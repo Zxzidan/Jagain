@@ -1,6 +1,6 @@
 @import 'tailwindcss';
-
 @import 'tw-animate-css';
+@import 'leaflet/dist/leaflet.css';
 
 @source '../views';
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
@@ -13,9 +13,21 @@
         'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
         'Noto Color Emoji';
 
-    --radius-lg: var(--radius);
-    --radius-md: calc(var(--radius) - 2px);
-    --radius-sm: calc(var(--radius) - 4px);
+    --radius-lg: 14px;
+    --radius-md: 10px;
+    --radius-sm: 6px;
+
+    /* JAGAIN Design System Colors (design.md) */
+    --color-forest-green: #174B35;
+    --color-primary-green: #216B49;
+    --color-leaf-green: #39845C;
+    --color-soft-green: #E8F1EB;
+    --color-pale-green: #F3F7F4;
+    --color-black: #171C19;
+    --color-dark-neutral: #343B36;
+    --color-gray-neutral: #68716B;
+    --color-border-neutral: #DDE3DE;
+    --color-white: #FFFFFF;
 
     --color-background: var(--background);
     --color-foreground: var(--foreground);
@@ -45,12 +57,6 @@
     --color-input: var(--input);
     --color-ring: var(--ring);
 
-    --color-chart-1: var(--chart-1);
-    --color-chart-2: var(--chart-2);
-    --color-chart-3: var(--chart-3);
-    --color-chart-4: var(--chart-4);
-    --color-chart-5: var(--chart-5);
-
     --color-sidebar: var(--sidebar);
     --color-sidebar-foreground: var(--sidebar-foreground);
     --color-sidebar-primary: var(--sidebar-primary);
@@ -62,74 +68,64 @@
 }
 
 :root {
-    --background: oklch(1 0 0);
-    --foreground: oklch(0.145 0 0);
-    --card: oklch(1 0 0);
-    --card-foreground: oklch(0.145 0 0);
-    --popover: oklch(1 0 0);
-    --popover-foreground: oklch(0.145 0 0);
-    --primary: oklch(0.205 0 0);
-    --primary-foreground: oklch(0.985 0 0);
-    --secondary: oklch(0.97 0 0);
-    --secondary-foreground: oklch(0.205 0 0);
-    --muted: oklch(0.97 0 0);
-    --muted-foreground: oklch(0.556 0 0);
-    --accent: oklch(0.97 0 0);
-    --accent-foreground: oklch(0.205 0 0);
-    --destructive: oklch(0.577 0.245 27.325);
-    --destructive-foreground: oklch(0.577 0.245 27.325);
-    --border: oklch(0.922 0 0);
-    --input: oklch(0.922 0 0);
-    --ring: oklch(0.87 0 0);
-    --chart-1: oklch(0.646 0.222 41.116);
-    --chart-2: oklch(0.6 0.118 184.704);
-    --chart-3: oklch(0.398 0.07 227.392);
-    --chart-4: oklch(0.828 0.189 84.429);
-    --chart-5: oklch(0.769 0.188 70.08);
+    --background: #FFFFFF;
+    --foreground: #171C19;
+    --card: #FFFFFF;
+    --card-foreground: #171C19;
+    --popover: #FFFFFF;
+    --popover-foreground: #171C19;
+    --primary: #216B49;
+    --primary-foreground: #FFFFFF;
+    --secondary: #E8F1EB;
+    --secondary-foreground: #174B35;
+    --muted: #F3F7F4;
+    --muted-foreground: #68716B;
+    --accent: #E8F1EB;
+    --accent-foreground: #174B35;
+    --destructive: #171C19;
+    --destructive-foreground: #FFFFFF;
+    --border: #DDE3DE;
+    --input: #DDE3DE;
+    --ring: #216B49;
     --radius: 0.625rem;
-    --sidebar: oklch(0.985 0 0);
-    --sidebar-foreground: oklch(0.145 0 0);
-    --sidebar-primary: oklch(0.205 0 0);
-    --sidebar-primary-foreground: oklch(0.985 0 0);
-    --sidebar-accent: oklch(0.97 0 0);
-    --sidebar-accent-foreground: oklch(0.205 0 0);
-    --sidebar-border: oklch(0.922 0 0);
-    --sidebar-ring: oklch(0.87 0 0);
+    --sidebar: #F3F7F4;
+    --sidebar-foreground: #171C19;
+    --sidebar-primary: #216B49;
+    --sidebar-primary-foreground: #FFFFFF;
+    --sidebar-accent: #E8F1EB;
+    --sidebar-accent-foreground: #174B35;
+    --sidebar-border: #DDE3DE;
+    --sidebar-ring: #216B49;
 }
 
 .dark {
-    --background: oklch(0.145 0 0);
-    --foreground: oklch(0.985 0 0);
-    --card: oklch(0.145 0 0);
-    --card-foreground: oklch(0.985 0 0);
-    --popover: oklch(0.145 0 0);
-    --popover-foreground: oklch(0.985 0 0);
-    --primary: oklch(0.985 0 0);
-    --primary-foreground: oklch(0.205 0 0);
-    --secondary: oklch(0.269 0 0);
-    --secondary-foreground: oklch(0.985 0 0);
-    --muted: oklch(0.269 0 0);
-    --muted-foreground: oklch(0.708 0 0);
-    --accent: oklch(0.269 0 0);
-    --accent-foreground: oklch(0.985 0 0);
-    --destructive: oklch(0.396 0.141 25.723);
-    --destructive-foreground: oklch(0.637 0.237 25.331);
-    --border: oklch(0.269 0 0);
-    --input: oklch(0.269 0 0);
-    --ring: oklch(0.439 0 0);
-    --chart-1: oklch(0.488 0.243 264.376);
-    --chart-2: oklch(0.696 0.17 162.48);
-    --chart-3: oklch(0.769 0.188 70.08);
-    --chart-4: oklch(0.627 0.265 303.9);
-    --chart-5: oklch(0.645 0.246 16.439);
-    --sidebar: oklch(0.205 0 0);
-    --sidebar-foreground: oklch(0.985 0 0);
-    --sidebar-primary: oklch(0.985 0 0);
-    --sidebar-primary-foreground: oklch(0.985 0 0);
-    --sidebar-accent: oklch(0.269 0 0);
-    --sidebar-accent-foreground: oklch(0.985 0 0);
-    --sidebar-border: oklch(0.269 0 0);
-    --sidebar-ring: oklch(0.439 0 0);
+    --background: #171C19;
+    --foreground: #F3F7F4;
+    --card: #1F2522;
+    --card-foreground: #F3F7F4;
+    --popover: #1F2522;
+    --popover-foreground: #F3F7F4;
+    --primary: #39845C;
+    --primary-foreground: #FFFFFF;
+    --secondary: #26332C;
+    --secondary-foreground: #E8F1EB;
+    --muted: #26332C;
+    --muted-foreground: #9AA39D;
+    --accent: #26332C;
+    --accent-foreground: #E8F1EB;
+    --destructive: #F3F7F4;
+    --destructive-foreground: #171C19;
+    --border: #343B36;
+    --input: #343B36;
+    --ring: #39845C;
+    --sidebar: #1F2522;
+    --sidebar-foreground: #F3F7F4;
+    --sidebar-primary: #39845C;
+    --sidebar-primary-foreground: #FFFFFF;
+    --sidebar-accent: #26332C;
+    --sidebar-accent-foreground: #E8F1EB;
+    --sidebar-border: #343B36;
+    --sidebar-ring: #39845C;
 }
 
 @layer base {
@@ -138,6 +134,23 @@
     }
 
     body {
-        @apply bg-background text-foreground;
+        @apply bg-background text-foreground antialiased;
+        font-feature-settings: "cv02", "cv03", "cv04", "cv11";
     }
+}
+
+/* Custom Leaflet Map styling to match JAGAIN Green Palette */
+.leaflet-container {
+    font-family: inherit;
+    z-index: 10;
+}
+
+.leaflet-popup-content-wrapper {
+    border-radius: 10px;
+    box-shadow: 0 4px 16px rgba(23, 28, 25, 0.12);
+    border: 1px solid #DDE3DE;
+}
+
+.leaflet-popup-tip {
+    background: #FFFFFF;
 }
