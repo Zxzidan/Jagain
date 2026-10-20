@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Head, Link, router } from '@inertiajs/react';
 import {
-    Clock,
     FileText,
     Filter,
     MapPin,
@@ -14,7 +13,10 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { StatusBadge, FireConditionBadge } from '@/components/reports/status-badge';
+import {
+    StatusBadge,
+    FireConditionBadge,
+} from '@/components/reports/status-badge';
 import type { ReportPagination } from '@/types';
 import { dashboard } from '@/routes';
 
@@ -50,7 +52,7 @@ export default function ReportsIndex({ reports, filters, statuses }: Props) {
                 search: search || undefined,
                 status: selectedStatus || undefined,
             },
-            { preserveState: true, replace: true }
+            { preserveState: true, replace: true },
         );
     };
 
@@ -64,13 +66,15 @@ export default function ReportsIndex({ reports, filters, statuses }: Props) {
         if (!isoString) return '-';
         try {
             const date = new Date(isoString);
-            return new Intl.DateTimeFormat('id-ID', {
-                day: 'numeric',
-                month: 'short',
-                year: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit',
-            }).format(date) + ' WIB';
+            return (
+                new Intl.DateTimeFormat('id-ID', {
+                    day: 'numeric',
+                    month: 'short',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                }).format(date) + ' WIB'
+            );
         } catch {
             return isoString;
         }
@@ -80,23 +84,24 @@ export default function ReportsIndex({ reports, filters, statuses }: Props) {
         <>
             <Head title="Daftar & Riwayat Laporan - JAGAIN" />
 
-            <div className="flex flex-1 flex-col gap-6 p-4 md:p-6 max-w-7xl mx-auto w-full">
+            <div className="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-6 p-4 md:p-6">
                 {/* Header */}
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
                     <div>
-                        <h1 className="text-xl md:text-2xl font-bold text-dark-neutral">
+                        <h1 className="text-xl font-bold text-dark-neutral md:text-2xl">
                             Daftar & Riwayat Laporan Karhutla
                         </h1>
-                        <p className="text-xs text-gray-neutral mt-0.5">
-                            Semua laporan kebakaran hutan dan lahan yang pernah Anda kirimkan
+                        <p className="mt-0.5 text-xs text-gray-neutral">
+                            Semua laporan kebakaran hutan dan lahan yang pernah
+                            Anda kirimkan
                         </p>
                     </div>
                     <Button
                         asChild
-                        className="bg-primary-green text-white hover:bg-forest-green text-xs font-semibold shrink-0"
+                        className="shrink-0 bg-primary-green text-xs font-semibold text-white hover:bg-forest-green"
                     >
                         <Link href="/reports/create">
-                            <PlusCircle className="size-4 mr-2" />
+                            <PlusCircle className="mr-2 size-4" />
                             Buat Laporan Baru
                         </Link>
                     </Button>
@@ -104,16 +109,19 @@ export default function ReportsIndex({ reports, filters, statuses }: Props) {
 
                 {/* Filter and Search Bar */}
                 <div className="rounded-xl border border-border-neutral bg-white p-4 shadow-2xs">
-                    <form onSubmit={handleFilterSubmit} className="flex flex-col sm:flex-row gap-3">
+                    <form
+                        onSubmit={handleFilterSubmit}
+                        className="flex flex-col gap-3 sm:flex-row"
+                    >
                         {/* Search Input */}
                         <div className="relative flex-1">
-                            <Search className="absolute left-3 top-2.5 size-4 text-gray-neutral pointer-events-none" />
+                            <Search className="pointer-events-none absolute top-2.5 left-3 size-4 text-gray-neutral" />
                             <Input
                                 type="text"
                                 value={search}
                                 onChange={(e) => setSearch(e.target.value)}
                                 placeholder="Cari nomor laporan, judul, atau patokan lokasi..."
-                                className="pl-9 text-xs border-border-neutral focus:border-primary-green focus:ring-primary-green"
+                                className="border-border-neutral pl-9 text-xs focus:border-primary-green focus:ring-primary-green"
                             />
                         </div>
 
@@ -124,7 +132,7 @@ export default function ReportsIndex({ reports, filters, statuses }: Props) {
                                 onChange={(e) => {
                                     setSelectedStatus(e.target.value);
                                 }}
-                                className="h-9 w-full rounded-md border border-border-neutral bg-white px-3 py-1 text-xs text-dark-neutral focus:border-primary-green focus:outline-none focus:ring-1 focus:ring-primary-green"
+                                className="h-9 w-full rounded-md border border-border-neutral bg-white px-3 py-1 text-xs text-dark-neutral focus:border-primary-green focus:ring-1 focus:ring-primary-green focus:outline-none"
                             >
                                 <option value="">Semua Status Laporan</option>
                                 {statuses.map((s) => (
@@ -140,9 +148,9 @@ export default function ReportsIndex({ reports, filters, statuses }: Props) {
                             <Button
                                 type="submit"
                                 size="sm"
-                                className="bg-primary-green text-white hover:bg-forest-green text-xs"
+                                className="bg-primary-green text-xs text-white hover:bg-forest-green"
                             >
-                                <Filter className="size-3.5 mr-1" />
+                                <Filter className="mr-1 size-3.5" />
                                 Terapkan
                             </Button>
                             {(search || selectedStatus) && (
@@ -153,7 +161,7 @@ export default function ReportsIndex({ reports, filters, statuses }: Props) {
                                     onClick={handleReset}
                                     className="border-border-neutral text-xs text-gray-neutral hover:bg-soft-green"
                                 >
-                                    <X className="size-3.5 mr-1" />
+                                    <X className="mr-1 size-3.5" />
                                     Reset
                                 </Button>
                             )}
@@ -191,10 +199,10 @@ export default function ReportsIndex({ reports, filters, statuses }: Props) {
                                 <Button
                                     asChild
                                     size="sm"
-                                    className="bg-primary-green text-white hover:bg-forest-green text-xs"
+                                    className="bg-primary-green text-xs text-white hover:bg-forest-green"
                                 >
                                     <Link href="/reports/create">
-                                        <PlusCircle className="size-4 mr-2" />
+                                        <PlusCircle className="mr-2 size-4" />
                                         Kirim Laporan Pertama
                                     </Link>
                                 </Button>
@@ -204,56 +212,84 @@ export default function ReportsIndex({ reports, filters, statuses }: Props) {
                 ) : (
                     <div className="space-y-3">
                         <div className="text-xs text-gray-neutral">
-                            Menampilkan <strong>{reports.data.length}</strong> dari total <strong>{reports.total}</strong> laporan Anda
+                            Menampilkan <strong>
+                                {reports.data.length}
+                            </strong>{' '}
+                            dari total <strong>{reports.total}</strong> laporan
+                            Anda
                         </div>
 
                         <div className="grid grid-cols-1 gap-3">
                             {reports.data.map((report) => (
                                 <div
                                     key={report.id}
-                                    className="rounded-xl border border-border-neutral bg-white p-5 transition-colors hover:border-primary-green/50 hover:bg-pale-green/30 shadow-2xs"
+                                    className="rounded-xl border border-border-neutral bg-white p-5 shadow-2xs transition-all duration-200 ease-out hover:-translate-y-0.5 hover:border-gray-neutral/30 hover:shadow-md"
                                 >
-                                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-border-neutral/60 pb-3">
+                                    <div className="flex flex-col justify-between gap-3 border-b border-border-neutral/60 pb-3 sm:flex-row sm:items-center">
                                         <div className="flex flex-wrap items-center gap-2">
-                                            <span className="font-mono text-xs font-bold text-forest-green bg-soft-green px-2 py-0.5 rounded-md">
+                                            <span className="rounded-md border border-border-neutral bg-neutral-100 px-2 py-0.5 font-mono text-xs font-semibold text-gray-neutral">
                                                 {report.report_number}
                                             </span>
-                                            <StatusBadge status={report.report_status} />
-                                            <FireConditionBadge condition={report.fire_condition} />
-                                            {report.evidence_count !== undefined && report.evidence_count > 0 && (
-                                                <span className="inline-flex items-center gap-1 rounded-md bg-neutral-100 px-2 py-0.5 text-xs text-gray-neutral">
-                                                    <Camera className="size-3" />
-                                                    <span>{report.evidence_count} Foto Bukti</span>
-                                                </span>
-                                            )}
+                                            <StatusBadge
+                                                status={report.report_status}
+                                                variant="neutral"
+                                            />
+                                            <FireConditionBadge
+                                                condition={
+                                                    report.fire_condition
+                                                }
+                                                variant="neutral"
+                                            />
+                                            {report.evidence_count !==
+                                                undefined &&
+                                                report.evidence_count > 0 && (
+                                                    <span className="inline-flex items-center gap-1 rounded-md border border-border-neutral bg-neutral-100 px-2 py-0.5 text-xs text-gray-neutral">
+                                                        <Camera className="size-3 text-gray-neutral" />
+                                                        <span>
+                                                            {
+                                                                report.evidence_count
+                                                            }{' '}
+                                                            Foto Bukti
+                                                        </span>
+                                                    </span>
+                                                )}
                                         </div>
 
                                         <div className="flex items-center gap-1.5 text-xs text-gray-neutral">
-                                            <Calendar className="size-3.5 text-leaf-green" />
-                                            <span>Dikirim: {formatDate(report.created_at)}</span>
+                                            <Calendar className="size-3.5 text-gray-neutral" />
+                                            <span>
+                                                Dikirim:{' '}
+                                                {formatDate(report.created_at)}
+                                            </span>
                                         </div>
                                     </div>
 
                                     <div className="pt-3">
                                         <div className="flex items-start justify-between gap-4">
-                                            <div className="space-y-1.5 flex-1 min-w-0">
+                                            <div className="min-w-0 flex-1 space-y-1.5">
                                                 <div className="flex items-center gap-2">
-                                                    <span className="text-[11px] font-semibold uppercase tracking-wider text-primary-green">
-                                                        {CATEGORY_LABELS[report.category] || report.category}
+                                                    <span className="text-[11px] font-semibold tracking-wider text-primary-green uppercase">
+                                                        {CATEGORY_LABELS[
+                                                            report.category
+                                                        ] || report.category}
                                                     </span>
                                                 </div>
 
-                                                <h3 className="text-base font-semibold text-dark-neutral truncate">
+                                                <h3 className="truncate text-base font-semibold text-dark-neutral">
                                                     {report.title}
                                                 </h3>
 
-                                                <p className="text-xs text-gray-neutral line-clamp-2">
+                                                <p className="line-clamp-2 text-xs text-gray-neutral">
                                                     {report.description}
                                                 </p>
 
-                                                <div className="flex items-center gap-1.5 text-xs text-dark-neutral/80 pt-1">
-                                                    <MapPin className="size-3.5 text-primary-green shrink-0" />
-                                                    <span className="truncate">{report.location_description}</span>
+                                                <div className="flex items-center gap-1.5 pt-1 text-xs">
+                                                    <MapPin className="size-3.5 shrink-0 text-primary-green" />
+                                                    <span className="truncate font-medium text-forest-green">
+                                                        {
+                                                            report.location_description
+                                                        }
+                                                    </span>
                                                 </div>
                                             </div>
 
@@ -261,12 +297,16 @@ export default function ReportsIndex({ reports, filters, statuses }: Props) {
                                                 <Button
                                                     asChild
                                                     size="sm"
-                                                    variant="outline"
-                                                    className="border-border-neutral text-xs text-forest-green hover:border-primary-green hover:bg-soft-green"
+                                                    className="bg-primary-green px-3.5 py-1.5 text-xs font-semibold text-white shadow-xs transition-all hover:bg-forest-green active:scale-[0.98]"
                                                 >
-                                                    <Link href={`/reports/${report.id}`}>
-                                                        <span>Lacak & Detail</span>
-                                                        <ArrowRight className="size-3.5 ml-1" />
+                                                    <Link
+                                                        href={`/reports/${report.id}`}
+                                                        className="inline-flex items-center text-white"
+                                                    >
+                                                        <span>
+                                                            Lacak & Detail
+                                                        </span>
+                                                        <ArrowRight className="ml-1 size-3.5 text-white" />
                                                     </Link>
                                                 </Button>
                                             </div>
@@ -280,7 +320,8 @@ export default function ReportsIndex({ reports, filters, statuses }: Props) {
                         {reports.last_page > 1 && (
                             <div className="flex items-center justify-between border-t border-border-neutral pt-4 text-xs text-gray-neutral">
                                 <div>
-                                    Halaman {reports.current_page} dari {reports.last_page}
+                                    Halaman {reports.current_page} dari{' '}
+                                    {reports.last_page}
                                 </div>
                                 <div className="flex gap-2">
                                     {reports.prev_page_url ? (
@@ -290,7 +331,10 @@ export default function ReportsIndex({ reports, filters, statuses }: Props) {
                                             variant="outline"
                                             className="border-border-neutral text-xs"
                                         >
-                                            <Link href={reports.prev_page_url} preserveState>
+                                            <Link
+                                                href={reports.prev_page_url}
+                                                preserveState
+                                            >
                                                 Sebelumnya
                                             </Link>
                                         </Button>
@@ -312,7 +356,10 @@ export default function ReportsIndex({ reports, filters, statuses }: Props) {
                                             variant="outline"
                                             className="border-border-neutral text-xs"
                                         >
-                                            <Link href={reports.next_page_url} preserveState>
+                                            <Link
+                                                href={reports.next_page_url}
+                                                preserveState
+                                            >
                                                 Selanjutnya
                                             </Link>
                                         </Button>

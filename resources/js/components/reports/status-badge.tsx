@@ -18,13 +18,64 @@ interface StatusBadgeProps {
     status: ReportStatus;
     className?: string;
     showIcon?: boolean;
+    variant?: 'default' | 'neutral';
 }
 
 export function StatusBadge({
     status,
     className = '',
     showIcon = true,
+    variant = 'default',
 }: StatusBadgeProps) {
+    if (variant === 'neutral') {
+        let label = status as string;
+        let Icon = Clock;
+        switch (status) {
+            case 'SUBMITTED':
+                label = 'Terkirim';
+                Icon = Clock;
+                break;
+            case 'UNDER_REVIEW':
+                label = 'Sedang Diperiksa';
+                Icon = FileText;
+                break;
+            case 'NEEDS_INFORMATION':
+                label = 'Perlu Info Tambahan';
+                Icon = AlertCircle;
+                break;
+            case 'VERIFIED':
+                label = 'Terverifikasi';
+                Icon = CheckCircle2;
+                break;
+            case 'DISPATCHED':
+                label = 'Diteruskan ke Instansi';
+                Icon = Send;
+                break;
+            case 'RESOLUTION_REVIEW':
+                label = 'Penanganan Ditinjau';
+                Icon = FileCheck;
+                break;
+            case 'RESOLVED_VERIFIED':
+                label = 'Penanganan Selesai';
+                Icon = CheckCircle2;
+                break;
+            case 'CLOSED_WITH_REASON':
+                label = 'Ditutup';
+                Icon = XCircle;
+                break;
+        }
+        return (
+            <span
+                className={`inline-flex items-center gap-1.5 rounded-md border border-border-neutral bg-neutral-100 px-2.5 py-0.5 text-xs font-medium text-gray-neutral ${className}`}
+            >
+                {showIcon && (
+                    <Icon className="size-3.5 shrink-0 text-gray-neutral" />
+                )}
+                <span>{label}</span>
+            </span>
+        );
+    }
+
     switch (status) {
         case 'SUBMITTED':
             return (
@@ -128,12 +179,57 @@ export function StatusBadge({
 interface FireConditionBadgeProps {
     condition: FireCondition;
     className?: string;
+    variant?: 'default' | 'neutral';
 }
 
 export function FireConditionBadge({
     condition,
     className = '',
+    variant = 'default',
 }: FireConditionBadgeProps) {
+    if (variant === 'neutral') {
+        let label = 'Belum Terpantau Lapangan';
+        let Icon = HelpCircle;
+        let title =
+            'Kondisi fisik kebakaran di lapangan belum diobservasi secara langsung';
+        switch (condition) {
+            case 'REPORTED_ACTIVE':
+                label = 'Laporan: Api Aktif';
+                Icon = Flame;
+                title = 'Kondisi kebakaran berdasarkan pengamatan pelapor';
+                break;
+            case 'OBSERVED_ACTIVE':
+                label = 'Terobservasi: Api Aktif';
+                Icon = ShieldAlert;
+                title =
+                    'Kondisi kebakaran terkonfirmasi aktif oleh petugas di lapangan';
+                break;
+            case 'OBSERVED_CONTAINED':
+                label = 'Tersekat / Terkendali';
+                Icon = Eye;
+                title = 'Api telah disekat / terkendali';
+                break;
+            case 'OBSERVED_EXTINGUISHED':
+                label = 'Terobservasi: Padam';
+                Icon = CheckCircle2;
+                title =
+                    'Kondisi kebakaran terobservasi telah padam oleh petugas berwenang';
+                break;
+            case 'UNKNOWN':
+            default:
+                break;
+        }
+        return (
+            <span
+                className={`inline-flex items-center gap-1.5 rounded-md border border-border-neutral bg-neutral-100 px-2.5 py-0.5 text-xs font-medium text-gray-neutral ${className}`}
+                title={title}
+            >
+                <Icon className="size-3.5 shrink-0 text-gray-neutral" />
+                <span>{label}</span>
+            </span>
+        );
+    }
+
     switch (condition) {
         case 'REPORTED_ACTIVE':
             return (

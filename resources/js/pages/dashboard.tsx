@@ -20,17 +20,6 @@ import {
     FireConditionBadge,
 } from '@/components/reports/status-badge';
 import {
-    Status,
-    StatusIndicator,
-    StatusLabel,
-} from '@/components/kibo-ui/status';
-import {
-    RelativeTime,
-    RelativeTimeZone,
-    RelativeTimeZoneLabel,
-    RelativeTimeZoneDisplay,
-} from '@/components/kibo-ui/relative-time';
-import {
     Banner,
     BannerIcon,
     BannerTitle,
@@ -164,55 +153,30 @@ export default function Dashboard({ metrics, recentReports }: Props) {
                     </Banner>
                 )}
 
-                {/* Refined Civic Header */}
-                <header className="rounded-xl border border-border-neutral bg-white p-5 shadow-xs sm:p-6 lg:p-7">
-                    <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
-                        <div className="max-w-3xl space-y-2.5">
-                            {/* Kibo UI Status & Dual-Timezone Field Clock */}
-                            <div className="flex flex-wrap items-center gap-2.5">
-                                <Status
-                                    status="online"
-                                    className="max-w-full border-border-neutral bg-pale-green px-2.5 py-1 text-xs text-forest-green"
-                                >
-                                    <StatusIndicator />
-                                    <StatusLabel className="truncate text-[11px] font-medium text-forest-green sm:text-xs">
-                                        <span className="sm:hidden">
-                                            Monitoring Aktif • Wilayah
-                                            Kalimantan
-                                        </span>
-                                        <span className="hidden sm:inline">
-                                            Sistem Monitoring Aktif • Portal
-                                            Pengawasan Kalimantan
-                                        </span>
-                                    </StatusLabel>
-                                </Status>
+                {/* Refined Civic Hero Header with Smoldering Forest Backdrop */}
+                <header className="relative overflow-hidden rounded-xl border border-forest-green/20 p-5 shadow-sm sm:p-6 lg:p-7">
+                    {/* Background Wildfire Photo */}
+                    <div
+                        className="absolute inset-0 bg-cover bg-center"
+                        style={{
+                            backgroundImage:
+                                "url('/images/Smoldering%20Forest%20at%20Dusk.png')",
+                        }}
+                        aria-hidden="true"
+                    />
 
-                                <RelativeTime className="flex items-center gap-1.5">
-                                    <RelativeTimeZone
-                                        zone="Asia/Jakarta"
-                                        className="inline-flex items-center gap-1.5 rounded-md border border-border-neutral/80 bg-white px-2 py-0.5 text-xs shadow-2xs"
-                                    >
-                                        <RelativeTimeZoneLabel>
-                                            WIB
-                                        </RelativeTimeZoneLabel>
-                                        <RelativeTimeZoneDisplay className="font-mono text-xs font-semibold text-dark-neutral" />
-                                    </RelativeTimeZone>
-                                    <RelativeTimeZone
-                                        zone="Asia/Makassar"
-                                        className="inline-flex items-center gap-1.5 rounded-md border border-border-neutral/80 bg-white px-2 py-0.5 text-xs shadow-2xs"
-                                    >
-                                        <RelativeTimeZoneLabel>
-                                            WITA
-                                        </RelativeTimeZoneLabel>
-                                        <RelativeTimeZoneDisplay className="font-mono text-xs font-semibold text-dark-neutral" />
-                                    </RelativeTimeZone>
-                                </RelativeTime>
-                            </div>
+                    {/* Dark Green Gradient Overlay: darker on text side, translucent on fire side */}
+                    <div
+                        className="absolute inset-0 bg-gradient-to-r from-[#174B35]/92 via-[#174B35]/82 to-[#174B35]/60"
+                        aria-hidden="true"
+                    />
 
-                            <h1 className="text-2xl font-bold tracking-tight text-dark-neutral sm:text-3xl">
+                    <div className="relative z-10 flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+                        <div className="max-w-2xl space-y-2">
+                            <h1 className="text-2xl font-bold tracking-tight text-white sm:text-3xl">
                                 Dasbor Pelaporan & Pengawasan Karhutla
                             </h1>
-                            <p className="text-sm leading-relaxed text-gray-neutral">
+                            <p className="text-sm leading-relaxed text-white/90">
                                 Pantau perkembangan laporan kebakaran hutan dan
                                 lahan yang Anda sampaikan, lengkapi data jika
                                 diperlukan, dan kawal transparansi penanganan
@@ -224,13 +188,13 @@ export default function Dashboard({ metrics, recentReports }: Props) {
                         <div className="flex shrink-0 flex-wrap items-center gap-2.5 pt-1 lg:pt-0">
                             <Button
                                 asChild
-                                className="h-auto bg-primary-green px-4 py-2.5 text-xs font-medium text-white shadow-xs transition-all duration-150 hover:bg-forest-green active:scale-[0.98] sm:text-sm"
+                                className="h-auto bg-white px-4 py-2.5 text-xs font-semibold text-forest-green shadow-md transition-all duration-150 hover:bg-pale-green hover:text-forest-green active:scale-[0.98] sm:text-sm"
                             >
                                 <Link
                                     href="/reports/create"
                                     className="flex items-center gap-2"
                                 >
-                                    <PlusCircle className="size-4 shrink-0" />
+                                    <PlusCircle className="size-4 shrink-0 text-primary-green" />
                                     <span>Buat Laporan Baru</span>
                                 </Link>
                             </Button>
@@ -238,13 +202,13 @@ export default function Dashboard({ metrics, recentReports }: Props) {
                             <Button
                                 asChild
                                 variant="outline"
-                                className="h-auto border-border-neutral bg-white px-4 py-2.5 text-xs font-medium text-dark-neutral transition-colors duration-150 hover:bg-pale-green hover:text-dark-neutral sm:text-sm"
+                                className="h-auto border-white/30 bg-white/10 px-4 py-2.5 text-xs font-medium text-white backdrop-blur-xs transition-colors duration-150 hover:bg-white/20 hover:text-white sm:text-sm"
                             >
                                 <Link
                                     href="/reports"
                                     className="flex items-center gap-2"
                                 >
-                                    <FileText className="size-4 shrink-0 text-gray-neutral" />
+                                    <FileText className="size-4 shrink-0 text-white/85" />
                                     <span>Riwayat Laporan Saya</span>
                                 </Link>
                             </Button>
@@ -258,9 +222,9 @@ export default function Dashboard({ metrics, recentReports }: Props) {
                                 <DialogStackTrigger asChild>
                                     <Button
                                         variant="outline"
-                                        className="h-auto border-border-neutral bg-white px-3.5 py-2.5 text-xs font-medium text-dark-neutral transition-colors duration-150 hover:bg-pale-green hover:text-forest-green sm:text-sm"
+                                        className="h-auto border-white/30 bg-white/10 px-3.5 py-2.5 text-xs font-medium text-white backdrop-blur-xs transition-colors duration-150 hover:bg-white/20 hover:text-white sm:text-sm"
                                     >
-                                        <HelpCircle className="size-4 shrink-0 text-primary-green" />
+                                        <HelpCircle className="size-4 shrink-0 text-emerald-300" />
                                         <span>Alur & Panduan</span>
                                     </Button>
                                 </DialogStackTrigger>
@@ -539,7 +503,7 @@ export default function Dashboard({ metrics, recentReports }: Props) {
                         </div>
 
                         {/* Metric 3: Verified & Dispatched */}
-                        <div className="group rounded-xl border border-border-neutral bg-white p-4 transition-all duration-200 hover:border-leaf-green/50 hover:shadow-xs sm:p-5">
+                        <div className="group rounded-xl border border-border-neutral bg-white p-4 transition-all duration-200 hover:border-gray-neutral/40 hover:shadow-xs sm:p-5">
                             <div className="flex items-center justify-between">
                                 <span className="text-[11px] font-semibold tracking-wider text-gray-neutral uppercase">
                                     Terverifikasi
@@ -614,11 +578,10 @@ export default function Dashboard({ metrics, recentReports }: Props) {
                     </Link>
                     <Link
                         href="/reports?status=NEEDS_INFORMATION"
-                        className={`shrink-0 rounded-lg border px-3 py-1.5 font-medium transition-colors focus-visible:ring-2 focus-visible:ring-primary-green focus-visible:outline-hidden ${
-                            metrics.needs_info > 0
+                        className={`shrink-0 rounded-lg border px-3 py-1.5 font-medium transition-colors focus-visible:ring-2 focus-visible:ring-primary-green focus-visible:outline-hidden ${metrics.needs_info > 0
                                 ? 'border-leaf-green/50 bg-soft-green font-semibold text-forest-green'
                                 : 'border-border-neutral bg-white text-dark-neutral hover:bg-pale-green'
-                        }`}
+                            }`}
                     >
                         Perlu Klarifikasi ({metrics.needs_info})
                     </Link>
@@ -708,29 +671,31 @@ export default function Dashboard({ metrics, recentReports }: Props) {
                             {recentReports.map((report) => (
                                 <article
                                     key={report.id}
-                                    className="group rounded-xl border border-border-neutral bg-white p-4 transition-all duration-200 hover:border-leaf-green/50 hover:shadow-xs sm:p-5"
+                                    className="group rounded-xl border border-border-neutral bg-white p-4 shadow-xs transition-all duration-200 ease-out hover:-translate-y-0.5 hover:border-gray-neutral/30 hover:shadow-md sm:p-5"
                                 >
                                     <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
                                         {/* Report Core Details */}
                                         <div className="min-w-0 flex-1 space-y-2">
                                             {/* Meta & Badges Row */}
                                             <div className="flex flex-wrap items-center gap-2">
-                                                <span className="rounded-md border border-border-neutral/70 bg-pale-green px-2 py-0.5 font-mono text-xs font-semibold text-forest-green">
+                                                <span className="rounded-md border border-border-neutral bg-neutral-100 px-2 py-0.5 font-mono text-xs font-semibold text-gray-neutral">
                                                     {report.report_number}
                                                 </span>
                                                 <StatusBadge
                                                     status={
                                                         report.report_status
                                                     }
+                                                    variant="neutral"
                                                 />
                                                 <FireConditionBadge
                                                     condition={
                                                         report.fire_condition
                                                     }
+                                                    variant="neutral"
                                                 />
 
                                                 {/* Category Tag */}
-                                                <span className="inline-flex items-center rounded-md border border-border-neutral bg-white px-2 py-0.5 text-xs font-medium text-gray-neutral">
+                                                <span className="inline-flex items-center rounded-md border border-border-neutral bg-neutral-100 px-2 py-0.5 text-xs font-medium text-gray-neutral">
                                                     {CATEGORY_LABELS[
                                                         report.category
                                                     ] || report.category}
@@ -738,7 +703,7 @@ export default function Dashboard({ metrics, recentReports }: Props) {
 
                                                 {/* Evidence Counter */}
                                                 {report.has_evidence && (
-                                                    <span className="inline-flex items-center gap-1 rounded-md border border-border-neutral bg-white px-2 py-0.5 text-xs text-gray-neutral">
+                                                    <span className="inline-flex items-center gap-1 rounded-md border border-border-neutral bg-neutral-100 px-2 py-0.5 text-xs text-gray-neutral">
                                                         <Camera className="size-3 shrink-0 text-gray-neutral" />
                                                         <span>
                                                             {
@@ -762,8 +727,8 @@ export default function Dashboard({ metrics, recentReports }: Props) {
                                             {/* Location & Time Metadata */}
                                             <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs text-gray-neutral">
                                                 <div className="flex min-w-0 items-center gap-1.5">
-                                                    <MapPin className="size-3.5 shrink-0 text-gray-neutral" />
-                                                    <span className="max-w-[280px] truncate sm:max-w-md">
+                                                    <MapPin className="size-3.5 shrink-0 text-primary-green" />
+                                                    <span className="max-w-[280px] truncate font-medium text-forest-green sm:max-w-md">
                                                         {
                                                             report.location_description
                                                         }
@@ -786,15 +751,14 @@ export default function Dashboard({ metrics, recentReports }: Props) {
                                             <Button
                                                 asChild
                                                 size="sm"
-                                                variant="outline"
-                                                className="h-9 w-full border-border-neutral px-3.5 text-xs font-semibold text-dark-neutral transition-all hover:border-gray-neutral/40 hover:bg-pale-green hover:text-forest-green active:scale-[0.98] sm:w-auto"
+                                                className="h-9 w-full bg-primary-green px-3.5 text-xs font-semibold text-white shadow-xs transition-all hover:bg-forest-green active:scale-[0.98] sm:w-auto"
                                             >
                                                 <Link
                                                     href={`/reports/${report.id}`}
-                                                    className="flex items-center justify-center gap-1.5"
+                                                    className="flex items-center justify-center gap-1.5 text-white"
                                                 >
                                                     <span>Lacak & Detail</span>
-                                                    <ArrowRight className="size-3.5 transition-transform duration-150 group-hover:translate-x-0.5" />
+                                                    <ArrowRight className="size-3.5 text-white transition-transform duration-150 group-hover:translate-x-0.5" />
                                                 </Link>
                                             </Button>
                                         </div>
