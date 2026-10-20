@@ -45,6 +45,16 @@ const mainNavItems: NavItem[] = [
         href: dashboard(),
         icon: LayoutGrid,
     },
+    {
+        title: 'Laporan Saya',
+        href: '/reports',
+        icon: LayoutGrid,
+    },
+    {
+        title: 'Buat Laporan',
+        href: '/reports/create',
+        icon: LayoutGrid,
+    },
 ];
 
 const rightNavItems: NavItem[] = [
