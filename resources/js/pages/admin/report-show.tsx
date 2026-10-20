@@ -1,11 +1,9 @@
 import { useState } from 'react';
 import { Head, Link, useForm } from '@inertiajs/react';
-import Navbar from '@/components/navbar';
-import Footer from '@/components/footer';
-import EmergencyBanner from '@/components/emergency-banner';
 import StatusBadge from '@/components/status-badge';
 import FireConditionBadge from '@/components/fire-condition-badge';
 import KarhutlaMap from '@/components/karhutla-map';
+import OperationalGanttTimeline from '@/components/operational-gantt-timeline';
 import {
     ArrowLeft,
     Clock,
@@ -128,28 +126,27 @@ export default function AdminReportShow({
     };
 
     return (
-        <div className="min-h-screen flex flex-col bg-[#F3F7F4] text-[#171C19]">
+        <div className="p-4 sm:p-6 lg:p-8 space-y-6 bg-[#F3F7F4] min-h-screen text-[#171C19]">
             <Head title={`Pemeriksaan Laporan ${report.tracking_code} — Admin JAGAIN`} />
-            <EmergencyBanner />
-            <Navbar />
 
-            {/* Subnav Header */}
-            <div className="bg-white border-b border-[#DDE3DE] py-3 px-4 sm:px-6 lg:px-8">
-                <div className="max-w-7xl mx-auto flex items-center justify-between">
-                    <Link
-                        href="/admin/laporan"
-                        className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#174B35] hover:underline"
-                    >
-                        <ArrowLeft className="size-4" />
-                        Kembali ke Antrean Laporan
-                    </Link>
-                    <span className="font-mono text-xs font-bold text-[#68716B]">
-                        Kode: {report.tracking_code}
+            {/* Top Navigation Bar */}
+            <div className="bg-white border border-[#DDE3DE] rounded-2xl p-4 sm:px-6 shadow-xs flex items-center justify-between">
+                <Link
+                    href="/admin/laporan"
+                    className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#174B35] hover:underline"
+                >
+                    <ArrowLeft className="size-4" />
+                    Kembali ke Antrean Laporan
+                </Link>
+                <div className="flex items-center gap-2">
+                    <span className="text-xs text-[#68716B]">Kode Laporan:</span>
+                    <span className="font-mono text-xs font-bold px-2 py-0.5 rounded bg-[#E8F1EB] text-[#174B35] border border-[#216B49]/20">
+                        {report.tracking_code}
                     </span>
                 </div>
             </div>
 
-            <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+            <div className="space-y-6">
                 {/* Potential Duplicate Warning (if detected) */}
                 {potentialDuplicates.length > 0 && (
                     <div className="bg-[#FFFBEB] border-l-4 border-[#D97706] p-4 rounded-r-xl shadow-xs text-xs text-[#92400E] space-y-2">
@@ -356,6 +353,17 @@ export default function AdminReportShow({
                             )}
                         </div>
 
+                        {/* Linimasa Jadwal Penanganan OPD (Kibo UI Gantt) */}
+                        {report.assignments.length > 0 && (
+                            <OperationalGanttTimeline
+                                assignedAt={report.assignments[0].assigned_at}
+                                status={report.assignments[0].assignment_status}
+                                updates={report.assignments[0].operational_updates}
+                                completedAt={report.report_status === 'RESOLVED_VERIFIED' ? new Date().toISOString() : null}
+                                title={`Linimasa Penanganan Lapangan (${report.assignments[0].agency.name})`}
+                            />
+                        )}
+
                         {/* Action Panel: Dispatch to Agency */}
                         <div className="bg-white border border-[#DDE3DE] rounded-xl p-6 shadow-xs space-y-4">
                             <div className="border-b border-[#DDE3DE] pb-3">
@@ -498,9 +506,7 @@ export default function AdminReportShow({
                         </div>
                     </div>
                 </div>
-            </main>
-
-            <Footer />
+            </div>
         </div>
     );
 }

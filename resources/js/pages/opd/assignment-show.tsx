@@ -1,11 +1,9 @@
 import { useState } from 'react';
 import { Head, Link, useForm } from '@inertiajs/react';
-import Navbar from '@/components/navbar';
-import Footer from '@/components/footer';
-import EmergencyBanner from '@/components/emergency-banner';
 import StatusBadge from '@/components/status-badge';
 import FireConditionBadge from '@/components/fire-condition-badge';
 import KarhutlaMap from '@/components/karhutla-map';
+import OperationalGanttTimeline from '@/components/operational-gantt-timeline';
 import {
     ArrowLeft,
     Building,
@@ -113,28 +111,27 @@ export default function OpdAssignmentShow({
     };
 
     return (
-        <div className="min-h-screen flex flex-col bg-[#F3F7F4] text-[#171C19]">
+        <div className="p-4 sm:p-6 lg:p-8 space-y-6 bg-[#F3F7F4] min-h-screen text-[#171C19]">
             <Head title={`Tugas ${report.tracking_code} — ${assignment.agency.code}`} />
-            <EmergencyBanner />
-            <Navbar />
 
-            {/* Subnav Header */}
-            <div className="bg-white border-b border-[#DDE3DE] py-3 px-4 sm:px-6 lg:px-8">
-                <div className="max-w-7xl mx-auto flex items-center justify-between">
-                    <Link
-                        href="/opd/tugas"
-                        className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#174B35] hover:underline"
-                    >
-                        <ArrowLeft className="size-4" />
-                        Kembali ke Daftar Tugas OPD
-                    </Link>
-                    <span className="font-mono text-xs font-bold text-[#68716B]">
-                        Laporan: {report.tracking_code}
+            {/* Top Navigation Bar */}
+            <div className="bg-white border border-[#DDE3DE] rounded-2xl p-4 sm:px-6 shadow-xs flex items-center justify-between">
+                <Link
+                    href="/opd/tugas"
+                    className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#174B35] hover:underline"
+                >
+                    <ArrowLeft className="size-4" />
+                    Kembali ke Daftar Tugas OPD
+                </Link>
+                <div className="flex items-center gap-2">
+                    <span className="text-xs text-[#68716B]">Kode Laporan:</span>
+                    <span className="font-mono text-xs font-bold px-2 py-0.5 rounded bg-[#E8F1EB] text-[#174B35] border border-[#216B49]/20">
+                        {report.tracking_code}
                     </span>
                 </div>
             </div>
 
-            <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+            <div className="space-y-6">
                 {/* Header Card */}
                 <div className="bg-white border border-[#DDE3DE] rounded-xl p-6 shadow-xs space-y-3">
                     <div className="flex flex-wrap items-center justify-between gap-2">
@@ -401,6 +398,15 @@ export default function OpdAssignmentShow({
                             </div>
                         )}
 
+                        {/* Visualisasi Linimasa & Gantt Chart Jadwal Penanganan */}
+                        <OperationalGanttTimeline
+                            assignedAt={assignment.assigned_at}
+                            status={assignment.assignment_status}
+                            updates={assignment.operational_updates}
+                            completedAt={assignment.assignment_status === 'COMPLETED' ? new Date().toISOString() : null}
+                            title={`Linimasa & Jadwal Penanganan (${assignment.agency.code})`}
+                        />
+
                         {/* Riwayat Catatan Progres Tindak Lanjut */}
                         <div className="bg-white border border-[#DDE3DE] rounded-xl p-6 shadow-xs space-y-4">
                             <h3 className="text-xs font-bold uppercase tracking-wider text-[#171C19] flex items-center gap-2">
@@ -493,9 +499,7 @@ export default function OpdAssignmentShow({
                         </div>
                     </div>
                 </div>
-            </main>
-
-            <Footer />
+            </div>
         </div>
     );
 }

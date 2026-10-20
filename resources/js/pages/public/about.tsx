@@ -2,129 +2,219 @@ import { Head, Link } from '@inertiajs/react';
 import Navbar from '@/components/navbar';
 import Footer from '@/components/footer';
 import EmergencyBanner from '@/components/emergency-banner';
-import { Info, ShieldCheck, Database, Layers, ArrowRight } from 'lucide-react';
+import {
+    Info,
+    ShieldCheck,
+    Database,
+    Layers,
+    ArrowRight,
+    Lock,
+    EyeOff,
+    CheckCircle2,
+    XCircle,
+    Satellite,
+    FileSpreadsheet,
+    Flame,
+    Users,
+} from 'lucide-react';
 
 export default function AboutPage() {
     return (
-        <div className="min-h-screen flex flex-col bg-white text-[#171C19]">
+        <div className="min-h-screen flex flex-col bg-[#F3F7F4] text-[#171C19]">
             <Head title="Transparansi & Provenance Data — JAGAIN" />
             <EmergencyBanner />
             <Navbar />
 
-            <main className="flex-1 max-w-5xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-10">
-                <div className="border-b border-[#DDE3DE] pb-6 mb-8">
-                    <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#E8F1EB] text-[#174B35] font-semibold text-xs mb-3">
-                        <Info className="size-3.5" />
-                        Transparansi & Akuntabilitas Publik
+            {/* Breadcrumb Header */}
+            <div className="bg-white border-b border-[#DDE3DE] py-4 px-4 sm:px-6 lg:px-8">
+                <div className="max-w-7xl mx-auto flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div className="space-y-1">
+                        <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#E8F1EB] text-[#174B35] font-bold text-[11px] tracking-wide">
+                            <Info className="size-3" />
+                            Prinsip & Asal-Usul Data
+                        </div>
+                        <h1 className="text-xl sm:text-2xl font-bold text-[#171C19] tracking-tight">
+                            Transparansi Platform & Akuntabilitas Data JAGAIN
+                        </h1>
                     </div>
-                    <h1 className="text-3xl font-bold text-[#171C19] tracking-tight">
-                        Tentang JAGAIN & Kejujuran Data
-                    </h1>
-                    <p className="text-sm text-[#68716B] mt-2 leading-relaxed max-w-3xl">
-                        JAGAIN hadir sebagai jembatan transparansi perjalanan laporan kebakaran hutan dan lahan (karhutla) di Kalimantan, mulai dari pengiriman oleh warga hingga tindak lanjut di lapangan.
-                    </p>
+                    <Link
+                        href="/peta"
+                        className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#216B49] text-white font-semibold text-xs hover:bg-[#174B35] transition-all shadow-xs shrink-0 self-start sm:self-auto"
+                    >
+                        Buka Peta Interaktif
+                        <ArrowRight className="size-3.5" />
+                    </Link>
                 </div>
+            </div>
 
-                {/* Section 1: Apa itu JAGAIN dan Apa yang BUKAN JAGAIN */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
-                    <div className="bg-[#E8F1EB]/50 border border-[#216B49]/30 rounded-xl p-6 space-y-3">
-                        <h2 className="text-base font-bold text-[#174B35] flex items-center gap-2">
-                            <ShieldCheck className="size-5 text-[#216B49]" />
-                            Apa yang Disediakan JAGAIN
+            <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 space-y-10">
+                {/* Hero Mission Statement */}
+                <section className="bg-white border border-[#DDE3DE] rounded-2xl p-6 sm:p-10 shadow-xs">
+                    <div className="max-w-3xl space-y-4">
+                        <span className="text-xs font-mono font-bold text-[#216B49] tracking-wider uppercase">
+                            Tentang Produk Digital JAGAIN
+                        </span>
+                        <h2 className="text-2xl sm:text-3xl font-extrabold text-[#171C19] tracking-tight leading-tight">
+                            Menghubungkan Partisipasi Warga Kalimantan dengan Tindak Lanjut Nyata di Lapangan
                         </h2>
-                        <ul className="text-xs text-[#343B36] space-y-2 list-disc list-inside leading-relaxed">
-                            <li>Pelaporan warga terstruktur dengan validasi koordinat geografis Kalimantan.</li>
-                            <li>Kode lacak unik untuk memantau status secara berkesinambungan.</li>
-                            <li>Alur verifikasi dan penugasan resmi kepada instansi berwenang (BPBD, Manggala Agni, Damkar).</li>
-                            <li>Jejak audit dan kronologi perubahan status yang transparan tanpa memanipulasi riwayat.</li>
-                            <li>Pemisahan tegas antara status laporan administratif dengan kondisi kebakaran aktual lapangan.</li>
+                        <p className="text-xs sm:text-sm text-[#343B36] leading-relaxed">
+                            JAGAIN adalah platform civic technology independen yang dibangun khusus untuk mengawal transparansi pelaporan kebakaran hutan dan lahan (karhutla) di Kalimantan. Kami memastikan setiap laporan warga memperoleh kode lacak unik, jejak audit yang tidak dapat dimanipulasi, serta status penanganan resmi dari instansi pemerintah yang berwenang.
+                        </p>
+                    </div>
+                </section>
+
+                {/* Boundaries & Non-Goals Comparison */}
+                <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {/* What JAGAIN Does */}
+                    <div className="bg-white border-2 border-[#216B49] rounded-2xl p-6 sm:p-8 shadow-xs space-y-5">
+                        <div className="flex items-center gap-2.5 pb-3 border-b border-[#DDE3DE]">
+                            <div className="size-8 rounded-lg bg-[#E8F1EB] text-[#216B49] flex items-center justify-center">
+                                <CheckCircle2 className="size-5" />
+                            </div>
+                            <div>
+                                <h3 className="font-bold text-base text-[#174B35]">Kapasitas & Peran Utama JAGAIN</h3>
+                                <p className="text-[11px] text-[#68716B]">Transparansi, pelacakan, dan audit publik</p>
+                            </div>
+                        </div>
+
+                        <ul className="space-y-3 text-xs text-[#343B36] leading-relaxed">
+                            <li className="flex items-start gap-2">
+                                <span className="size-1.5 rounded-full bg-[#216B49] mt-1.5 shrink-0" />
+                                <span><strong>Pelaporan Warga Berbasis Peta:</strong> Menampung input masyarakat dengan koordinat lintang/bujur terkalibrasi di 5 provinsi Kalimantan.</span>
+                            </li>
+                            <li className="flex items-start gap-2">
+                                <span className="size-1.5 rounded-full bg-[#216B49] mt-1.5 shrink-0" />
+                                <span><strong>Jejak Audit Kronologis (Audit Trail):</strong> Setiap mutasi status dicatat permanen lengkap dengan alasan, aktor, dan cap waktu.</span>
+                            </li>
+                            <li className="flex items-start gap-2">
+                                <span className="size-1.5 rounded-full bg-[#216B49] mt-1.5 shrink-0" />
+                                <span><strong>Pemisahan Semantik Tegas:</strong> Membedakan status administratif laporan (diproses/selesai) dengan kondisi kebakaran aktual lapangan (padam/membara).</span>
+                            </li>
+                            <li className="flex items-start gap-2">
+                                <span className="size-1.5 rounded-full bg-[#216B49] mt-1.5 shrink-0" />
+                                <span><strong>Disposisi ke OPD Berwenang:</strong> Meneruskan laporan terverifikasi kepada BPBD, Manggala Agni, atau Damkar setempat.</span>
+                            </li>
                         </ul>
                     </div>
 
-                    <div className="bg-[#F3F7F4] border border-[#DDE3DE] rounded-xl p-6 space-y-3">
-                        <h2 className="text-base font-bold text-[#171C19] flex items-center gap-2">
-                            <Info className="size-5 text-[#68716B]" />
-                            Batasan Platform (Non-Goals)
-                        </h2>
-                        <ul className="text-xs text-[#68716B] space-y-2 list-disc list-inside leading-relaxed">
-                            <li>Bukan pengganti nomor darurat nasional (112) atau layanan tanggap darurat resmi.</li>
-                            <li>Bukan sistem komando operasional atau pelacak armada armada lapangan.</li>
-                            <li>Tidak memiliki kewenangan penegakan hukum atau penetapan tersangka.</li>
-                            <li>Tidak mempublikasikan identitas pribadi (PII) pelapor ke publik tanpa izin.</li>
-                            <li>Tidak mengklaim data real-time jika frekuensi integrasi belum diverifikasi.</li>
+                    {/* What JAGAIN Does NOT Do */}
+                    <div className="bg-white border border-[#DDE3DE] rounded-2xl p-6 sm:p-8 shadow-xs space-y-5">
+                        <div className="flex items-center gap-2.5 pb-3 border-b border-[#DDE3DE]">
+                            <div className="size-8 rounded-lg bg-[#F3F7F4] text-[#68716B] flex items-center justify-center">
+                                <XCircle className="size-5" />
+                            </div>
+                            <div>
+                                <h3 className="font-bold text-base text-[#171C19]">Batasan Sistem (Non-Goals)</h3>
+                                <p className="text-[11px] text-[#68716B]">Batas kewenangan operasional & hukum</p>
+                            </div>
+                        </div>
+
+                        <ul className="space-y-3 text-xs text-[#68716B] leading-relaxed">
+                            <li className="flex items-start gap-2">
+                                <span className="size-1.5 rounded-full bg-[#68716B] mt-1.5 shrink-0" />
+                                <span><strong>Bukan Pengganti Layanan 112:</strong> JAGAIN bukan saluran darurat 24 jam untuk penyelamatan segera jiwa yang sedang terancam api.</span>
+                            </li>
+                            <li className="flex items-start gap-2">
+                                <span className="size-1.5 rounded-full bg-[#68716B] mt-1.5 shrink-0" />
+                                <span><strong>Bukan Pelacak Armada Taktis:</strong> JAGAIN tidak mengontrol pergerakan mobil damkar atau helikopter <em>water-bombing</em>.</span>
+                            </li>
+                            <li className="flex items-start gap-2">
+                                <span className="size-1.5 rounded-full bg-[#68716B] mt-1.5 shrink-0" />
+                                <span><strong>Bukan Lembaga Penegak Hukum:</strong> JAGAIN tidak melakukan penyelidikan pidana atau penetapan status hukum pihak pemilik konsesi lahan.</span>
+                            </li>
+                            <li className="flex items-start gap-2">
+                                <span className="size-1.5 rounded-full bg-[#68716B] mt-1.5 shrink-0" />
+                                <span><strong>Bukan Klaim Real-Time Palsu:</strong> Data satelit dan laporan lapangan memiliki jeda verifikasi manusia yang diakui secara jujur.</span>
+                            </li>
                         </ul>
                     </div>
-                </div>
+                </section>
 
-                {/* Section 2: Klasifikasi Sumber Data */}
-                <div className="mb-12">
-                    <h2 className="text-xl font-bold text-[#171C19] mb-4 flex items-center gap-2">
-                        <Database className="size-5 text-[#216B49]" />
-                        Klasifikasi & Asal-usul Data (Provenance)
-                    </h2>
-                    <p className="text-xs text-[#68716B] mb-6 leading-relaxed">
-                        JAGAIN membedakan jenis data secara eksplisit agar masyarakat dan pengambil kebijakan tidak salah memahami tingkat kepastian informasi:
-                    </p>
+                {/* 4 Data Provenance Classes */}
+                <section className="bg-white border border-[#DDE3DE] rounded-2xl p-6 sm:p-8 shadow-xs space-y-6">
+                    <div className="border-b border-[#DDE3DE] pb-4">
+                        <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[#216B49] mb-1">
+                            <Database className="size-3.5" />
+                            Kejujuran Asal-Usul Informasi
+                        </div>
+                        <h2 className="text-lg font-bold text-[#171C19]">
+                            4 Tingkatan Klasifikasi Data pada Sistem JAGAIN
+                        </h2>
+                        <p className="text-xs text-[#68716B] mt-1">
+                            Untuk menjaga integritas ilmiah dan hukum, kami menandai asal-usul setiap data di seluruh halaman:
+                        </p>
+                    </div>
 
-                    <div className="space-y-4">
-                        <div className="border border-[#DDE3DE] rounded-lg p-4 bg-white">
-                            <div className="flex items-center gap-2 font-bold text-xs text-[#174B35] mb-1">
-                                <span className="size-2.5 rounded-full bg-[#174B35]" />
-                                1. Laporan Masyarakat (Community Reports)
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="p-4 rounded-xl border border-[#DDE3DE] bg-[#F3F7F4]/50 space-y-2">
+                            <div className="flex items-center gap-2">
+                                <Users className="size-4 text-[#174B35]" />
+                                <span className="font-bold text-xs text-[#174B35]">1. Laporan Masyarakat (Citizen Reports)</span>
                             </div>
                             <p className="text-xs text-[#343B36] leading-relaxed">
-                                Dikirim langsung oleh warga masyarakat terdaftar yang menyaksikan kejadian. Status awalnya adalah <code>SUBMITTED</code> dan memerlukan verifikasi internal sebelum diteruskan ke instansi penanganan.
+                                Dibuat oleh warga terdaftar melalui formulir daring. Berstatus <code>SUBMITTED</code> sebelum ditinjau. Tidak dianggap sebagai kepastian hukum kebakaran sebelum diverifikasi admin atau dicek lapangan.
                             </p>
                         </div>
 
-                        <div className="border border-[#DDE3DE] rounded-lg p-4 bg-white">
-                            <div className="flex items-center gap-2 font-bold text-xs text-[#D97706] mb-1">
-                                <span className="size-2.5 rounded-full bg-[#D97706]" />
-                                2. Observasi Titik Panas Satelit (Satellite Hotspots)
+                        <div className="p-4 rounded-xl border border-[#DDE3DE] bg-[#F3F7F4]/50 space-y-2">
+                            <div className="flex items-center gap-2">
+                                <Satellite className="size-4 text-[#D97706]" />
+                                <span className="font-bold text-xs text-[#D97706]">2. Titik Panas Satelit (Satellite Hotspots)</span>
                             </div>
                             <p className="text-xs text-[#343B36] leading-relaxed">
-                                Berasal dari sensor termal satelit (seperti NASA FIRMS MODIS/VIIRS atau Sipongi KLHK). <strong>Penting:</strong> Titik panas adalah anomali suhu permukaan dan bukan bukti pasti kebakaran hutan sebelum dilakukan pengecekan lapangan (ground-check).
+                                Anomali suhu termal sensor MODIS/VIIRS NASA atau Sipongi KLHK. Titik panas adalah potensi indikasi panas permukaan, bukan pembuktian visual api menyala tanpa pemeriksaan darat (<em>ground-check</em>).
                             </p>
                         </div>
 
-                        <div className="border border-[#DDE3DE] rounded-lg p-4 bg-white">
-                            <div className="flex items-center gap-2 font-bold text-xs text-[#216B49] mb-1">
-                                <span className="size-2.5 rounded-full bg-[#216B49]" />
-                                3. Insiden Terverifikasi & Penugasan OPD (Verified Incidents)
+                        <div className="p-4 rounded-xl border border-[#DDE3DE] bg-[#F3F7F4]/50 space-y-2">
+                            <div className="flex items-center gap-2">
+                                <ShieldCheck className="size-4 text-[#216B49]" />
+                                <span className="font-bold text-xs text-[#216B49]">3. Penugasan & Insiden Terverifikasi (OPD Actions)</span>
                             </div>
                             <p className="text-xs text-[#343B36] leading-relaxed">
-                                Laporan yang telah diperiksa oleh administrator, ditugaskan kepada instansi terkait, dan memiliki pembaruan perkembangan operasional dari petugas lapangan.
+                                Laporan yang telah diverifikasi kelayakannya, dikirimkan kepada instansi terkait (BPBD/Manggala Agni), dan memiliki catatan perkembangan langsung dari petugas di lapangan.
                             </p>
                         </div>
 
-                        <div className="border border-[#DDE3DE] rounded-lg p-4 bg-white">
-                            <div className="flex items-center gap-2 font-bold text-xs text-[#171C19] mb-1">
-                                <span className="size-2.5 rounded-full bg-[#171C19]" />
-                                4. Dataset Simulasi (Simulated Data)
+                        <div className="p-4 rounded-xl border border-[#DDE3DE] bg-[#F3F7F4]/50 space-y-2">
+                            <div className="flex items-center gap-2">
+                                <FileSpreadsheet className="size-4 text-[#171C19]" />
+                                <span className="font-bold text-xs text-[#171C19]">4. Data Simulasi / Uji Coba (Simulated Data)</span>
                             </div>
                             <p className="text-xs text-[#343B36] leading-relaxed">
-                                Pada tahap demonstrasi atau ketika integrasi eksternal belum tersambung langsung secara real-time, data uji coba secara eksplisit diberi label <strong>DATA SIMULASI</strong> dan tidak disamarkan seolah data aktual.
+                                Pada mode pengembangan atau demonstrasi antarmuka, data tiruan wajib diberi label eksplisit <strong>DATA SIMULASI</strong> agar tidak menimbulkan kepanikan publik atau kesalahpahaman.
                             </p>
                         </div>
                     </div>
-                </div>
+                </section>
 
-                {/* Section 3: Privasi Pelapor */}
-                <div className="bg-[#F3F7F4] border border-[#DDE3DE] rounded-xl p-6 mb-10 space-y-3">
-                    <h2 className="text-base font-bold text-[#171C19]">
-                        Perlindungan Privasi Pelapor
-                    </h2>
-                    <p className="text-xs text-[#343B36] leading-relaxed">
-                        Kami sangat menghargai partisipasi warga dalam menjaga kelestarian hutan Kalimantan. Demi mencegah intimidasi atau risiko terhadap keselamatan pelapor, seluruh endpoint publik dan peta publik JAGAIN secara ketat menyaring dan tidak menampilkan nama lengkap, nomor telepon, maupun email pelapor. Data kontak pelapor hanya dapat diakses oleh petugas berwenang untuk keperluan klarifikasi lokasi.
-                    </p>
-                </div>
+                {/* Privacy & Whistleblower Protection */}
+                <section className="bg-white border border-[#DDE3DE] rounded-2xl p-6 sm:p-8 shadow-xs">
+                    <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
+                        <div className="size-12 rounded-xl bg-[#E8F1EB] text-[#174B35] flex items-center justify-center shrink-0 border border-[#216B49]/20">
+                            <EyeOff className="size-6 text-[#174B35]" />
+                        </div>
+                        <div className="space-y-2 flex-1">
+                            <div className="text-xs font-bold uppercase tracking-wider text-[#174B35]">
+                                Kebijakan Privasi & Perlindungan Pelapor
+                            </div>
+                            <h3 className="text-base sm:text-lg font-bold text-[#171C19]">
+                                Identitas Pribadi Pelapor Tidak Pernah Ditampilkan ke Publik
+                            </h3>
+                            <p className="text-xs sm:text-sm text-[#343B36] leading-relaxed">
+                                Menjaga kelestarian hutan adalah tugas bersama, namun keselamatan warga pelapor dari intimidasi pihak yang tidak bertanggung jawab adalah prioritas tertinggi. Di seluruh endpoint publik dan peta terbuka JAGAIN, nama lengkap, nomor WhatsApp/telepon, serta alamat surel pelapor secara otomatis disaring dan disembunyikan. Hanya petugas penanganan berwenang yang dapat menghubungi pelapor untuk klarifikasi patok lokasi.
+                            </p>
+                        </div>
+                    </div>
+                </section>
 
+                {/* Bottom Call to Action */}
                 <div className="text-center pt-2">
                     <Link
                         href="/peta"
-                        className="inline-flex items-center gap-2 px-6 py-2.5 rounded-lg bg-[#216B49] text-white font-semibold text-xs hover:bg-[#174B35] transition-colors"
+                        className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-[#216B49] text-white font-semibold text-xs hover:bg-[#174B35] transition-all shadow-xs"
                     >
-                        Jelajahi Peta Karhutla
+                        Lihat Sebaran Titik di Peta Karhutla
                         <ArrowRight className="size-4" />
                     </Link>
                 </div>

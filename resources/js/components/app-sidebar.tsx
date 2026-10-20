@@ -1,5 +1,16 @@
-import { Link } from '@inertiajs/react';
-import { BookOpen, FolderGit2, LayoutGrid } from 'lucide-react';
+import { Link, usePage } from '@inertiajs/react';
+import {
+    LayoutGrid,
+    Flame,
+    Building2,
+    History,
+    Map,
+    ClipboardList,
+    FileText,
+    PlusCircle,
+    Shield,
+    ShieldCheck,
+} from 'lucide-react';
 import AppLogo from '@/components/app-logo';
 import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
@@ -13,50 +24,68 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
-import { dashboard } from '@/routes';
 import type { NavItem } from '@/types';
-
-const mainNavItems: NavItem[] = [
-    {
-        title: 'Dashboard',
-        href: dashboard(),
-        icon: LayoutGrid,
-    },
-];
-
-const footerNavItems: NavItem[] = [
-    {
-        title: 'Repository',
-        href: 'https://github.com/laravel/react-starter-kit',
-        icon: FolderGit2,
-    },
-    {
-        title: 'Documentation',
-        href: 'https://laravel.com/docs/starter-kits#react',
-        icon: BookOpen,
-    },
-];
+import type { User } from '@/types/auth';
 
 export function AppSidebar() {
+    const { auth } = usePage().props as { auth?: { user?: User } };
+    const user = auth?.user;
+
+    const navItems: NavItem[] = [];
+
+    if (user?.is_admin) {
+        navItems.push(
+            { title: 'Pusat Kendali', href: '/admin/dashboard', icon: LayoutGrid },
+            { title: 'Antrean Laporan', href: '/admin/laporan', icon: Flame },
+            { title: 'Kelola Instansi', href: '/admin/instansi', icon: Building2 },
+            { title: 'Audit Trail', href: '/admin/audit-logs', icon: History },
+            { title: 'Peta Karhutla', href: '/peta', icon: Map }
+        );
+    } else if (user?.is_agency) {
+        navItems.push(
+            { title: 'Dashboard OPD', href: '/opd/dashboard', icon: LayoutGrid },
+            { title: 'Tugas Lapangan', href: '/opd/tugas', icon: ClipboardList },
+            { title: 'Peta Karhutla', href: '/peta', icon: Map }
+        );
+    } else {
+        navItems.push(
+            { title: 'Laporan Saya', href: '/laporan-saya', icon: FileText },
+            { title: 'Buat Laporan Baru', href: '/lapor', icon: PlusCircle },
+            { title: 'Peta Karhutla', href: '/peta', icon: Map },
+            { title: 'Panduan Keselamatan', href: '/panduan-keselamatan', icon: Shield }
+        );
+    }
+
+    const footerNavItems: NavItem[] = [
+        { title: 'Peta Publik', href: '/peta', icon: Map },
+        { title: 'Transparansi', href: '/tentang-kami', icon: ShieldCheck },
+    ];
+
+    const homeUrl = user?.is_admin
+        ? '/admin/dashboard'
+        : user?.is_agency
+        ? '/opd/dashboard'
+        : '/laporan-saya';
+
     return (
-        <Sidebar collapsible="icon" variant="inset">
-            <SidebarHeader>
+        <Sidebar collapsible="icon" variant="inset" className="border-r border-[#DDE3DE] dark:border-[#343B36]">
+            <SidebarHeader className="border-b border-[#DDE3DE]/60 dark:border-[#343B36]/60 pb-3">
                 <SidebarMenu>
                     <SidebarMenuItem>
-                        <SidebarMenuButton size="lg" asChild>
-                            <Link href={dashboard()} prefetch>
-                                <AppLogo />
+                        <SidebarMenuButton size="lg" asChild className="hover:bg-[#E8F1EB] dark:hover:bg-[#1F2522]">
+                            <Link href={homeUrl} prefetch>
+                                <AppLogo showTagline={false} />
                             </Link>
                         </SidebarMenuButton>
                     </SidebarMenuItem>
                 </SidebarMenu>
             </SidebarHeader>
 
-            <SidebarContent>
-                <NavMain items={mainNavItems} />
+            <SidebarContent className="px-2 py-3">
+                <NavMain items={navItems} />
             </SidebarContent>
 
-            <SidebarFooter>
+            <SidebarFooter className="border-t border-[#DDE3DE]/60 dark:border-[#343B36]/60 pt-2">
                 <NavFooter items={footerNavItems} className="mt-auto" />
                 <NavUser />
             </SidebarFooter>

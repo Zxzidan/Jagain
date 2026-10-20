@@ -1,10 +1,7 @@
 import { useState } from 'react';
 import { Head, Link, router } from '@inertiajs/react';
-import Navbar from '@/components/navbar';
-import Footer from '@/components/footer';
-import EmergencyBanner from '@/components/emergency-banner';
 import StatusBadge from '@/components/status-badge';
-import { FileText, Search, RotateCcw, ArrowRight, MapPin, Building, Eye } from 'lucide-react';
+import { FileText, Search, RotateCcw, ArrowRight, MapPin, Building, Eye, ArrowLeft, Filter } from 'lucide-react';
 
 interface ReportItem {
     id: number;
@@ -73,56 +70,56 @@ export default function ReportsIndex({
     };
 
     return (
-        <div className="min-h-screen flex flex-col bg-[#F3F7F4] text-[#171C19]">
+        <div className="p-4 sm:p-6 lg:p-8 space-y-6 bg-[#F3F7F4] min-h-screen text-[#171C19]">
             <Head title="Antrean Pemeriksaan Laporan — Admin JAGAIN" />
-            <EmergencyBanner />
-            <Navbar />
 
-            {/* Subnav Header */}
-            <div className="bg-white border-b border-[#DDE3DE] py-4 px-4 sm:px-6 lg:px-8">
-                <div className="max-w-7xl mx-auto flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                    <div>
+            {/* Admin Header Card */}
+            <div className="bg-white border border-[#DDE3DE] rounded-2xl p-6 sm:p-8 shadow-xs">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div className="space-y-1">
                         <div className="text-xs text-[#216B49] font-bold uppercase tracking-wider mb-0.5">
-                            Pusat Review & Moderasi
+                            Pusat Review & Moderasi Admin
                         </div>
-                        <h1 className="text-xl font-bold text-[#171C19] flex items-center gap-2">
+                        <h1 className="text-xl sm:text-2xl font-bold text-[#171C19] flex items-center gap-2">
                             <FileText className="size-5 text-[#174B35]" />
-                            Antrean Seluruh Laporan Karhutla ({reports.total})
+                            Antrean Seluruh Laporan Karhutla ({reports.total} Total)
                         </h1>
                     </div>
 
                     <Link
                         href="/admin/dashboard"
-                        className="text-xs font-semibold text-[#174B35] hover:underline"
+                        className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#174B35] hover:underline"
                     >
-                        ← Kembali ke Dashboard Ringkasan
+                        <ArrowLeft className="size-3.5" />
+                        Kembali ke Ringkasan Dashboard
                     </Link>
                 </div>
             </div>
 
-            <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 space-y-6">
-                {/* Search & Filter Bar */}
+            <div className="space-y-6">
+                {/* Search & Multi-Filter Bar */}
                 <form
                     onSubmit={handleApply}
-                    className="bg-white border border-[#DDE3DE] rounded-xl p-4 shadow-xs grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3"
+                    className="bg-white border border-[#DDE3DE] rounded-2xl p-5 shadow-xs grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3"
                 >
-                    <div>
+                    <div className="relative">
                         <input
                             type="text"
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
-                            placeholder="Cari judul, kode, kab..."
-                            className="w-full text-xs p-2.5 rounded-lg border border-[#DDE3DE] focus:outline-none focus:ring-1 focus:ring-[#216B49]"
+                            placeholder="Cari judul, kode, kabupaten..."
+                            className="w-full text-xs p-2.5 pl-8 rounded-xl border border-[#DDE3DE] focus:outline-none focus:ring-1 focus:ring-[#216B49] bg-white"
                         />
+                        <Search className="size-3.5 text-[#68716B] absolute left-2.5 top-3.5" />
                     </div>
 
                     <div>
                         <select
                             value={status}
                             onChange={(e) => setStatus(e.target.value)}
-                            className="w-full text-xs p-2.5 rounded-lg border border-[#DDE3DE] focus:outline-none focus:ring-1 focus:ring-[#216B49] bg-white"
+                            className="w-full text-xs p-2.5 rounded-xl border border-[#DDE3DE] focus:outline-none focus:ring-1 focus:ring-[#216B49] bg-white"
                         >
-                            <option value="">Semua Status</option>
+                            <option value="">Semua Status Laporan</option>
                             {statusOptions.map((opt) => (
                                 <option key={opt.value} value={opt.value}>
                                     {opt.label}
@@ -135,9 +132,9 @@ export default function ReportsIndex({
                         <select
                             value={province}
                             onChange={(e) => setProvince(e.target.value)}
-                            className="w-full text-xs p-2.5 rounded-lg border border-[#DDE3DE] focus:outline-none focus:ring-1 focus:ring-[#216B49] bg-white"
+                            className="w-full text-xs p-2.5 rounded-xl border border-[#DDE3DE] focus:outline-none focus:ring-1 focus:ring-[#216B49] bg-white"
                         >
-                            <option value="">Semua Provinsi</option>
+                            <option value="">Semua Provinsi Kalimantan</option>
                             {provinces.map((prov) => (
                                 <option key={prov} value={prov}>
                                     {prov}
@@ -150,9 +147,9 @@ export default function ReportsIndex({
                         <select
                             value={category}
                             onChange={(e) => setCategory(e.target.value)}
-                            className="w-full text-xs p-2.5 rounded-lg border border-[#DDE3DE] focus:outline-none focus:ring-1 focus:ring-[#216B49] bg-white"
+                            className="w-full text-xs p-2.5 rounded-xl border border-[#DDE3DE] focus:outline-none focus:ring-1 focus:ring-[#216B49] bg-white"
                         >
-                            <option value="">Semua Kategori</option>
+                            <option value="">Semua Kategori Insiden</option>
                             {categories.map((cat) => (
                                 <option key={cat.id} value={cat.slug}>
                                     {cat.name}
@@ -164,15 +161,15 @@ export default function ReportsIndex({
                     <div className="flex items-center gap-2">
                         <button
                             type="submit"
-                            className="flex-1 py-2.5 px-3 bg-[#216B49] hover:bg-[#174B35] text-white font-semibold text-xs rounded-lg transition-colors flex items-center justify-center gap-1.5"
+                            className="flex-1 py-2.5 px-4 bg-[#216B49] hover:bg-[#174B35] text-white font-bold text-xs rounded-xl transition-all shadow-xs flex items-center justify-center gap-1.5 active:scale-[0.98]"
                         >
-                            <Search className="size-3.5" />
-                            Filter
+                            <Filter className="size-3.5" />
+                            Terapkan Filter
                         </button>
                         <button
                             type="button"
                             onClick={handleReset}
-                            className="p-2.5 border border-[#DDE3DE] hover:bg-[#F3F7F4] text-[#68716B] rounded-lg"
+                            className="p-2.5 border border-[#DDE3DE] hover:bg-[#F3F7F4] text-[#68716B] rounded-xl transition-colors"
                             title="Reset Filter"
                         >
                             <RotateCcw className="size-3.5" />
@@ -181,24 +178,24 @@ export default function ReportsIndex({
                 </form>
 
                 {/* Table */}
-                <div className="bg-white border border-[#DDE3DE] rounded-xl overflow-hidden shadow-xs">
+                <div className="bg-white border border-[#DDE3DE] rounded-2xl overflow-hidden shadow-xs">
                     <div className="overflow-x-auto">
                         <table className="w-full text-left text-xs">
                             <thead className="bg-[#F3F7F4] border-b border-[#DDE3DE] text-[#343B36] uppercase tracking-wider text-[11px] font-semibold">
                                 <tr>
-                                    <th className="py-3 px-4">Kode Lacak</th>
-                                    <th className="py-3 px-4">Judul Laporan</th>
-                                    <th className="py-3 px-4">Kategori & Lokasi</th>
-                                    <th className="py-3 px-4">Status</th>
-                                    <th className="py-3 px-4">OPD Ditugaskan</th>
-                                    <th className="py-3 px-4">Waktu</th>
-                                    <th className="py-3 px-4 text-right">Aksi</th>
+                                    <th className="py-3.5 px-4">Kode Lacak</th>
+                                    <th className="py-3.5 px-4">Judul Laporan</th>
+                                    <th className="py-3.5 px-4">Kategori & Lokasi</th>
+                                    <th className="py-3.5 px-4">Status Laporan</th>
+                                    <th className="py-3.5 px-4">OPD Ditugaskan</th>
+                                    <th className="py-3.5 px-4">Waktu</th>
+                                    <th className="py-3.5 px-4 text-right">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-[#DDE3DE]">
                                 {reports.data.length === 0 ? (
                                     <tr>
-                                        <td colSpan={7} className="py-8 text-center text-[#68716B]">
+                                        <td colSpan={7} className="py-12 text-center text-[#68716B]">
                                             Tidak ada laporan yang sesuai dengan kriteria filter saat ini.
                                         </td>
                                     </tr>
@@ -208,11 +205,11 @@ export default function ReportsIndex({
                                             <td className="py-3.5 px-4 font-mono font-bold text-[#171C19]">
                                                 {report.tracking_code}
                                             </td>
-                                            <td className="py-3.5 px-4 font-semibold text-[#171C19] max-w-xs truncate">
+                                            <td className="py-3.5 px-4 font-bold text-[#171C19] max-w-xs truncate">
                                                 {report.title}
                                             </td>
                                             <td className="py-3.5 px-4 text-[#343B36]">
-                                                <div className="font-medium text-[#174B35]">
+                                                <div className="font-semibold text-[#174B35]">
                                                     {report.category?.name || 'Umum'}
                                                 </div>
                                                 <div className="text-[11px] text-[#68716B]">
@@ -224,14 +221,14 @@ export default function ReportsIndex({
                                             </td>
                                             <td className="py-3.5 px-4 text-[11px] text-[#343B36]">
                                                 {report.latest_assignment?.agency ? (
-                                                    <span className="font-medium text-[#174B35]">
+                                                    <span className="font-semibold text-[#174B35]">
                                                         {report.latest_assignment.agency.name}
                                                     </span>
                                                 ) : (
                                                     <span className="text-[#68716B] italic">Belum ditugaskan</span>
                                                 )}
                                             </td>
-                                            <td className="py-3.5 px-4 text-[11px] text-[#68716B] whitespace-nowrap">
+                                            <td className="py-3.5 px-4 text-[11px] text-[#68716B] whitespace-nowrap font-mono">
                                                 {new Date(report.created_at).toLocaleDateString('id-ID', {
                                                     day: '2-digit',
                                                     month: 'short',
@@ -241,7 +238,7 @@ export default function ReportsIndex({
                                             <td className="py-3.5 px-4 text-right">
                                                 <Link
                                                     href={`/admin/laporan/${report.id}`}
-                                                    className="inline-flex items-center gap-1 px-3 py-1 bg-[#F3F7F4] hover:bg-[#E8F1EB] text-[#174B35] font-semibold rounded text-xs transition-colors"
+                                                    className="inline-flex items-center gap-1 px-3 py-1.5 bg-[#216B49] hover:bg-[#174B35] text-white font-bold rounded-lg text-xs transition-colors shadow-xs active:scale-[0.98]"
                                                 >
                                                     <Eye className="size-3" />
                                                     Periksa
@@ -267,7 +264,7 @@ export default function ReportsIndex({
                                         type="button"
                                         disabled={!link.url}
                                         onClick={() => link.url && router.get(link.url, {}, { preserveState: true })}
-                                        className={`px-3 py-1 rounded text-xs border ${
+                                        className={`px-3 py-1.5 rounded-lg text-xs border ${
                                             link.active
                                                 ? 'bg-[#174B35] text-white border-[#174B35]'
                                                 : 'bg-white text-[#343B36] border-[#DDE3DE] hover:bg-[#F3F7F4] disabled:opacity-40'
@@ -279,9 +276,7 @@ export default function ReportsIndex({
                         </div>
                     )}
                 </div>
-            </main>
-
-            <Footer />
+            </div>
         </div>
     );
 }
