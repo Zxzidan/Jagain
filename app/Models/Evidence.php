@@ -10,14 +10,15 @@ use Illuminate\Support\Facades\Storage;
 /**
  * @property int $id
  * @property int $report_id
- * @property int $uploaded_by_user_id
- * @property string $storage_key
+ * @property int|null $uploaded_by_user_id
+ * @property string $file_path
+ * @property string|null $storage_key
  * @property string $original_filename
  * @property string $media_type
  * @property int $size_bytes
  * @property string|null $caption
- * @property Carbon|null $captured_at
  * @property string $visibility
+ * @property Carbon|null $captured_at
  * @property-read string $url
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
@@ -29,28 +30,43 @@ class Evidence extends Model
     protected $fillable = [
         'report_id',
         'uploaded_by_user_id',
+        'file_path',
         'storage_key',
         'original_filename',
         'media_type',
         'size_bytes',
         'caption',
-        'captured_at',
         'visibility',
+        'captured_at',
     ];
 
     protected $appends = ['url'];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
     protected function casts(): array
     {
         return [
             'captured_at' => 'datetime',
             'size_bytes' => 'integer',
         ];
+    }
+
+    public function getStorageKeyAttribute(): ?string
+    {
+        return $this->attributes['storage_key'] ?? $this->attributes['file_path'] ?? null;
+    }
+
+    public function getFilePathAttribute(): ?string
+    {
+        return $this->attributes['file_path'] ?? $this->attributes['storage_key'] ?? null;
+    }
+
+    /**
+     * Get URL for accessing the evidence file.
+     */
+    public function getUrlAttribute(): string
+    {
+        $path = $this->file_path ?? $this->storage_key ?? '';
+        return Storage::disk('public')->url($path);
     }
 
     /**
@@ -70,10 +86,10 @@ class Evidence extends Model
     }
 
     /**
-     * Get URL for accessing the evidence file.
+     * @return BelongsTo<User, $this>
      */
-    public function getUrlAttribute(): string
+    public function uploadedByUser(): BelongsTo
     {
-        return Storage::disk('public')->url($this->storage_key);
+        return $this->belongsTo(User::class, 'uploaded_by_user_id');
     }
 }

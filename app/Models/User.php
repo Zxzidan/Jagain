@@ -2,11 +2,11 @@
 
 namespace App\Models;
 
+use App\Enums\UserRole;
 use Database\Factories\UserFactory;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Database\Eloquent\Attributes\Fillable;
-use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -19,59 +19,96 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
  * @property int $id
  * @property string $name
  * @property string $email
+ * @property UserRole|string $role
+ * @property string|null $phone
+ * @property string $account_status
  * @property Carbon|null $email_verified_at
  * @property string $password
  * @property string|null $two_factor_secret
  * @property string|null $two_factor_recovery_codes
  * @property Carbon|null $two_factor_confirmed_at
- * @property string $role
  * @property Carbon|null $remember_token
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
-#[Fillable(['name', 'email', 'password', 'role', 'email_verified_at'])]
-#[Hidden(['password', 'two_factor_secret', 'two_factor_recovery_codes', 'remember_token'])]
 class User extends Authenticatable implements MustVerifyEmail, PasskeyUser
 {
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable, PasskeyAuthenticatable, TwoFactorAuthenticatable;
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
+    protected $fillable = [
+        'name',
+        'email',
+        'password',
+        'role',
+        'phone',
+        'account_status',
+        'email_verified_at',
+    ];
+
+    protected $hidden = [
+        'password',
+        'two_factor_secret',
+        'two_factor_recovery_codes',
+        'remember_token',
+    ];
+
     protected function casts(): array
     {
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'two_factor_confirmed_at' => 'datetime',
+            'role' => UserRole::class,
         ];
     }
 
+    public function isAdmin(): bool
+    {
+        return $this->role === UserRole::ADMIN || $this->role === 'ADMIN' || $this->role?->value === 'ADMIN';
+    }
+
+    public function isAgency(): bool
+    {
+        return $this->role === UserRole::AGENCY || $this->role === 'AGENCY' || $this->role?->value === 'AGENCY';
+    }
+
+    public function isCommunity(): bool
+    {
+        return $this->role === UserRole::COMMUNITY || $this->role === 'COMMUNITY' || $this->role?->value === 'COMMUNITY' || empty($this->role);
+    }
+
     /**
-     * Reports submitted by this user.
-     *
+     * @return HasMany<AgencyMembership, $this>
+     */
+    public function agencyMemberships(): HasMany
+    {
+        return $this->hasMany(AgencyMembership::class);
+    }
+
+    /**
+     * @return BelongsToMany<Agency, $this>
+     */
+    public function agencies(): BelongsToMany
+    {
+        return $this->belongsToMany(Agency::class, 'agency_memberships')
+            ->withPivot('membership_status', 'role_in_agency')
+            ->withTimestamps();
+    }
+
+    /**
+     * Primary agency if member of any agency.
+     */
+    public function currentAgency(): ?Agency
+    {
+        return $this->agencies()->where('agencies.is_active', true)->first();
+    }
+
+    /**
      * @return HasMany<Report, $this>
      */
     public function reports(): HasMany
     {
         return $this->hasMany(Report::class, 'created_by_user_id');
-    }
-
-    public function isCommunity(): bool
-    {
-        return ($this->role ?? 'COMMUNITY') === 'COMMUNITY';
-    }
-
-    public function isAdmin(): bool
-    {
-        return $this->role === 'ADMIN';
-    }
-
-    public function isAgency(): bool
-    {
-        return $this->role === 'AGENCY';
     }
 }

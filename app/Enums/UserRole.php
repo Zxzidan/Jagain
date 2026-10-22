@@ -15,7 +15,7 @@ enum UserRole: string
             self::PUBLIC => 'Pengunjung',
             self::COMMUNITY => 'Masyarakat',
             self::ADMIN => 'Administrator',
-            self::AGENCY => 'Petugas OPD / Instansi',
+            self::AGENCY => 'Instansi / OPD',
         };
     }
 }

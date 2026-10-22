@@ -9,6 +9,7 @@ import {
     FileText,
     HelpCircle,
     Info,
+    Map,
     MapPin,
     PlusCircle,
     Shield,
@@ -41,12 +42,23 @@ import {
     DialogStackPrevious,
 } from '@/components/kibo-ui/dialog-stack';
 import type { DashboardMetrics, ReportItem } from '@/types';
-import { dashboard } from '@/routes';
 
 interface Props {
-    metrics: DashboardMetrics;
-    recentReports: ReportItem[];
+    metrics?: DashboardMetrics;
+    recentReports?: ReportItem[];
 }
+
+const defaultMetrics: DashboardMetrics = {
+    total: 0,
+    submitted: 0,
+    in_review: 0,
+    needs_info: 0,
+    verified: 0,
+    dispatched: 0,
+    in_progress: 0,
+    resolved: 0,
+    closed: 0,
+};
 
 const CATEGORY_LABELS: Record<string, string> = {
     hutan: 'Kebakaran Hutan',
@@ -56,7 +68,10 @@ const CATEGORY_LABELS: Record<string, string> = {
     lainnya: 'Lainnya',
 };
 
-export default function Dashboard({ metrics, recentReports }: Props) {
+export default function Dashboard({
+    metrics = defaultMetrics,
+    recentReports = [],
+}: Props) {
     const page = usePage();
     const flash = (page.props as any).flash;
     const [guideOpen, setGuideOpen] = useState(false);
@@ -867,12 +882,3 @@ export default function Dashboard({ metrics, recentReports }: Props) {
         </>
     );
 }
-
-Dashboard.layout = {
-    breadcrumbs: [
-        {
-            title: 'Dashboard',
-            href: dashboard(),
-        },
-    ],
-};

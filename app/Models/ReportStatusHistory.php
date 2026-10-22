@@ -10,13 +10,14 @@ use Illuminate\Support\Carbon;
 /**
  * @property int $id
  * @property int $report_id
- * @property ReportStatus|null $from_status
- * @property ReportStatus $to_status
+ * @property ReportStatus|string|null $from_status
+ * @property ReportStatus|string $to_status
  * @property int|null $actor_user_id
  * @property string|null $reason
  * @property string|null $note
  * @property Carbon $created_at
  * @property User|null $actor
+ * @property User|null $actorUser
  */
 class ReportStatusHistory extends Model
 {
@@ -32,16 +33,9 @@ class ReportStatusHistory extends Model
         'created_at',
     ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
     protected function casts(): array
     {
         return [
-            'from_status' => ReportStatus::class,
-            'to_status' => ReportStatus::class,
             'created_at' => 'datetime',
         ];
     }
@@ -58,6 +52,14 @@ class ReportStatusHistory extends Model
      * @return BelongsTo<User, $this>
      */
     public function actor(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'actor_user_id');
+    }
+
+    /**
+     * @return BelongsTo<User, $this>
+     */
+    public function actorUser(): BelongsTo
     {
         return $this->belongsTo(User::class, 'actor_user_id');
     }

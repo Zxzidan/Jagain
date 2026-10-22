@@ -16,14 +16,14 @@ enum ReportStatus: string
     public function label(): string
     {
         return match ($this) {
-            self::SUBMITTED => 'Terkirim',
-            self::UNDER_REVIEW => 'Sedang Diperiksa',
-            self::NEEDS_INFORMATION => 'Perlu Informasi Tambahan',
+            self::SUBMITTED => 'Baru Dikirim',
+            self::UNDER_REVIEW => 'Sedang Ditinjau',
+            self::NEEDS_INFORMATION => 'Perlu Informasi',
             self::VERIFIED => 'Terverifikasi',
-            self::DISPATCHED => 'Diteruskan ke Instansi',
-            self::RESOLUTION_REVIEW => 'Penanganan Ditinjau',
-            self::RESOLVED_VERIFIED => 'Penanganan Selesai',
-            self::CLOSED_WITH_REASON => 'Ditutup',
+            self::DISPATCHED => 'Ditugaskan ke OPD',
+            self::RESOLUTION_REVIEW => 'Review Penanganan',
+            self::RESOLVED_VERIFIED => 'Selesai Terverifikasi',
+            self::CLOSED_WITH_REASON => 'Ditutup dengan Alasan',
         };
     }
 
@@ -38,6 +38,51 @@ enum ReportStatus: string
             self::RESOLUTION_REVIEW => 'Pembaruan tindakan penanganan telah diajukan dan sedang dievaluasi.',
             self::RESOLVED_VERIFIED => 'Tindakan penanganan administratif dinilai selesai berdasarkan bukti yang tercatat.',
             self::CLOSED_WITH_REASON => 'Laporan ditutup dengan alasan yang telah dicatat (misal: duplikat atau tidak valid).',
+        };
+    }
+
+    /**
+     * Check if transition from current status to target status is valid.
+     */
+    public function canTransitionTo(self $target): bool
+    {
+        if ($this === $target) {
+            return false;
+        }
+
+        return match ($this) {
+            self::SUBMITTED => in_array($target, [
+                self::UNDER_REVIEW,
+                self::CLOSED_WITH_REASON,
+            ]),
+            self::UNDER_REVIEW => in_array($target, [
+                self::NEEDS_INFORMATION,
+                self::VERIFIED,
+                self::CLOSED_WITH_REASON,
+            ]),
+            self::NEEDS_INFORMATION => in_array($target, [
+                self::UNDER_REVIEW,
+                self::CLOSED_WITH_REASON,
+            ]),
+            self::VERIFIED => in_array($target, [
+                self::DISPATCHED,
+                self::CLOSED_WITH_REASON,
+            ]),
+            self::DISPATCHED => in_array($target, [
+                self::RESOLUTION_REVIEW,
+                self::CLOSED_WITH_REASON,
+            ]),
+            self::RESOLUTION_REVIEW => in_array($target, [
+                self::RESOLVED_VERIFIED,
+                self::DISPATCHED,
+                self::CLOSED_WITH_REASON,
+            ]),
+            self::RESOLVED_VERIFIED => in_array($target, [
+                self::UNDER_REVIEW, // Admin reopen
+            ]),
+            self::CLOSED_WITH_REASON => in_array($target, [
+                self::UNDER_REVIEW, // Admin reopen
+            ]),
         };
     }
 }

@@ -17,17 +17,29 @@ class ReportPolicy
     }
 
     /**
-     * Determine whether the user can view the report.
+     * Determine whether the user can view the specific report.
      */
     public function view(User $user, Report $report): bool
     {
-        // Admin can view all reports
         if ($user->isAdmin()) {
             return true;
         }
 
-        // Community user can only view their own reports or public reports
-        return $report->created_by_user_id === $user->id || $report->visibility === 'PUBLIC';
+        if ($report->created_by_user_id === $user->id) {
+            return true;
+        }
+
+        if ($report->visibility === 'PUBLIC') {
+            return true;
+        }
+
+        if ($user->isAgency()) {
+            $userAgencyIds = $user->agencies()->where('agencies.is_active', true)->pluck('agencies.id');
+
+            return $report->assignments()->whereIn('agency_id', $userAgencyIds)->exists();
+        }
+
+        return false;
     }
 
     /**
@@ -39,13 +51,20 @@ class ReportPolicy
     }
 
     /**
-     * Determine whether the user can provide additional information.
+     * Determine whether the citizen can provide additional information.
+     */
+    public function provideInformation(User $user, Report $report): bool
+    {
+        return $report->created_by_user_id === $user->id;
+    }
+
+    /**
+     * Determine whether the user can provide additional information (status constrained).
      */
     public function provideAdditionalInfo(User $user, Report $report): bool
     {
-        // Only report owner can provide additional information, and only when status is NEEDS_INFORMATION
         return $report->created_by_user_id === $user->id
-            && $report->report_status === ReportStatus::NEEDS_INFORMATION;
+            && ($report->report_status === ReportStatus::NEEDS_INFORMATION || $report->report_status?->value === 'NEEDS_INFORMATION');
     }
 
     /**
@@ -53,7 +72,22 @@ class ReportPolicy
      */
     public function uploadEvidence(User $user, Report $report): bool
     {
-        // Only report owner can upload evidence to their report
         return $report->created_by_user_id === $user->id;
+    }
+
+    /**
+     * Determine whether the user can review reports (Admin only).
+     */
+    public function review(User $user, Report $report): bool
+    {
+        return $user->isAdmin();
+    }
+
+    /**
+     * Determine whether the user can assign reports to an agency (Admin only).
+     */
+    public function assign(User $user, Report $report): bool
+    {
+        return $user->isAdmin();
     }
 }
