@@ -213,3 +213,26 @@
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
 }
 
+/* Bootstrap Badge Styles */
+.badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.3em 0.55em;
+    font-size: 0.75rem;
+    font-weight: 700;
+    line-height: 1;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    border-radius: 0.25rem;
+    border: none;
+    transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out;
+}
+
+.badge-light {
+    color: #212529;
+    background-color: #f1f3f5;
+    border: none;
+}
+

@@ -203,13 +203,13 @@ export default function ReportCreate() {
                                             }
                                             className={`cursor-pointer rounded-xl border p-3 transition-all ${
                                                 isSelected
-                                                    ? 'border-primary-green bg-soft-green/60 shadow-2xs'
-                                                    : 'border-border-neutral bg-white hover:border-gray-neutral hover:bg-pale-green/30'
+                                                    ? 'border-black bg-white shadow-2xs'
+                                                    : 'border-border-neutral bg-white hover:border-gray-neutral hover:bg-neutral-50/50'
                                             }`}
                                         >
                                             <div className="flex items-center justify-between">
                                                 <span
-                                                    className={`text-xs font-bold ${isSelected ? 'text-forest-green' : 'text-dark-neutral'}`}
+                                                    className={`text-xs font-bold ${isSelected ? 'text-black' : 'text-dark-neutral'}`}
                                                 >
                                                     {cat.label}
                                                 </span>
@@ -223,7 +223,7 @@ export default function ReportCreate() {
                                                             cat.id,
                                                         )
                                                     }
-                                                    className="size-3.5 text-primary-green focus:ring-primary-green"
+                                                    className="size-3.5 accent-blue-600 text-blue-600 focus:ring-blue-600"
                                                 />
                                             </div>
                                             <p className="mt-1 text-[11px] leading-normal text-gray-neutral">

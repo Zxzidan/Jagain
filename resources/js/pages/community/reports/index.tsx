@@ -227,7 +227,7 @@ export default function ReportsIndex({ reports, filters, statuses }: Props) {
                                 >
                                     <div className="flex flex-col justify-between gap-3 border-b border-border-neutral/60 pb-3 sm:flex-row sm:items-center">
                                         <div className="flex flex-wrap items-center gap-2">
-                                            <span className="rounded-md border border-border-neutral bg-neutral-100 px-2 py-0.5 font-mono text-xs font-semibold text-gray-neutral">
+                                            <span className="badge badge-light font-mono font-bold">
                                                 {report.report_number}
                                             </span>
                                             <StatusBadge
@@ -243,8 +243,8 @@ export default function ReportsIndex({ reports, filters, statuses }: Props) {
                                             {report.evidence_count !==
                                                 undefined &&
                                                 report.evidence_count > 0 && (
-                                                    <span className="inline-flex items-center gap-1 rounded-md border border-border-neutral bg-neutral-100 px-2 py-0.5 text-xs text-gray-neutral">
-                                                        <Camera className="size-3 text-gray-neutral" />
+                                                    <span className="badge badge-light">
+                                                        <Camera className="size-3 text-[#212529]" />
                                                         <span>
                                                             {
                                                                 report.evidence_count

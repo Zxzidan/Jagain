@@ -23,6 +23,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { StatusBadge, FireConditionBadge } from '@/components/reports/status-badge';
+import { ReportMapViewer } from '@/components/reports/report-map-viewer';
 import type { ReportItem } from '@/types';
 import { dashboard } from '@/routes';
 
@@ -324,10 +325,10 @@ export default function ReportShow({ report }: Props) {
                                 {report.description}
                             </div>
 
-                            {/* Location Details */}
-                            <div className="space-y-2 pt-2">
+                            {/* Location Details & Interactive Leaflet Map */}
+                            <div className="space-y-3 pt-2">
                                 <h3 className="text-xs font-semibold text-forest-green uppercase tracking-wider">
-                                    Lokasi & Koordinat
+                                    Lokasi & Titik Koordinat
                                 </h3>
                                 <div className="rounded-xl border border-border-neutral bg-white p-4 space-y-3">
                                     <div className="flex items-start gap-2.5 text-xs text-dark-neutral">
@@ -358,6 +359,16 @@ export default function ReportShow({ report }: Props) {
                                         </div>
                                     )}
                                 </div>
+
+                                {/* Leaflet Map Viewer */}
+                                <ReportMapViewer
+                                    latitude={report.latitude}
+                                    longitude={report.longitude}
+                                    locationDescription={report.location_description}
+                                    reportNumber={report.report_number}
+                                    title={report.title}
+                                    categoryLabel={CATEGORY_LABELS[report.category] || report.category}
+                                />
                             </div>
 
                             {/* Evidence Photo Preview */}

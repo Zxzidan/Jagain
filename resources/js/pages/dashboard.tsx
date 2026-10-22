@@ -153,21 +153,20 @@ export default function Dashboard({ metrics, recentReports }: Props) {
                     </Banner>
                 )}
 
-                {/* Refined Civic Hero Header with Smoldering Forest Backdrop */}
-                <header className="relative overflow-hidden rounded-xl border border-forest-green/20 p-5 shadow-sm sm:p-6 lg:p-7">
+                {/* Hero Header with Karhutla Background & Transparent Forest Green Overlay */}
+                <header className="relative overflow-hidden rounded-2xl border border-forest-green/20 p-5 shadow-xs sm:p-6 lg:p-7">
                     {/* Background Wildfire Photo */}
                     <div
-                        className="absolute inset-0 bg-cover bg-center"
+                        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
                         style={{
-                            backgroundImage:
-                                "url('/images/Smoldering%20Forest%20at%20Dusk.png')",
+                            backgroundImage: "url('/images/karhutla-hero.png')",
                         }}
                         aria-hidden="true"
                     />
 
                     {/* Dark Green Gradient Overlay: darker on text side, translucent on fire side */}
                     <div
-                        className="absolute inset-0 bg-gradient-to-r from-[#174B35]/92 via-[#174B35]/82 to-[#174B35]/60"
+                        className="absolute inset-0 bg-gradient-to-b from-[#174B35]/90 via-[#174B35]/80 to-[#216B49]/60 sm:bg-gradient-to-r sm:from-[#174B35]/92 sm:via-[#174B35]/78 sm:to-[#216B49]/60"
                         aria-hidden="true"
                     />
 
@@ -176,7 +175,7 @@ export default function Dashboard({ metrics, recentReports }: Props) {
                             <h1 className="text-2xl font-bold tracking-tight text-white sm:text-3xl">
                                 Dasbor Pelaporan & Pengawasan Karhutla
                             </h1>
-                            <p className="text-sm leading-relaxed text-white/90">
+                            <p className="text-sm leading-relaxed text-white/90 sm:text-base sm:leading-relaxed">
                                 Pantau perkembangan laporan kebakaran hutan dan
                                 lahan yang Anda sampaikan, lengkapi data jika
                                 diperlukan, dan kawal transparansi penanganan
@@ -188,7 +187,7 @@ export default function Dashboard({ metrics, recentReports }: Props) {
                         <div className="flex shrink-0 flex-wrap items-center gap-2.5 pt-1 lg:pt-0">
                             <Button
                                 asChild
-                                className="h-auto bg-white px-4 py-2.5 text-xs font-semibold text-forest-green shadow-md transition-all duration-150 hover:bg-pale-green hover:text-forest-green active:scale-[0.98] sm:text-sm"
+                                className="h-auto border border-white/40 bg-white px-4 py-2.5 text-xs font-semibold text-forest-green shadow-xs transition-all duration-150 hover:bg-pale-green hover:text-forest-green hover:shadow-sm active:scale-[0.98] sm:text-sm"
                             >
                                 <Link
                                     href="/reports/create"
@@ -202,13 +201,13 @@ export default function Dashboard({ metrics, recentReports }: Props) {
                             <Button
                                 asChild
                                 variant="outline"
-                                className="h-auto border-white/30 bg-white/10 px-4 py-2.5 text-xs font-medium text-white backdrop-blur-xs transition-colors duration-150 hover:bg-white/20 hover:text-white sm:text-sm"
+                                className="h-auto border border-white/30 bg-white/10 px-4 py-2.5 text-xs font-medium text-white backdrop-blur-xs transition-colors duration-150 hover:bg-white/20 hover:text-white sm:text-sm"
                             >
                                 <Link
                                     href="/reports"
                                     className="flex items-center gap-2"
                                 >
-                                    <FileText className="size-4 shrink-0 text-white/85" />
+                                    <FileText className="size-4 shrink-0 text-white/90" />
                                     <span>Riwayat Laporan Saya</span>
                                 </Link>
                             </Button>
@@ -222,9 +221,9 @@ export default function Dashboard({ metrics, recentReports }: Props) {
                                 <DialogStackTrigger asChild>
                                     <Button
                                         variant="outline"
-                                        className="h-auto border-white/30 bg-white/10 px-3.5 py-2.5 text-xs font-medium text-white backdrop-blur-xs transition-colors duration-150 hover:bg-white/20 hover:text-white sm:text-sm"
+                                        className="h-auto border border-white/30 bg-white/10 px-3.5 py-2.5 text-xs font-medium text-white backdrop-blur-xs transition-colors duration-150 hover:bg-white/20 hover:text-white sm:text-sm"
                                     >
-                                        <HelpCircle className="size-4 shrink-0 text-emerald-300" />
+                                        <HelpCircle className="size-4 shrink-0 text-emerald-200" />
                                         <span>Alur & Panduan</span>
                                     </Button>
                                 </DialogStackTrigger>
@@ -444,20 +443,20 @@ export default function Dashboard({ metrics, recentReports }: Props) {
 
                     <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
                         {/* Metric 1: Total Reports */}
-                        <div className="group rounded-xl border border-border-neutral bg-white p-4 transition-all duration-200 hover:border-gray-neutral/40 hover:shadow-xs sm:p-5">
+                        <div className="group rounded-xl bg-white p-4 shadow-[0_10px_30px_rgba(0,0,0,0.08)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_14px_35px_rgba(0,0,0,0.11)] sm:p-5">
                             <div className="flex items-center justify-between">
                                 <span className="text-[11px] font-semibold tracking-wider text-gray-neutral uppercase">
                                     Total Laporan
                                 </span>
-                                <div className="flex size-7 items-center justify-center rounded-md border border-border-neutral/60 bg-pale-green text-dark-neutral transition-colors group-hover:border-border-neutral">
+                                <div className="flex size-7 items-center justify-center rounded-md bg-pale-green text-dark-neutral transition-colors">
                                     <FileText className="size-3.5 text-gray-neutral" />
                                 </div>
                             </div>
                             <div className="mt-3 flex items-baseline gap-2">
-                                <span className="text-2xl font-bold tracking-tight text-dark-neutral tabular-nums sm:text-3xl">
+                                <span className="text-xl font-bold tracking-tight text-forest-green tabular-nums sm:text-2xl lg:text-3xl">
                                     {metrics.total}
                                 </span>
-                                <span className="text-xs text-gray-neutral">
+                                <span className="text-lg font-bold tracking-tight text-dark-neutral sm:text-xl lg:text-2xl">
                                     laporan
                                 </span>
                             </div>
@@ -467,20 +466,20 @@ export default function Dashboard({ metrics, recentReports }: Props) {
                         </div>
 
                         {/* Metric 2: Submitted & In Review */}
-                        <div className="group rounded-xl border border-border-neutral bg-white p-4 transition-all duration-200 hover:border-gray-neutral/40 hover:shadow-xs sm:p-5">
+                        <div className="group rounded-xl bg-white p-4 shadow-[0_10px_30px_rgba(0,0,0,0.08)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_14px_35px_rgba(0,0,0,0.11)] sm:p-5">
                             <div className="flex items-center justify-between">
                                 <span className="text-[11px] font-semibold tracking-wider text-gray-neutral uppercase">
                                     Dalam Telaah
                                 </span>
-                                <div className="flex size-7 items-center justify-center rounded-md border border-border-neutral/60 bg-pale-green text-dark-neutral transition-colors group-hover:border-border-neutral">
+                                <div className="flex size-7 items-center justify-center rounded-md bg-pale-green text-dark-neutral transition-colors">
                                     <Clock className="size-3.5 text-gray-neutral" />
                                 </div>
                             </div>
                             <div className="mt-3 flex items-baseline gap-2">
-                                <span className="text-2xl font-bold tracking-tight text-dark-neutral tabular-nums sm:text-3xl">
+                                <span className="text-xl font-bold tracking-tight text-forest-green tabular-nums sm:text-2xl lg:text-3xl">
                                     {metrics.submitted + metrics.in_review}
                                 </span>
-                                <span className="text-xs text-gray-neutral">
+                                <span className="text-lg font-bold tracking-tight text-dark-neutral sm:text-xl lg:text-2xl">
                                     berjalan
                                 </span>
                             </div>
@@ -503,20 +502,20 @@ export default function Dashboard({ metrics, recentReports }: Props) {
                         </div>
 
                         {/* Metric 3: Verified & Dispatched */}
-                        <div className="group rounded-xl border border-border-neutral bg-white p-4 transition-all duration-200 hover:border-gray-neutral/40 hover:shadow-xs sm:p-5">
+                        <div className="group rounded-xl bg-white p-4 shadow-[0_10px_30px_rgba(0,0,0,0.08)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_14px_35px_rgba(0,0,0,0.11)] sm:p-5">
                             <div className="flex items-center justify-between">
                                 <span className="text-[11px] font-semibold tracking-wider text-gray-neutral uppercase">
                                     Terverifikasi
                                 </span>
-                                <div className="flex size-7 items-center justify-center rounded-md border border-leaf-green/30 bg-soft-green/60 text-primary-green transition-colors">
+                                <div className="flex size-7 items-center justify-center rounded-md bg-soft-green/70 text-primary-green transition-colors">
                                     <CheckCircle2 className="size-3.5 text-primary-green" />
                                 </div>
                             </div>
                             <div className="mt-3 flex items-baseline gap-2">
-                                <span className="text-2xl font-bold tracking-tight text-dark-neutral tabular-nums sm:text-3xl">
+                                <span className="text-xl font-bold tracking-tight text-forest-green tabular-nums sm:text-2xl lg:text-3xl">
                                     {metrics.verified}
                                 </span>
-                                <span className="text-xs text-gray-neutral">
+                                <span className="text-lg font-bold tracking-tight text-dark-neutral sm:text-xl lg:text-2xl">
                                     tervalidasi
                                 </span>
                             </div>
@@ -526,20 +525,20 @@ export default function Dashboard({ metrics, recentReports }: Props) {
                         </div>
 
                         {/* Metric 4: Resolved / Closed */}
-                        <div className="group rounded-xl border border-border-neutral bg-white p-4 transition-all duration-200 hover:border-gray-neutral/40 hover:shadow-xs sm:p-5">
+                        <div className="group rounded-xl bg-white p-4 shadow-[0_10px_30px_rgba(0,0,0,0.08)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_14px_35px_rgba(0,0,0,0.11)] sm:p-5">
                             <div className="flex items-center justify-between">
                                 <span className="text-[11px] font-semibold tracking-wider text-gray-neutral uppercase">
                                     Selesai Ditangani
                                 </span>
-                                <div className="flex size-7 items-center justify-center rounded-md border border-border-neutral/60 bg-pale-green text-dark-neutral transition-colors group-hover:border-border-neutral">
+                                <div className="flex size-7 items-center justify-center rounded-md bg-pale-green text-dark-neutral transition-colors">
                                     <Shield className="size-3.5 text-gray-neutral" />
                                 </div>
                             </div>
                             <div className="mt-3 flex items-baseline gap-2">
-                                <span className="text-2xl font-bold tracking-tight text-dark-neutral tabular-nums sm:text-3xl">
+                                <span className="text-xl font-bold tracking-tight text-forest-green tabular-nums sm:text-2xl lg:text-3xl">
                                     {metrics.resolved}
                                 </span>
-                                <span className="text-xs text-gray-neutral">
+                                <span className="text-lg font-bold tracking-tight text-dark-neutral sm:text-xl lg:text-2xl">
                                     tuntas
                                 </span>
                             </div>
@@ -678,7 +677,7 @@ export default function Dashboard({ metrics, recentReports }: Props) {
                                         <div className="min-w-0 flex-1 space-y-2">
                                             {/* Meta & Badges Row */}
                                             <div className="flex flex-wrap items-center gap-2">
-                                                <span className="rounded-md border border-border-neutral bg-neutral-100 px-2 py-0.5 font-mono text-xs font-semibold text-gray-neutral">
+                                                <span className="badge badge-light font-mono font-bold">
                                                     {report.report_number}
                                                 </span>
                                                 <StatusBadge
@@ -695,7 +694,7 @@ export default function Dashboard({ metrics, recentReports }: Props) {
                                                 />
 
                                                 {/* Category Tag */}
-                                                <span className="inline-flex items-center rounded-md border border-border-neutral bg-neutral-100 px-2 py-0.5 text-xs font-medium text-gray-neutral">
+                                                <span className="badge badge-light">
                                                     {CATEGORY_LABELS[
                                                         report.category
                                                     ] || report.category}
@@ -703,8 +702,8 @@ export default function Dashboard({ metrics, recentReports }: Props) {
 
                                                 {/* Evidence Counter */}
                                                 {report.has_evidence && (
-                                                    <span className="inline-flex items-center gap-1 rounded-md border border-border-neutral bg-neutral-100 px-2 py-0.5 text-xs text-gray-neutral">
-                                                        <Camera className="size-3 shrink-0 text-gray-neutral" />
+                                                    <span className="badge badge-light">
+                                                        <Camera className="size-3 shrink-0 text-[#212529]" />
                                                         <span>
                                                             {
                                                                 report.evidence_count

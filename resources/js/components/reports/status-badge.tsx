@@ -66,10 +66,10 @@ export function StatusBadge({
         }
         return (
             <span
-                className={`inline-flex items-center gap-1.5 rounded-md border border-border-neutral bg-neutral-100 px-2.5 py-0.5 text-xs font-medium text-gray-neutral ${className}`}
+                className={`badge badge-light ${className}`}
             >
                 {showIcon && (
-                    <Icon className="size-3.5 shrink-0 text-gray-neutral" />
+                    <Icon className="size-3.5 shrink-0 text-[#212529]" />
                 )}
                 <span>{label}</span>
             </span>
@@ -221,10 +221,10 @@ export function FireConditionBadge({
         }
         return (
             <span
-                className={`inline-flex items-center gap-1.5 rounded-md border border-border-neutral bg-neutral-100 px-2.5 py-0.5 text-xs font-medium text-gray-neutral ${className}`}
+                className={`badge badge-light ${className}`}
                 title={title}
             >
-                <Icon className="size-3.5 shrink-0 text-gray-neutral" />
+                <Icon className="size-3.5 shrink-0 text-[#212529]" />
                 <span>{label}</span>
             </span>
         );
