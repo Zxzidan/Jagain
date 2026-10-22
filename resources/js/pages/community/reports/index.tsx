@@ -108,7 +108,7 @@ export default function ReportsIndex({ reports, filters, statuses }: Props) {
                 </div>
 
                 {/* Filter and Search Bar */}
-                <div className="rounded-xl border border-border-neutral bg-white p-4 shadow-2xs">
+                <div className="rounded-xl border border-border-neutral bg-white p-4 shadow-2xs dark:border-border-neutral dark:bg-card">
                     <form
                         onSubmit={handleFilterSubmit}
                         className="flex flex-col gap-3 sm:flex-row"
@@ -121,7 +121,7 @@ export default function ReportsIndex({ reports, filters, statuses }: Props) {
                                 value={search}
                                 onChange={(e) => setSearch(e.target.value)}
                                 placeholder="Cari nomor laporan, judul, atau patokan lokasi..."
-                                className="border-border-neutral pl-9 text-xs focus:border-primary-green focus:ring-primary-green"
+                                className="border-border-neutral pl-9 text-xs focus:border-primary-green focus:ring-primary-green dark:border-border-neutral dark:bg-[#151c17]"
                             />
                         </div>
 
@@ -132,7 +132,7 @@ export default function ReportsIndex({ reports, filters, statuses }: Props) {
                                 onChange={(e) => {
                                     setSelectedStatus(e.target.value);
                                 }}
-                                className="h-9 w-full rounded-md border border-border-neutral bg-white px-3 py-1 text-xs text-dark-neutral focus:border-primary-green focus:ring-1 focus:ring-primary-green focus:outline-none"
+                                className="h-9 w-full rounded-md border border-border-neutral bg-white px-3 py-1 text-xs text-dark-neutral focus:border-primary-green focus:ring-1 focus:ring-primary-green focus:outline-none dark:border-border-neutral dark:bg-[#151c17] dark:text-foreground"
                             >
                                 <option value="">Semua Status Laporan</option>
                                 {statuses.map((s) => (
@@ -171,9 +171,9 @@ export default function ReportsIndex({ reports, filters, statuses }: Props) {
 
                 {/* Reports List */}
                 {reports.data.length === 0 ? (
-                    <div className="rounded-xl border border-dashed border-border-neutral bg-white p-12 text-center">
-                        <div className="mx-auto flex size-12 items-center justify-center rounded-full bg-soft-green text-forest-green">
-                            <FileText className="size-6" />
+                    <div className="rounded-xl border border-dashed border-border-neutral bg-white p-12 text-center dark:border-border-neutral dark:bg-card">
+                        <div className="mx-auto flex size-12 items-center justify-center rounded-full bg-soft-green text-forest-green dark:bg-[#18221b]">
+                            <FileText className="size-6 text-primary-green" />
                         </div>
                         <h3 className="mt-4 text-base font-semibold text-dark-neutral">
                             {search || selectedStatus
@@ -191,7 +191,7 @@ export default function ReportsIndex({ reports, filters, statuses }: Props) {
                                     variant="outline"
                                     size="sm"
                                     onClick={handleReset}
-                                    className="border-border-neutral text-xs"
+                                    className="border-border-neutral text-xs dark:border-border-neutral dark:hover:bg-accent"
                                 >
                                     Hapus Filter Pencarian
                                 </Button>
@@ -223,9 +223,9 @@ export default function ReportsIndex({ reports, filters, statuses }: Props) {
                             {reports.data.map((report) => (
                                 <div
                                     key={report.id}
-                                    className="rounded-xl border border-border-neutral bg-white p-5 shadow-2xs transition-all duration-200 ease-out hover:-translate-y-0.5 hover:border-gray-neutral/30 hover:shadow-md"
+                                    className="rounded-xl border border-border-neutral bg-white p-5 shadow-2xs transition-all duration-200 ease-out hover:-translate-y-0.5 hover:border-gray-neutral/30 hover:shadow-md dark:border-border-neutral dark:bg-card dark:hover:border-leaf-green/40 dark:hover:bg-[#17201a]"
                                 >
-                                    <div className="flex flex-col justify-between gap-3 border-b border-border-neutral/60 pb-3 sm:flex-row sm:items-center">
+                                    <div className="flex flex-col justify-between gap-3 border-b border-border-neutral/60 pb-3 sm:flex-row sm:items-center dark:border-border-neutral">
                                         <div className="flex flex-wrap items-center gap-2">
                                             <span className="badge badge-light font-mono font-bold">
                                                 {report.report_number}

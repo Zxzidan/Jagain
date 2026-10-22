@@ -279,7 +279,7 @@ export const DialogStackContent = ({
     return (
         <div
             className={cn(
-                'h-auto w-full rounded-xl border border-border-neutral bg-white p-6 shadow-lg transition-all duration-300',
+                'h-auto w-full rounded-xl border border-border-neutral bg-white p-6 shadow-lg transition-all duration-300 dark:border-border dark:bg-card',
                 className,
             )}
             onClick={handleClick}
@@ -486,7 +486,7 @@ export const DialogStackPrevious = ({
         <button
             className={cn(
                 'inline-flex items-center justify-center rounded-lg text-xs font-medium whitespace-nowrap',
-                'h-8 border border-border-neutral bg-white px-3.5 text-dark-neutral transition-colors hover:bg-pale-green',
+                'h-8 border border-border-neutral bg-white px-3.5 text-dark-neutral transition-colors hover:bg-pale-green dark:border-border dark:bg-card dark:hover:bg-accent',
                 'disabled:pointer-events-none disabled:opacity-50',
                 className,
             )}
