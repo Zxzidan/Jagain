@@ -63,8 +63,12 @@ class ReportPolicy
      */
     public function provideAdditionalInfo(User $user, Report $report): bool
     {
+        $statusValue = $report->report_status instanceof \BackedEnum
+            ? $report->report_status->value
+            : (string) $report->report_status;
+
         return $report->created_by_user_id === $user->id
-            && ($report->report_status === ReportStatus::NEEDS_INFORMATION || $report->report_status?->value === 'NEEDS_INFORMATION');
+            && ($statusValue === 'NEEDS_INFORMATION' || $report->report_status === ReportStatus::NEEDS_INFORMATION);
     }
 
     /**

@@ -10,6 +10,8 @@ import {
     PlusCircle,
     Shield,
     ShieldCheck,
+    Tags,
+    LayoutDashboard,
 } from 'lucide-react';
 import AppLogo from '@/components/app-logo';
 import { NavFooter } from '@/components/nav-footer';
@@ -30,18 +32,21 @@ import type { User } from '@/types/auth';
 export function AppSidebar() {
     const { auth } = usePage().props as { auth?: { user?: User } };
     const user = auth?.user;
+    const isAdmin = user?.role === 'ADMIN' || user?.is_admin;
+    const isAgency = user?.role === 'AGENCY' || user?.is_agency;
 
     const navItems: NavItem[] = [];
 
-    if (user?.is_admin) {
+    if (isAdmin) {
         navItems.push(
-            { title: 'Pusat Kendali', href: '/admin/dashboard', icon: LayoutGrid },
-            { title: 'Antrean Laporan', href: '/admin/laporan', icon: Flame },
-            { title: 'Kelola Instansi', href: '/admin/instansi', icon: Building2 },
+            { title: 'Pusat Kendali', href: '/admin/dashboard', icon: LayoutDashboard },
+            { title: 'Antrean & Laporan', href: '/admin/reports', icon: Flame },
+            { title: 'Instansi & OPD', href: '/admin/agencies', icon: Building2 },
+            { title: 'Kategori Karhutla', href: '/admin/categories', icon: Tags },
             { title: 'Audit Trail', href: '/admin/audit-logs', icon: History },
             { title: 'Peta Karhutla', href: '/peta', icon: Map }
         );
-    } else if (user?.is_agency) {
+    } else if (isAgency) {
         navItems.push(
             { title: 'Dashboard OPD', href: '/opd/dashboard', icon: LayoutGrid },
             { title: 'Tugas Lapangan', href: '/opd/tugas', icon: ClipboardList },
@@ -62,9 +67,9 @@ export function AppSidebar() {
         { title: 'Transparansi', href: '/tentang-kami', icon: ShieldCheck },
     ];
 
-    const homeUrl = user?.is_admin
+    const homeUrl = isAdmin
         ? '/admin/dashboard'
-        : user?.is_agency
+        : isAgency
         ? '/opd/dashboard'
         : '/dashboard';
 

@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Database\Factories\AssignmentHistoryFactory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
@@ -18,6 +20,9 @@ use Illuminate\Support\Carbon;
  */
 class AssignmentHistory extends Model
 {
+    /** @use HasFactory<AssignmentHistoryFactory> */
+    use HasFactory;
+
     public $timestamps = false;
 
     protected $fillable = [
@@ -43,6 +48,14 @@ class AssignmentHistory extends Model
     public function assignment(): BelongsTo
     {
         return $this->belongsTo(Assignment::class);
+    }
+
+    /**
+     * @return BelongsTo<User, $this>
+     */
+    public function actor(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'actor_user_id');
     }
 
     /**

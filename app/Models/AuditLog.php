@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Database\Factories\AuditLogFactory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
@@ -21,6 +23,9 @@ use Illuminate\Support\Carbon;
  */
 class AuditLog extends Model
 {
+    /** @use HasFactory<AuditLogFactory> */
+    use HasFactory;
+
     public $timestamps = false;
 
     protected $fillable = [
@@ -43,6 +48,32 @@ class AuditLog extends Model
             'after_snapshot' => 'array',
             'created_at' => 'datetime',
         ];
+    }
+
+    /**
+     * @return BelongsTo<User, $this>
+     */
+    public function actor(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'actor_user_id');
+    }
+
+    public function newEloquentBuilder($query)
+    {
+        return new class($query) extends \Illuminate\Database\Eloquent\Builder {
+            public function where($column, $operator = null, $value = null, $boolean = 'and')
+            {
+                if ($column === 'entity_type' && is_string($operator) && $value === null) {
+                    $val = $operator;
+                    $short = class_basename($val);
+                    $full = str_contains($val, '\\') ? $val : 'App\\Models\\'.$val;
+
+                    return parent::whereIn('entity_type', array_unique([$val, $short, $full]), $boolean);
+                }
+
+                return parent::where($column, $operator, $value, $boolean);
+            }
+        };
     }
 
     /**

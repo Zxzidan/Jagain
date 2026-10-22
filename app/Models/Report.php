@@ -5,8 +5,10 @@ namespace App\Models;
 use App\Enums\FireCondition;
 use App\Enums\ReportStatus;
 use Carbon\CarbonImmutable;
+use Database\Factories\ReportFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -27,14 +29,16 @@ use Illuminate\Support\Str;
  * @property float $longitude
  * @property string|null $province
  * @property string|null $regency_city
- * @property string $location_description
+ * @property string|null $location_description
  * @property Carbon|CarbonImmutable|null $reported_occurrence_at
- * @property ReportStatus $report_status
- * @property FireCondition $fire_condition
+ * @property ReportStatus|string $report_status
+ * @property FireCondition|string $fire_condition
  * @property string|null $fire_condition_source
  * @property Carbon|CarbonImmutable|null $fire_condition_observed_at
+ * @property string|null $actual_fire_condition
  * @property string $visibility
  * @property bool $is_simulated
+ * @property int $lock_version
  * @property string|null $admin_notes
  * @property string|null $information_requested
  * @property string|null $additional_information
@@ -48,6 +52,9 @@ use Illuminate\Support\Str;
  */
 class Report extends Model
 {
+    /** @use HasFactory<ReportFactory> */
+    use HasFactory;
+
     protected $fillable = [
         'tracking_code',
         'report_number',
@@ -66,8 +73,10 @@ class Report extends Model
         'fire_condition',
         'fire_condition_source',
         'fire_condition_observed_at',
+        'actual_fire_condition',
         'visibility',
         'is_simulated',
+        'lock_version',
         'admin_notes',
         'information_requested',
         'additional_information',
@@ -83,9 +92,10 @@ class Report extends Model
             'longitude' => 'float',
             'reported_occurrence_at' => 'datetime',
             'fire_condition_observed_at' => 'datetime',
+            'is_simulated' => 'boolean',
+            'lock_version' => 'integer',
             'report_status' => ReportStatus::class,
             'fire_condition' => FireCondition::class,
-            'is_simulated' => 'boolean',
         ];
     }
 
@@ -100,6 +110,10 @@ class Report extends Model
                 $report->tracking_code = $report->report_number;
             } elseif (empty($report->report_number)) {
                 $report->report_number = $report->tracking_code;
+            }
+
+            if (! isset($report->lock_version)) {
+                $report->lock_version = 1;
             }
         });
     }
@@ -140,6 +154,14 @@ class Report extends Model
     /**
      * @return BelongsTo<User, $this>
      */
+    public function creator(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'created_by_user_id');
+    }
+
+    /**
+     * @return BelongsTo<User, $this>
+     */
     public function reporter(): BelongsTo
     {
         return $this->createdByUser();
@@ -154,11 +176,13 @@ class Report extends Model
     }
 
     /**
-     * @return BelongsTo<ReportCategory, $this>
+     * @return BelongsTo<Category, $this>
      */
     public function category(): BelongsTo
     {
-        return $this->belongsTo(ReportCategory::class, 'category_id');
+        return class_exists(Category::class)
+            ? $this->belongsTo(Category::class, 'category_id')
+            : $this->belongsTo(ReportCategory::class, 'category_id');
     }
 
     /**
@@ -210,6 +234,12 @@ class Report extends Model
      */
     public function toPublicArray(): array
     {
+        $statusVal = $this->report_status instanceof ReportStatus ? $this->report_status->value : (string) $this->report_status;
+        $statusLabel = $this->report_status instanceof ReportStatus ? $this->report_status->label() : (ReportStatus::tryFrom($statusVal)?->label() ?? $statusVal);
+
+        $fireVal = $this->fire_condition instanceof FireCondition ? $this->fire_condition->value : (string) ($this->fire_condition ?? 'UNKNOWN');
+        $fireLabel = $this->fire_condition instanceof FireCondition ? $this->fire_condition->label() : (FireCondition::tryFrom($fireVal)?->label() ?? $fireVal);
+
         return [
             'id' => $this->id,
             'tracking_code' => $this->tracking_code,
@@ -227,10 +257,10 @@ class Report extends Model
             'regency_city' => $this->regency_city,
             'location_description' => $this->location_description,
             'reported_occurrence_at' => $this->reported_occurrence_at?->toIso8601String(),
-            'report_status' => $this->report_status->value,
-            'status_label' => $this->report_status->label(),
-            'fire_condition' => $this->fire_condition->value,
-            'fire_condition_label' => $this->fire_condition->label(),
+            'report_status' => $statusVal,
+            'status_label' => $statusLabel,
+            'fire_condition' => $fireVal,
+            'fire_condition_label' => $fireLabel,
             'fire_condition_source' => $this->fire_condition_source,
             'fire_condition_observed_at' => $this->fire_condition_observed_at?->toIso8601String(),
             'is_simulated' => $this->is_simulated,

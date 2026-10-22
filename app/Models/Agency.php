@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Database\Factories\AgencyFactory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -10,7 +12,7 @@ use Illuminate\Support\Carbon;
 /**
  * @property int $id
  * @property string $name
- * @property string $code
+ * @property string|null $code
  * @property string $agency_type
  * @property string $jurisdiction
  * @property string|null $contact_email
@@ -21,6 +23,9 @@ use Illuminate\Support\Carbon;
  */
 class Agency extends Model
 {
+    /** @use HasFactory<AgencyFactory> */
+    use HasFactory;
+
     protected $fillable = [
         'name',
         'code',

@@ -193,13 +193,13 @@ class ReportController extends Controller
                 ]),
                 'status_histories' => $report->statusHistories->map(fn (ReportStatusHistory $history) => [
                     'id' => $history->id,
-                    'from_status' => $history->from_status?->value,
-                    'to_status' => $history->to_status->value,
-                    'to_status_label' => $history->to_status->label(),
+                    'from_status' => $history->from_status instanceof \BackedEnum ? $history->from_status->value : ($history->from_status ? (string) $history->from_status : null),
+                    'to_status' => $history->to_status instanceof \BackedEnum ? $history->to_status->value : (string) $history->to_status,
+                    'to_status_label' => $history->to_status instanceof ReportStatus ? $history->to_status->label() : (ReportStatus::tryFrom((string) $history->to_status)?->label() ?? (string) $history->to_status),
                     'reason' => $history->reason,
                     'note' => $history->note,
                     'actor_name' => $history->actor !== null ? $history->actor->name : 'Sistem',
-                    'created_at' => $history->created_at->toISOString(),
+                    'created_at' => $history->created_at?->toISOString() ?? now()->toISOString(),
                 ]),
             ],
         ]);

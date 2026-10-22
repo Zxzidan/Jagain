@@ -13,72 +13,100 @@ use App\Models\Report;
 use App\Models\ReportStatusHistory;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
-use InvalidArgumentException;
+use Illuminate\Validation\ValidationException;
 
 class AssignmentService
 {
     public function __construct(
-        protected AuditLogService $auditLogService
+        protected readonly AuditLogService $auditLogService,
     ) {}
 
     /**
-     * Dispatch/Assign a report to an official agency.
+     * Dispatch/assign a verified report to an active agency.
+     *
+     * @throws ValidationException
      */
-    public function assignReport(
+    public function assign(
         Report $report,
         Agency $agency,
         User $actor,
-        ?string $notes = null
+        ?string $note = null,
+        ?int $expectedLockVersion = null,
     ): Assignment {
-        return DB::transaction(function () use ($report, $agency, $actor, $notes) {
+        $statusStr = $report->report_status instanceof ReportStatus
+            ? $report->report_status->value
+            : (string) $report->report_status;
+
+        if (! in_array($statusStr, ['VERIFIED', 'DISPATCHED'], true)) {
+            throw ValidationException::withMessages([
+                'report' => "Laporan berstatus {$statusStr} tidak dapat ditugaskan. Laporan harus terverifikasi terlebih dahulu.",
+            ]);
+        }
+
+        if (! $agency->is_active) {
+            throw ValidationException::withMessages([
+                'agency_id' => 'Instansi yang dipilih sedang tidak aktif.',
+            ]);
+        }
+
+        if ($expectedLockVersion !== null && isset($report->lock_version) && $report->lock_version !== $expectedLockVersion) {
+            throw ValidationException::withMessages([
+                'lock_version' => 'Data laporan telah diperbarui oleh pengguna lain. Silakan muat ulang halaman untuk melihat data terkini.',
+            ]);
+        }
+
+        return DB::transaction(function () use ($report, $agency, $actor, $note, $statusStr) {
             $assignment = Assignment::create([
                 'report_id' => $report->id,
                 'agency_id' => $agency->id,
                 'assigned_by_user_id' => $actor->id,
-                'assignment_status' => AssignmentStatus::ASSIGNED,
+                'assignment_status' => 'ASSIGNED',
                 'assigned_at' => now(),
-                'notes' => $notes,
+                'notes' => $note,
             ]);
 
             AssignmentHistory::create([
                 'assignment_id' => $assignment->id,
                 'from_status' => null,
-                'to_status' => AssignmentStatus::ASSIGNED->value,
+                'to_status' => 'ASSIGNED',
                 'actor_user_id' => $actor->id,
                 'reason' => 'Penugasan baru oleh Admin',
-                'note' => $notes,
+                'note' => $note,
                 'created_at' => now(),
             ]);
 
-            // Transition report to DISPATCHED if not already in dispatched or further
-            if ($report->report_status !== ReportStatus::DISPATCHED) {
-                $previousReportStatus = $report->report_status;
-                $report->report_status = ReportStatus::DISPATCHED;
+            $previousStatus = $statusStr;
+            if ($statusStr !== 'DISPATCHED') {
+                $report->report_status = ReportStatus::tryFrom('DISPATCHED') ?? 'DISPATCHED';
+                if (isset($report->lock_version)) {
+                    $report->lock_version += 1;
+                }
                 $report->save();
 
                 ReportStatusHistory::create([
                     'report_id' => $report->id,
-                    'from_status' => $previousReportStatus->value,
-                    'to_status' => ReportStatus::DISPATCHED->value,
+                    'from_status' => $previousStatus,
+                    'to_status' => 'DISPATCHED',
                     'actor_user_id' => $actor->id,
-                    'reason' => "Ditugaskan kepada {$agency->name}",
-                    'note' => $notes,
+                    'reason' => "Ditugaskan ke instansi: {$agency->name}",
+                    'note' => $note,
                     'created_at' => now(),
                 ]);
             }
 
-            $this->auditLogService->record(
-                action: 'ASSIGNMENT_CREATED',
-                entity: $assignment,
-                before: null,
+            $this->auditLogService->log(
+                actor: $actor,
+                action: 'REPORT_ASSIGNED_TO_AGENCY',
+                entityType: 'Assignment',
+                entityId: $assignment->id,
+                before: ['report_status' => $previousStatus],
                 after: [
-                    'report_id' => $report->id,
+                    'assignment_id' => $assignment->id,
                     'agency_id' => $agency->id,
                     'agency_name' => $agency->name,
-                    'assignment_status' => AssignmentStatus::ASSIGNED->value,
+                    'report_status' => 'DISPATCHED',
                 ],
-                reason: $notes,
-                actor: $actor
+                reason: $note,
             );
 
             return $assignment;
@@ -86,32 +114,51 @@ class AssignmentService
     }
 
     /**
-     * Agency officer accepts or declines assignment.
+     * Dispatch/Assign a report to an official agency (convenience alias).
+     */
+    public function assignReport(
+        Report $report,
+        Agency $agency,
+        User $actor,
+        ?string $notes = null
+    ): Assignment {
+        return $this->assign($report, $agency, $actor, $notes);
+    }
+
+    /**
+     * Agency officer responds to an assignment (accept or decline).
      */
     public function respondToAssignment(
         Assignment $assignment,
-        AssignmentStatus $targetStatus,
         User $actor,
-        ?string $declineReason = null
+        bool|AssignmentStatus|string $accepted = true,
+        ?string $declineReason = null,
+        AssignmentStatus|string|null $targetStatus = null
     ): Assignment {
-        if (! $assignment->assignment_status->canTransitionTo($targetStatus)) {
-            throw new InvalidArgumentException(
-                "Transisi status penugasan ke '{$targetStatus->label()}' tidak diizinkan dari status saat ini."
-            );
+        if ($targetStatus !== null) {
+            $statusVal = $targetStatus instanceof \BackedEnum ? $targetStatus->value : (string) $targetStatus;
+            $accepted = $statusVal === 'RECEIVED_BY_AGENCY';
+        } elseif (! is_bool($accepted)) {
+            $statusVal = $accepted instanceof \BackedEnum ? $accepted->value : (string) $accepted;
+            $accepted = $statusVal === 'RECEIVED_BY_AGENCY';
         }
 
-        if ($targetStatus === AssignmentStatus::DECLINED_BY_AGENCY && empty(trim((string) $declineReason))) {
-            throw new InvalidArgumentException('Penolakan penugasan wajib menyertakan alasan yang jelas.');
-        }
+        return DB::transaction(function () use ($assignment, $actor, $accepted, $declineReason) {
+            $fromStatus = $assignment->assignment_status instanceof AssignmentStatus
+                ? $assignment->assignment_status
+                : AssignmentStatus::tryFrom((string) $assignment->assignment_status) ?? AssignmentStatus::ASSIGNED;
 
-        return DB::transaction(function () use ($assignment, $targetStatus, $actor, $declineReason) {
-            $fromStatus = $assignment->assignment_status;
-            $assignment->assignment_status = $targetStatus;
+            $targetStatus = $accepted
+                ? AssignmentStatus::RECEIVED_BY_AGENCY
+                : AssignmentStatus::DECLINED_BY_AGENCY;
 
-            if ($targetStatus === AssignmentStatus::DECLINED_BY_AGENCY) {
+            $assignment->assignment_status = $targetStatus->value;
+            if ($accepted) {
+                $assignment->acknowledged_at = now();
+            } else {
+                $assignment->declined_at = now();
                 $assignment->decline_reason = $declineReason;
             }
-
             $assignment->save();
 
             AssignmentHistory::create([
@@ -119,21 +166,22 @@ class AssignmentService
                 'from_status' => $fromStatus->value,
                 'to_status' => $targetStatus->value,
                 'actor_user_id' => $actor->id,
-                'reason' => $declineReason,
-                'note' => $targetStatus === AssignmentStatus::RECEIVED_BY_AGENCY ? 'Diterima oleh petugas instansi' : 'Ditolak oleh instansi',
+                'reason' => $accepted ? 'Tugas diterima oleh OPD' : 'Tugas ditolak oleh OPD',
+                'note' => $declineReason,
                 'created_at' => now(),
             ]);
 
-            $this->auditLogService->record(
+            $this->auditLogService->log(
+                actor: $actor,
                 action: 'ASSIGNMENT_STATUS_TRANSITION',
-                entity: $assignment,
+                entityType: 'Assignment',
+                entityId: $assignment->id,
                 before: ['assignment_status' => $fromStatus->value],
                 after: [
                     'assignment_status' => $targetStatus->value,
                     'decline_reason' => $declineReason,
                 ],
                 reason: $declineReason,
-                actor: $actor
             );
 
             return $assignment;
@@ -152,9 +200,12 @@ class AssignmentService
         ?string $evidencePath = null
     ): OperationalUpdate {
         return DB::transaction(function () use ($assignment, $actor, $updateType, $note, $fireConditionObserved, $evidencePath) {
-            // Automatically advance to IN_PROGRESS if currently RECEIVED_BY_AGENCY
-            if ($assignment->assignment_status === AssignmentStatus::RECEIVED_BY_AGENCY) {
-                $assignment->assignment_status = AssignmentStatus::IN_PROGRESS;
+            $currentStatus = $assignment->assignment_status instanceof AssignmentStatus
+                ? $assignment->assignment_status->value
+                : (string) $assignment->assignment_status;
+
+            if ($currentStatus === AssignmentStatus::RECEIVED_BY_AGENCY->value || $currentStatus === 'RECEIVED_BY_AGENCY') {
+                $assignment->assignment_status = AssignmentStatus::IN_PROGRESS->value;
                 $assignment->save();
 
                 AssignmentHistory::create([
@@ -177,7 +228,6 @@ class AssignmentService
                 'evidence_path' => $evidencePath,
             ]);
 
-            // If fire condition was observed on the ground, update the report's fire condition with provenance
             if ($fireConditionObserved !== null) {
                 $report = $assignment->report;
                 $report->fire_condition = $fireConditionObserved;
@@ -186,9 +236,11 @@ class AssignmentService
                 $report->save();
             }
 
-            $this->auditLogService->record(
+            $this->auditLogService->log(
+                actor: $actor,
                 action: 'OPERATIONAL_UPDATE_ADDED',
-                entity: $update,
+                entityType: 'OperationalUpdate',
+                entityId: $update->id,
                 before: null,
                 after: [
                     'assignment_id' => $assignment->id,
@@ -197,7 +249,6 @@ class AssignmentService
                     'fire_condition_observed' => $fireConditionObserved?->value,
                 ],
                 reason: $note,
-                actor: $actor
             );
 
             return $update;
@@ -213,13 +264,16 @@ class AssignmentService
         string $summary
     ): Assignment {
         return DB::transaction(function () use ($assignment, $actor, $summary) {
-            $fromStatus = $assignment->assignment_status;
-            $assignment->assignment_status = AssignmentStatus::SUBMITTED_FOR_REVIEW;
+            $fromStatus = $assignment->assignment_status instanceof AssignmentStatus
+                ? $assignment->assignment_status->value
+                : (string) $assignment->assignment_status;
+
+            $assignment->assignment_status = AssignmentStatus::SUBMITTED_FOR_REVIEW->value;
             $assignment->save();
 
             AssignmentHistory::create([
                 'assignment_id' => $assignment->id,
-                'from_status' => $fromStatus->value,
+                'from_status' => $fromStatus,
                 'to_status' => AssignmentStatus::SUBMITTED_FOR_REVIEW->value,
                 'actor_user_id' => $actor->id,
                 'reason' => 'Pengajuan penyelesaian penanganan untuk review admin',
@@ -227,16 +281,19 @@ class AssignmentService
                 'created_at' => now(),
             ]);
 
-            // Transition report to RESOLUTION_REVIEW
             $report = $assignment->report;
-            if ($report->report_status === ReportStatus::DISPATCHED) {
-                $report->report_status = ReportStatus::RESOLUTION_REVIEW;
+            $reportStatusStr = $report->report_status instanceof ReportStatus
+                ? $report->report_status->value
+                : (string) $report->report_status;
+
+            if ($reportStatusStr === 'DISPATCHED') {
+                $report->report_status = ReportStatus::tryFrom('RESOLUTION_REVIEW') ?? 'RESOLUTION_REVIEW';
                 $report->save();
 
                 ReportStatusHistory::create([
                     'report_id' => $report->id,
-                    'from_status' => ReportStatus::DISPATCHED->value,
-                    'to_status' => ReportStatus::RESOLUTION_REVIEW->value,
+                    'from_status' => 'DISPATCHED',
+                    'to_status' => 'RESOLUTION_REVIEW',
                     'actor_user_id' => $actor->id,
                     'reason' => "Tindak lanjut diajukan oleh {$assignment->agency->name}",
                     'note' => $summary,
@@ -244,16 +301,17 @@ class AssignmentService
                 ]);
             }
 
-            $this->auditLogService->record(
+            $this->auditLogService->log(
+                actor: $actor,
                 action: 'ASSIGNMENT_SUBMITTED_FOR_REVIEW',
-                entity: $assignment,
-                before: ['assignment_status' => $fromStatus->value],
+                entityType: 'Assignment',
+                entityId: $assignment->id,
+                before: ['assignment_status' => $fromStatus],
                 after: [
                     'assignment_status' => AssignmentStatus::SUBMITTED_FOR_REVIEW->value,
                     'summary' => $summary,
                 ],
                 reason: $summary,
-                actor: $actor
             );
 
             return $assignment;

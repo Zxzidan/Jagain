@@ -10,7 +10,10 @@ use App\Models\Agency;
 use App\Models\AgencyMembership;
 use App\Models\Assignment;
 use App\Models\AssignmentHistory;
+use App\Models\AuditLog;
+use App\Models\Category;
 use App\Models\DataSource;
+use App\Models\Evidence;
 use App\Models\ExternalObservation;
 use App\Models\OperationalUpdate;
 use App\Models\Report;
@@ -19,19 +22,21 @@ use App\Models\ReportStatusHistory;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        // 1. Seed Users for all 3 roles
+        // 1. Seed Users
         $admin = User::firstOrCreate(
             ['email' => 'admin@jagain.id'],
             [
-                'name' => 'Admin Pengendali Karhutla',
+                'name' => 'Administrator JAGAIN',
                 'password' => Hash::make('password'),
                 'role' => UserRole::ADMIN,
                 'phone' => '08110000001',
+                'account_status' => 'active',
                 'email_verified_at' => now(),
             ]
         );
@@ -43,6 +48,19 @@ class DatabaseSeeder extends Seeder
                 'password' => Hash::make('password'),
                 'role' => UserRole::AGENCY,
                 'phone' => '08120000002',
+                'account_status' => 'active',
+                'email_verified_at' => now(),
+            ]
+        );
+
+        $agencyUser = User::firstOrCreate(
+            ['email' => 'petugas@bpbd.go.id'],
+            [
+                'name' => 'Budi Santoso (BPBD Kalbar)',
+                'password' => Hash::make('password'),
+                'role' => UserRole::AGENCY,
+                'phone' => '08120000005',
+                'account_status' => 'active',
                 'email_verified_at' => now(),
             ]
         );
@@ -54,6 +72,7 @@ class DatabaseSeeder extends Seeder
                 'password' => Hash::make('password'),
                 'role' => UserRole::AGENCY,
                 'phone' => '08130000003',
+                'account_status' => 'active',
                 'email_verified_at' => now(),
             ]
         );
@@ -65,15 +84,50 @@ class DatabaseSeeder extends Seeder
                 'password' => Hash::make('password'),
                 'role' => UserRole::COMMUNITY,
                 'phone' => '08190000004',
+                'account_status' => 'active',
                 'email_verified_at' => now(),
             ]
         );
 
-        // 2. Seed Agencies
-        $bpbdKalbar = Agency::firstOrCreate(
-            ['code' => 'BPBD-KALBAR'],
+        $communityUser = User::firstOrCreate(
+            ['email' => 'warga@gmail.com'],
             [
-                'name' => 'BPBD Provinsi Kalimantan Barat',
+                'name' => 'Ahmad Rinaldi',
+                'password' => Hash::make('password'),
+                'role' => UserRole::COMMUNITY,
+                'phone' => '08190000006',
+                'account_status' => 'active',
+                'email_verified_at' => now(),
+            ]
+        );
+
+        // 2. Categories
+        $categoriesData = [
+            ['name' => 'Kebakaran Lahan Gambut', 'slug' => 'lahan-gambut', 'description' => 'Kebakaran di area bertanah gambut dengan kepulan asap tebal.', 'is_active' => true],
+            ['name' => 'Kebakaran Hutan Lindung & Konservasi', 'slug' => 'hutan-lindung', 'description' => 'Kawasan hutan lindung, taman nasional, dan suaka alam.', 'is_active' => true],
+            ['name' => 'Kebakaran Perkebunan & Pertanian', 'slug' => 'perkebunan-pertanian', 'description' => 'Area perkebunan kelapa sawit, karet, atau ladang pertanian.', 'is_active' => true],
+            ['name' => 'Kebakaran Semak Belukar & Padang Ilalang', 'slug' => 'semak-belukar', 'description' => 'Lahan terbuka vegetasi kering mudah terbakar.', 'is_active' => true],
+            ['name' => 'Kebakaran Sekitar Pemukiman Warga', 'slug' => 'area-pemukiman', 'description' => 'Titik kebakaran yang mendekati batas pemukiman dan infrastruktur desa.', 'is_active' => true],
+        ];
+
+        $categories = [];
+        foreach ($categoriesData as $data) {
+            $cat = Category::firstOrCreate(['slug' => $data['slug']], $data);
+            $categories[$data['slug']] = $cat;
+
+            // Also seed ReportCategory if table exists
+            try {
+                ReportCategory::firstOrCreate(['slug' => $data['slug']], $data);
+            } catch (\Throwable) {
+                // Table might not exist or be same
+            }
+        }
+
+        // 3. Agencies
+        $bpbdKalbar = Agency::firstOrCreate(
+            ['name' => 'BPBD Provinsi Kalimantan Barat'],
+            [
+                'code' => 'BPBD-KALBAR',
                 'agency_type' => 'BPBD',
                 'jurisdiction' => 'Kalimantan Barat',
                 'contact_email' => 'pusdalops@bpbd.kalbarprov.go.id',
@@ -83,9 +137,9 @@ class DatabaseSeeder extends Seeder
         );
 
         $manggalaKalteng = Agency::firstOrCreate(
-            ['code' => 'MANGGALA-KALTENG'],
+            ['name' => 'Manggala Agni Daops Palangka Raya'],
             [
-                'name' => 'Manggala Agni Daops Palangka Raya',
+                'code' => 'MANGGALA-KALTENG',
                 'agency_type' => 'MANGGALA_AGNI',
                 'jurisdiction' => 'Kalimantan Tengah',
                 'contact_email' => 'daops.palangkaraya@menlhk.go.id',
@@ -95,9 +149,9 @@ class DatabaseSeeder extends Seeder
         );
 
         $bpbdKalsel = Agency::firstOrCreate(
-            ['code' => 'BPBD-KALSEL'],
+            ['name' => 'BPBD Provinsi Kalimantan Selatan'],
             [
-                'name' => 'BPBD Provinsi Kalimantan Selatan',
+                'code' => 'BPBD-KALSEL',
                 'agency_type' => 'BPBD',
                 'jurisdiction' => 'Kalimantan Selatan',
                 'contact_email' => 'pusdalops@kalselprov.go.id',
@@ -107,20 +161,25 @@ class DatabaseSeeder extends Seeder
         );
 
         $disdamkarPontianak = Agency::firstOrCreate(
-            ['code' => 'DISDAMKAR-PONTIANAK'],
+            ['name' => 'Dinas Kebakaran & Penyelamatan Kota Pontianak'],
             [
-                'name' => 'Dinas Kebakaran & Penyelamatan Kota Pontianak',
+                'code' => 'DISDAMKAR-PONTIANAK',
                 'agency_type' => 'DISDAMKAR',
-                'jurisdiction' => 'Kalimantan Barat',
+                'jurisdiction' => 'Kota Pontianak',
                 'contact_email' => 'damkar@pontianakkota.go.id',
                 'contact_phone' => '0561-113',
                 'is_active' => true,
             ]
         );
 
-        // 3. Link Agency Memberships
+        // Agency Memberships
         AgencyMembership::firstOrCreate(
             ['user_id' => $opdKalbarUser->id, 'agency_id' => $bpbdKalbar->id],
+            ['membership_status' => 'ACTIVE', 'role_in_agency' => 'OFFICER']
+        );
+
+        AgencyMembership::firstOrCreate(
+            ['user_id' => $agencyUser->id, 'agency_id' => $bpbdKalbar->id],
             ['membership_status' => 'ACTIVE', 'role_in_agency' => 'OFFICER']
         );
 
@@ -129,57 +188,11 @@ class DatabaseSeeder extends Seeder
             ['membership_status' => 'ACTIVE', 'role_in_agency' => 'OFFICER']
         );
 
-        // 4. Seed Categories
-        $catGambut = ReportCategory::firstOrCreate(
-            ['slug' => 'lahan-gambut'],
-            [
-                'name' => 'Kebakaran Lahan Gambut',
-                'description' => 'Kebakaran pada lapisan gambut yang berpotensi menyala di bawah permukaan dan menghasilkan kabut asap pekat.',
-                'is_active' => true,
-            ]
-        );
-
-        $catHutan = ReportCategory::firstOrCreate(
-            ['slug' => 'hutan-lindung'],
-            [
-                'name' => 'Kebakaran Hutan Lindung/Konservasi',
-                'description' => 'Titik api di dalam atau berbatasan langsung dengan area kawasan hutan tutupan negara.',
-                'is_active' => true,
-            ]
-        );
-
-        $catSemak = ReportCategory::firstOrCreate(
-            ['slug' => 'semak-belukar'],
-            [
-                'name' => 'Kebakaran Lahan Terbuka / Semak Belukar',
-                'description' => 'Api pada lahan tidur, semak belukar, atau perkebunan terbuka.',
-                'is_active' => true,
-            ]
-        );
-
-        $catPemukiman = ReportCategory::firstOrCreate(
-            ['slug' => 'dekat-pemukiman'],
-            [
-                'name' => 'Kebakaran Dekat Fasilitas / Pemukiman',
-                'description' => 'Titik kebakaran yang berjarak dekat (< 500m) dari rumah tinggal, jalan poros, atau fasilitas publik.',
-                'is_active' => true,
-            ]
-        );
-
-        $catAsap = ReportCategory::firstOrCreate(
-            ['slug' => 'asap-pekat'],
-            [
-                'name' => 'Dampak Asap Pekat & Penurunan Visibilitas',
-                'description' => 'Laporan kepulan asap tebal tanpa terlihat kobaran langsung yang mengganggu pernapasan atau lalu lintas.',
-                'is_active' => true,
-            ]
-        );
-
-        // 5. Seed Data Sources
+        // 4. Data Sources
         $dsCommunity = DataSource::firstOrCreate(
-            ['code' => 'COMMUNITY_JAGAIN'],
+            ['name' => 'Laporan Masyarakat JAGAIN'],
             [
-                'name' => 'Laporan Masyarakat JAGAIN',
+                'code' => 'COMMUNITY_JAGAIN',
                 'source_type' => 'COMMUNITY',
                 'attribution_text' => 'Pelaporan langsung oleh warga terverifikasi melalui aplikasi JAGAIN',
                 'integration_status' => 'ACTIVE',
@@ -187,47 +200,41 @@ class DatabaseSeeder extends Seeder
         );
 
         $dsNasa = DataSource::firstOrCreate(
-            ['code' => 'NASA_FIRMS_SIM'],
+            ['name' => 'NASA FIRMS Hotspots Ingest (Simulasi)'],
             [
-                'name' => 'NASA FIRMS VIIRS/MODIS (Data Simulasi)',
-                'source_type' => 'SATELLITE_HOTSPOT',
-                'attribution_text' => 'Dataset simulasi titik panas satelit format NASA FIRMS (bukan koneksi API produksi langsung)',
-                'integration_status' => 'SIMULATION_ONLY',
-                'last_successful_sync_at' => now()->subHours(2),
+                'code' => 'NASA_FIRMS_SIM',
+                'source_type' => 'SATELLITE',
+                'attribution_text' => 'Dataset Hotspot Satelit MODIS & VIIRS (Simulasi Kalbar/Kalteng)',
+                'integration_status' => 'ACTIVE',
             ]
         );
 
-        $dsSipongi = DataSource::firstOrCreate(
-            ['code' => 'SIPONGI_KLHK_SIM'],
-            [
-                'name' => 'Sipongi+ KLHK (Data Simulasi)',
-                'source_type' => 'SATELLITE_HOTSPOT',
-                'attribution_text' => 'Dataset simulasi sistem monitoring kebakaran hutan KLHK',
-                'integration_status' => 'SIMULATION_ONLY',
-                'last_successful_sync_at' => now()->subHours(4),
-            ]
-        );
+        // 5. Sample Reports
+        $gambutCat = $categories['lahan-gambut'];
+        $hutanCat = $categories['hutan-lindung'];
+        $semakCat = $categories['semak-belukar'];
+        $pemukimanCat = $categories['area-pemukiman'];
 
-        // 6. Seed Realistic Reports across Kalimantan
-        // Report 1: Dispatched to BPBD Kalbar (Active)
         $report1 = Report::create([
             'tracking_code' => 'JGN-202610-KB01',
+            'report_number' => 'JGN-202610-KB01',
             'created_by_user_id' => $citizen->id,
-            'category_id' => $catGambut->id,
-            'title' => 'Asap Tebal dan Api di Lahan Gambut Rasau Jaya',
-            'description' => 'Terlihat kobaran api di parit sekunder lahan gambut sekitar 300 meter dari jalan poros. Asap putih tebal terbawa angin ke arah barat.',
-            'latitude' => -0.1832000,
-            'longitude' => 109.3871000,
+            'category_id' => $gambutCat->id,
+            'title' => 'Asap Pekat di Area Gambut Rasau Jaya Km 14',
+            'description' => 'Kepulan asap putih pekat merayap dari lantai gambut bekas ladang. Terlihat titik bara api membakar semak pakis di parit sekunder.',
+            'latitude' => -0.1558230,
+            'longitude' => 109.3872340,
             'province' => 'Kalimantan Barat',
             'regency_city' => 'Kabupaten Kubu Raya',
-            'location_description' => 'Kecamatan Rasau Jaya Tiga, dekat saluran irigasi sekunder blok D',
-            'reported_occurrence_at' => now()->subHours(5),
-            'report_status' => ReportStatus::DISPATCHED,
-            'fire_condition' => FireCondition::REPORTED_ACTIVE,
-            'fire_condition_source' => 'Laporan masyarakat terverifikasi',
-            'fire_condition_observed_at' => now()->subHours(4),
+            'location_description' => 'Parit H. Ali, Dusun Mekar Sari, Desa Rasau Jaya Tiga, sekitar 400m dari jalan poros',
+            'reported_occurrence_at' => now()->subHours(8),
+            'report_status' => 'VERIFIED',
+            'fire_condition' => 'OBSERVED_ACTIVE',
+            'fire_condition_source' => 'Petugas BPBD Kalbar (Verifikasi Lapangan)',
+            'fire_condition_observed_at' => now()->subHours(6),
             'visibility' => 'PUBLIC',
             'is_simulated' => false,
+            'lock_version' => 2,
             'reporter_name' => 'Budi Santoso',
             'reporter_phone' => '08190000004',
         ]);
@@ -235,185 +242,139 @@ class DatabaseSeeder extends Seeder
         ReportStatusHistory::create([
             'report_id' => $report1->id,
             'from_status' => null,
-            'to_status' => ReportStatus::SUBMITTED->value,
+            'to_status' => 'SUBMITTED',
             'actor_user_id' => $citizen->id,
-            'note' => 'Laporan dikirim masyarakat',
-            'created_at' => now()->subHours(5),
+            'note' => 'Laporan masuk dari aplikasi warga',
+            'created_at' => now()->subHours(8),
         ]);
 
         ReportStatusHistory::create([
             'report_id' => $report1->id,
-            'from_status' => ReportStatus::SUBMITTED->value,
-            'to_status' => ReportStatus::VERIFIED->value,
+            'from_status' => 'SUBMITTED',
+            'to_status' => 'UNDER_REVIEW',
             'actor_user_id' => $admin->id,
-            'note' => 'Lokasi dan laporan telah diperiksa silang via citra sebaran asap',
-            'created_at' => now()->subHours(4),
+            'note' => 'Admin memulai proses telaah dokumen dan koordinat laporan.',
+            'created_at' => now()->subHours(7),
         ]);
 
         ReportStatusHistory::create([
             'report_id' => $report1->id,
-            'from_status' => ReportStatus::VERIFIED->value,
-            'to_status' => ReportStatus::DISPATCHED->value,
+            'from_status' => 'UNDER_REVIEW',
+            'to_status' => 'VERIFIED',
             'actor_user_id' => $admin->id,
-            'note' => 'Ditugaskan ke BPBD Kalimantan Barat untuk pemadaman darat',
-            'created_at' => now()->subHours(3),
+            'note' => 'Laporan telah diverifikasi memenuhi kriteria validitas dan lokasi.',
+            'created_at' => now()->subHours(6),
+        ]);
+
+        Evidence::create([
+            'report_id' => $report1->id,
+            'uploaded_by_user_id' => $citizen->id,
+            'file_path' => 'evidence/sample_karhutla_1.jpg',
+            'storage_key' => 'evidence/sample_karhutla_1.jpg',
+            'original_filename' => 'foto_lapangan_gambut.jpg',
+            'media_type' => 'image/jpeg',
+            'size_bytes' => 1024 * 450,
+            'caption' => 'Kondisi asap tebal merambat di atas lahan gambut',
+            'visibility' => 'PUBLIC',
+            'captured_at' => now()->subHours(8),
         ]);
 
         $assignment1 = Assignment::create([
             'report_id' => $report1->id,
             'agency_id' => $bpbdKalbar->id,
             'assigned_by_user_id' => $admin->id,
-            'assignment_status' => AssignmentStatus::IN_PROGRESS,
-            'assigned_at' => now()->subHours(3),
-            'notes' => 'Prioritas pemadaman awal agar tidak merembet ke kebun sawit warga',
+            'assignment_status' => 'IN_PROGRESS',
+            'assigned_at' => now()->subHours(5),
+            'notes' => 'Harap segera lakukan ground check dan sekat basah di parit perbatasan',
         ]);
 
         AssignmentHistory::create([
             'assignment_id' => $assignment1->id,
             'from_status' => null,
-            'to_status' => AssignmentStatus::ASSIGNED->value,
+            'to_status' => 'ASSIGNED',
             'actor_user_id' => $admin->id,
-            'note' => 'Penugasan dibuat oleh admin',
-            'created_at' => now()->subHours(3),
+            'note' => 'Penugasan diteruskan ke BPBD Kalbar.',
+            'created_at' => now()->subHours(5),
         ]);
 
-        AssignmentHistory::create([
-            'assignment_id' => $assignment1->id,
-            'from_status' => AssignmentStatus::ASSIGNED->value,
-            'to_status' => AssignmentStatus::RECEIVED_BY_AGENCY->value,
-            'actor_user_id' => $opdKalbarUser->id,
-            'note' => 'Diterima oleh Pusdalops BPBD Kalbar, regu 2 meluncur',
-            'created_at' => now()->subHours(2)->subMinutes(30),
-        ]);
-
-        AssignmentHistory::create([
-            'assignment_id' => $assignment1->id,
-            'from_status' => AssignmentStatus::RECEIVED_BY_AGENCY->value,
-            'to_status' => AssignmentStatus::IN_PROGRESS->value,
-            'actor_user_id' => $opdKalbarUser->id,
-            'note' => 'Tim sudah di lokasi bersama 2 unit pompa portabel dan selang 300 meter',
-            'created_at' => now()->subHours(2),
-        ]);
-
-        OperationalUpdate::create([
-            'assignment_id' => $assignment1->id,
-            'created_by_user_id' => $opdKalbarUser->id,
-            'update_type' => 'CONTAINMENT',
-            'note' => 'Sedang dilakukan penyekatan dan pembasahan (mopping up) area batas lahan gambut. Sumber air dari parit primer mencukupi.',
-            'fire_condition_observed' => FireCondition::OBSERVED_ACTIVE->value,
-            'created_at' => now()->subHours(1),
-        ]);
-
-        // Report 2: Needs information in Palangka Raya
-        $report2 = Report::create([
-            'tracking_code' => 'JGN-202610-KT02',
-            'created_by_user_id' => $citizen->id,
-            'category_id' => $catSemak->id,
-            'title' => 'Asap Pekat di Jalan Tjilik Riwut Km 14',
-            'description' => 'Tercium bau sangit dan kabut asap mulai masuk jalan raya utama. Titik api persis di dalam semak belum jelas.',
-            'latitude' => -2.1554000,
-            'longitude' => 113.8242000,
-            'province' => 'Kalimantan Tengah',
-            'regency_city' => 'Kota Palangka Raya',
-            'location_description' => 'Jalan Tjilik Riwut Km 14, seberang SPBU',
-            'reported_occurrence_at' => now()->subHours(8),
-            'report_status' => ReportStatus::NEEDS_INFORMATION,
-            'fire_condition' => FireCondition::UNKNOWN,
-            'visibility' => 'PUBLIC',
-            'is_simulated' => false,
-            'information_requested' => 'Mohon tambahkan perkiraan jarak titik api dari tepi jalan aspal dan apakah ada patok penanda terdekat untuk mempermudah navigasi regu darat.',
-            'reporter_name' => 'Budi Santoso',
-            'reporter_phone' => '08190000004',
-        ]);
-
-        ReportStatusHistory::create([
-            'report_id' => $report2->id,
-            'from_status' => null,
-            'to_status' => ReportStatus::SUBMITTED->value,
-            'actor_user_id' => $citizen->id,
-            'note' => 'Laporan awal warga',
-            'created_at' => now()->subHours(8),
-        ]);
-
-        ReportStatusHistory::create([
-            'report_id' => $report2->id,
-            'from_status' => ReportStatus::SUBMITTED->value,
-            'to_status' => ReportStatus::NEEDS_INFORMATION->value,
+        AuditLog::create([
             'actor_user_id' => $admin->id,
-            'note' => 'Meminta kejelasan posisi masuk titik api dari jalan besar',
+            'action' => 'REPORT_STATUS_TRANSITION',
+            'entity_type' => 'Report',
+            'entity_id' => $report1->id,
+            'reason' => 'Verifikasi administratif dan validasi lapangan',
+            'request_id' => (string) Str::uuid(),
             'created_at' => now()->subHours(6),
         ]);
 
-        // Report 3: Resolved & Verified in Banjarbaru
-        $report3 = Report::create([
-            'tracking_code' => 'JGN-202610-KS03',
-            'created_by_user_id' => $citizen->id,
-            'category_id' => $catPemukiman->id,
-            'title' => 'Kebakaran Semak Belukar Dekat Kompleks Perumahan Guntung Manggis',
-            'description' => 'Api sempat membesar dan mendekati pagar belakang rumah warga. Angin kencang.',
-            'latitude' => -3.4561000,
-            'longitude' => 114.8123000,
-            'province' => 'Kalimantan Selatan',
-            'regency_city' => 'Kota Banjarbaru',
-            'location_description' => 'Belakang Kompleks Griya Utama blok B, Kelurahan Guntung Manggis',
-            'reported_occurrence_at' => now()->subDays(1),
-            'report_status' => ReportStatus::RESOLVED_VERIFIED,
-            'fire_condition' => FireCondition::OBSERVED_EXTINGUISHED,
-            'fire_condition_source' => 'Pemeriksaan lapangan dan laporan akhir BPBD Kalsel',
-            'fire_condition_observed_at' => now()->subHours(10),
+        // Report 2: Needs Information
+        $report2 = Report::create([
+            'tracking_code' => 'JGN-202610-KB02',
+            'report_number' => 'JGN-202610-KB02',
+            'created_by_user_id' => $communityUser->id,
+            'category_id' => $semakCat->id,
+            'title' => 'Titik Asap Mencurigakan di Ambawang Km 18',
+            'description' => 'Api membakar semak belukar pinggir jalan, jarak pandang mulai berkurang hingga kurang dari 100 meter.',
+            'latitude' => -0.0821450,
+            'longitude' => 109.4321900,
+            'province' => 'Kalimantan Barat',
+            'regency_city' => 'Kabupaten Kubu Raya',
+            'location_description' => 'Jl. Trans Kalimantan Km 18, Ambawang',
+            'reported_occurrence_at' => now()->subHours(6),
+            'report_status' => 'NEEDS_INFORMATION',
+            'fire_condition' => 'REPORTED_ACTIVE',
             'visibility' => 'PUBLIC',
             'is_simulated' => false,
-            'reporter_name' => 'Budi Santoso',
-            'reporter_phone' => '08190000004',
+            'lock_version' => 1,
+            'information_requested' => 'Mohon berikan patok kilometer atau nama bangunan penanda di sekitar lokasi.',
+        ]);
+
+        ReportStatusHistory::create([
+            'report_id' => $report2->id,
+            'from_status' => 'UNDER_REVIEW',
+            'to_status' => 'NEEDS_INFORMATION',
+            'actor_user_id' => $admin->id,
+            'note' => 'Meminta kejelasan titik koordinat detail dari patok terdekat.',
+            'public_note' => 'Mohon berikan patok kilometer atau nama bangunan penanda di sekitar lokasi.',
+            'created_at' => now()->subHours(4),
+        ]);
+
+        // Report 3: Resolved
+        $report3 = Report::create([
+            'tracking_code' => 'JGN-202610-KB03',
+            'report_number' => 'JGN-202610-KB03',
+            'created_by_user_id' => $citizen->id,
+            'category_id' => $pemukimanCat->id,
+            'title' => 'Penanganan Karhutla Selesai di Wajok Hilir',
+            'description' => 'Operasi pembasahan total selesai dengan bukti foto drone dan catatan pemadaman.',
+            'latitude' => 0.0345600,
+            'longitude' => 109.2845600,
+            'province' => 'Kalimantan Barat',
+            'regency_city' => 'Kabupaten Mempawah',
+            'location_description' => 'Desa Wajok Hilir, Kec. Jongkat, Kab. Mempawah',
+            'reported_occurrence_at' => now()->subDays(2),
+            'report_status' => 'RESOLVED_VERIFIED',
+            'fire_condition' => 'OBSERVED_EXTINGUISHED',
+            'visibility' => 'PUBLIC',
+            'is_simulated' => false,
+            'lock_version' => 4,
         ]);
 
         ReportStatusHistory::create([
             'report_id' => $report3->id,
-            'from_status' => null,
-            'to_status' => ReportStatus::SUBMITTED->value,
-            'actor_user_id' => $citizen->id,
+            'from_status' => 'RESOLUTION_REVIEW',
+            'to_status' => 'RESOLVED_VERIFIED',
+            'actor_user_id' => $admin->id,
+            'note' => 'Penanganan tuntas. Pemadaman selesai dan observasi memastikan tidak ada bara aktif tersisa.',
             'created_at' => now()->subDays(1),
         ]);
 
-        ReportStatusHistory::create([
-            'report_id' => $report3->id,
-            'from_status' => ReportStatus::SUBMITTED->value,
-            'to_status' => ReportStatus::DISPATCHED->value,
-            'actor_user_id' => $admin->id,
-            'created_at' => now()->subHours(20),
-        ]);
-
-        ReportStatusHistory::create([
-            'report_id' => $report3->id,
-            'from_status' => ReportStatus::DISPATCHED->value,
-            'to_status' => ReportStatus::RESOLUTION_REVIEW->value,
-            'actor_user_id' => $admin->id,
-            'created_at' => now()->subHours(12),
-        ]);
-
-        ReportStatusHistory::create([
-            'report_id' => $report3->id,
-            'from_status' => ReportStatus::RESOLUTION_REVIEW->value,
-            'to_status' => ReportStatus::RESOLVED_VERIFIED->value,
-            'actor_user_id' => $admin->id,
-            'note' => 'Penanganan tuntas. Dilakukan pendinginan menyeluruh dan ground check memastikan tidak ada bara aktif tersisa.',
-            'created_at' => now()->subHours(10),
-        ]);
-
-        $assignment3 = Assignment::create([
-            'report_id' => $report3->id,
-            'agency_id' => $bpbdKalsel->id,
-            'assigned_by_user_id' => $admin->id,
-            'assignment_status' => AssignmentStatus::COMPLETED,
-            'assigned_at' => now()->subHours(20),
-            'notes' => 'Telah dipadamkan dan disekat bersama relawan pemadam kebakaran',
-        ]);
-
-        // Report 4: Newly Submitted (Queue)
+        // Report 4: Newly Submitted
         $report4 = Report::create([
             'tracking_code' => 'JGN-202610-KB04',
+            'report_number' => 'JGN-202610-KB04',
             'created_by_user_id' => $citizen->id,
-            'category_id' => $catHutan->id,
+            'category_id' => $hutanCat->id,
             'title' => 'Dugaan Titik Api di Perbatasan Hutan Lindung Gunung Palung',
             'description' => 'Terlihat kolom asap membubung tinggi dari arah bukit timur. Lokasi terpencil belum terjangkau jalan mobil.',
             'latitude' => -1.2185000,
@@ -422,10 +383,11 @@ class DatabaseSeeder extends Seeder
             'regency_city' => 'Kabupaten Kayong Utara',
             'location_description' => 'Lereng timur laut kawasan penyangga, dekat Desa Sedahan Jaya',
             'reported_occurrence_at' => now()->subMinutes(45),
-            'report_status' => ReportStatus::SUBMITTED,
-            'fire_condition' => FireCondition::UNKNOWN,
+            'report_status' => 'SUBMITTED',
+            'fire_condition' => 'UNKNOWN',
             'visibility' => 'PUBLIC',
             'is_simulated' => false,
+            'lock_version' => 1,
             'reporter_name' => 'Budi Santoso',
             'reporter_phone' => '08190000004',
         ]);
@@ -433,74 +395,10 @@ class DatabaseSeeder extends Seeder
         ReportStatusHistory::create([
             'report_id' => $report4->id,
             'from_status' => null,
-            'to_status' => ReportStatus::SUBMITTED->value,
+            'to_status' => 'SUBMITTED',
             'actor_user_id' => $citizen->id,
             'note' => 'Laporan masuk dari aplikasi warga',
             'created_at' => now()->subMinutes(45),
-        ]);
-
-        // 7. Seed Simulated External Observations (Hotspots) - explicitly labeled IS_SIMULATED = true
-        ExternalObservation::create([
-            'data_source_id' => $dsNasa->id,
-            'external_record_id' => 'MODIS-20261020-001-SIM',
-            'satellite_instrument' => 'MODIS (Aqua)',
-            'confidence_level' => 'high',
-            'brightness_kelvin' => 348.5,
-            'frp_mw' => 42.8,
-            'latitude' => -2.3120000,
-            'longitude' => 113.1250000,
-            'province' => 'Kalimantan Tengah',
-            'regency_city' => 'Kabupaten Kotawaringin Timur',
-            'observed_at' => now()->subHours(3),
-            'ingested_at' => now()->subHours(2),
-            'is_simulated' => true,
-            'raw_metadata' => [
-                'daynight' => 'D',
-                'satellite' => 'A',
-                'version' => '6.1N',
-                'dataset_label' => 'DATASET SIMULASI KALIMANTAN',
-            ],
-        ]);
-
-        ExternalObservation::create([
-            'data_source_id' => $dsNasa->id,
-            'external_record_id' => 'VIIRS-20261020-002-SIM',
-            'satellite_instrument' => 'VIIRS (Suomi NPP)',
-            'confidence_level' => 'nominal',
-            'brightness_kelvin' => 328.2,
-            'frp_mw' => 18.4,
-            'latitude' => -0.0540000,
-            'longitude' => 109.1120000,
-            'province' => 'Kalimantan Barat',
-            'regency_city' => 'Kabupaten Mempawah',
-            'observed_at' => now()->subHours(4),
-            'ingested_at' => now()->subHours(2),
-            'is_simulated' => true,
-            'raw_metadata' => [
-                'daynight' => 'D',
-                'satellite' => 'NPP',
-                'dataset_label' => 'DATASET SIMULASI KALIMANTAN',
-            ],
-        ]);
-
-        ExternalObservation::create([
-            'data_source_id' => $dsSipongi->id,
-            'external_record_id' => 'SIPONGI-20261020-003-SIM',
-            'satellite_instrument' => 'Sipongi+ Thermal Ingest',
-            'confidence_level' => 'nominal',
-            'brightness_kelvin' => 335.0,
-            'frp_mw' => 25.0,
-            'latitude' => -3.2100000,
-            'longitude' => 114.9200000,
-            'province' => 'Kalimantan Selatan',
-            'regency_city' => 'Kabupaten Tanah Laut',
-            'observed_at' => now()->subHours(5),
-            'ingested_at' => now()->subHours(4),
-            'is_simulated' => true,
-            'raw_metadata' => [
-                'system' => 'Sipongi+ Web Hook Simulation',
-                'dataset_label' => 'DATASET SIMULASI KALIMANTAN',
-            ],
         ]);
     }
 }

@@ -86,7 +86,7 @@ function MapClickHandler({
     onSelectLocation: (lat: number, lng: number) => void;
 }) {
     useMapEvents({
-        click(e) {
+        click(e: any) {
             onSelectLocation(
                 parseFloat(e.latlng.lat.toFixed(6)),
                 parseFloat(e.latlng.lng.toFixed(6)),

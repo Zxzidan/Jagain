@@ -9,10 +9,11 @@ export type User = {
     is_admin?: boolean;
     is_agency?: boolean;
     is_community?: boolean;
+    account_status?: string;
     agency?: {
         id: number;
         name: string;
-        code: string;
+        code?: string;
         jurisdiction?: string;
     } | null;
     email_verified_at: string | null;

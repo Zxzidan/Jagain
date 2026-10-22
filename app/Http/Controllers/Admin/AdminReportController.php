@@ -6,6 +6,7 @@ use App\Enums\FireCondition;
 use App\Enums\ReportStatus;
 use App\Http\Controllers\Controller;
 use App\Models\Agency;
+use App\Models\Category;
 use App\Models\Report;
 use App\Models\ReportCategory;
 use App\Services\AssignmentService;
@@ -14,7 +15,6 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
-use InvalidArgumentException;
 
 class AdminReportController extends Controller
 {
@@ -23,18 +23,15 @@ class AdminReportController extends Controller
         protected AssignmentService $assignmentService
     ) {}
 
-    /**
-     * List all reports with search and filter controls.
-     */
     public function index(Request $request): Response
     {
         $status = $request->query('status');
-        $province = $request->query('province');
-        $categorySlug = $request->query('category');
+        $categoryId = $request->query('category_id');
         $search = $request->query('search');
+        $province = $request->query('province');
 
-        $query = Report::with(['category', 'createdByUser', 'latestAssignment.agency'])
-            ->latest();
+        $query = Report::query()
+            ->with(['category', 'creator', 'createdByUser', 'latestAssignment.agency']);
 
         if ($status) {
             $query->where('report_status', $status);
@@ -44,88 +41,104 @@ class AdminReportController extends Controller
             $query->where('province', $province);
         }
 
-        if ($categorySlug) {
-            $query->whereHas('category', fn ($q) => $q->where('slug', $categorySlug));
+        if ($categoryId) {
+            $query->where('category_id', $categoryId);
         }
 
         if ($search) {
             $query->where(function ($q) use ($search) {
                 $q->where('title', 'like', "%{$search}%")
+                    ->orWhere('description', 'like', "%{$search}%")
+                    ->orWhere('location_description', 'like', "%{$search}%")
                     ->orWhere('tracking_code', 'like', "%{$search}%")
-                    ->orWhere('regency_city', 'like', "%{$search}%");
+                    ->orWhere('report_number', 'like', "%{$search}%")
+                    ->orWhere('id', $search);
             });
         }
 
-        $reports = $query->paginate(12)->withQueryString();
-        $categories = ReportCategory::where('is_active', true)->get(['id', 'name', 'slug']);
+        $reports = $query->orderByDesc('created_at')
+            ->paginate(15)
+            ->withQueryString();
 
-        $provinces = [
-            'Kalimantan Barat',
-            'Kalimantan Tengah',
-            'Kalimantan Selatan',
-            'Kalimantan Timur',
-            'Kalimantan Utara',
+        $categories = Category::where('is_active', true)->orderBy('name')->get();
+        if ($categories->isEmpty()) {
+            $categories = ReportCategory::where('is_active', true)->orderBy('name')->get();
+        }
+
+        $statusCounts = [
+            'all' => Report::count(),
+            'SUBMITTED' => Report::where('report_status', 'SUBMITTED')->orWhere('report_status', ReportStatus::SUBMITTED)->count(),
+            'UNDER_REVIEW' => Report::where('report_status', 'UNDER_REVIEW')->orWhere('report_status', ReportStatus::UNDER_REVIEW)->count(),
+            'NEEDS_INFORMATION' => Report::where('report_status', 'NEEDS_INFORMATION')->orWhere('report_status', ReportStatus::NEEDS_INFORMATION)->count(),
+            'VERIFIED' => Report::where('report_status', 'VERIFIED')->orWhere('report_status', ReportStatus::VERIFIED)->count(),
+            'DISPATCHED' => Report::where('report_status', 'DISPATCHED')->orWhere('report_status', ReportStatus::DISPATCHED)->count(),
+            'RESOLUTION_REVIEW' => Report::where('report_status', 'RESOLUTION_REVIEW')->orWhere('report_status', ReportStatus::RESOLUTION_REVIEW)->count(),
+            'RESOLVED_VERIFIED' => Report::where('report_status', 'RESOLVED_VERIFIED')->orWhere('report_status', ReportStatus::RESOLVED_VERIFIED)->count(),
+            'CLOSED_WITH_REASON' => Report::where('report_status', 'CLOSED_WITH_REASON')->orWhere('report_status', ReportStatus::CLOSED_WITH_REASON)->count(),
         ];
 
-        return Inertia::render('admin/reports-index', [
+        return Inertia::render('admin/reports/index', [
             'reports' => $reports,
             'categories' => $categories,
-            'provinces' => $provinces,
             'filters' => [
                 'status' => $status,
-                'province' => $province,
-                'category' => $categorySlug,
+                'category_id' => $categoryId ?: null,
+                'province' => $province ?: null,
                 'search' => $search,
             ],
-            'statusOptions' => array_map(fn (ReportStatus $s) => [
-                'value' => $s->value,
-                'label' => $s->label(),
-            ], ReportStatus::cases()),
+            'statusCounts' => $statusCounts,
         ]);
     }
 
-    /**
-     * Inspect single report with duplicate check, evidence, and actions.
-     */
     public function show(Report $report): Response
     {
         $report->load([
             'category',
+            'creator',
             'createdByUser',
             'evidence',
+            'statusHistories.actor',
             'statusHistories.actorUser',
             'assignments.agency',
-            'assignments.operationalUpdates.createdByUser',
+            'assignments.assigner',
+            'assignments.histories.actor',
             'assignments.histories.actorUser',
+            'assignments.operationalUpdates.createdByUser',
+            'assignments.updates.creator',
+            'assignments.updates.evidence',
         ]);
 
-        // Duplicate check: Find other reports within ~0.5 degrees (~55km) within 7 days
-        $potentialDuplicates = Report::where('id', '!=', $report->id)
-            ->whereBetween('latitude', [$report->latitude - 0.5, $report->latitude + 0.5])
-            ->whereBetween('longitude', [$report->longitude - 0.5, $report->longitude + 0.5])
-            ->where('created_at', '>=', $report->created_at->subDays(7))
-            ->where('created_at', '<=', $report->created_at->addDays(7))
-            ->with('category')
-            ->take(5)
+        $activeAgencies = Agency::where('is_active', true)
+            ->orderBy('name')
             ->get();
 
-        // Active agencies available for assignment
-        $agencies = Agency::where('is_active', true)->orderBy('name')->get();
+        $statusStr = $report->report_status instanceof ReportStatus
+            ? $report->report_status->value
+            : (string) $report->report_status;
 
-        // Determine which statuses current report can transition to
-        $availableTransitions = array_filter(
-            ReportStatus::cases(),
-            fn (ReportStatus $target) => $report->report_status->canTransitionTo($target)
-        );
+        $allowedTransitions = ReportTransitionService::VALID_TRANSITIONS[$statusStr] ?? [];
 
-        return Inertia::render('admin/report-show', [
+        $potentialDuplicates = Report::query()
+            ->where('id', '!=', $report->id)
+            ->where(function ($q) use ($report) {
+                if ($report->category_id) {
+                    $q->where('category_id', $report->category_id);
+                }
+                $q->orWhereBetween('latitude', [$report->latitude - 0.5, $report->latitude + 0.5]);
+            })
+            ->limit(5)
+            ->get(['id', 'title', 'report_status', 'created_at', 'location_description', 'latitude', 'longitude']);
+
+        return Inertia::render('admin/reports/show', [
             'report' => $report,
+            'activeAgencies' => $activeAgencies,
+            'agencies' => $activeAgencies,
+            'allowedTransitions' => $allowedTransitions,
+            'availableTransitions' => array_values(array_map(fn ($s) => [
+                'value' => $s,
+                'label' => ReportStatus::tryFrom($s)?->label() ?? $s,
+            ], $allowedTransitions)),
             'potentialDuplicates' => $potentialDuplicates,
-            'agencies' => $agencies,
-            'availableTransitions' => array_values(array_map(fn (ReportStatus $s) => [
-                'value' => $s->value,
-                'label' => $s->label(),
-            ], $availableTransitions)),
             'fireConditionOptions' => array_map(fn (FireCondition $f) => [
                 'value' => $f->value,
                 'label' => $f->label(),
@@ -133,73 +146,60 @@ class AdminReportController extends Controller
         ]);
     }
 
-    /**
-     * Perform validated status transition.
-     */
-    public function transition(Request $request, Report $report): RedirectResponse
-    {
+    public function transition(
+        Request $request,
+        Report $report,
+        ?ReportTransitionService $transitionService = null,
+    ): RedirectResponse {
+        $svc = $transitionService ?? $this->transitionService;
+
         $validated = $request->validate([
             'target_status' => ['required', 'string'],
-            'reason' => ['nullable', 'required_if:target_status,CLOSED_WITH_REASON', 'string', 'max:1000'],
-            'note' => ['nullable', 'required_if:target_status,NEEDS_INFORMATION', 'string', 'max:1000'],
+            'reason' => ['nullable', 'string', 'max:1000'],
+            'note' => ['nullable', 'string', 'max:1000'],
+            'public_note' => ['nullable', 'string', 'max:1000'],
+            'lock_version' => ['nullable', 'integer'],
             'fire_condition' => ['nullable', 'string'],
-        ], [
-            'reason.required_if' => 'Penutupan laporan wajib menyertakan alasan yang jelas.',
-            'note.required_if' => 'Permintaan informasi tambahan wajib menjelaskan informasi apa yang dibutuhkan.',
         ]);
 
-        $targetStatus = ReportStatus::tryFrom($validated['target_status']);
-        if (! $targetStatus) {
-            return back()->withErrors(['target_status' => 'Status tujuan tidak valid.']);
-        }
+        $svc->transition(
+            report: $report,
+            targetStatus: $validated['target_status'],
+            actor: $request->user(),
+            reason: $validated['reason'] ?? null,
+            note: $validated['note'] ?? $validated['public_note'] ?? null,
+            publicNote: $validated['public_note'] ?? null,
+            expectedLockVersion: isset($validated['lock_version']) ? (int) $validated['lock_version'] : null,
+            fireCondition: $validated['fire_condition'] ?? null,
+        );
 
-        if (! $report->report_status->canTransitionTo($targetStatus)) {
-            return back()->withErrors(['target_status' => "Transisi status dari '{$report->report_status->label()}' ke '{$targetStatus->label()}' tidak diizinkan."]);
-        }
-
-        $fireCondition = ! empty($validated['fire_condition'])
-            ? FireCondition::tryFrom($validated['fire_condition'])
-            : null;
-
-        try {
-            $this->transitionService->transition(
-                report: $report,
-                targetStatus: $targetStatus,
-                actor: $request->user(),
-                reason: $validated['reason'] ?? null,
-                note: $validated['note'] ?? null,
-                fireCondition: $fireCondition
-            );
-
-            return back()->with('success', "Status laporan berhasil diperbarui menjadi: {$targetStatus->label()}");
-        } catch (InvalidArgumentException $e) {
-            return back()->with('error', $e->getMessage());
-        }
+        return back()->with('success', "Status laporan berhasil diubah menjadi {$validated['target_status']}.");
     }
 
-    /**
-     * Dispatch report to an agency.
-     */
-    public function assign(Request $request, Report $report): RedirectResponse
-    {
+    public function assign(
+        Request $request,
+        Report $report,
+        ?AssignmentService $assignmentService = null,
+    ): RedirectResponse {
+        $svc = $assignmentService ?? $this->assignmentService;
+
         $validated = $request->validate([
             'agency_id' => ['required', 'exists:agencies,id'],
+            'note' => ['nullable', 'string', 'max:1000'],
             'notes' => ['nullable', 'string', 'max:1000'],
+            'lock_version' => ['nullable', 'integer'],
         ]);
 
-        $agency = Agency::where('id', $validated['agency_id'])->firstOrFail();
+        $agency = Agency::whereKey((int) $validated['agency_id'])->firstOrFail();
 
-        if (! $agency->is_active) {
-            return back()->with('error', 'Instansi yang dipilih tidak sedang aktif.');
-        }
-
-        $this->assignmentService->assignReport(
+        $svc->assign(
             report: $report,
             agency: $agency,
             actor: $request->user(),
-            notes: $validated['notes'] ?? null
+            note: $validated['note'] ?? $validated['notes'] ?? null,
+            expectedLockVersion: isset($validated['lock_version']) ? (int) $validated['lock_version'] : null,
         );
 
-        return back()->with('success', "Laporan berhasil ditugaskan kepada: {$agency->name}");
+        return back()->with('success', "Laporan berhasil ditugaskan kepada {$agency->name}.");
     }
 }

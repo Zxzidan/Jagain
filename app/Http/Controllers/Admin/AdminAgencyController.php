@@ -13,15 +13,33 @@ use Inertia\Response;
 class AdminAgencyController extends Controller
 {
     public function __construct(
-        protected AuditLogService $auditLogService
+        protected readonly AuditLogService $auditLogService,
     ) {}
 
-    public function index(): Response
+    public function index(Request $request): Response
     {
-        $agencies = Agency::withCount(['memberships', 'assignments'])->latest()->get();
+        $search = $request->string('search')->toString();
 
-        return Inertia::render('admin/agencies-index', [
+        $query = Agency::query()
+            ->withCount('assignments');
+
+        if (! empty($search)) {
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('jurisdiction', 'like', "%{$search}%")
+                    ->orWhere('agency_type', 'like', "%{$search}%");
+            });
+        }
+
+        $agencies = $query->orderBy('name')
+            ->paginate(15)
+            ->withQueryString();
+
+        return Inertia::render('admin/agencies/index', [
             'agencies' => $agencies,
+            'filters' => [
+                'search' => $search,
+            ],
             'jurisdictions' => [
                 'Kalimantan Barat',
                 'Kalimantan Tengah',
@@ -42,48 +60,85 @@ class AdminAgencyController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'name' => ['required', 'string', 'max:200'],
-            'code' => ['required', 'string', 'max:50', 'unique:agencies,code'],
-            'agency_type' => ['required', 'string'],
-            'jurisdiction' => ['required', 'string'],
+            'name' => ['required', 'string', 'max:255'],
+            'agency_type' => ['required', 'string', 'max:100'],
+            'jurisdiction' => ['required', 'string', 'max:255'],
+            'is_active' => ['boolean'],
             'contact_email' => ['nullable', 'email', 'max:100'],
             'contact_phone' => ['nullable', 'string', 'max:50'],
+            'code' => ['nullable', 'string', 'max:50'],
         ]);
 
         $agency = Agency::create([
-            ...$validated,
-            'is_active' => true,
+            'name' => $validated['name'],
+            'agency_type' => $validated['agency_type'],
+            'jurisdiction' => $validated['jurisdiction'],
+            'is_active' => $validated['is_active'] ?? true,
+            'contact_email' => $validated['contact_email'] ?? null,
+            'contact_phone' => $validated['contact_phone'] ?? null,
+            'code' => $validated['code'] ?? null,
         ]);
 
-        $this->auditLogService->record(
+        $this->auditLogService->log(
+            actor: $request->user(),
             action: 'AGENCY_CREATED',
-            entity: $agency,
-            before: null,
+            entityType: 'Agency',
+            entityId: $agency->id,
             after: $agency->toArray(),
-            reason: 'Penambahan instansi baru oleh Administrator',
-            actor: $request->user()
         );
 
         return back()->with('success', "Instansi {$agency->name} berhasil ditambahkan.");
     }
 
-    public function toggleActive(Request $request, Agency $agency): RedirectResponse
+    public function update(Request $request, Agency $agency): RedirectResponse
+    {
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'agency_type' => ['required', 'string', 'max:100'],
+            'jurisdiction' => ['required', 'string', 'max:255'],
+            'is_active' => ['boolean'],
+            'contact_email' => ['nullable', 'email', 'max:100'],
+            'contact_phone' => ['nullable', 'string', 'max:50'],
+            'code' => ['nullable', 'string', 'max:50'],
+        ]);
+
+        $before = $agency->toArray();
+        $agency->update($validated);
+
+        $this->auditLogService->log(
+            actor: $request->user(),
+            action: 'AGENCY_UPDATED',
+            entityType: 'Agency',
+            entityId: $agency->id,
+            before: $before,
+            after: $agency->toArray(),
+        );
+
+        return back()->with('success', "Data instansi {$agency->name} berhasil diperbarui.");
+    }
+
+    public function toggleStatus(Request $request, Agency $agency): RedirectResponse
     {
         $before = ['is_active' => $agency->is_active];
         $agency->is_active = ! $agency->is_active;
         $agency->save();
 
-        $this->auditLogService->record(
+        $this->auditLogService->log(
+            actor: $request->user(),
             action: 'AGENCY_STATUS_TOGGLED',
-            entity: $agency,
+            entityType: 'Agency',
+            entityId: $agency->id,
             before: $before,
             after: ['is_active' => $agency->is_active],
-            reason: 'Pengubahan status aktif instansi',
-            actor: $request->user()
         );
 
-        $statusText = $agency->is_active ? 'diaktifkan' : 'dinonaktifkan';
+        $statusLabel = $agency->is_active ? 'diaktifkan' : 'dinonaktifkan';
 
-        return back()->with('success', "Instansi {$agency->name} berhasil {$statusText}.");
+        return back()->with('success', "Status instansi {$agency->name} berhasil {$statusLabel}.");
+    }
+
+    public function toggleActive(Request $request, Agency $agency): RedirectResponse
+    {
+        return $this->toggleStatus($request, $agency);
     }
 }

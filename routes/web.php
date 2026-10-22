@@ -2,7 +2,9 @@
 
 use App\Http\Controllers\Admin\AdminAgencyController;
 use App\Http\Controllers\Admin\AdminAuditLogController;
+use App\Http\Controllers\Admin\AdminCategoryController;
 use App\Http\Controllers\Admin\AdminDashboardController;
+use App\Http\Controllers\Admin\AdminExportController;
 use App\Http\Controllers\Admin\AdminReportController;
 use App\Http\Controllers\Agency\AgencyAssignmentController;
 use App\Http\Controllers\Agency\AgencyDashboardController;
@@ -35,14 +37,14 @@ Route::middleware(['auth'])->group(function () {
         return app(DashboardController::class)->index($request);
     })->name('dashboard');
 
-    // Community Reports
+    // Community Reports (from main)
     Route::get('reports', [ReportController::class, 'index'])->name('reports.index');
     Route::get('reports/create', [ReportController::class, 'create'])->name('reports.create');
     Route::post('reports', [ReportController::class, 'store'])->name('reports.store');
     Route::get('reports/{report}', [ReportController::class, 'show'])->name('reports.show');
     Route::post('reports/{report}/additional-info', [ReportController::class, 'submitAdditionalInfo'])->name('reports.additional-info');
 
-    // Citizen Report Creation & Tracking
+    // Citizen Report Creation & Tracking (from brian)
     Route::get('/lapor', [CitizenReportController::class, 'create'])->name('citizen.reports.create');
     Route::post('/lapor', [CitizenReportController::class, 'store'])->name('citizen.reports.store');
     Route::get('/laporan-saya', [CitizenReportController::class, 'index'])->name('citizen.reports.index');
@@ -50,19 +52,43 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/laporan-saya/{tracking_code}/tambah-informasi', [CitizenReportController::class, 'provideInformation'])->name('citizen.reports.provide-info');
 });
 
-// Admin Dashboard & Management (Requires ADMIN role)
-Route::middleware(['auth', 'role:ADMIN'])->prefix('admin')->name('admin.')->group(function () {
-    Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
-    Route::get('/laporan', [AdminReportController::class, 'index'])->name('reports.index');
-    Route::get('/laporan/{report}', [AdminReportController::class, 'show'])->name('reports.show');
-    Route::post('/laporan/{report}/status', [AdminReportController::class, 'transition'])->name('reports.transition');
-    Route::post('/laporan/{report}/assign', [AdminReportController::class, 'assign'])->name('reports.assign');
+// Admin Route Group (Requires ADMIN role)
+Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/', AdminDashboardController::class)->name('dashboard');
+    Route::get('/dashboard', AdminDashboardController::class);
 
-    Route::get('/instansi', [AdminAgencyController::class, 'index'])->name('agencies.index');
-    Route::post('/instansi', [AdminAgencyController::class, 'store'])->name('agencies.store');
-    Route::post('/instansi/{agency}/toggle', [AdminAgencyController::class, 'toggleActive'])->name('agencies.toggle');
+    // Reports Review & Management
+    Route::get('/reports', [AdminReportController::class, 'index'])->name('reports.index');
+    Route::get('/reports/{report}', [AdminReportController::class, 'show'])->name('reports.show');
+    Route::post('/reports/{report}/transitions', [AdminReportController::class, 'transition'])->name('reports.transition');
+    Route::post('/reports/{report}/assignments', [AdminReportController::class, 'assign'])->name('reports.assign');
 
-    Route::get('/audit-logs', [AdminAuditLogController::class, 'index'])->name('audit-logs.index');
+    // Aliases for alternate route paths
+    Route::get('/laporan', [AdminReportController::class, 'index']);
+    Route::get('/laporan/{report}', [AdminReportController::class, 'show']);
+    Route::post('/laporan/{report}/status', [AdminReportController::class, 'transition']);
+    Route::post('/laporan/{report}/assign', [AdminReportController::class, 'assign']);
+
+    // Agencies Management
+    Route::get('/agencies', [AdminAgencyController::class, 'index'])->name('agencies.index');
+    Route::post('/agencies', [AdminAgencyController::class, 'store'])->name('agencies.store');
+    Route::put('/agencies/{agency}', [AdminAgencyController::class, 'update'])->name('agencies.update');
+    Route::patch('/agencies/{agency}/toggle-status', [AdminAgencyController::class, 'toggleStatus'])->name('agencies.toggle-status');
+    Route::get('/instansi', [AdminAgencyController::class, 'index']);
+    Route::post('/instansi', [AdminAgencyController::class, 'store']);
+    Route::post('/instansi/{agency}/toggle', [AdminAgencyController::class, 'toggleActive']);
+
+    // Categories Management
+    Route::get('/categories', [AdminCategoryController::class, 'index'])->name('categories.index');
+    Route::post('/categories', [AdminCategoryController::class, 'store'])->name('categories.store');
+    Route::put('/categories/{category}', [AdminCategoryController::class, 'update'])->name('categories.update');
+    Route::patch('/categories/{category}/toggle-status', [AdminCategoryController::class, 'toggleStatus'])->name('categories.toggle-status');
+
+    // Audit Logs
+    Route::get('/audit-logs', AdminAuditLogController::class)->name('audit-logs.index');
+
+    // Exports
+    Route::get('/exports/reports', [AdminExportController::class, 'reports'])->name('exports.reports');
 });
 
 // OPD / Agency Handling (Requires AGENCY role)

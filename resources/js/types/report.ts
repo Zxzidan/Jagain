@@ -77,6 +77,10 @@ export interface DashboardMetrics {
     submitted: number;
     in_review: number;
     verified: number;
+    dispatched?: number;
+    in_progress?: number;
     resolved: number;
+    closed?: number;
     needs_info: number;
 }
+

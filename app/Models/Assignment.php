@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use App\Enums\AssignmentStatus;
+use Database\Factories\AssignmentFactory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -13,15 +15,20 @@ use Illuminate\Support\Carbon;
  * @property int $report_id
  * @property int $agency_id
  * @property int $assigned_by_user_id
- * @property AssignmentStatus $assignment_status
+ * @property AssignmentStatus|string $assignment_status
  * @property string|null $decline_reason
- * @property Carbon $assigned_at
+ * @property Carbon|null $assigned_at
+ * @property Carbon|null $acknowledged_at
+ * @property Carbon|null $declined_at
  * @property string|null $notes
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
 class Assignment extends Model
 {
+    /** @use HasFactory<AssignmentFactory> */
+    use HasFactory;
+
     protected $fillable = [
         'report_id',
         'agency_id',
@@ -29,6 +36,8 @@ class Assignment extends Model
         'assignment_status',
         'decline_reason',
         'assigned_at',
+        'acknowledged_at',
+        'declined_at',
         'notes',
     ];
 
@@ -37,6 +46,9 @@ class Assignment extends Model
         return [
             'assignment_status' => AssignmentStatus::class,
             'assigned_at' => 'datetime',
+            'acknowledged_at' => 'datetime',
+            'declined_at' => 'datetime',
+            'updated_at' => 'datetime',
         ];
     }
 
@@ -65,6 +77,14 @@ class Assignment extends Model
     }
 
     /**
+     * @return BelongsTo<User, $this>
+     */
+    public function assigner(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'assigned_by_user_id');
+    }
+
+    /**
      * @return HasMany<AssignmentHistory, $this>
      */
     public function histories(): HasMany
@@ -76,6 +96,14 @@ class Assignment extends Model
      * @return HasMany<OperationalUpdate, $this>
      */
     public function operationalUpdates(): HasMany
+    {
+        return $this->hasMany(OperationalUpdate::class)->orderBy('created_at', 'desc');
+    }
+
+    /**
+     * @return HasMany<OperationalUpdate, $this>
+     */
+    public function updates(): HasMany
     {
         return $this->hasMany(OperationalUpdate::class)->orderBy('created_at', 'desc');
     }

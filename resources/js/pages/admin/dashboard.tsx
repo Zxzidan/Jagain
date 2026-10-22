@@ -1,15 +1,29 @@
 import { Head, Link } from '@inertiajs/react';
-import StatusBadge from '@/components/status-badge';
 import {
-    FileText,
-    Building,
-    Shield,
+    AlertTriangle,
+    Building2,
+    CheckCircle2,
     Clock,
+    FileCheck2,
+    Flame,
+    History,
+    MapPin,
     Send,
-    Activity,
+    Shield,
+    Users,
 } from 'lucide-react';
+import { EmptyState } from '@/components/jagain/empty-state';
+import { FlashMessage } from '@/components/jagain/flash-message';
+import { StatusBadge } from '@/components/jagain/status-badge';
+import AppLayout from '@/layouts/app-layout';
+import { dashboard as adminDashboard } from '@/routes/admin';
+import { index as agenciesIndex } from '@/routes/admin/agencies';
+import { index as auditLogsIndex } from '@/routes/admin/audit-logs';
+import { index as categoriesIndex } from '@/routes/admin/categories';
+import { index as reportsIndex, show as reportShow } from '@/routes/admin/reports';
+import type { AuditLog, BreadcrumbItem, Report } from '@/types';
 
-interface AdminDashboardProps {
+type DashboardProps = {
     statusCounts: {
         submitted: number;
         under_review: number;
@@ -19,291 +33,375 @@ interface AdminDashboardProps {
         resolution_review: number;
         resolved_verified: number;
         closed_with_reason: number;
+        total: number;
     };
-    pendingReviews: Array<{
-        id: number;
-        tracking_code: string;
-        title: string;
-        report_status: string;
-        province: string;
-        regency_city: string;
-        created_at: string;
-        category?: { name: string } | null;
-    }>;
-    activeAssignments: Array<{
-        id: number;
-        assignment_status: string;
-        assigned_at: string;
-        agency: { name: string; jurisdiction: string };
-        report: { id: number; tracking_code: string; title: string };
-    }>;
-    agencyStats: Array<{
-        id: number;
-        name: string;
-        jurisdiction: string;
-        total_assignments_count: number;
-        in_progress_count: number;
-        completed_count: number;
-    }>;
-}
+    priorityQueue: Report[];
+    recentAuditLogs: AuditLog[];
+};
 
 export default function AdminDashboard({
     statusCounts,
-    pendingReviews,
-    activeAssignments,
-    agencyStats,
-}: AdminDashboardProps) {
-    const totalReports = Object.values(statusCounts).reduce((a, b) => a + b, 0);
-
-    const pipelineStages = [
-        { key: 'SUBMITTED', label: 'Baru Masuk', count: statusCounts.submitted, color: 'text-[#141413]' },
-        { key: 'UNDER_REVIEW', label: 'Ditinjau', count: statusCounts.under_review, color: 'text-[#141413]' },
-        { key: 'NEEDS_INFORMATION', label: 'Perlu Info', count: statusCounts.needs_information, color: 'text-[#d97757]' },
-        { key: 'VERIFIED', label: 'Terverifikasi', count: statusCounts.verified, color: 'text-[#141413]' },
-        { key: 'DISPATCHED', label: 'Ditugaskan', count: statusCounts.dispatched, color: 'text-[#141413]' },
-        { key: 'RESOLUTION_REVIEW', label: 'Review OPD', count: statusCounts.resolution_review, color: 'text-[#141413]' },
-        { key: 'RESOLVED_VERIFIED', label: 'Selesai Valid', count: statusCounts.resolved_verified, color: 'text-[#141413]' },
-        { key: 'CLOSED_WITH_REASON', label: 'Ditutup', count: statusCounts.closed_with_reason, color: 'text-[#87867f]' },
+    priorityQueue,
+    recentAuditLogs,
+}: DashboardProps) {
+    const breadcrumbs: BreadcrumbItem[] = [
+        {
+            title: 'Admin JAGAIN',
+            href: adminDashboard(),
+        },
+        {
+            title: 'Ringkasan Operasional',
+            href: adminDashboard(),
+        },
     ];
 
+    const pendingReviewTotal = statusCounts.submitted + statusCounts.under_review;
+
     return (
-        <div className="p-4 sm:p-6 lg:p-8 space-y-8 text-[#141413] bg-[#f0eee6] min-h-screen">
-            <Head title="Pusat Komando Pengendali Karhutla — JAGAIN" />
+        <AppLayout breadcrumbs={breadcrumbs}>
+            <Head title="Admin Dashboard - JAGAIN" />
 
-            {/* Operational Header Bar */}
-            <div className="border-b border-[#cccbc8] pb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 font-sans">
-                <div className="space-y-1">
-                    <div className="inline-flex items-center gap-2 text-[10px] font-mono font-bold tracking-wider uppercase text-[#87867f]">
-                        <Activity className="size-3.5 text-[#d97757]" />
-                        <span>Pusat Kendali Verifikasi & Disposisi Karhutla</span>
-                    </div>
-                    <h1 className="text-2xl sm:text-3xl font-serif text-[#141413] tracking-tight">
-                        Konsol Administrator JAGAIN
-                    </h1>
-                    <p className="font-serif text-xs sm:text-sm text-[#87867f]">
-                        Total {totalReports} laporan tercatat di 5 provinsi Kalimantan. Pantau antrean masuk dan penugasan regu darat.
-                    </p>
-                </div>
+            <div className="flex flex-1 flex-col gap-6 p-4 md:p-8">
+                <FlashMessage />
 
-                <div className="flex items-center gap-2 flex-wrap">
-                    <Link
-                        href="/admin/laporan"
-                        className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold bg-[#141413] text-[#faf9f5] rounded-[8px] hover:bg-[#3d3d3a] transition-colors"
-                    >
-                        <FileText className="size-3.5" />
-                        <span>Antrean Laporan</span>
-                    </Link>
-                    <Link
-                        href="/admin/instansi"
-                        className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold border border-[#cccbc8] bg-[#faf9f5] text-[#141413] hover:bg-[#e3dacc] rounded-[8px] transition-colors"
-                    >
-                        <Building className="size-3.5 text-[#87867f]" />
-                        <span>Kelola OPD</span>
-                    </Link>
-                    <Link
-                        href="/admin/audit-logs"
-                        className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold border border-[#cccbc8] bg-[#faf9f5] text-[#141413] hover:bg-[#e3dacc] rounded-[8px] transition-colors"
-                    >
-                        <Shield className="size-3.5 text-[#87867f]" />
-                        <span>Audit Trail</span>
-                    </Link>
-                </div>
-            </div>
-
-            {/* PIPELINE STATUS RIBBON & LEDGER */}
-            <div className="space-y-3 font-sans">
-                <div className="flex items-center justify-between text-xs">
-                    <span className="font-bold uppercase tracking-wider text-[#87867f] text-[11px]">
-                        Pipeline Status Laporan (8 Tahapan Resmi)
-                    </span>
-                    <span className="text-[11px] text-[#87867f] font-serif">Pilih tahapan untuk memfilter antrean</span>
-                </div>
-
-                <div className="border border-[#cccbc8] rounded-[24px] overflow-hidden bg-[#faf9f5]">
-                    <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 divide-x divide-y sm:divide-y-0 divide-[#cccbc8] text-xs">
-                        {pipelineStages.map((stage) => (
-                            <Link
-                                key={stage.key}
-                                href={`/admin/laporan?status=${stage.key}`}
-                                className="p-4 hover:bg-[#f0eee6] transition-colors block group"
-                            >
-                                <div className="text-[11px] text-[#87867f] font-medium truncate mb-1">
-                                    {stage.label}
-                                </div>
-                                <div className={`font-mono text-xl font-bold tabular-nums ${stage.color}`}>
-                                    {stage.count}
-                                </div>
-                                <div className="text-[9px] font-mono text-[#87867f] group-hover:text-[#141413] mt-0.5">
-                                    {stage.key}
-                                </div>
-                            </Link>
-                        ))}
-                    </div>
-                </div>
-            </div>
-
-            {/* TWO WORK QUEUES: PENDING REVIEWS & ACTIVE DISPATCHES */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start font-sans">
-                {/* 1. Pending Reviews Queue */}
-                <div className="border border-[#cccbc8] rounded-[24px] overflow-hidden bg-[#faf9f5]">
-                    <div className="p-5 bg-[#f0eee6] border-b border-[#cccbc8] flex items-center justify-between">
-                        <div>
-                            <h2 className="text-xs font-bold uppercase tracking-wider text-[#141413] flex items-center gap-2">
-                                <Clock className="size-3.5 text-[#87867f]" />
-                                Antrean Review Laporan Baru ({pendingReviews.length})
-                            </h2>
-                            <span className="text-[11px] font-serif text-[#87867f]">Membutuhkan validasi lokasi & kelayakan</span>
-                        </div>
-                        <Link
-                            href="/admin/laporan?status=SUBMITTED"
-                            className="text-xs text-[#141413] font-semibold hover:underline"
-                        >
-                            Buka Semua →
-                        </Link>
-                    </div>
-
-                    {pendingReviews.length === 0 ? (
-                        <div className="p-10 text-center text-xs text-[#87867f] font-serif">
-                            Tidak ada laporan baru dalam antrean peninjauan.
-                        </div>
-                    ) : (
-                        <div className="divide-y divide-[#cccbc8] text-xs">
-                            {pendingReviews.map((rep) => (
-                                <div key={rep.id} className="p-4 flex items-center justify-between gap-3 hover:bg-[#f0eee6]/60 transition-colors">
-                                    <div className="space-y-1 min-w-0">
-                                        <div className="flex items-center gap-2">
-                                            <span className="font-mono text-[10px] font-bold px-1.5 py-0.5 rounded-[3px] bg-[#f0eee6] text-[#141413] border border-[#cccbc8]">
-                                                {rep.tracking_code}
-                                            </span>
-                                            <StatusBadge status={rep.report_status} size="sm" />
-                                        </div>
-                                        <div className="font-semibold text-[#141413] truncate">{rep.title}</div>
-                                        <div className="text-[11px] text-[#87867f] font-serif">
-                                            {rep.regency_city}, {rep.province}
-                                        </div>
-                                    </div>
-                                    <Link
-                                        href={`/admin/laporan/${rep.id}`}
-                                        className="px-3.5 py-1.5 rounded-[6px] bg-[#141413] hover:bg-[#3d3d3a] text-[#faf9f5] text-xs font-semibold shrink-0 transition-colors"
-                                    >
-                                        Periksa
-                                    </Link>
-                                </div>
-                            ))}
-                        </div>
-                    )}
-                </div>
-
-                {/* 2. Active Dispatches Queue */}
-                <div className="border border-[#cccbc8] rounded-[24px] overflow-hidden bg-[#faf9f5]">
-                    <div className="p-5 bg-[#f0eee6] border-b border-[#cccbc8] flex items-center justify-between">
-                        <div>
-                            <h2 className="text-xs font-bold uppercase tracking-wider text-[#141413] flex items-center gap-2">
-                                <Send className="size-3.5 text-[#87867f]" />
-                                Penugasan Berjalan di Instansi ({activeAssignments.length})
-                            </h2>
-                            <span className="text-[11px] font-serif text-[#87867f]">Status operasional tim lapangan BPBD / Damkar</span>
-                        </div>
-                        <Link
-                            href="/admin/laporan?status=DISPATCHED"
-                            className="text-xs text-[#141413] font-semibold hover:underline"
-                        >
-                            Semua Disposisi →
-                        </Link>
-                    </div>
-
-                    {activeAssignments.length === 0 ? (
-                        <div className="p-10 text-center text-xs text-[#87867f] font-serif">
-                            Tidak ada penugasan OPD yang sedang aktif saat ini.
-                        </div>
-                    ) : (
-                        <div className="divide-y divide-[#cccbc8] text-xs">
-                            {activeAssignments.map((asg) => (
-                                <div key={asg.id} className="p-4 flex items-center justify-between gap-3 hover:bg-[#f0eee6]/60 transition-colors">
-                                    <div className="space-y-1 min-w-0">
-                                        <div className="flex items-center gap-2">
-                                            <span className="font-mono text-[10px] font-bold px-1.5 py-0.5 rounded-[3px] bg-[#f0eee6] text-[#141413] border border-[#cccbc8]">
-                                                {asg.report.tracking_code}
-                                            </span>
-                                            <StatusBadge status={asg.assignment_status} size="sm" />
-                                        </div>
-                                        <div className="font-semibold text-[#141413] truncate">{asg.report.title}</div>
-                                        <div className="text-[11px] text-[#87867f] font-serif">
-                                            OPD: {asg.agency.name} ({asg.agency.jurisdiction})
-                                        </div>
-                                    </div>
-                                    <Link
-                                        href={`/admin/laporan/${asg.report.id}`}
-                                        className="px-3.5 py-1.5 rounded-[6px] border border-[#cccbc8] bg-[#faf9f5] hover:bg-[#e3dacc] text-[#141413] text-xs font-semibold shrink-0 transition-colors"
-                                    >
-                                        Pantau
-                                    </Link>
-                                </div>
-                            ))}
-                        </div>
-                    )}
-                </div>
-            </div>
-
-            {/* AGENCY WORKLOADS TABLE */}
-            <div className="border border-[#cccbc8] rounded-[24px] overflow-hidden bg-[#faf9f5] font-sans">
-                <div className="p-5 bg-[#f0eee6] border-b border-[#cccbc8] flex items-center justify-between">
+                {/* Header Banner */}
+                <div className="flex flex-col justify-between gap-4 rounded-xl border border-[#DDE3DE] bg-gradient-to-r from-[#F3F7F4] to-white p-6 md:flex-row md:items-center dark:border-neutral-800 dark:from-neutral-900 dark:to-neutral-900/60">
                     <div>
-                        <h2 className="text-xs font-bold uppercase tracking-wider text-[#141413] flex items-center gap-2">
-                            <Building className="size-3.5 text-[#87867f]" />
-                            Beban Kerja Instansi & OPD Terdaftar
-                        </h2>
-                        <span className="text-[11px] font-serif text-[#87867f]">Distribusi penanganan aktif vs penyelesaian tuntas</span>
+                        <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-[#216B49] dark:text-emerald-400">
+                            <Shield className="size-4" />
+                            <span>Pusat Kendali Admin JAGAIN</span>
+                        </div>
+                        <h1 className="mt-1 text-2xl font-bold tracking-tight text-[#171C19] dark:text-white">
+                            Monitoring & Akuntabilitas Karhutla
+                        </h1>
+                        <p className="mt-1 text-sm text-[#68716B] dark:text-neutral-400">
+                            Kelola antrean verifikasi laporan warga, koordinasi penugasan OPD, dan pantau jejak audit secara transparan.
+                        </p>
                     </div>
-                    <Link href="/admin/instansi" className="text-xs text-[#141413] font-semibold hover:underline">
-                        Kelola Instansi →
-                    </Link>
+
+                    <div className="flex flex-wrap items-center gap-2">
+                        <Link
+                            href={reportsIndex()}
+                            className="inline-flex items-center gap-2 rounded-lg bg-[#216B49] px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-[#174B35] focus:outline-none focus:ring-2 focus:ring-[#216B49] focus:ring-offset-2"
+                        >
+                            <Clock className="size-4" />
+                            <span>Buka Antrean Review ({pendingReviewTotal})</span>
+                        </Link>
+                    </div>
                 </div>
 
-                <div className="overflow-x-auto">
-                    <table className="w-full text-left text-xs">
-                        <thead className="bg-[#faf9f5] border-b border-[#cccbc8] text-[#87867f] uppercase tracking-wider text-[11px] font-semibold">
-                            <tr>
-                                <th className="py-3.5 px-5">Nama Instansi</th>
-                                <th className="py-3.5 px-5">Wilayah Yurisdiksi</th>
-                                <th className="py-3.5 px-5 text-center">Tugas Aktif</th>
-                                <th className="py-3.5 px-5 text-center">Selesai Ditangani</th>
-                                <th className="py-3.5 px-5 text-center">Total Riwayat</th>
-                                <th className="py-3.5 px-5 text-right">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y divide-[#cccbc8]">
-                            {agencyStats.map((ag) => (
-                                <tr key={ag.id} className="hover:bg-[#f0eee6]/60 transition-colors">
-                                    <td className="py-3.5 px-5 font-semibold text-[#141413]">
-                                        {ag.name}
-                                    </td>
-                                    <td className="py-3.5 px-5 text-[#87867f] font-serif">
-                                        {ag.jurisdiction}
-                                    </td>
-                                    <td className="py-3.5 px-5 text-center font-mono font-bold text-[#141413]">
-                                        {ag.in_progress_count}
-                                    </td>
-                                    <td className="py-3.5 px-5 text-center font-mono font-bold text-[#141413]">
-                                        {ag.completed_count}
-                                    </td>
-                                    <td className="py-3.5 px-5 text-center font-mono text-[#87867f]">
-                                        {ag.total_assignments_count}
-                                    </td>
-                                    <td className="py-3.5 px-5 text-right">
-                                        <Link
-                                            href={`/admin/laporan?agency=${ag.id}`}
-                                            className="text-xs font-semibold text-[#141413] hover:text-[#d97757] hover:underline"
+                {/* Key Metric Cards */}
+                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                    <div className="rounded-xl border border-[#DDE3DE] bg-white p-5 shadow-xs dark:border-neutral-800 dark:bg-neutral-900">
+                        <div className="flex items-center justify-between">
+                            <span className="text-sm font-medium text-[#68716B] dark:text-neutral-400">
+                                Perlu Review
+                            </span>
+                            <span className="flex size-9 items-center justify-center rounded-lg bg-[#E8F1EB] text-[#216B49] dark:bg-emerald-950 dark:text-emerald-400">
+                                <Clock className="size-5" />
+                            </span>
+                        </div>
+                        <div className="mt-3 flex items-baseline gap-2">
+                            <span className="text-3xl font-bold tracking-tight text-[#171C19] dark:text-white">
+                                {pendingReviewTotal}
+                            </span>
+                            <span className="text-xs text-[#68716B] dark:text-neutral-400">
+                                ({statusCounts.submitted} baru, {statusCounts.under_review} telaah)
+                            </span>
+                        </div>
+                        <div className="mt-3">
+                            <Link
+                                href={reportsIndex({ query: { status: 'SUBMITTED' } })}
+                                className="text-xs font-semibold text-[#216B49] hover:underline dark:text-emerald-400"
+                            >
+                                Lihat antrean belum diperiksa &rarr;
+                            </Link>
+                        </div>
+                    </div>
+
+                    <div className="rounded-xl border border-[#DDE3DE] bg-white p-5 shadow-xs dark:border-neutral-800 dark:bg-neutral-900">
+                        <div className="flex items-center justify-between">
+                            <span className="text-sm font-medium text-[#68716B] dark:text-neutral-400">
+                                Butuh Info Tambahan
+                            </span>
+                            <span className="flex size-9 items-center justify-center rounded-lg bg-amber-50 text-amber-700 dark:bg-amber-950/50 dark:text-amber-400">
+                                <AlertTriangle className="size-5" />
+                            </span>
+                        </div>
+                        <div className="mt-3 flex items-baseline gap-2">
+                            <span className="text-3xl font-bold tracking-tight text-[#171C19] dark:text-white">
+                                {statusCounts.needs_information}
+                            </span>
+                            <span className="text-xs text-[#68716B] dark:text-neutral-400">
+                                menunggu klarifikasi warga
+                            </span>
+                        </div>
+                        <div className="mt-3">
+                            <Link
+                                href={reportsIndex({ query: { status: 'NEEDS_INFORMATION' } })}
+                                className="text-xs font-semibold text-amber-700 hover:underline dark:text-amber-400"
+                            >
+                                Cek laporan menunggu info &rarr;
+                            </Link>
+                        </div>
+                    </div>
+
+                    <div className="rounded-xl border border-[#DDE3DE] bg-white p-5 shadow-xs dark:border-neutral-800 dark:bg-neutral-900">
+                        <div className="flex items-center justify-between">
+                            <span className="text-sm font-medium text-[#68716B] dark:text-neutral-400">
+                                Terverifikasi / Ditugaskan
+                            </span>
+                            <span className="flex size-9 items-center justify-center rounded-lg bg-[#E8F1EB] text-[#216B49] dark:bg-emerald-950 dark:text-emerald-400">
+                                <Send className="size-5" />
+                            </span>
+                        </div>
+                        <div className="mt-3 flex items-baseline gap-2">
+                            <span className="text-3xl font-bold tracking-tight text-[#171C19] dark:text-white">
+                                {statusCounts.verified + statusCounts.dispatched}
+                            </span>
+                            <span className="text-xs text-[#68716B] dark:text-neutral-400">
+                                ({statusCounts.verified} siap, {statusCounts.dispatched} di OPD)
+                            </span>
+                        </div>
+                        <div className="mt-3">
+                            <Link
+                                href={reportsIndex({ query: { status: 'VERIFIED' } })}
+                                className="text-xs font-semibold text-[#216B49] hover:underline dark:text-emerald-400"
+                            >
+                                Tugaskan ke instansi &rarr;
+                            </Link>
+                        </div>
+                    </div>
+
+                    <div className="rounded-xl border border-[#DDE3DE] bg-white p-5 shadow-xs dark:border-neutral-800 dark:bg-neutral-900">
+                        <div className="flex items-center justify-between">
+                            <span className="text-sm font-medium text-[#68716B] dark:text-neutral-400">
+                                Selesai Terverifikasi
+                            </span>
+                            <span className="flex size-9 items-center justify-center rounded-lg bg-[#E8F1EB] text-[#174B35] dark:bg-emerald-950 dark:text-emerald-300">
+                                <CheckCircle2 className="size-5" />
+                            </span>
+                        </div>
+                        <div className="mt-3 flex items-baseline gap-2">
+                            <span className="text-3xl font-bold tracking-tight text-[#171C19] dark:text-white">
+                                {statusCounts.resolved_verified}
+                            </span>
+                            <span className="text-xs text-[#68716B] dark:text-neutral-400">
+                                ({statusCounts.closed_with_reason} ditutup berdasar)
+                            </span>
+                        </div>
+                        <div className="mt-3">
+                            <Link
+                                href={reportsIndex({ query: { status: 'RESOLVED_VERIFIED' } })}
+                                className="text-xs font-semibold text-[#216B49] hover:underline dark:text-emerald-400"
+                            >
+                                Arsip penyelesaian laporan &rarr;
+                            </Link>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Priority Queue Section */}
+                <div className="rounded-xl border border-[#DDE3DE] bg-white shadow-xs dark:border-neutral-800 dark:bg-neutral-900">
+                    <div className="flex items-center justify-between border-b border-[#DDE3DE] px-6 py-4 dark:border-neutral-800">
+                        <div>
+                            <h2 className="text-base font-semibold text-[#171C19] dark:text-white">
+                                Antrean Prioritas Peninjauan
+                            </h2>
+                            <p className="text-xs text-[#68716B] dark:text-neutral-400">
+                                Laporan masyarakat yang memerlukan tindakan verifikasi atau telaah awal admin.
+                            </p>
+                        </div>
+                        <Link
+                            href={reportsIndex()}
+                            className="text-xs font-semibold text-[#216B49] hover:underline dark:text-emerald-400"
+                        >
+                            Lihat Semua ({statusCounts.total}) &rarr;
+                        </Link>
+                    </div>
+
+                    {priorityQueue.length === 0 ? (
+                        <div className="p-8">
+                            <EmptyState
+                                icon={FileCheck2}
+                                title="Tidak ada antrean tertunda"
+                                description="Seluruh laporan yang masuk saat ini telah diperiksa atau ditugaskan."
+                            />
+                        </div>
+                    ) : (
+                        <div className="overflow-x-auto">
+                            <table className="w-full text-left text-sm">
+                                <thead className="border-b border-[#DDE3DE] bg-[#F3F7F4] text-xs font-semibold text-[#343B36] uppercase dark:border-neutral-800 dark:bg-neutral-800/60 dark:text-neutral-300">
+                                    <tr>
+                                        <th scope="col" className="px-6 py-3.5">ID & Judul Laporan</th>
+                                        <th scope="col" className="px-6 py-3.5">Kategori</th>
+                                        <th scope="col" className="px-6 py-3.5">Lokasi</th>
+                                        <th scope="col" className="px-6 py-3.5">Status</th>
+                                        <th scope="col" className="px-6 py-3.5 text-right">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-[#DDE3DE] dark:divide-neutral-800">
+                                    {priorityQueue.map((report) => (
+                                        <tr
+                                            key={report.id}
+                                            className="transition-colors hover:bg-[#F3F7F4]/50 dark:hover:bg-neutral-800/40"
                                         >
-                                            Lihat Laporan
-                                        </Link>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                                            <td className="px-6 py-4">
+                                                <div className="font-semibold text-[#171C19] dark:text-white">
+                                                    #{report.id} — {report.title}
+                                                </div>
+                                                <div className="mt-0.5 text-xs text-[#68716B] dark:text-neutral-400">
+                                                    Pelapor: {report.creator?.name ?? 'Anonim'} &bull; Dibuat:{' '}
+                                                    {new Date(report.created_at).toLocaleDateString('id-ID', {
+                                                        day: 'numeric',
+                                                        month: 'short',
+                                                        year: 'numeric',
+                                                        hour: '2-digit',
+                                                        minute: '2-digit',
+                                                    })} WIB
+                                                </div>
+                                            </td>
+                                            <td className="px-6 py-4">
+                                                <span className="rounded bg-neutral-100 px-2 py-1 text-xs font-medium text-neutral-800 dark:bg-neutral-800 dark:text-neutral-200">
+                                                    {report.category?.name ?? 'Umum'}
+                                                </span>
+                                            </td>
+                                            <td className="px-6 py-4 text-xs text-[#68716B] dark:text-neutral-400">
+                                                <div className="flex items-center gap-1.5 font-medium text-[#171C19] dark:text-neutral-200">
+                                                    <MapPin className="size-3.5 shrink-0 text-[#216B49]" />
+                                                    <span className="truncate max-w-[200px]">
+                                                        {report.location_description ?? `${report.latitude}, ${report.longitude}`}
+                                                    </span>
+                                                </div>
+                                            </td>
+                                            <td className="px-6 py-4">
+                                                <StatusBadge status={report.report_status} />
+                                            </td>
+                                            <td className="px-6 py-4 text-right">
+                                                <Link
+                                                    href={reportShow(report.id)}
+                                                    className="inline-flex items-center gap-1 rounded-md border border-[#216B49] bg-white px-3 py-1.5 text-xs font-semibold text-[#216B49] transition hover:bg-[#E8F1EB] dark:bg-transparent dark:text-emerald-400 dark:hover:bg-emerald-950/50"
+                                                >
+                                                    <span>Tinjau</span>
+                                                    <span>&rarr;</span>
+                                                </Link>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    )}
+                </div>
+
+                {/* Secondary Grid: Recent Audit Logs & Navigation Shortcuts */}
+                <div className="grid gap-6 lg:grid-cols-3">
+                    <div className="rounded-xl border border-[#DDE3DE] bg-white p-6 shadow-xs lg:col-span-2 dark:border-neutral-800 dark:bg-neutral-900">
+                        <div className="flex items-center justify-between border-b border-[#DDE3DE] pb-4 dark:border-neutral-800">
+                            <div>
+                                <h3 className="text-base font-semibold text-[#171C19] dark:text-white">
+                                    Catatan Jejak Audit Terbaru
+                                </h3>
+                                <p className="text-xs text-[#68716B] dark:text-neutral-400">
+                                    Transparansi perubahan data, keputusan verifikasi, dan mutasi penugasan.
+                                </p>
+                            </div>
+                            <Link
+                                href={auditLogsIndex()}
+                                className="text-xs font-semibold text-[#216B49] hover:underline dark:text-emerald-400"
+                            >
+                                Log Lengkap &rarr;
+                            </Link>
+                        </div>
+
+                        {recentAuditLogs.length === 0 ? (
+                            <div className="py-6 text-center text-xs text-[#68716B]">
+                                Belum ada aktivitas audit yang tercatat.
+                            </div>
+                        ) : (
+                            <ul className="mt-4 divide-y divide-[#DDE3DE] dark:divide-neutral-800">
+                                {recentAuditLogs.map((log) => (
+                                    <li key={log.id} className="flex items-start justify-between py-3 text-xs">
+                                        <div className="flex items-start gap-2.5">
+                                            <span className="mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full bg-[#E8F1EB] text-[#216B49] dark:bg-emerald-950 dark:text-emerald-400">
+                                                <History className="size-3.5" />
+                                            </span>
+                                            <div>
+                                                <span className="font-semibold text-[#171C19] dark:text-white">
+                                                    {log.action}
+                                                </span>{' '}
+                                                <span className="text-[#68716B] dark:text-neutral-400">
+                                                    pada {log.entity_type} #{log.entity_id}
+                                                </span>
+                                                {log.reason && (
+                                                    <p className="mt-0.5 text-neutral-600 dark:text-neutral-300 italic">
+                                                        "{log.reason}"
+                                                    </p>
+                                                )}
+                                                <div className="mt-0.5 text-[11px] text-[#68716B] dark:text-neutral-500">
+                                                    Aktor: {log.actor?.name ?? 'Sistem'}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <span className="text-[11px] text-[#68716B] dark:text-neutral-500 shrink-0">
+                                            {new Date(log.created_at).toLocaleTimeString('id-ID', {
+                                                hour: '2-digit',
+                                                minute: '2-digit',
+                                            })}{' '}
+                                            WIB
+                                        </span>
+                                    </li>
+                                ))}
+                            </ul>
+                        )}
+                    </div>
+
+                    {/* Quick Configuration Links */}
+                    <div className="flex flex-col gap-4 rounded-xl border border-[#DDE3DE] bg-[#F3F7F4]/50 p-6 dark:border-neutral-800 dark:bg-neutral-900/50">
+                        <h3 className="text-base font-semibold text-[#171C19] dark:text-white">
+                            Akses Konfigurasi Admin
+                        </h3>
+                        <p className="text-xs text-[#68716B] dark:text-neutral-400">
+                            Kelola data master instansi kewenangan dan kategori karhutla sesuai FR-10 PRD.
+                        </p>
+
+                        <div className="mt-2 flex flex-col gap-2.5">
+                            <Link
+                                href={agenciesIndex()}
+                                className="flex items-center justify-between rounded-lg border border-[#DDE3DE] bg-white p-3.5 text-sm font-medium text-[#171C19] transition hover:border-[#216B49] hover:bg-[#E8F1EB]/30 dark:border-neutral-800 dark:bg-neutral-900 dark:text-white"
+                            >
+                                <div className="flex items-center gap-2.5">
+                                    <Building2 className="size-4 text-[#216B49]" />
+                                    <span>Instansi & OPD Yurisdiksi</span>
+                                </div>
+                                <span className="text-xs text-[#68716B]">&rarr;</span>
+                            </Link>
+
+                            <Link
+                                href={categoriesIndex()}
+                                className="flex items-center justify-between rounded-lg border border-[#DDE3DE] bg-white p-3.5 text-sm font-medium text-[#171C19] transition hover:border-[#216B49] hover:bg-[#E8F1EB]/30 dark:border-neutral-800 dark:bg-neutral-900 dark:text-white"
+                            >
+                                <div className="flex items-center gap-2.5">
+                                    <Flame className="size-4 text-[#216B49]" />
+                                    <span>Kategori Laporan</span>
+                                </div>
+                                <span className="text-xs text-[#68716B]">&rarr;</span>
+                            </Link>
+
+                            <Link
+                                href={auditLogsIndex()}
+                                className="flex items-center justify-between rounded-lg border border-[#DDE3DE] bg-white p-3.5 text-sm font-medium text-[#171C19] transition hover:border-[#216B49] hover:bg-[#E8F1EB]/30 dark:border-neutral-800 dark:bg-neutral-900 dark:text-white"
+                            >
+                                <div className="flex items-center gap-2.5">
+                                    <Shield className="size-4 text-[#216B49]" />
+                                    <span>Audit Trail Lengkap</span>
+                                </div>
+                                <span className="text-xs text-[#68716B]">&rarr;</span>
+                            </Link>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
+        </AppLayout>
     );
 }
