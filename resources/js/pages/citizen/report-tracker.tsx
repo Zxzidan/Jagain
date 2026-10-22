@@ -10,12 +10,8 @@ import {
     Building,
     AlertCircle,
     Send,
-    CheckCircle2,
-    FileText,
-    Info,
     Copy,
     Check,
-    Shield,
 } from 'lucide-react';
 
 interface ReportTrackerProps {
@@ -91,30 +87,30 @@ export default function ReportTracker({ report }: ReportTrackerProps) {
     };
 
     return (
-        <div className="p-4 sm:p-6 lg:p-8 space-y-6 bg-[#F3F7F4] min-h-screen text-[#171C19]">
+        <div className="p-4 sm:p-6 lg:p-8 space-y-6 bg-[#f0eee6] min-h-screen text-[#141413] selection:bg-[#e3dacc] selection:text-[#141413]">
             <Head title={`Pelacakan Laporan ${report.tracking_code} — JAGAIN`} />
 
             {/* Top Navigation Bar */}
-            <div className="bg-white border border-[#DDE3DE] rounded-2xl p-4 sm:px-6 shadow-xs flex items-center justify-between">
+            <div className="bg-[#faf9f5] border border-[#cccbc8] rounded-[24px] p-4 sm:px-6 flex items-center justify-between font-sans">
                 <Link
                     href="/laporan-saya"
-                    className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#174B35] hover:underline"
+                    className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#141413] hover:text-[#d97757] transition-colors"
                 >
                     <ArrowLeft className="size-4" />
-                    Kembali ke Daftar Laporan Saya
+                    <span>Kembali ke Daftar Laporan Saya</span>
                 </Link>
 
                 <div className="flex items-center gap-2">
-                    <span className="text-xs text-[#68716B]">Kode Lacak Warga:</span>
-                    <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#E8F1EB] border border-[#216B49]/20 font-mono text-xs font-bold text-[#174B35]">
+                    <span className="text-xs text-[#87867f]">Kode Lacak Warga:</span>
+                    <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-[6px] bg-[#f0eee6] border border-[#cccbc8] font-mono text-xs font-bold text-[#141413]">
                         <span>{report.tracking_code}</span>
                         <button
                             type="button"
                             onClick={handleCopyCode}
-                            className="p-0.5 hover:text-[#216B49] transition-colors"
+                            className="p-0.5 text-[#87867f] hover:text-[#141413] transition-colors"
                             title="Salin Kode Lacak"
                         >
-                            {copied ? <Check className="size-3 text-[#216B49]" /> : <Copy className="size-3" />}
+                            {copied ? <Check className="size-3 text-[#141413]" /> : <Copy className="size-3" />}
                         </button>
                     </div>
                 </div>
@@ -122,27 +118,27 @@ export default function ReportTracker({ report }: ReportTrackerProps) {
 
             <div className="space-y-6">
                 {/* Header Card */}
-                <div className="bg-white border border-[#DDE3DE] rounded-2xl p-6 sm:p-8 shadow-xs space-y-4">
+                <div className="bg-[#faf9f5] border border-[#cccbc8] rounded-[24px] p-8 space-y-4 font-sans">
                     <div className="flex flex-wrap items-center gap-2">
                         <StatusBadge status={report.report_status} label={report.status_label} />
                         {report.category && (
-                            <span className="text-xs bg-[#F3F7F4] text-[#343B36] px-2.5 py-1 rounded-full border border-[#DDE3DE]">
+                            <span className="text-xs bg-[#f0eee6] text-[#141413] px-2.5 py-1 rounded-[4px] border border-[#cccbc8]">
                                 {report.category.name}
                             </span>
                         )}
                     </div>
 
-                    <h1 className="text-xl sm:text-2xl font-bold text-[#171C19] leading-tight">
+                    <h1 className="text-2xl sm:text-3xl font-serif text-[#141413] leading-tight">
                         {report.title}
                     </h1>
 
-                    <div className="flex flex-wrap items-center gap-4 text-xs text-[#68716B] pt-3 border-t border-[#DDE3DE]">
-                        <div className="flex items-center gap-1.5">
-                            <MapPin className="size-3.5 text-[#216B49]" />
-                            <span className="font-medium text-[#171C19]">{report.regency_city}, {report.province}</span>
+                    <div className="flex flex-wrap items-center gap-5 text-xs text-[#87867f] pt-3 border-t border-[#cccbc8]">
+                        <div className="flex items-center gap-1.5 font-serif">
+                            <MapPin className="size-3.5 text-[#87867f]" />
+                            <span className="font-sans font-semibold text-[#141413]">{report.regency_city}, {report.province}</span>
                         </div>
-                        <div className="flex items-center gap-1.5">
-                            <Clock className="size-3.5 text-[#68716B]" />
+                        <div className="flex items-center gap-1.5 font-mono text-[11px]">
+                            <Clock className="size-3.5 text-[#87867f]" />
                             <span>
                                 Dikirim: {report.created_at ? new Date(report.created_at).toLocaleString('id-ID') : '-'}
                             </span>
@@ -150,31 +146,31 @@ export default function ReportTracker({ report }: ReportTrackerProps) {
                     </div>
                 </div>
 
-                {/* ACTION REQUIRED: If NEEDS_INFORMATION */}
+                {/* ACTION REQUIRED: If NEEDS_INFORMATION (Manilla Featured Card #f5e3c7) */}
                 {report.report_status === 'NEEDS_INFORMATION' && (
-                    <div className="bg-white border-2 border-[#174B35] rounded-2xl p-6 sm:p-8 shadow-sm space-y-5">
-                        <div className="flex items-center gap-2.5 pb-3 border-b border-[#DDE3DE]">
-                            <div className="size-8 rounded-lg bg-[#FFFBEB] text-[#D97706] flex items-center justify-center">
+                    <div className="bg-[#f5e3c7] border border-[#e3dacc] rounded-[24px] p-8 space-y-5 font-sans">
+                        <div className="flex items-center gap-3 pb-3 border-b border-[#e3dacc]">
+                            <div className="size-8 rounded-[6px] bg-[#faf9f5] text-[#d97757] border border-[#cccbc8] flex items-center justify-center">
                                 <AlertCircle className="size-5" />
                             </div>
                             <div>
-                                <h2 className="font-bold text-sm text-[#174B35]">
+                                <h2 className="font-bold text-sm text-[#141413]">
                                     Petugas Membutuhkan Informasi Tambahan untuk Memverifikasi Laporan
                                 </h2>
-                                <p className="text-[11px] text-[#68716B]">Tanggapi catatan di bawah agar laporan dapat diproses segera.</p>
+                                <p className="text-[11px] text-[#87867f] font-serif">Tanggapi catatan di bawah agar laporan dapat diproses segera ke instansi terkait.</p>
                             </div>
                         </div>
 
-                        <div className="bg-[#E8F1EB] p-4 rounded-xl text-xs text-[#174B35] border border-[#216B49]/30 space-y-1">
-                            <strong className="block text-[#174B35] text-[11px] uppercase tracking-wider">Catatan Klarifikasi dari Admin:</strong>
-                            <p className="text-sm font-medium text-[#171C19] italic">
+                        <div className="bg-[#faf9f5] p-5 rounded-[12px] text-xs text-[#141413] border border-[#cccbc8] space-y-1 font-serif">
+                            <strong className="block text-[#141413] text-[11px] font-mono uppercase tracking-wider">Catatan Klarifikasi dari Admin:</strong>
+                            <p className="text-sm font-medium text-[#141413] italic">
                                 "{report.information_requested}"
                             </p>
                         </div>
 
                         <form onSubmit={handleSendInfo} className="space-y-4">
                             <div>
-                                <label className="block text-xs font-semibold text-[#171C19] mb-1.5">
+                                <label className="block text-xs font-semibold text-[#141413] mb-1.5">
                                     Lengkapi Keterangan Tambahan:
                                 </label>
                                 <textarea
@@ -182,18 +178,18 @@ export default function ReportTracker({ report }: ReportTrackerProps) {
                                     value={data.supplementary_info}
                                     onChange={(e) => setData('supplementary_info', e.target.value)}
                                     placeholder="Tuliskan keterangan detail patok lokasi, akses jalan kendaraan pemadam, atau informasi tambahan yang diminta..."
-                                    className="w-full text-xs p-3 rounded-xl border border-[#DDE3DE] focus:outline-none focus:ring-2 focus:ring-[#216B49] bg-white"
+                                    className="w-full text-xs p-3.5 rounded-[8px] border border-[#cccbc8] focus:outline-none focus:ring-1 focus:ring-[#141413] bg-[#faf9f5] font-serif leading-relaxed"
                                     required
                                 />
                                 {errors.supplementary_info && (
-                                    <p className="text-[11px] text-red-600 mt-1">{errors.supplementary_info}</p>
+                                    <p className="text-[11px] text-[#c6613f] mt-1">{errors.supplementary_info}</p>
                                 )}
                             </div>
 
                             <button
                                 type="submit"
                                 disabled={processing}
-                                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#216B49] text-white font-bold text-xs hover:bg-[#174B35] transition-all shadow-xs active:scale-[0.98] disabled:opacity-50"
+                                className="inline-flex items-center gap-2 px-6 py-2.5 rounded-[8px] bg-[#d97757] hover:bg-[#c6613f] text-[#faf9f5] font-semibold text-xs transition-colors disabled:opacity-50"
                             >
                                 <Send className="size-3.5" />
                                 {processing ? 'Mengirim Data...' : 'Kirim Informasi Tambahan'}
@@ -204,20 +200,20 @@ export default function ReportTracker({ report }: ReportTrackerProps) {
 
                 {/* Closed Reason Notice if CLOSED_WITH_REASON */}
                 {report.report_status === 'CLOSED_WITH_REASON' && (
-                    <div className="bg-white border border-[#DDE3DE] rounded-2xl p-6 shadow-xs space-y-2">
-                        <h3 className="font-bold text-sm text-[#171C19]">
+                    <div className="bg-[#faf9f5] border border-[#cccbc8] rounded-[24px] p-6 space-y-2 font-sans">
+                        <h3 className="font-bold text-sm text-[#141413]">
                             Laporan Ditutup dengan Catatan Alasan
                         </h3>
-                        <p className="text-xs text-[#68716B] leading-relaxed">
+                        <p className="font-serif text-xs text-[#87867f] leading-relaxed">
                             Alasan: {report.close_reason || 'Laporan telah ditutup sesuai tinjauan administratif.'}
                         </p>
                     </div>
                 )}
 
                 {/* Ground Fire Condition & Assigned Agency Card */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="bg-white border border-[#DDE3DE] rounded-2xl p-6 shadow-xs space-y-3">
-                        <div className="text-xs font-bold uppercase tracking-wider text-[#174B35]">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 font-sans">
+                    <div className="bg-[#faf9f5] border border-[#cccbc8] rounded-[24px] p-6 space-y-3">
+                        <div className="text-xs font-bold uppercase tracking-wider text-[#141413]">
                             Kondisi Lapangan Terkini
                         </div>
                         <FireConditionBadge
@@ -225,29 +221,29 @@ export default function ReportTracker({ report }: ReportTrackerProps) {
                             source={report.fire_condition_source}
                             observedAt={report.fire_condition_observed_at}
                         />
-                        <p className="text-[11px] text-[#68716B] pt-2 border-t border-[#DDE3DE] leading-relaxed">
+                        <p className="text-[11px] font-serif text-[#87867f] pt-2 border-t border-[#cccbc8] leading-relaxed">
                             Atribut kondisi kebakaran dicatat terpisah dan diverifikasi langsung oleh petugas operasional.
                         </p>
                     </div>
 
-                    <div className="bg-white border border-[#DDE3DE] rounded-2xl p-6 shadow-xs space-y-3">
-                        <div className="text-xs font-bold uppercase tracking-wider text-[#174B35]">
+                    <div className="bg-[#faf9f5] border border-[#cccbc8] rounded-[24px] p-6 space-y-3">
+                        <div className="text-xs font-bold uppercase tracking-wider text-[#141413]">
                             Instansi Penugasan
                         </div>
                         {report.assignments.length > 0 ? (
-                            <div className="bg-[#E8F1EB] p-4 rounded-xl border border-[#216B49]/30 space-y-1">
-                                <div className="font-bold text-sm text-[#174B35]">
+                            <div className="bg-[#e3dacc] p-4 rounded-[12px] border border-[#cccbc8] space-y-1">
+                                <div className="font-bold text-sm text-[#141413]">
                                     {report.assignments[0].agency_name}
                                 </div>
-                                <div className="text-xs text-[#343B36]">
+                                <div className="text-xs text-[#87867f]">
                                     Wilayah: {report.assignments[0].jurisdiction}
                                 </div>
-                                <div className="text-[11px] font-semibold text-[#216B49] pt-1 border-t border-[#216B49]/20">
+                                <div className="text-[11px] font-mono text-[#141413] pt-1.5 border-t border-[#cccbc8]">
                                     Status Tugas: {report.assignments[0].status_label}
                                 </div>
                             </div>
                         ) : (
-                            <div className="bg-[#F3F7F4] p-4 rounded-xl border border-[#DDE3DE] text-xs text-[#68716B] leading-relaxed">
+                            <div className="bg-[#f0eee6] p-4 rounded-[12px] border border-[#cccbc8] text-xs font-serif text-[#87867f] leading-relaxed">
                                 Laporan sedang dalam tahap pemeriksaan administratif admin sebelum ditugaskan ke OPD.
                             </div>
                         )}
@@ -255,28 +251,28 @@ export default function ReportTracker({ report }: ReportTrackerProps) {
                 </div>
 
                 {/* Chronology & Operational Updates */}
-                <div className="bg-white border border-[#DDE3DE] rounded-2xl p-6 sm:p-8 shadow-xs space-y-6">
-                    <div className="flex items-center justify-between pb-3 border-b border-[#DDE3DE]">
-                        <h2 className="text-xs font-bold text-[#171C19] uppercase tracking-wider flex items-center gap-2">
-                            <Clock className="size-4 text-[#216B49]" />
+                <div className="bg-[#faf9f5] border border-[#cccbc8] rounded-[24px] p-8 space-y-6 font-sans">
+                    <div className="flex items-center justify-between pb-3 border-b border-[#cccbc8]">
+                        <h2 className="text-xs font-bold text-[#141413] uppercase tracking-wider flex items-center gap-2">
+                            <Clock className="size-4 text-[#87867f]" />
                             Kronologi Perjalanan Laporan & Respon OPD
                         </h2>
-                        <span className="text-[11px] text-[#68716B] font-mono">Riwayat Nyata</span>
+                        <span className="text-[11px] text-[#87867f] font-mono">Riwayat Nyata</span>
                     </div>
 
-                    <div className="relative pl-6 space-y-6 before:absolute before:left-2 before:top-2 before:bottom-2 before:w-0.5 before:bg-[#DDE3DE]">
+                    <div className="relative pl-6 space-y-6 before:absolute before:left-2 before:top-2 before:bottom-2 before:w-0.5 before:bg-[#cccbc8]">
                         {report.status_history.map((hist) => (
                             <div key={hist.id} className="relative">
-                                <span className="absolute -left-6 top-1 size-4 rounded-full bg-[#216B49] border-2 border-white ring-2 ring-[#E8F1EB]" />
+                                <span className="absolute -left-6 top-1.5 size-3.5 rounded-full bg-[#141413] border-2 border-[#faf9f5]" />
                                 <div className="space-y-1">
                                     <div className="flex items-center gap-2 flex-wrap">
                                         <StatusBadge status={hist.to_status} size="sm" />
-                                        <span className="text-[11px] font-mono text-[#68716B]">
+                                        <span className="text-[11px] font-mono text-[#87867f]">
                                             {hist.created_at ? new Date(hist.created_at).toLocaleString('id-ID') : ''}
                                         </span>
                                     </div>
                                     {hist.note && (
-                                        <p className="text-xs text-[#343B36] bg-[#F3F7F4] p-3 rounded-xl border border-[#DDE3DE] mt-1">
+                                        <p className="text-xs font-serif text-[#141413] bg-[#f0eee6] p-3 rounded-[8px] border border-[#cccbc8] mt-1.5 leading-relaxed">
                                             {hist.note}
                                         </p>
                                     )}
@@ -287,9 +283,9 @@ export default function ReportTracker({ report }: ReportTrackerProps) {
 
                     {/* Operational Updates from OPD */}
                     {report.assignments.some((a) => a.operational_updates.length > 0) && (
-                        <div className="mt-8 pt-6 border-t border-[#DDE3DE] space-y-4">
-                            <h3 className="text-xs font-bold text-[#171C19] uppercase tracking-wider flex items-center gap-2">
-                                <Building className="size-4 text-[#174B35]" />
+                        <div className="mt-8 pt-6 border-t border-[#cccbc8] space-y-4">
+                            <h3 className="text-xs font-bold text-[#141413] uppercase tracking-wider flex items-center gap-2">
+                                <Building className="size-4 text-[#87867f]" />
                                 Catatan Progres Tindak Lanjut dari Petugas Lapangan
                             </h3>
                             <div className="space-y-3">
@@ -297,15 +293,15 @@ export default function ReportTracker({ report }: ReportTrackerProps) {
                                     assignment.operational_updates.map((update) => (
                                         <div
                                             key={update.id}
-                                            className="bg-[#E8F1EB]/60 border border-[#216B49]/30 rounded-xl p-4 text-xs space-y-1.5"
+                                            className="bg-[#e3dacc]/60 border border-[#cccbc8] rounded-[12px] p-4 text-xs space-y-1.5"
                                         >
-                                            <div className="flex items-center justify-between text-[11px] text-[#174B35] font-bold">
+                                            <div className="flex items-center justify-between text-[11px] text-[#141413] font-bold">
                                                 <span>Jenis Tindakan: {update.update_type}</span>
-                                                <span className="font-mono">
+                                                <span className="font-mono text-[#87867f]">
                                                     {update.created_at ? new Date(update.created_at).toLocaleString('id-ID') : ''}
                                                 </span>
                                             </div>
-                                            <p className="text-[#171C19] text-xs leading-relaxed">{update.note}</p>
+                                            <p className="text-[#141413] font-serif text-xs leading-relaxed">{update.note}</p>
                                         </div>
                                     ))
                                 )}
@@ -315,11 +311,11 @@ export default function ReportTracker({ report }: ReportTrackerProps) {
                 </div>
 
                 {/* Location Map */}
-                <div className="bg-white border border-[#DDE3DE] rounded-2xl p-6 sm:p-8 shadow-xs space-y-3">
-                    <h3 className="text-xs font-bold text-[#171C19] uppercase tracking-wider">
+                <div className="bg-[#faf9f5] border border-[#cccbc8] rounded-[24px] p-8 space-y-4 font-sans">
+                    <h3 className="text-xs font-bold text-[#141413] uppercase tracking-wider">
                         Peta Posisi Kejadian Terlapor
                     </h3>
-                    <div className="border border-[#DDE3DE] rounded-xl overflow-hidden">
+                    <div className="border border-[#cccbc8] rounded-[16px] overflow-hidden">
                         <KarhutlaMap
                             reports={[
                                 {

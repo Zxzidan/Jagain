@@ -5,12 +5,9 @@ import {
     FileText,
     Clock,
     CheckCircle2,
-    Send,
     ArrowRight,
-    ShieldCheck,
-    AlertCircle,
     Activity,
-    Layers,
+    MapPin,
 } from 'lucide-react';
 
 interface OpdDashboardProps {
@@ -46,185 +43,152 @@ interface OpdDashboardProps {
 export default function OpdDashboard({ agency, statusCounts, pendingTasks }: OpdDashboardProps) {
     const totalActive = statusCounts.assigned + statusCounts.received + statusCounts.in_progress;
 
+    const opdStages = [
+        { key: 'ASSIGNED', label: 'Penugasan Baru', count: statusCounts.assigned, color: 'text-[#d97757]' },
+        { key: 'RECEIVED_BY_AGENCY', label: 'Telah Diterima', count: statusCounts.received, color: 'text-[#141413]' },
+        { key: 'IN_PROGRESS', label: 'Sedang Ditangani', count: statusCounts.in_progress, color: 'text-[#141413]' },
+        { key: 'SUBMITTED_FOR_REVIEW', label: 'Diajukan Review', count: statusCounts.submitted_for_review, color: 'text-[#141413]' },
+        { key: 'COMPLETED', label: 'Selesai Terverifikasi', count: statusCounts.completed, color: 'text-[#87867f]' },
+    ];
+
     return (
-        <div className="p-4 sm:p-6 lg:p-8 space-y-8 bg-[#F3F7F4] min-h-screen text-[#171C19]">
+        <div className="min-h-screen bg-[#f0eee6] text-[#141413] p-4 sm:p-6 lg:p-8 space-y-6">
             <Head title={`Pusat Operasional ${agency.code} — JAGAIN`} />
 
-            {/* OPD Header Card */}
-            <div className="bg-white border border-[#DDE3DE] rounded-2xl p-6 sm:p-8 shadow-xs">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                    <div className="space-y-1">
-                        <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#174B35] text-white text-[10px] font-bold tracking-wider uppercase">
-                            <Activity className="size-3" />
-                            Pusat Komando Operasional Lapangan
-                        </div>
-                        <h1 className="text-xl sm:text-2xl font-bold text-[#171C19] flex items-center gap-2">
-                            <Building className="size-5 text-[#174B35]" />
-                            {agency.name}
-                        </h1>
-                        <p className="text-xs text-[#68716B]">
-                            Wilayah Kewenangan: <strong className="text-[#171C19]">{agency.jurisdiction}</strong> • Kode Registrasi: <span className="font-mono font-bold text-[#174B35]">{agency.code}</span>
-                        </p>
+            {/* Operational Header */}
+            <div className="border-b border-[#cccbc8] pb-5 flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+                <div className="space-y-1">
+                    <div className="inline-flex items-center gap-2 text-[11px] font-mono tracking-wider uppercase text-[#87867f]">
+                        <Activity className="size-3.5 text-[#141413]" />
+                        <span>Posko Operasional Penanganan Lapangan</span>
                     </div>
+                    <h1 className="text-2xl sm:text-3xl font-serif font-normal text-[#141413] flex items-center gap-2.5">
+                        <Building className="size-6 text-[#141413]" />
+                        {agency.name}
+                    </h1>
+                    <p className="text-sm font-sans text-[#87867f]">
+                        Yurisdiksi Operasional: <strong className="text-[#141413] font-medium">{agency.jurisdiction}</strong> • Kode Instansi: <span className="font-mono font-bold text-[#141413]">{agency.code}</span>
+                    </p>
+                </div>
 
-                    <div className="flex items-center gap-3">
-                        <Link
-                            href="/opd/tugas"
-                            className="inline-flex items-center gap-2 px-4 py-2.5 text-xs font-bold bg-[#216B49] text-white rounded-xl hover:bg-[#174B35] transition-all shadow-xs active:scale-[0.98]"
-                        >
-                            <FileText className="size-3.5" />
-                            Daftar Seluruh Penugasan
-                        </Link>
+                <div className="flex items-center gap-3 self-start sm:self-center">
+                    <Link
+                        href="/opd/tugas"
+                        className="inline-flex items-center gap-2 px-4 py-2 text-xs font-sans font-medium bg-[#141413] text-[#faf9f5] rounded-lg hover:bg-[#3d3d3a] transition-colors"
+                    >
+                        <FileText className="size-3.5" />
+                        <span>Daftar Seluruh Penugasan</span>
+                    </Link>
+                </div>
+            </div>
+
+            {/* Status Ribbon & Ledger */}
+            <div className="space-y-2">
+                <div className="flex items-center justify-between text-xs">
+                    <span className="font-sans font-semibold uppercase tracking-wider text-[#87867f] text-[11px]">
+                        Distribusi Beban Penanganan Lapangan
+                    </span>
+                    <span className="text-[11px] font-sans font-medium text-[#141413]">
+                        {totalActive} Tugas Aktif Butuh Tindakan
+                    </span>
+                </div>
+
+                <div className="border border-[#cccbc8] rounded-2xl overflow-hidden bg-[#faf9f5]">
+                    <div className="grid grid-cols-2 sm:grid-cols-5 divide-x divide-y sm:divide-y-0 divide-[#cccbc8] text-xs">
+                        {opdStages.map((st) => (
+                            <Link
+                                key={st.key}
+                                href={`/opd/tugas?status=${st.key}`}
+                                className="p-4 hover:bg-[#e3dacc]/40 transition-colors block group"
+                            >
+                                <div className="text-[11px] font-sans text-[#87867f] font-normal truncate mb-1">
+                                    {st.label}
+                                </div>
+                                <div className={`font-mono text-2xl font-bold tabular-nums ${st.color}`}>
+                                    {st.count}
+                                </div>
+                                <div className="text-[10px] font-mono text-[#87867f] group-hover:text-[#141413] mt-1">
+                                    {st.key}
+                                </div>
+                            </Link>
+                        ))}
                     </div>
                 </div>
             </div>
 
-            <div className="space-y-8">
-                {/* Status Counters */}
-                <div>
-                    <div className="flex items-center justify-between mb-3">
-                        <h2 className="text-xs font-bold uppercase tracking-wider text-[#68716B]">
-                            Status Beban Penanganan Lapangan
+            {/* Action Tasks Queue */}
+            <div className="border border-[#cccbc8] rounded-2xl overflow-hidden bg-[#faf9f5]">
+                <div className="p-4 bg-[#e3dacc]/40 border-b border-[#cccbc8] flex items-center justify-between">
+                    <div>
+                        <h2 className="text-xs font-sans font-semibold uppercase tracking-wider text-[#141413] flex items-center gap-2">
+                            <Clock className="size-3.5 text-[#141413]" />
+                            Antrean Tugas Lapangan Butuh Tindakan ({pendingTasks.length})
                         </h2>
-                        <span className="text-xs text-[#174B35] font-semibold">
-                            Total {totalActive} Tugas Aktif Butuh Tindakan
-                        </span>
+                        <span className="text-xs font-serif text-[#87867f]">Konfirmasi penerimaan penugasan dan perbarui linimasa progres penanganan.</span>
                     </div>
 
-                    <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
-                        <Link
-                            href="/opd/tugas?status=ASSIGNED"
-                            className="bg-white border border-[#DDE3DE] hover:border-[#174B35] p-5 rounded-2xl shadow-xs transition-all space-y-1 block"
-                        >
-                            <div className="text-xs text-[#68716B]">Penugasan Baru</div>
-                            <div className="text-3xl font-bold text-[#171C19]">{statusCounts.assigned}</div>
-                            <span className="inline-block text-[11px] font-bold text-[#D97706] bg-[#FEF3C7] px-2 py-0.5 rounded-full">
-                                Perlu Respon
-                            </span>
-                        </Link>
-
-                        <Link
-                            href="/opd/tugas?status=RECEIVED_BY_AGENCY"
-                            className="bg-white border border-[#DDE3DE] hover:border-[#216B49] p-5 rounded-2xl shadow-xs transition-all space-y-1 block"
-                        >
-                            <div className="text-xs text-[#68716B]">Telah Diterima</div>
-                            <div className="text-3xl font-bold text-[#174B35]">{statusCounts.received}</div>
-                            <span className="inline-block text-[11px] font-bold text-[#174B35] bg-[#E8F1EB] px-2 py-0.5 rounded-full">
-                                Siap Berangkat
-                            </span>
-                        </Link>
-
-                        <Link
-                            href="/opd/tugas?status=IN_PROGRESS"
-                            className="bg-white border border-[#DDE3DE] hover:border-[#216B49] p-5 rounded-2xl shadow-xs transition-all space-y-1 block"
-                        >
-                            <div className="text-xs text-[#68716B]">Sedang Ditangani</div>
-                            <div className="text-3xl font-bold text-[#216B49]">{statusCounts.in_progress}</div>
-                            <span className="inline-block text-[11px] font-bold text-white bg-[#216B49] px-2 py-0.5 rounded-full">
-                                Tim di Lokasi
-                            </span>
-                        </Link>
-
-                        <Link
-                            href="/opd/tugas?status=SUBMITTED_FOR_REVIEW"
-                            className="bg-white border border-[#DDE3DE] hover:border-[#39845C] p-5 rounded-2xl shadow-xs transition-all space-y-1 block"
-                        >
-                            <div className="text-xs text-[#68716B]">Diajukan Review</div>
-                            <div className="text-3xl font-bold text-[#171C19]">{statusCounts.submitted_for_review}</div>
-                            <span className="inline-block text-[11px] font-bold text-[#68716B] bg-[#F3F7F4] px-2 py-0.5 rounded-full">
-                                Menunggu Verifikasi
-                            </span>
-                        </Link>
-
-                        <Link
-                            href="/opd/tugas?status=COMPLETED"
-                            className="bg-white border border-[#DDE3DE] hover:border-[#174B35] p-5 rounded-2xl shadow-xs transition-all space-y-1 block"
-                        >
-                            <div className="text-xs text-[#68716B]">Tuntas Terverifikasi</div>
-                            <div className="text-3xl font-bold text-[#174B35]">{statusCounts.completed}</div>
-                            <span className="inline-block text-[11px] font-bold text-[#174B35] bg-[#E8F1EB] px-2 py-0.5 rounded-full">
-                                Selesai
-                            </span>
-                        </Link>
-                    </div>
+                    <Link href="/opd/tugas" className="text-xs font-sans font-medium text-[#141413] hover:text-[#d97757] transition-colors">
+                        Lihat Seluruh Penugasan →
+                    </Link>
                 </div>
 
-                {/* Priority Action Tasks Table */}
-                <div className="bg-white border border-[#DDE3DE] rounded-2xl p-6 sm:p-8 shadow-xs space-y-6">
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-[#DDE3DE]">
-                        <div>
-                            <h2 className="text-sm font-bold text-[#171C19] uppercase tracking-wider flex items-center gap-2">
-                                <Clock className="size-4 text-[#216B49]" />
-                                Antrean Tindak Lanjut Tugas Aktif ({pendingTasks.length})
-                            </h2>
-                            <p className="text-xs text-[#68716B] mt-0.5">
-                                Segera konfirmasi penerimaan penugasan baru dan catat progres lapangan berkala (Gantt timeline & bukti penanganan).
-                            </p>
-                        </div>
-
-                        <Link href="/opd/tugas" className="text-xs font-bold text-[#216B49] hover:underline">
-                            Lihat Seluruh Penugasan &rarr;
-                        </Link>
+                {pendingTasks.length === 0 ? (
+                    <div className="py-14 text-center text-[#87867f] space-y-2">
+                        <CheckCircle2 className="size-8 text-[#141413] mx-auto opacity-40" />
+                        <div className="text-sm font-serif font-medium text-[#141413]">Semua Tugas Telah Ditangani</div>
+                        <p className="text-xs font-sans max-w-sm mx-auto">
+                            Tidak ada penugasan baru atau penanganan berjalan yang tertunda untuk instansi Anda saat ini.
+                        </p>
                     </div>
-
-                    {pendingTasks.length === 0 ? (
-                        <div className="py-12 text-center text-[#68716B] space-y-2">
-                            <CheckCircle2 className="size-10 text-[#216B49] mx-auto" />
-                            <div className="text-sm font-bold text-[#171C19]">Semua Tugas Telah Ditangani</div>
-                            <p className="text-xs max-w-sm mx-auto">
-                                Tidak ada penugasan baru atau penanganan berjalan yang tertunda untuk instansi Anda saat ini.
-                            </p>
-                        </div>
-                    ) : (
-                        <div className="space-y-3">
-                            {pendingTasks.map((asg) => (
-                                <div
-                                    key={asg.id}
-                                    className="p-5 rounded-xl border border-[#DDE3DE] hover:border-[#216B49] transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-[#F3F7F4]/40"
-                                >
-                                    <div className="space-y-2 flex-1">
-                                        <div className="flex flex-wrap items-center gap-2">
-                                            <span className="font-mono text-xs font-bold px-2 py-0.5 rounded bg-white text-[#171C19] border border-[#DDE3DE]">
-                                                {asg.report.tracking_code}
+                ) : (
+                    <div className="divide-y divide-[#cccbc8]/60 text-xs">
+                        {pendingTasks.map((asg) => (
+                            <div
+                                key={asg.id}
+                                className="p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-[#f0eee6]/60 transition-colors"
+                            >
+                                <div className="space-y-1.5 flex-1 min-w-0">
+                                    <div className="flex flex-wrap items-center gap-2">
+                                        <span className="font-mono text-[10px] font-medium px-2 py-0.5 rounded bg-[#e3dacc]/70 text-[#141413] border border-[#cccbc8]">
+                                            {asg.report.tracking_code}
+                                        </span>
+                                        <StatusBadge status={asg.assignment_status} size="sm" />
+                                        {asg.report.category && (
+                                            <span className="text-[10px] font-sans bg-[#faf9f5] px-2 py-0.5 rounded border border-[#cccbc8] text-[#87867f]">
+                                                {asg.report.category.name}
                                             </span>
-                                            <StatusBadge status={asg.assignment_status} size="sm" />
-                                            {asg.report.category && (
-                                                <span className="text-[10px] bg-white px-2 py-0.5 rounded-full border border-[#DDE3DE] text-[#343B36]">
-                                                    {asg.report.category.name}
-                                                </span>
-                                            )}
-                                        </div>
-
-                                        <h3 className="font-bold text-sm text-[#171C19]">
-                                            {asg.report.title}
-                                        </h3>
-
-                                        <div className="text-xs text-[#68716B] flex items-center gap-4 flex-wrap">
-                                            <div className="flex items-center gap-1">
-                                                <Building className="size-3 text-[#216B49]" />
-                                                <span>{asg.report.regency_city}, {asg.report.province}</span>
-                                            </div>
-                                            <div className="flex items-center gap-1 font-mono text-[11px]">
-                                                <Clock className="size-3" />
-                                                <span>Ditugaskan: {new Date(asg.assigned_at).toLocaleString('id-ID')}</span>
-                                            </div>
-                                        </div>
+                                        )}
                                     </div>
 
-                                    <div className="shrink-0 flex items-center gap-2">
-                                        <Link
-                                            href={`/opd/tugas/${asg.id}`}
-                                            className="px-4 py-2.5 bg-[#216B49] hover:bg-[#174B35] text-white font-bold rounded-xl text-xs transition-all shadow-xs flex items-center gap-1.5 active:scale-[0.98]"
-                                        >
-                                            Buka Tindak Lanjut
-                                            <ArrowRight className="size-3.5" />
-                                        </Link>
+                                    <h3 className="font-serif font-semibold text-base text-[#141413] truncate">
+                                        {asg.report.title}
+                                    </h3>
+
+                                    <div className="text-xs font-sans text-[#87867f] flex items-center gap-4 flex-wrap">
+                                        <div className="flex items-center gap-1.5">
+                                            <MapPin className="size-3.5 text-[#141413]" />
+                                            <span>{asg.report.regency_city}, {asg.report.province}</span>
+                                        </div>
+                                        <div className="flex items-center gap-1.5 font-mono text-[11px]">
+                                            <Clock className="size-3.5" />
+                                            <span>Ditugaskan: {new Date(asg.assigned_at).toLocaleString('id-ID')}</span>
+                                        </div>
                                     </div>
                                 </div>
-                            ))}
-                        </div>
-                    )}
-                </div>
+
+                                <div className="shrink-0 flex items-center gap-2">
+                                    <Link
+                                        href={`/opd/tugas/${asg.id}`}
+                                        className="px-4 py-2 bg-[#d97757] hover:bg-[#c6613f] text-[#faf9f5] font-sans font-medium rounded-lg text-xs transition-colors flex items-center gap-1.5"
+                                    >
+                                        <span>Buka Tindak Lanjut</span>
+                                        <ArrowRight className="size-3.5" />
+                                    </Link>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                )}
             </div>
         </div>
     );

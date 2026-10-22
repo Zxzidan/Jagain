@@ -15,6 +15,7 @@ import {
     Send,
     Shield,
     FileText,
+    AlertCircle,
 } from 'lucide-react';
 
 interface AssignmentShowProps {
@@ -111,21 +112,21 @@ export default function OpdAssignmentShow({
     };
 
     return (
-        <div className="p-4 sm:p-6 lg:p-8 space-y-6 bg-[#F3F7F4] min-h-screen text-[#171C19]">
+        <div className="min-h-screen bg-[#f0eee6] text-[#141413] p-4 sm:p-6 lg:p-8 space-y-6">
             <Head title={`Tugas ${report.tracking_code} — ${assignment.agency.code}`} />
 
             {/* Top Navigation Bar */}
-            <div className="bg-white border border-[#DDE3DE] rounded-2xl p-4 sm:px-6 shadow-xs flex items-center justify-between">
+            <div className="bg-[#faf9f5] border border-[#cccbc8] rounded-2xl p-4 sm:px-6 flex items-center justify-between">
                 <Link
                     href="/opd/tugas"
-                    className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#174B35] hover:underline"
+                    className="inline-flex items-center gap-1.5 text-xs font-sans font-medium text-[#141413] hover:text-[#d97757] transition-colors"
                 >
                     <ArrowLeft className="size-4" />
-                    Kembali ke Daftar Tugas OPD
+                    <span>Kembali ke Daftar Tugas OPD</span>
                 </Link>
                 <div className="flex items-center gap-2">
-                    <span className="text-xs text-[#68716B]">Kode Laporan:</span>
-                    <span className="font-mono text-xs font-bold px-2 py-0.5 rounded bg-[#E8F1EB] text-[#174B35] border border-[#216B49]/20">
+                    <span className="text-xs font-sans text-[#87867f]">Kode Laporan:</span>
+                    <span className="font-mono text-xs font-medium px-2 py-0.5 rounded bg-[#e3dacc]/70 text-[#141413] border border-[#cccbc8]">
                         {report.tracking_code}
                     </span>
                 </div>
@@ -133,86 +134,88 @@ export default function OpdAssignmentShow({
 
             <div className="space-y-6">
                 {/* Header Card */}
-                <div className="bg-white border border-[#DDE3DE] rounded-xl p-6 shadow-xs space-y-3">
+                <div className="bg-[#faf9f5] border border-[#cccbc8] rounded-2xl p-6 sm:p-8 space-y-4">
                     <div className="flex flex-wrap items-center justify-between gap-2">
                         <div className="flex items-center gap-2">
                             <StatusBadge status={assignment.assignment_status} />
                             {report.category && (
-                                <span className="text-xs bg-[#F3F7F4] text-[#343B36] px-2.5 py-1 rounded-full border border-[#DDE3DE]">
+                                <span className="text-xs font-sans bg-[#e3dacc]/40 text-[#141413] px-2.5 py-0.5 rounded border border-[#cccbc8]">
                                     {report.category.name}
                                 </span>
                             )}
                         </div>
-                        <span className="text-xs text-[#68716B]">
-                            Waktu Tugas: {new Date(assignment.assigned_at).toLocaleString('id-ID')}
+                        <span className="text-xs font-mono text-[#87867f]">
+                            Ditugaskan: {new Date(assignment.assigned_at).toLocaleString('id-ID')}
                         </span>
                     </div>
 
-                    <h1 className="text-2xl font-bold text-[#171C19]">{report.title}</h1>
+                    <h1 className="text-2xl sm:text-3xl font-serif font-normal text-[#141413] leading-snug">
+                        {report.title}
+                    </h1>
 
-                    <p className="text-xs text-[#343B36] whitespace-pre-line leading-relaxed">
+                    <p className="text-sm font-serif text-[#141413]/90 whitespace-pre-line leading-relaxed">
                         {report.description}
                     </p>
 
-                    <div className="bg-[#F3F7F4] p-3 rounded-lg border border-[#DDE3DE] text-xs space-y-1">
-                        <div className="font-semibold text-[#171C19]">Petunjuk Lokasi Khusus:</div>
-                        <div className="text-[#68716B]">{report.location_description}</div>
-                        <div className="text-[11px] text-[#68716B]">
+                    <div className="bg-[#f0eee6] p-4 rounded-xl border border-[#cccbc8] text-xs space-y-1">
+                        <div className="font-sans font-semibold text-[#141413]">Petunjuk Lokasi Khusus:</div>
+                        <div className="text-[#87867f] font-sans">{report.location_description}</div>
+                        <div className="text-[11px] font-mono text-[#87867f] pt-1">
                             {report.regency_city}, {report.province} (Koordinat: {report.latitude}, {report.longitude})
                         </div>
                     </div>
 
                     {assignment.notes && (
-                        <div className="bg-[#E8F1EB] p-3 rounded-lg border border-[#216B49]/30 text-xs text-[#174B35]">
-                            <strong>Instruksi Khusus dari Administrator:</strong>
-                            <p className="mt-0.5">{assignment.notes}</p>
+                        <div className="bg-[#f5e3c7]/60 p-4 rounded-xl border border-[#cccbc8] text-xs text-[#141413] font-sans">
+                            <strong className="font-semibold block mb-0.5">Instruksi Khusus dari Administrator:</strong>
+                            <p className="leading-relaxed">{assignment.notes}</p>
                         </div>
                     )}
                 </div>
 
                 {/* ACTION 1: Terima / Tolak Penugasan (Only if ASSIGNED) */}
                 {isAssigned && (
-                    <div className="bg-white border-2 border-[#216B49] rounded-xl p-6 shadow-xs space-y-4">
-                        <div className="border-b border-[#DDE3DE] pb-2">
-                            <h2 className="text-sm font-bold text-[#171C19] uppercase tracking-wider flex items-center gap-2">
-                                <Building className="size-4 text-[#216B49]" />
+                    <div className="bg-[#f5e3c7]/70 border border-[#cccbc8] rounded-2xl p-6 space-y-4">
+                        <div className="border-b border-[#cccbc8] pb-3">
+                            <h2 className="text-sm font-sans font-semibold text-[#141413] uppercase tracking-wider flex items-center gap-2">
+                                <Building className="size-4 text-[#141413]" />
                                 Konfirmasi Respon Penugasan Lapangan
                             </h2>
-                            <p className="text-xs text-[#68716B] mt-0.5">
-                                Instansi {assignment.agency.name} wajib mengonfirmasi penerimaan tugas sebelum melakukan tindakan operasional
+                            <p className="text-xs font-sans text-[#87867f] mt-1">
+                                Instansi {assignment.agency.name} wajib mengonfirmasi penerimaan tugas sebelum melakukan tindakan operasional di lapangan.
                             </p>
                         </div>
 
                         <form onSubmit={handleRespond} className="space-y-4">
-                            <div className="flex items-center gap-4 text-xs font-semibold">
-                                <label className="flex items-center gap-2 cursor-pointer">
+                            <div className="flex items-center gap-6 text-xs font-sans">
+                                <label className="flex items-center gap-2 cursor-pointer font-medium text-[#141413]">
                                     <input
                                         type="radio"
                                         name="response_type"
                                         value="ACCEPT"
                                         checked={responseForm.data.response_type === 'ACCEPT'}
                                         onChange={() => responseForm.setData('response_type', 'ACCEPT')}
-                                        className="text-[#216B49] focus:ring-[#216B49]"
+                                        className="text-[#141413] focus:ring-[#141413]"
                                     />
-                                    <span className="text-[#174B35]">Terima Penugasan & Luncurkan Regu</span>
+                                    <span>Terima Penugasan & Luncurkan Regu</span>
                                 </label>
 
-                                <label className="flex items-center gap-2 cursor-pointer">
+                                <label className="flex items-center gap-2 cursor-pointer font-medium text-[#141413]">
                                     <input
                                         type="radio"
                                         name="response_type"
                                         value="DECLINE"
                                         checked={responseForm.data.response_type === 'DECLINE'}
                                         onChange={() => responseForm.setData('response_type', 'DECLINE')}
-                                        className="text-red-700 focus:ring-red-700"
+                                        className="text-[#141413] focus:ring-[#141413]"
                                     />
-                                    <span className="text-red-700">Tolak Penugasan (Wajib Alasan)</span>
+                                    <span>Tolak Penugasan (Wajib Alasan)</span>
                                 </label>
                             </div>
 
                             {responseForm.data.response_type === 'DECLINE' && (
-                                <div>
-                                    <label className="block text-xs font-semibold text-[#171C19] mb-1">
+                                <div className="space-y-1">
+                                    <label className="block text-xs font-sans font-medium text-[#141413]">
                                         Alasan Penolakan Penugasan (Wajib):
                                     </label>
                                     <textarea
@@ -220,11 +223,11 @@ export default function OpdAssignmentShow({
                                         value={responseForm.data.decline_reason}
                                         onChange={(e) => responseForm.setData('decline_reason', e.target.value)}
                                         placeholder="Contoh: Lokasi berada di luar batas wilayah kewenangan administratif kami, atau seluruh regu sedang terkonsentrasi di kebakaran status darurat..."
-                                        className="w-full text-xs p-2.5 rounded-lg border border-[#DDE3DE]"
+                                        className="w-full text-xs p-3 rounded-xl border border-[#cccbc8] bg-[#faf9f5] font-sans focus:outline-none focus:border-[#141413]"
                                         required
                                     />
                                     {responseForm.errors.decline_reason && (
-                                        <p className="text-[11px] text-red-600 mt-1">{responseForm.errors.decline_reason}</p>
+                                        <p className="text-[11px] text-[#d97757] mt-1">{responseForm.errors.decline_reason}</p>
                                     )}
                                 </div>
                             )}
@@ -232,10 +235,10 @@ export default function OpdAssignmentShow({
                             <button
                                 type="submit"
                                 disabled={responseForm.processing}
-                                className={`px-5 py-2.5 text-xs font-semibold text-white rounded-lg transition-colors ${
+                                className={`px-5 py-2.5 text-xs font-sans font-medium rounded-lg transition-colors ${
                                     responseForm.data.response_type === 'ACCEPT'
-                                        ? 'bg-[#216B49] hover:bg-[#174B35]'
-                                        : 'bg-red-700 hover:bg-red-800'
+                                        ? 'bg-[#d97757] hover:bg-[#c6613f] text-[#faf9f5]'
+                                        : 'bg-[#141413] hover:bg-[#3d3d3a] text-[#faf9f5]'
                                 }`}
                             >
                                 {responseForm.processing
@@ -250,38 +253,38 @@ export default function OpdAssignmentShow({
 
                 {/* If DECLINED */}
                 {assignment.assignment_status === 'DECLINED_BY_AGENCY' && (
-                    <div className="bg-white border border-[#DDE3DE] rounded-xl p-5 text-xs space-y-1">
-                        <div className="font-bold text-red-700">Penugasan Ditolak oleh Instansi</div>
-                        <p className="text-[#343B36]">Alasan: {assignment.decline_reason}</p>
+                    <div className="bg-[#faf9f5] border border-[#cccbc8] rounded-2xl p-5 text-xs space-y-1">
+                        <div className="font-sans font-medium text-[#d97757]">Penugasan Ditolak oleh Instansi</div>
+                        <p className="font-sans text-[#87867f]">Alasan: {assignment.decline_reason}</p>
                     </div>
                 )}
 
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     {/* Left 2 Cols: Progress Updates and Review Form */}
                     <div className="lg:col-span-2 space-y-6">
                         {/* ACTION 2: Tambah Progres Operasional Lapangan (If handling) */}
                         {isHandling && (
-                            <div className="bg-white border border-[#DDE3DE] rounded-xl p-6 shadow-xs space-y-4">
-                                <div className="border-b border-[#DDE3DE] pb-2">
-                                    <h2 className="text-sm font-bold text-[#171C19] uppercase tracking-wider flex items-center gap-2">
-                                        <Clock className="size-4 text-[#216B49]" />
+                            <div className="bg-[#faf9f5] border border-[#cccbc8] rounded-2xl p-6 space-y-4">
+                                <div className="border-b border-[#cccbc8] pb-3">
+                                    <h2 className="text-sm font-sans font-semibold text-[#141413] uppercase tracking-wider flex items-center gap-2">
+                                        <Clock className="size-4 text-[#141413]" />
                                         Catat Perkembangan Operasional Lapangan
                                     </h2>
-                                    <p className="text-xs text-[#68716B] mt-0.5">
-                                        Catatan ini akan otomatis masuk ke kronologi pelacakan publik
+                                    <p className="text-xs font-sans text-[#87867f] mt-1">
+                                        Catatan ini akan otomatis masuk ke kronologi pelacakan publik secara transparan.
                                     </p>
                                 </div>
 
                                 <form onSubmit={handleUpdateProgress} className="space-y-4">
                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                         <div>
-                                            <label className="block text-xs font-semibold text-[#171C19] mb-1">
+                                            <label className="block text-xs font-sans font-medium text-[#141413] mb-1">
                                                 Jenis Tindakan Operasional:
                                             </label>
                                             <select
                                                 value={progressForm.data.update_type}
                                                 onChange={(e) => progressForm.setData('update_type', e.target.value)}
-                                                className="w-full text-xs p-2.5 rounded-lg border border-[#DDE3DE] bg-white text-[#171C19]"
+                                                className="w-full text-xs p-2.5 rounded-lg border border-[#cccbc8] bg-[#faf9f5] text-[#141413] font-sans focus:outline-none focus:border-[#141413]"
                                             >
                                                 <option value="PATROL">Patroli Pengecekan Lokasi (Ground Check)</option>
                                                 <option value="CONTAINMENT">Penyekatan / Pembuatan Sekat Bakar</option>
@@ -292,7 +295,7 @@ export default function OpdAssignmentShow({
                                         </div>
 
                                         <div>
-                                            <label className="block text-xs font-semibold text-[#171C19] mb-1">
+                                            <label className="block text-xs font-sans font-medium text-[#141413] mb-1">
                                                 Hasil Observasi Fisik Api (Ground Check):
                                             </label>
                                             <select
@@ -300,9 +303,9 @@ export default function OpdAssignmentShow({
                                                 onChange={(e) =>
                                                     progressForm.setData('fire_condition_observed', e.target.value)
                                                 }
-                                                className="w-full text-xs p-2.5 rounded-lg border border-[#DDE3DE] bg-white text-[#171C19]"
+                                                className="w-full text-xs p-2.5 rounded-lg border border-[#cccbc8] bg-[#faf9f5] text-[#141413] font-sans focus:outline-none focus:border-[#141413]"
                                             >
-                                                <option value="">-- Tidak Ada Perubahan Kondisi --</option>
+                                                <option value="">— Tidak Ada Perubahan Kondisi —</option>
                                                 {fireConditionOptions.map((f) => (
                                                     <option key={f.value} value={f.value}>
                                                         {f.label}
@@ -313,7 +316,7 @@ export default function OpdAssignmentShow({
                                     </div>
 
                                     <div>
-                                        <label className="block text-xs font-semibold text-[#171C19] mb-1">
+                                        <label className="block text-xs font-sans font-medium text-[#141413] mb-1">
                                             Catatan Progres Lapangan (Wajib):
                                         </label>
                                         <textarea
@@ -321,16 +324,16 @@ export default function OpdAssignmentShow({
                                             value={progressForm.data.note}
                                             onChange={(e) => progressForm.setData('note', e.target.value)}
                                             placeholder="Contoh: Regu 2 tiba di koordinat. Sumber air parit primer mencukupi, sedang dilakukan penyemprotan sekat bakar sepanjang 200 meter..."
-                                            className="w-full text-xs p-2.5 rounded-lg border border-[#DDE3DE]"
+                                            className="w-full text-xs p-3 rounded-xl border border-[#cccbc8] bg-[#faf9f5] font-sans focus:outline-none focus:border-[#141413]"
                                             required
                                         />
                                         {progressForm.errors.note && (
-                                            <p className="text-[11px] text-red-600 mt-1">{progressForm.errors.note}</p>
+                                            <p className="text-[11px] text-[#d97757] mt-1">{progressForm.errors.note}</p>
                                         )}
                                     </div>
 
                                     <div>
-                                        <label className="block text-xs font-semibold text-[#171C19] mb-1">
+                                        <label className="block text-xs font-sans font-medium text-[#141413] mb-1">
                                             Unggah Foto Bukti Penanganan (Opsional):
                                         </label>
                                         <input
@@ -340,14 +343,14 @@ export default function OpdAssignmentShow({
                                                 const file = e.target.files?.[0];
                                                 if (file) progressForm.setData('evidence_file', file);
                                             }}
-                                            className="text-xs text-[#68716B]"
+                                            className="text-xs font-sans text-[#87867f]"
                                         />
                                     </div>
 
                                     <button
                                         type="submit"
                                         disabled={progressForm.processing}
-                                        className="px-5 py-2.5 bg-[#216B49] hover:bg-[#174B35] text-white font-semibold text-xs rounded-lg transition-colors"
+                                        className="px-5 py-2.5 bg-[#d97757] hover:bg-[#c6613f] text-[#faf9f5] font-sans font-medium text-xs rounded-lg transition-colors"
                                     >
                                         {progressForm.processing ? 'Menyimpan...' : 'Simpan Catatan Progres'}
                                     </button>
@@ -357,20 +360,20 @@ export default function OpdAssignmentShow({
 
                         {/* ACTION 3: Ajukan Penyelesaian untuk Review Admin (If IN_PROGRESS) */}
                         {assignment.assignment_status === 'IN_PROGRESS' && (
-                            <div className="bg-white border border-[#DDE3DE] rounded-xl p-6 shadow-xs space-y-4">
-                                <div className="border-b border-[#DDE3DE] pb-2">
-                                    <h2 className="text-sm font-bold text-[#171C19] uppercase tracking-wider flex items-center gap-2">
-                                        <CheckCircle2 className="size-4 text-[#174B35]" />
+                            <div className="bg-[#faf9f5] border border-[#cccbc8] rounded-2xl p-6 space-y-4">
+                                <div className="border-b border-[#cccbc8] pb-3">
+                                    <h2 className="text-sm font-sans font-semibold text-[#141413] uppercase tracking-wider flex items-center gap-2">
+                                        <CheckCircle2 className="size-4 text-[#141413]" />
                                         Ajukan Penyelesaian Penanganan ke Administrator
                                     </h2>
-                                    <p className="text-xs text-[#68716B] mt-0.5">
-                                        Gunakan setelah pemadaman tuntas atau api telah terkendali sepenuhnya di lapangan
+                                    <p className="text-xs font-sans text-[#87867f] mt-1">
+                                        Gunakan setelah pemadaman tuntas atau api telah terkendali sepenuhnya di lapangan.
                                     </p>
                                 </div>
 
                                 <form onSubmit={handleSubmitReview} className="space-y-4">
                                     <div>
-                                        <label className="block text-xs font-semibold text-[#171C19] mb-1">
+                                        <label className="block text-xs font-sans font-medium text-[#141413] mb-1">
                                             Ringkasan Hasil Penanganan & Verifikasi Akhir:
                                         </label>
                                         <textarea
@@ -378,21 +381,21 @@ export default function OpdAssignmentShow({
                                             value={reviewForm.data.summary}
                                             onChange={(e) => reviewForm.setData('summary', e.target.value)}
                                             placeholder="Jelaskan luas area yang berhasil dipadamkan/disekat, status bara di bawah permukaan tanah gambut, dan hasil pengecekan akhir regu sebelum ditarik kembali..."
-                                            className="w-full text-xs p-2.5 rounded-lg border border-[#DDE3DE]"
+                                            className="w-full text-xs p-3 rounded-xl border border-[#cccbc8] bg-[#faf9f5] font-sans focus:outline-none focus:border-[#141413]"
                                             required
                                         />
                                         {reviewForm.errors.summary && (
-                                            <p className="text-[11px] text-red-600 mt-1">{reviewForm.errors.summary}</p>
+                                            <p className="text-[11px] text-[#d97757] mt-1">{reviewForm.errors.summary}</p>
                                         )}
                                     </div>
 
                                     <button
                                         type="submit"
                                         disabled={reviewForm.processing}
-                                        className="px-5 py-2.5 bg-[#174B35] hover:bg-[#216B49] text-white font-semibold text-xs rounded-lg transition-colors flex items-center gap-2"
+                                        className="px-5 py-2.5 bg-[#141413] hover:bg-[#3d3d3a] text-[#faf9f5] font-sans font-medium text-xs rounded-lg transition-colors flex items-center gap-2"
                                     >
                                         <Send className="size-3.5" />
-                                        {reviewForm.processing ? 'Mengajukan...' : 'Ajukan Review Penyelesaian ke Admin'}
+                                        <span>{reviewForm.processing ? 'Mengajukan...' : 'Ajukan Review Penyelesaian ke Admin'}</span>
                                     </button>
                                 </form>
                             </div>
@@ -408,36 +411,36 @@ export default function OpdAssignmentShow({
                         />
 
                         {/* Riwayat Catatan Progres Tindak Lanjut */}
-                        <div className="bg-white border border-[#DDE3DE] rounded-xl p-6 shadow-xs space-y-4">
-                            <h3 className="text-xs font-bold uppercase tracking-wider text-[#171C19] flex items-center gap-2">
-                                <Clock className="size-4 text-[#216B49]" />
+                        <div className="bg-[#faf9f5] border border-[#cccbc8] rounded-2xl p-6 space-y-4">
+                            <h3 className="text-xs font-sans font-semibold uppercase tracking-wider text-[#141413] flex items-center gap-2">
+                                <Clock className="size-4 text-[#141413]" />
                                 Riwayat Catatan Tindak Lanjut Instansi ({assignment.operational_updates.length})
                             </h3>
 
                             {assignment.operational_updates.length === 0 ? (
-                                <p className="text-xs text-[#68716B] py-4">Belum ada catatan progres operasional.</p>
+                                <p className="text-xs font-serif text-[#87867f] py-4">Belum ada catatan progres operasional.</p>
                             ) : (
                                 <div className="space-y-3">
                                     {assignment.operational_updates.map((update) => (
                                         <div
                                             key={update.id}
-                                            className="bg-[#F3F7F4] border border-[#DDE3DE] p-4 rounded-xl text-xs space-y-2"
+                                            className="bg-[#f0eee6] border border-[#cccbc8] p-4 rounded-xl text-xs space-y-2"
                                         >
-                                            <div className="flex items-center justify-between font-semibold text-[#174B35] text-[11px]">
+                                            <div className="flex items-center justify-between font-sans font-medium text-[#141413] text-[11px]">
                                                 <span>Tindakan: {update.update_type}</span>
-                                                <span className="text-[#68716B]">
+                                                <span className="text-[#87867f] font-mono">
                                                     {new Date(update.created_at).toLocaleString('id-ID')} • Oleh:{' '}
                                                     {update.created_by_user.name}
                                                 </span>
                                             </div>
 
-                                            <p className="text-[#171C19] whitespace-pre-line leading-relaxed">
+                                            <p className="text-[#141413] font-serif whitespace-pre-line leading-relaxed text-sm">
                                                 {update.note}
                                             </p>
 
                                             {update.fire_condition_observed && (
-                                                <div className="text-[11px] text-[#216B49] font-medium">
-                                                    Kondisi Api Terobservasi: {update.fire_condition_observed}
+                                                <div className="text-[11px] font-sans text-[#141413]">
+                                                    Kondisi Api Terobservasi: <span className="font-medium">{update.fire_condition_observed}</span>
                                                 </div>
                                             )}
 
@@ -446,7 +449,7 @@ export default function OpdAssignmentShow({
                                                     <img
                                                         src={update.evidence_path}
                                                         alt="Bukti operasional"
-                                                        className="size-32 object-cover rounded-lg border border-[#DDE3DE]"
+                                                        className="size-32 object-cover rounded-lg border border-[#cccbc8]"
                                                     />
                                                 </div>
                                             )}
@@ -459,12 +462,12 @@ export default function OpdAssignmentShow({
 
                     {/* Right 1 Col: Location Map & Coordinates */}
                     <div className="space-y-6">
-                        <div className="bg-white border border-[#DDE3DE] rounded-xl p-5 shadow-xs space-y-3">
-                            <h3 className="text-xs font-bold uppercase tracking-wider text-[#171C19] flex items-center gap-1.5">
-                                <MapPin className="size-4 text-[#216B49]" />
+                        <div className="bg-[#faf9f5] border border-[#cccbc8] rounded-2xl p-5 space-y-3">
+                            <h3 className="text-xs font-sans font-semibold uppercase tracking-wider text-[#141413] flex items-center gap-1.5">
+                                <MapPin className="size-4 text-[#141413]" />
                                 Lokasi Kejadian Lapangan
                             </h3>
-                            <div className="bg-[#F3F7F4] p-2.5 rounded border border-[#DDE3DE] text-xs font-mono">
+                            <div className="bg-[#f0eee6] p-2.5 rounded-lg border border-[#cccbc8] text-xs font-mono text-[#141413]">
                                 <div>Lat: {report.latitude}</div>
                                 <div>Lng: {report.longitude}</div>
                             </div>
@@ -488,12 +491,12 @@ export default function OpdAssignmentShow({
                         </div>
 
                         {/* Safety Notice */}
-                        <div className="bg-[#E8F1EB] border border-[#216B49]/30 rounded-xl p-5 text-xs text-[#174B35] space-y-2">
-                            <div className="font-bold flex items-center gap-1.5">
-                                <Shield className="size-4 text-[#174B35]" />
+                        <div className="bg-[#f5e3c7]/60 border border-[#cccbc8] rounded-2xl p-5 text-xs text-[#141413] space-y-2">
+                            <div className="font-sans font-semibold flex items-center gap-1.5">
+                                <Shield className="size-4 text-[#141413]" />
                                 Standar Operasional Keselamatan Petugas
                             </div>
-                            <p className="text-[#343B36] leading-relaxed">
+                            <p className="font-sans text-[#141413]/80 leading-relaxed">
                                 Pastikan seluruh personil regu pemadam dilengkapi APD lengkap (masker respirator, helm, sepatu boots tahan api, dan kacamata pelindung). Selalu siapkan jalur evakuasi darurat sebelum memulai pemadaman di area gambut.
                             </p>
                         </div>

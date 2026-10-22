@@ -11,102 +11,102 @@ const statusConfig: Record<string, { label: string; bg: string; text: string; bo
     // Report Statuses
     SUBMITTED: {
         label: 'Baru Dikirim',
-        bg: 'bg-[#F3F7F4]',
-        text: 'text-[#343B36]',
-        border: 'border-[#DDE3DE]',
+        bg: 'bg-neutral-100',
+        text: 'text-neutral-700',
+        border: 'border-neutral-200',
         icon: Clock,
     },
     UNDER_REVIEW: {
         label: 'Sedang Ditinjau',
-        bg: 'bg-[#E8F1EB]',
-        text: 'text-[#174B35]',
-        border: 'border-[#216B49]/30',
+        bg: 'bg-blue-50',
+        text: 'text-blue-700 font-semibold',
+        border: 'border-blue-200',
         icon: Search,
     },
     NEEDS_INFORMATION: {
-        label: 'Perlu Informasi Tambahan',
-        bg: 'bg-white',
-        text: 'text-[#171C19]',
-        border: 'border-[#68716B]',
+        label: 'Perlu Info Tambahan',
+        bg: 'bg-amber-50',
+        text: 'text-amber-800 font-semibold',
+        border: 'border-amber-200',
         icon: AlertCircle,
     },
     VERIFIED: {
-        label: 'Terverifikasi Internal',
-        bg: 'bg-[#E8F1EB]',
-        text: 'text-[#216B49]',
-        border: 'border-[#216B49]',
+        label: 'Terverifikasi Valid',
+        bg: 'bg-emerald-50',
+        text: 'text-emerald-800 font-semibold',
+        border: 'border-emerald-200',
         icon: CheckCircle2,
     },
     DISPATCHED: {
         label: 'Ditugaskan ke OPD',
-        bg: 'bg-[#174B35]',
-        text: 'text-white',
-        border: 'border-[#174B35]',
+        bg: 'bg-[#10e57a]',
+        text: 'text-black font-bold',
+        border: 'border-[#10e57a]',
         icon: Send,
     },
     RESOLUTION_REVIEW: {
         label: 'Review Penanganan',
-        bg: 'bg-[#E8F1EB]',
-        text: 'text-[#174B35]',
-        border: 'border-[#39845C]',
+        bg: 'bg-sky-50',
+        text: 'text-sky-800 font-semibold',
+        border: 'border-sky-200',
         icon: Search,
     },
     RESOLVED_VERIFIED: {
         label: 'Selesai Terverifikasi',
-        bg: 'bg-[#E8F1EB]',
-        text: 'text-[#174B35]',
-        border: 'border-[#216B49]',
+        bg: 'bg-emerald-100',
+        text: 'text-emerald-900 font-bold',
+        border: 'border-emerald-300',
         icon: CheckCheck,
     },
     CLOSED_WITH_REASON: {
-        label: 'Ditutup dengan Alasan',
-        bg: 'bg-[#F3F7F4]',
-        text: 'text-[#68716B]',
-        border: 'border-[#DDE3DE]',
+        label: 'Ditutup',
+        bg: 'bg-neutral-100',
+        text: 'text-neutral-600',
+        border: 'border-neutral-200',
         icon: XCircle,
     },
 
     // Assignment Statuses
     ASSIGNED: {
         label: 'Penugasan Baru',
-        bg: 'bg-[#F3F7F4]',
-        text: 'text-[#174B35]',
-        border: 'border-[#DDE3DE]',
+        bg: 'bg-neutral-100',
+        text: 'text-neutral-700',
+        border: 'border-neutral-200',
         icon: Clock,
     },
     RECEIVED_BY_AGENCY: {
         label: 'Diterima OPD',
-        bg: 'bg-[#E8F1EB]',
-        text: 'text-[#216B49]',
-        border: 'border-[#216B49]/30',
+        bg: 'bg-emerald-50',
+        text: 'text-emerald-800 font-semibold',
+        border: 'border-emerald-200',
         icon: CheckCircle2,
     },
     DECLINED_BY_AGENCY: {
         label: 'Ditolak OPD',
-        bg: 'bg-[#F3F7F4]',
-        text: 'text-[#171C19]',
-        border: 'border-[#343B36]',
+        bg: 'bg-rose-50',
+        text: 'text-rose-700 font-semibold',
+        border: 'border-rose-200',
         icon: XCircle,
     },
     IN_PROGRESS: {
-        label: 'Sedang Ditangani Lapangan',
-        bg: 'bg-[#216B49]',
-        text: 'text-white',
-        border: 'border-[#216B49]',
+        label: 'Sedang Ditangani',
+        bg: 'bg-emerald-100',
+        text: 'text-emerald-900 font-semibold',
+        border: 'border-emerald-200',
         icon: Clock,
     },
     SUBMITTED_FOR_REVIEW: {
-        label: 'Diajukan untuk Ditinjau',
-        bg: 'bg-[#E8F1EB]',
-        text: 'text-[#174B35]',
-        border: 'border-[#39845C]',
+        label: 'Diajukan Review',
+        bg: 'bg-sky-50',
+        text: 'text-sky-800 font-semibold',
+        border: 'border-sky-200',
         icon: Send,
     },
     COMPLETED: {
         label: 'Penugasan Selesai',
-        bg: 'bg-[#E8F1EB]',
-        text: 'text-[#174B35]',
-        border: 'border-[#216B49]',
+        bg: 'bg-[#10e57a]',
+        text: 'text-black font-bold',
+        border: 'border-[#10e57a]',
         icon: CheckCheck,
     },
 };
@@ -114,20 +114,20 @@ const statusConfig: Record<string, { label: string; bg: string; text: string; bo
 export default function StatusBadge({ status, label, className = '', size = 'md' }: StatusBadgeProps) {
     const config = statusConfig[status] || {
         label: label || status,
-        bg: 'bg-[#F3F7F4]',
-        text: 'text-[#343B36]',
-        border: 'border-[#DDE3DE]',
+        bg: 'bg-white/10',
+        text: 'text-white',
+        border: 'border-white/20',
         icon: Clock,
     };
 
     const displayText = label || config.label;
     const Icon = config.icon;
 
-    const sizeClasses = size === 'sm' ? 'px-2 py-0.5 text-[11px] gap-1' : 'px-2.5 py-1 text-xs gap-1.5';
+    const sizeClasses = size === 'sm' ? 'px-3 py-1 text-[11px] gap-1.5' : 'px-3.5 py-1.5 text-xs gap-2';
 
     return (
         <span
-            className={`inline-flex items-center font-medium rounded-full border ${config.bg} ${config.text} ${config.border} ${sizeClasses} ${className}`}
+            className={`inline-flex items-center font-sans font-medium rounded-full border backdrop-blur-md tracking-tight ${config.bg} ${config.text} ${config.border} ${sizeClasses} ${className}`}
         >
             <Icon className={size === 'sm' ? 'size-3 shrink-0' : 'size-3.5 shrink-0'} aria-hidden="true" />
             <span>{displayText}</span>

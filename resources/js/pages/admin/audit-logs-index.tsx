@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Head, Link, router } from '@inertiajs/react';
-import { Shield, Search, ArrowLeft, Clock, User, Terminal, Filter } from 'lucide-react';
+import { Shield, Search, ArrowLeft, Filter } from 'lucide-react';
 
 interface AuditItem {
     id: number;
@@ -48,54 +48,55 @@ export default function AuditLogsIndex({ logs, actions, filters }: AuditLogsInde
     };
 
     return (
-        <div className="p-4 sm:p-6 lg:p-8 space-y-6 bg-[#F3F7F4] min-h-screen text-[#171C19]">
+        <div className="min-h-screen bg-[#f0eee6] text-[#141413] p-4 sm:p-6 lg:p-8 space-y-6">
             <Head title="Audit Trail Log Sistem — Admin JAGAIN" />
 
-            {/* Admin Header Card */}
-            <div className="bg-white border border-[#DDE3DE] rounded-2xl p-6 sm:p-8 shadow-xs">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                    <div className="space-y-1">
-                        <div className="text-xs text-[#216B49] font-bold uppercase tracking-wider mb-0.5">
-                            Akuntabilitas & Integritas Data
-                        </div>
-                        <h1 className="text-xl sm:text-2xl font-bold text-[#171C19] flex items-center gap-2">
-                            <Shield className="size-5 text-[#174B35]" />
-                            Audit Trail Log Sistem ({logs.total} Total Entri)
-                        </h1>
+            {/* Header Bar */}
+            <div className="border-b border-[#cccbc8] pb-5 flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+                <div className="space-y-1">
+                    <div className="inline-flex items-center gap-2 text-[11px] font-mono tracking-wider uppercase text-[#87867f]">
+                        <Shield className="size-3.5 text-[#141413]" />
+                        <span>Akuntabilitas & Integritas Data Permanen</span>
                     </div>
-
-                    <Link
-                        href="/admin/dashboard"
-                        className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#174B35] hover:underline"
-                    >
-                        <ArrowLeft className="size-3.5" />
-                        Kembali ke Dashboard Admin
-                    </Link>
+                    <h1 className="text-2xl sm:text-3xl font-serif font-normal text-[#141413]">
+                        Audit Trail Log Sistem
+                    </h1>
+                    <p className="text-sm font-sans text-[#87867f]">
+                        Rekaman peristiwa mutasi data, otentikasi, dan aksi administratif yang tidak dapat dimanipulasi ({logs.total} total entri).
+                    </p>
                 </div>
+
+                <Link
+                    href="/admin/dashboard"
+                    className="inline-flex items-center gap-1.5 text-xs font-sans font-medium text-[#141413] hover:text-[#d97757] transition-colors self-start sm:self-center"
+                >
+                    <ArrowLeft className="size-3.5" />
+                    <span>Kembali ke Dashboard</span>
+                </Link>
             </div>
 
-            <div className="space-y-6">
+            <div className="space-y-4">
                 {/* Search & Action Filter Bar */}
                 <form
                     onSubmit={handleFilter}
-                    className="bg-white border border-[#DDE3DE] rounded-2xl p-5 shadow-xs flex flex-wrap gap-3"
+                    className="bg-[#faf9f5] border border-[#cccbc8] rounded-xl p-4 flex flex-wrap gap-3 items-center"
                 >
-                    <div className="flex-1 min-w-[220px] relative">
+                    <div className="flex-1 min-w-[240px] relative">
                         <input
                             type="text"
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
                             placeholder="Cari alasan, aksi, ID entitas, atau kata kunci..."
-                            className="w-full text-xs p-2.5 pl-8 rounded-xl border border-[#DDE3DE] focus:outline-none focus:ring-1 focus:ring-[#216B49] bg-white"
+                            className="w-full text-xs p-2.5 pl-8 rounded-lg border border-[#cccbc8] focus:outline-none focus:border-[#141413] bg-[#faf9f5] font-sans"
                         />
-                        <Search className="size-3.5 text-[#68716B] absolute left-2.5 top-3.5" />
+                        <Search className="size-3.5 text-[#87867f] absolute left-2.5 top-3.5" />
                     </div>
 
                     <div className="w-64">
                         <select
                             value={action}
                             onChange={(e) => setAction(e.target.value)}
-                            className="w-full text-xs p-2.5 rounded-xl border border-[#DDE3DE] bg-white focus:outline-none focus:ring-1 focus:ring-[#216B49]"
+                            className="w-full text-xs p-2.5 rounded-lg border border-[#cccbc8] bg-[#faf9f5] focus:outline-none focus:border-[#141413] font-sans"
                         >
                             <option value="">Semua Jenis Aksi (Action)</option>
                             {actions.map((act) => (
@@ -108,64 +109,64 @@ export default function AuditLogsIndex({ logs, actions, filters }: AuditLogsInde
 
                     <button
                         type="submit"
-                        className="px-5 py-2.5 bg-[#216B49] hover:bg-[#174B35] text-white font-bold text-xs rounded-xl transition-all shadow-xs flex items-center gap-1.5 active:scale-[0.98]"
+                        className="py-2.5 px-5 bg-[#141413] hover:bg-[#3d3d3a] text-[#faf9f5] font-sans font-medium text-xs rounded-lg transition-colors flex items-center gap-1.5"
                     >
-                        <Filter className="size-3.5" />
-                        Filter Log
+                        <Filter className="size-3" />
+                        <span>Terapkan Filter</span>
                     </button>
                 </form>
 
-                {/* Table */}
-                <div className="bg-white border border-[#DDE3DE] rounded-2xl overflow-hidden shadow-xs">
+                {/* Audit Log Table */}
+                <div className="bg-[#faf9f5] border border-[#cccbc8] rounded-2xl overflow-hidden shadow-xs">
                     <div className="overflow-x-auto">
                         <table className="w-full text-left text-xs">
-                            <thead className="bg-[#F3F7F4] border-b border-[#DDE3DE] text-[#343B36] uppercase tracking-wider text-[11px] font-semibold">
+                            <thead className="bg-[#e3dacc]/40 border-b border-[#cccbc8] text-[#141413] uppercase tracking-wider text-[11px] font-sans font-semibold">
                                 <tr>
-                                    <th className="py-3.5 px-4">Waktu (WIB)</th>
-                                    <th className="py-3.5 px-4">Aktor Pengubah</th>
-                                    <th className="py-3.5 px-4">Aksi / Event</th>
-                                    <th className="py-3.5 px-4">Entitas Terkait</th>
-                                    <th className="py-3.5 px-4">Catatan / Alasan</th>
-                                    <th className="py-3.5 px-4 font-mono">IP / Request ID</th>
+                                    <th className="py-3 px-4">Waktu</th>
+                                    <th className="py-3 px-4">Aksi (Action)</th>
+                                    <th className="py-3 px-4">Aktor / Pengguna</th>
+                                    <th className="py-3 px-4">Entitas Target</th>
+                                    <th className="py-3 px-4">Alasan & Catatan</th>
+                                    <th className="py-3 px-4">Metadata Permintaan</th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-[#DDE3DE]">
+                            <tbody className="divide-y divide-[#cccbc8]/60">
                                 {logs.data.length === 0 ? (
                                     <tr>
-                                        <td colSpan={6} className="py-12 text-center text-[#68716B]">
-                                            Tidak ada riwayat audit log yang cocok dengan filter.
+                                        <td colSpan={6} className="py-12 text-center text-[#87867f] font-serif text-sm">
+                                            Tidak ada entri log yang sesuai dengan filter pencarian.
                                         </td>
                                     </tr>
                                 ) : (
-                                    logs.data.map((item) => (
-                                        <tr key={item.id} className="hover:bg-[#F3F7F4]/40 transition-colors">
-                                            <td className="py-3.5 px-4 text-[#68716B] whitespace-nowrap font-mono text-[11px]">
-                                                {new Date(item.created_at).toLocaleString('id-ID')}
+                                    logs.data.map((log) => (
+                                        <tr key={log.id} className="hover:bg-[#f0eee6]/60 transition-colors">
+                                            <td className="py-3 px-4 font-mono text-[11px] text-[#87867f] whitespace-nowrap">
+                                                {new Date(log.created_at).toLocaleString('id-ID')}
                                             </td>
-                                            <td className="py-3.5 px-4">
-                                                <div className="font-bold text-[#171C19]">
-                                                    {item.actor_user?.name || 'Sistem Otomatis'}
-                                                </div>
-                                                <div className="text-[10px] text-[#68716B]">
-                                                    {item.actor_user?.email || 'system@jagain.internal'}
-                                                </div>
-                                            </td>
-                                            <td className="py-3.5 px-4">
-                                                <span className="font-mono font-bold text-[10px] text-[#174B35] bg-[#E8F1EB] px-2 py-0.5 rounded-full border border-[#216B49]/20">
-                                                    {item.action}
+                                            <td className="py-3 px-4 whitespace-nowrap">
+                                                <span className="font-mono text-[11px] font-medium px-2 py-0.5 rounded bg-[#e3dacc]/70 text-[#141413] border border-[#cccbc8]">
+                                                    {log.action}
                                                 </span>
                                             </td>
-                                            <td className="py-3.5 px-4 font-mono text-[11px] text-[#343B36]">
-                                                {item.entity_type.split('\\').pop()} #{item.entity_id}
-                                            </td>
-                                            <td className="py-3.5 px-4 max-w-xs text-[#343B36] truncate leading-relaxed">
-                                                {item.reason || '-'}
-                                            </td>
-                                            <td className="py-3.5 px-4 font-mono text-[10px] text-[#68716B]">
-                                                <div>{item.ip_address || '127.0.0.1'}</div>
-                                                <div className="text-[9px] text-[#68716B] truncate max-w-[120px]">
-                                                    {item.request_id || '-'}
+                                            <td className="py-3 px-4">
+                                                <div className="font-sans font-semibold text-[#141413]">
+                                                    {log.actor_user?.name || 'Sistem / Guest'}
                                                 </div>
+                                                <div className="text-[10px] text-[#87867f] font-mono">
+                                                    {log.actor_user?.email || '—'}
+                                                </div>
+                                            </td>
+                                            <td className="py-3 px-4 font-mono text-[11px] text-[#141413] whitespace-nowrap">
+                                                {log.entity_type} #{log.entity_id}
+                                            </td>
+                                            <td className="py-3 px-4 max-w-xs">
+                                                <div className="text-xs text-[#141413] line-clamp-2 font-sans">
+                                                    {log.reason || '—'}
+                                                </div>
+                                            </td>
+                                            <td className="py-3 px-4 font-mono text-[10px] text-[#87867f]">
+                                                <div>IP: {log.ip_address || '—'}</div>
+                                                {log.request_id && <div className="truncate max-w-[120px]">Req: {log.request_id}</div>}
                                             </td>
                                         </tr>
                                     ))
@@ -173,32 +174,32 @@ export default function AuditLogsIndex({ logs, actions, filters }: AuditLogsInde
                             </tbody>
                         </table>
                     </div>
-
-                    {/* Pagination */}
-                    {logs.last_page > 1 && (
-                        <div className="p-4 border-t border-[#DDE3DE] bg-[#F3F7F4] flex items-center justify-between text-xs">
-                            <span className="text-[#68716B]">
-                                Halaman {logs.current_page} dari {logs.last_page}
-                            </span>
-                            <div className="flex items-center gap-1">
-                                {logs.links.map((link, idx) => (
-                                    <button
-                                        key={idx}
-                                        type="button"
-                                        disabled={!link.url}
-                                        onClick={() => link.url && router.get(link.url, {}, { preserveState: true })}
-                                        className={`px-3 py-1.5 rounded-lg text-xs border ${
-                                            link.active
-                                                ? 'bg-[#174B35] text-white border-[#174B35]'
-                                                : 'bg-white text-[#343B36] border-[#DDE3DE] hover:bg-[#F3F7F4] disabled:opacity-40'
-                                        }`}
-                                        dangerouslySetInnerHTML={{ __html: link.label }}
-                                    />
-                                ))}
-                            </div>
-                        </div>
-                    )}
                 </div>
+
+                {/* Pagination */}
+                {logs.last_page > 1 && (
+                    <div className="p-3 border border-[#cccbc8] bg-[#faf9f5] rounded-xl flex items-center justify-between text-xs">
+                        <span className="text-[#87867f] font-sans">
+                            Halaman {logs.current_page} dari {logs.last_page}
+                        </span>
+                        <div className="flex items-center gap-1">
+                            {logs.links.map((link, idx) => (
+                                <button
+                                    key={idx}
+                                    type="button"
+                                    disabled={!link.url}
+                                    onClick={() => link.url && router.get(link.url, {}, { preserveState: true })}
+                                    className={`px-3 py-1 rounded text-xs border font-sans ${
+                                        link.active
+                                            ? 'bg-[#141413] text-[#faf9f5] border-[#141413] font-medium'
+                                            : 'bg-[#faf9f5] text-[#141413] border-[#cccbc8] hover:bg-[#e3dacc] disabled:opacity-40'
+                                    }`}
+                                    dangerouslySetInnerHTML={{ __html: link.label }}
+                                />
+                            ))}
+                        </div>
+                    </div>
+                )}
             </div>
         </div>
     );

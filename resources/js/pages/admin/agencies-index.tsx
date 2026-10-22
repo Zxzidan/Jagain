@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Head, Link, useForm } from '@inertiajs/react';
-import { Building, Plus, ArrowLeft, CheckCircle2, XCircle, ShieldCheck, Mail, Phone, MapPin } from 'lucide-react';
+import { Building, Plus, ArrowLeft } from 'lucide-react';
 
 interface AgencyItem {
     id: number;
@@ -50,252 +50,251 @@ export default function AgenciesIndex({ agencies, jurisdictions, agencyTypes }: 
     };
 
     return (
-        <div className="p-4 sm:p-6 lg:p-8 space-y-6 bg-[#F3F7F4] min-h-screen text-[#171C19]">
+        <div className="p-4 sm:p-6 lg:p-8 space-y-6 text-[#141413] bg-[#f0eee6] min-h-screen">
             <Head title="Kelola Instansi / OPD — Admin JAGAIN" />
 
-            {/* Admin Header Card */}
-            <div className="bg-white border border-[#DDE3DE] rounded-2xl p-6 sm:p-8 shadow-xs">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                    <div className="space-y-1">
-                        <div className="text-xs text-[#216B49] font-bold uppercase tracking-wider mb-0.5">
-                            Konfigurasi Penanganan & Organisasi
-                        </div>
-                        <h1 className="text-xl sm:text-2xl font-bold text-[#171C19] flex items-center gap-2">
-                            <Building className="size-5 text-[#174B35]" />
-                            Pengelolaan Instansi & OPD Penanganan ({agencies.length})
-                        </h1>
+            {/* Header Bar */}
+            <div className="border-b border-[#cccbc8] pb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 font-sans">
+                <div className="space-y-1">
+                    <div className="inline-flex items-center gap-2 text-[10px] font-mono font-bold tracking-wider uppercase text-[#87867f]">
+                        <Building className="size-3.5 text-[#d97757]" />
+                        <span>Konfigurasi Organisasi & Penanganan</span>
                     </div>
+                    <h1 className="text-2xl sm:text-3xl font-serif text-[#141413] flex items-center gap-2">
+                        <span>Pengelolaan Instansi & OPD Penanganan ({agencies.length})</span>
+                    </h1>
+                    <p className="font-serif text-xs sm:text-sm text-[#87867f]">
+                        Daftar instansi teknis yang berwenang menerima penugasan laporan karhutla di Kalimantan.
+                    </p>
+                </div>
 
-                    <div className="flex items-center gap-3">
-                        <Link
-                            href="/admin/dashboard"
-                            className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#174B35] hover:underline"
-                        >
-                            <ArrowLeft className="size-3.5" />
-                            Kembali ke Dashboard
-                        </Link>
-                        <button
-                            type="button"
-                            onClick={() => setShowModal(true)}
-                            className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-bold bg-[#216B49] text-white rounded-xl hover:bg-[#174B35] transition-all shadow-xs active:scale-[0.98]"
-                        >
-                            <Plus className="size-3.5" />
-                            Tambah Instansi Baru
-                        </button>
-                    </div>
+                <div className="flex items-center gap-3">
+                    <Link
+                        href="/admin/dashboard"
+                        className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#141413] hover:text-[#d97757] hover:underline"
+                    >
+                        <ArrowLeft className="size-3.5" />
+                        <span>Kembali ke Dashboard</span>
+                    </Link>
+                    <button
+                        type="button"
+                        onClick={() => setShowModal(true)}
+                        className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold bg-[#141413] text-[#faf9f5] rounded-[8px] hover:bg-[#3d3d3a] transition-colors"
+                    >
+                        <Plus className="size-3.5" />
+                        <span>Tambah Instansi Baru</span>
+                    </button>
                 </div>
             </div>
 
-            <div>
-                <div className="bg-white border border-[#DDE3DE] rounded-2xl overflow-hidden shadow-xs">
-                    <div className="overflow-x-auto">
-                        <table className="w-full text-left text-xs">
-                            <thead className="bg-[#F3F7F4] border-b border-[#DDE3DE] text-[#343B36] uppercase tracking-wider text-[11px] font-semibold">
-                                <tr>
-                                    <th className="py-3.5 px-4">Kode Unik</th>
-                                    <th className="py-3.5 px-4">Nama Lengkap Instansi</th>
-                                    <th className="py-3.5 px-4">Tipe Organisasi</th>
-                                    <th className="py-3.5 px-4">Wilayah Kewenangan</th>
-                                    <th className="py-3.5 px-4">Kontak Resmi</th>
-                                    <th className="py-3.5 px-4">Status & Beban</th>
-                                    <th className="py-3.5 px-4 text-right">Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-[#DDE3DE]">
-                                {agencies.map((agency) => (
-                                    <tr key={agency.id} className="hover:bg-[#F3F7F4]/50 transition-colors">
-                                        <td className="py-3.5 px-4 font-mono font-bold text-[#171C19]">
-                                            {agency.code}
-                                        </td>
-                                        <td className="py-3.5 px-4 font-bold text-[#171C19]">
-                                            {agency.name}
-                                        </td>
-                                        <td className="py-3.5 px-4 text-[#68716B]">
-                                            <span className="px-2 py-0.5 rounded-full bg-[#F3F7F4] border border-[#DDE3DE] font-semibold text-[10px]">
-                                                {agency.agency_type}
-                                            </span>
-                                        </td>
-                                        <td className="py-3.5 px-4 font-semibold text-[#174B35]">
-                                            {agency.jurisdiction}
-                                        </td>
-                                        <td className="py-3.5 px-4 text-[11px] text-[#68716B]">
-                                            <div>{agency.contact_email || '-'}</div>
-                                            <div className="font-mono">{agency.contact_phone || '-'}</div>
-                                        </td>
-                                        <td className="py-3.5 px-4">
-                                            <div className="flex items-center gap-2">
-                                                <span
-                                                    className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
-                                                        agency.is_active
-                                                            ? 'bg-[#E8F1EB] text-[#174B35]'
-                                                            : 'bg-[#F3F7F4] text-[#68716B]'
-                                                    }`}
-                                                >
-                                                    {agency.is_active ? 'Aktif' : 'Nonaktif'}
-                                                </span>
-                                                <span className="text-[11px] text-[#68716B] font-mono">
-                                                    {agency.assignments_count} tugas
-                                                </span>
-                                            </div>
-                                        </td>
-                                        <td className="py-3.5 px-4 text-right">
-                                            <button
-                                                type="button"
-                                                onClick={() => handleToggle(agency.id)}
-                                                className={`px-3 py-1 text-xs font-semibold border rounded-lg transition-colors ${
+            <div className="bg-[#faf9f5] border border-[#cccbc8] rounded-[24px] overflow-hidden font-sans">
+                <div className="overflow-x-auto">
+                    <table className="w-full text-left text-xs">
+                        <thead className="bg-[#f0eee6] border-b border-[#cccbc8] text-[#87867f] uppercase tracking-wider text-[11px] font-semibold">
+                            <tr>
+                                <th className="py-4 px-5">Kode Unik</th>
+                                <th className="py-4 px-5">Nama Lengkap Instansi</th>
+                                <th className="py-4 px-5">Tipe Organisasi</th>
+                                <th className="py-4 px-5">Wilayah Kewenangan</th>
+                                <th className="py-4 px-5">Kontak Resmi</th>
+                                <th className="py-4 px-5">Status & Beban</th>
+                                <th className="py-4 px-5 text-right">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-[#cccbc8]">
+                            {agencies.map((agency) => (
+                                <tr key={agency.id} className="hover:bg-[#f0eee6]/60 transition-colors">
+                                    <td className="py-4 px-5 font-mono font-bold text-[#141413]">
+                                        {agency.code}
+                                    </td>
+                                    <td className="py-4 px-5 font-semibold text-[#141413]">
+                                        {agency.name}
+                                    </td>
+                                    <td className="py-4 px-5 text-[#87867f]">
+                                        <span className="px-2 py-0.5 rounded-[3px] bg-[#f0eee6] border border-[#cccbc8] font-mono text-[10px] text-[#141413]">
+                                            {agency.agency_type}
+                                        </span>
+                                    </td>
+                                    <td className="py-4 px-5 font-semibold text-[#141413]">
+                                        {agency.jurisdiction}
+                                    </td>
+                                    <td className="py-4 px-5 text-[11px] text-[#87867f]">
+                                        <div>{agency.contact_email || '-'}</div>
+                                        <div className="font-mono">{agency.contact_phone || '-'}</div>
+                                    </td>
+                                    <td className="py-4 px-5">
+                                        <div className="flex items-center gap-2">
+                                            <span
+                                                className={`px-2 py-0.5 rounded-[4px] text-[10px] font-bold ${
                                                     agency.is_active
-                                                        ? 'border-[#DDE3DE] hover:bg-[#F3F7F4] text-[#68716B]'
-                                                        : 'border-[#216B49] bg-[#E8F1EB] text-[#174B35] hover:bg-[#216B49] hover:text-white'
+                                                        ? 'bg-[#e3dacc] text-[#141413]'
+                                                        : 'bg-[#f0eee6] text-[#87867f]'
                                                 }`}
                                             >
-                                                {agency.is_active ? 'Nonaktifkan' : 'Aktifkan'}
-                                            </button>
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
+                                                {agency.is_active ? 'Aktif' : 'Nonaktif'}
+                                            </span>
+                                            <span className="text-[11px] text-[#87867f] font-mono">
+                                                {agency.assignments_count} tugas
+                                            </span>
+                                        </div>
+                                    </td>
+                                    <td className="py-4 px-5 text-right">
+                                        <button
+                                            type="button"
+                                            onClick={() => handleToggle(agency.id)}
+                                            className={`px-3 py-1 text-xs font-semibold border rounded-[6px] transition-colors ${
+                                                agency.is_active
+                                                    ? 'border-[#cccbc8] hover:bg-[#e3dacc] text-[#87867f]'
+                                                    : 'border-[#141413] bg-[#141413] text-[#faf9f5] hover:bg-[#3d3d3a]'
+                                            }`}
+                                        >
+                                            {agency.is_active ? 'Nonaktifkan' : 'Aktifkan'}
+                                        </button>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
                 </div>
+            </div>
 
-                {/* Modal Tambah Instansi */}
-                {showModal && (
-                    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-4 animate-in fade-in duration-200">
-                        <div className="bg-white rounded-2xl max-w-lg w-full p-6 sm:p-8 shadow-2xl border border-[#DDE3DE] space-y-6">
-                            <div className="flex items-center justify-between border-b border-[#DDE3DE] pb-4">
-                                <div>
-                                    <h3 className="font-bold text-base text-[#171C19]">
-                                        Tambah Instansi Penanganan Baru
-                                    </h3>
-                                    <p className="text-xs text-[#68716B] mt-0.5">
-                                        Daftarkan OPD berwenang untuk menerima penugasan karhutla
-                                    </p>
-                                </div>
-                                <button
-                                    type="button"
-                                    onClick={() => setShowModal(false)}
-                                    className="size-8 rounded-lg bg-[#F3F7F4] hover:bg-[#E8F1EB] flex items-center justify-center text-xs font-bold text-[#68716B] hover:text-[#171C19] transition-colors"
-                                >
-                                    ✕
-                                </button>
+            {/* Modal Tambah Instansi */}
+            {showModal && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#141413]/60 p-4 font-sans">
+                    <div className="bg-[#faf9f5] rounded-[24px] max-w-lg w-full p-8 border border-[#cccbc8] space-y-5">
+                        <div className="flex items-center justify-between border-b border-[#cccbc8] pb-4">
+                            <div>
+                                <h3 className="font-serif font-bold text-lg text-[#141413]">
+                                    Tambah Instansi Penanganan Baru
+                                </h3>
+                                <p className="font-serif text-xs text-[#87867f]">
+                                    Daftarkan OPD berwenang untuk menerima penugasan karhutla
+                                </p>
+                            </div>
+                            <button
+                                type="button"
+                                onClick={() => setShowModal(false)}
+                                className="size-7 rounded-[4px] bg-[#f0eee6] hover:bg-[#e3dacc] flex items-center justify-center text-xs font-bold text-[#87867f]"
+                            >
+                                ✕
+                            </button>
+                        </div>
+
+                        <form onSubmit={handleCreate} className="space-y-4 text-xs">
+                            <div>
+                                <label className="block font-semibold text-[#141413] mb-1.5">
+                                    Nama Lengkap Instansi:
+                                </label>
+                                <input
+                                    type="text"
+                                    value={data.name}
+                                    onChange={(e) => setData('name', e.target.value)}
+                                    placeholder="Contoh: BPBD Kabupaten Sintang"
+                                    className="w-full text-xs p-3 rounded-[8px] border border-[#cccbc8] focus:outline-none focus:ring-1 focus:ring-[#141413] bg-[#faf9f5] text-[#141413]"
+                                    required
+                                />
+                                {errors.name && <p className="text-[11px] text-[#c6613f] mt-1">{errors.name}</p>}
                             </div>
 
-                            <form onSubmit={handleCreate} className="space-y-4">
+                            <div className="grid grid-cols-2 gap-3">
                                 <div>
-                                    <label className="block text-xs font-semibold text-[#171C19] mb-1.5">
-                                        Nama Lengkap Instansi:
+                                    <label className="block font-semibold text-[#141413] mb-1.5">
+                                        Kode Unik (Identitas):
                                     </label>
                                     <input
                                         type="text"
-                                        value={data.name}
-                                        onChange={(e) => setData('name', e.target.value)}
-                                        placeholder="Contoh: BPBD Kabupaten Sintang"
-                                        className="w-full text-xs p-3 rounded-xl border border-[#DDE3DE] focus:outline-none focus:ring-2 focus:ring-[#216B49] bg-white"
+                                        value={data.code}
+                                        onChange={(e) => setData('code', e.target.value.toUpperCase())}
+                                        placeholder="BPBD-SINTANG"
+                                        className="w-full text-xs p-3 rounded-[8px] border border-[#cccbc8] font-mono font-bold focus:outline-none focus:ring-1 focus:ring-[#141413] bg-[#faf9f5] text-[#141413]"
                                         required
                                     />
-                                    {errors.name && <p className="text-[11px] text-red-600 mt-1">{errors.name}</p>}
-                                </div>
-
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div>
-                                        <label className="block text-xs font-semibold text-[#171C19] mb-1.5">
-                                            Kode Unik (Identitas):
-                                        </label>
-                                        <input
-                                            type="text"
-                                            value={data.code}
-                                            onChange={(e) => setData('code', e.target.value.toUpperCase())}
-                                            placeholder="BPBD-SINTANG"
-                                            className="w-full text-xs p-3 rounded-xl border border-[#DDE3DE] font-mono font-bold focus:outline-none focus:ring-2 focus:ring-[#216B49] bg-white"
-                                            required
-                                        />
-                                        {errors.code && <p className="text-[11px] text-red-600 mt-1">{errors.code}</p>}
-                                    </div>
-
-                                    <div>
-                                        <label className="block text-xs font-semibold text-[#171C19] mb-1.5">
-                                            Tipe Organisasi:
-                                        </label>
-                                        <select
-                                            value={data.agency_type}
-                                            onChange={(e) => setData('agency_type', e.target.value)}
-                                            className="w-full text-xs p-3 rounded-xl border border-[#DDE3DE] bg-white focus:outline-none focus:ring-2 focus:ring-[#216B49]"
-                                        >
-                                            {Object.entries(agencyTypes).map(([k]) => (
-                                                <option key={k} value={k}>
-                                                    {k}
-                                                </option>
-                                            ))}
-                                        </select>
-                                    </div>
+                                    {errors.code && <p className="text-[11px] text-[#c6613f] mt-1">{errors.code}</p>}
                                 </div>
 
                                 <div>
-                                    <label className="block text-xs font-semibold text-[#171C19] mb-1.5">
-                                        Wilayah Kewenangan (Provinsi):
+                                    <label className="block font-semibold text-[#141413] mb-1.5">
+                                        Tipe Organisasi:
                                     </label>
                                     <select
-                                        value={data.jurisdiction}
-                                        onChange={(e) => setData('jurisdiction', e.target.value)}
-                                        className="w-full text-xs p-3 rounded-xl border border-[#DDE3DE] bg-white focus:outline-none focus:ring-2 focus:ring-[#216B49]"
+                                        value={data.agency_type}
+                                        onChange={(e) => setData('agency_type', e.target.value)}
+                                        className="w-full text-xs p-3 rounded-[8px] border border-[#cccbc8] bg-[#faf9f5] text-[#141413] focus:outline-none focus:ring-1 focus:ring-[#141413]"
                                     >
-                                        {jurisdictions.map((j) => (
-                                            <option key={j} value={j}>
-                                                {j}
+                                        {Object.entries(agencyTypes).map(([k]) => (
+                                            <option key={k} value={k}>
+                                                {k}
                                             </option>
                                         ))}
                                     </select>
                                 </div>
+                            </div>
 
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div>
-                                        <label className="block text-xs font-semibold text-[#171C19] mb-1.5">
-                                            Email Kontak Resmi:
-                                        </label>
-                                        <input
-                                            type="email"
-                                            value={data.contact_email}
-                                            onChange={(e) => setData('contact_email', e.target.value)}
-                                            placeholder="pusdalops@bpbd..."
-                                            className="w-full text-xs p-3 rounded-xl border border-[#DDE3DE] focus:outline-none focus:ring-2 focus:ring-[#216B49] bg-white"
-                                        />
-                                    </div>
+                            <div>
+                                <label className="block font-semibold text-[#141413] mb-1.5">
+                                    Wilayah Kewenangan (Provinsi):
+                                </label>
+                                <select
+                                    value={data.jurisdiction}
+                                    onChange={(e) => setData('jurisdiction', e.target.value)}
+                                    className="w-full text-xs p-3 rounded-[8px] border border-[#cccbc8] bg-[#faf9f5] text-[#141413] focus:outline-none focus:ring-1 focus:ring-[#141413]"
+                                >
+                                    {jurisdictions.map((j) => (
+                                        <option key={j} value={j}>
+                                            {j}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
 
-                                    <div>
-                                        <label className="block text-xs font-semibold text-[#171C19] mb-1.5">
-                                            Telepon Kantor / Posko:
-                                        </label>
-                                        <input
-                                            type="text"
-                                            value={data.contact_phone}
-                                            onChange={(e) => setData('contact_phone', e.target.value)}
-                                            placeholder="0561-..."
-                                            className="w-full text-xs p-3 rounded-xl border border-[#DDE3DE] focus:outline-none focus:ring-2 focus:ring-[#216B49] bg-white"
-                                        />
-                                    </div>
+                            <div className="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label className="block font-semibold text-[#141413] mb-1.5">
+                                        Email Kontak Resmi:
+                                    </label>
+                                    <input
+                                        type="email"
+                                        value={data.contact_email}
+                                        onChange={(e) => setData('contact_email', e.target.value)}
+                                        placeholder="pusdalops@bpbd.go.id"
+                                        className="w-full text-xs p-3 rounded-[8px] border border-[#cccbc8] bg-[#faf9f5] text-[#141413]"
+                                    />
                                 </div>
 
-                                <div className="pt-4 flex items-center justify-end gap-3 border-t border-[#DDE3DE]">
-                                    <button
-                                        type="button"
-                                        onClick={() => setShowModal(false)}
-                                        className="px-4 py-2 text-xs font-semibold text-[#68716B] hover:text-[#171C19]"
-                                    >
-                                        Batal
-                                    </button>
-                                    <button
-                                        type="submit"
-                                        disabled={processing}
-                                        className="px-5 py-2.5 bg-[#216B49] text-white font-bold text-xs rounded-xl hover:bg-[#174B35] transition-all shadow-xs active:scale-[0.98]"
-                                    >
-                                        {processing ? 'Menyimpan...' : 'Simpan Instansi'}
-                                    </button>
+                                <div>
+                                    <label className="block font-semibold text-[#141413] mb-1.5">
+                                        No. Telepon / Hotline:
+                                    </label>
+                                    <input
+                                        type="text"
+                                        value={data.contact_phone}
+                                        onChange={(e) => setData('contact_phone', e.target.value)}
+                                        placeholder="(0561) 123456"
+                                        className="w-full text-xs p-3 rounded-[8px] border border-[#cccbc8] bg-[#faf9f5] text-[#141413]"
+                                    />
                                 </div>
-                            </form>
-                        </div>
+                            </div>
+
+                            <div className="pt-3 flex justify-end gap-2 border-t border-[#cccbc8]">
+                                <button
+                                    type="button"
+                                    onClick={() => setShowModal(false)}
+                                    className="px-4 py-2 border border-[#cccbc8] text-[#87867f] rounded-[8px] hover:bg-[#e3dacc]"
+                                >
+                                    Batal
+                                </button>
+                                <button
+                                    type="submit"
+                                    disabled={processing}
+                                    className="px-5 py-2 bg-[#141413] hover:bg-[#3d3d3a] text-[#faf9f5] font-semibold rounded-[8px] disabled:opacity-50"
+                                >
+                                    {processing ? 'Menyimpan...' : 'Simpan Instansi'}
+                                </button>
+                            </div>
+                        </form>
                     </div>
-                )}
-            </div>
+                </div>
+            )}
         </div>
     );
 }

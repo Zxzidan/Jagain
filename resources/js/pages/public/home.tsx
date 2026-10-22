@@ -1,23 +1,30 @@
-import { Head, Link } from '@inertiajs/react';
+import { useState } from 'react';
+import { Head, Link, router } from '@inertiajs/react';
 import Navbar from '@/components/navbar';
 import Footer from '@/components/footer';
-import EmergencyBanner from '@/components/emergency-banner';
 import KarhutlaMap, { MapReport } from '@/components/karhutla-map';
 import StatusBadge from '@/components/status-badge';
-import FireConditionBadge from '@/components/fire-condition-badge';
+import AnimatedContent from '@/components/react-bits/AnimatedContent';
+import LogoLoop from '@/components/react-bits/LogoLoop';
+import SpecularButton from '@/components/react-bits/SpecularButton';
+import MagicBento, { type MagicBentoItem } from '@/components/react-bits/MagicBento';
+import CountUp from '@/components/react-bits/CountUp';
+import Stepper, { Step } from '@/components/react-bits/Stepper';
+import TiltedCard, { TiltedCardLayer } from '@/components/react-bits/TiltedCard';
+import AnimatedList from '@/components/react-bits/AnimatedList';
+import BorderGlow from '@/components/react-bits/BorderGlow';
 import {
-    Shield,
     MapPin,
-    Eye,
     ArrowRight,
-    CheckCircle2,
+    Shield,
     AlertTriangle,
+    Search,
+    CheckCircle2,
+    Satellite,
     FileText,
-    Send,
     Flame,
-    Building2,
-    Compass,
-    Sparkles,
+    ShieldCheck,
+    Activity,
 } from 'lucide-react';
 
 interface HomeProps {
@@ -32,335 +39,790 @@ interface HomeProps {
 }
 
 export default function Home({ stats, recentReports }: HomeProps) {
-    return (
-        <div className="min-h-screen flex flex-col bg-white text-[#171C19] selection:bg-[#E8F1EB] selection:text-[#174B35]">
-            <Head title="JAGAIN — Pantau Karhutla. Kawal Penanganannya." />
+    const [lookupCode, setLookupCode] = useState('');
 
-            <EmergencyBanner />
-            <Navbar />
+    const handleLookup = (e: React.FormEvent) => {
+        e.preventDefault();
+        if (lookupCode.trim()) {
+            window.location.href = `/laporan-publik/${encodeURIComponent(lookupCode.trim().toUpperCase())}`;
+        }
+    };
 
-            {/* Hero Section — Architectural & Editorial Civic Standard */}
-            <section className="relative bg-[#174B35] text-white pt-20 pb-24 px-4 sm:px-6 lg:px-8 overflow-hidden">
-                {/* Subtle Geometric Background Grain / Mesh */}
-                <div className="absolute inset-0 opacity-[0.08] pointer-events-none bg-[radial-gradient(#FFFFFF_1px,transparent_1px)] [background-size:24px_24px]" />
-                <div className="absolute -top-32 right-0 size-96 rounded-full bg-[#216B49]/40 blur-3xl pointer-events-none" />
+    // Partner & Data Sources Logos for LogoLoop
+    const partnerLogos = [
+        {
+            node: (
+                <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-neutral-100 hover:bg-neutral-200/80 border border-neutral-200 font-mono text-xs font-bold text-neutral-800 tracking-wider shadow-xs transition-colors">
+                    <Satellite className="size-3.5 text-emerald-600" />
+                    <span>NASA FIRMS</span>
+                </div>
+            ),
+            title: 'NASA FIRMS',
+            hoverColor: '#10e57a',
+        },
+        {
+            node: (
+                <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-neutral-100 hover:bg-neutral-200/80 border border-neutral-200 font-mono text-xs font-bold text-neutral-800 tracking-wider shadow-xs transition-colors">
+                    <span className="size-2 rounded-full bg-sky-500" />
+                    <span>BMKG INDONESIA</span>
+                </div>
+            ),
+            title: 'BMKG',
+            hoverColor: '#10e57a',
+        },
+        {
+            node: (
+                <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-neutral-100 hover:bg-neutral-200/80 border border-neutral-200 font-mono text-xs font-bold text-neutral-800 tracking-wider shadow-xs transition-colors">
+                    <span className="size-2 rounded-full bg-amber-500" />
+                    <span>KLHK SIPONGI+</span>
+                </div>
+            ),
+            title: 'KLHK SIPONGI',
+            hoverColor: '#10e57a',
+        },
+        {
+            node: (
+                <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-neutral-100 hover:bg-neutral-200/80 border border-neutral-200 font-mono text-xs font-bold text-neutral-800 tracking-wider shadow-xs transition-colors">
+                    <Shield className="size-3.5 text-emerald-600" />
+                    <span>BNPB PUSDALOPS</span>
+                </div>
+            ),
+            title: 'BNPB',
+            hoverColor: '#10e57a',
+        },
+        {
+            node: (
+                <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-neutral-100 hover:bg-neutral-200/80 border border-neutral-200 font-mono text-xs font-bold text-neutral-800 tracking-wider shadow-xs transition-colors">
+                    <span className="size-2 rounded-full bg-purple-500" />
+                    <span>BRIN GEOSPASIAL</span>
+                </div>
+            ),
+            title: 'BRIN',
+            hoverColor: '#10e57a',
+        },
+        {
+            node: (
+                <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-neutral-100 hover:bg-neutral-200/80 border border-neutral-200 font-mono text-xs font-bold text-neutral-800 tracking-wider shadow-xs transition-colors">
+                    <CheckCircle2 className="size-3.5 text-emerald-600" />
+                    <span>BPBD 5 PROVINSI</span>
+                </div>
+            ),
+            title: 'BPBD 5 PROVINSI',
+            hoverColor: '#10e57a',
+        },
+    ];
 
-                <div className="max-w-7xl mx-auto relative z-10">
-                    <div className="max-w-3xl space-y-6">
-                        {/* Eyebrow Tag */}
-                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/15 text-[11px] uppercase tracking-[0.15em] font-medium text-[#E8F1EB]">
-                            <span className="size-1.5 rounded-full bg-[#E8F1EB] animate-pulse" />
-                            Platform Transparansi & Akuntabilitas Karhutla
-                        </div>
+    // AnimatedList Data Mapping for Laporan Terkini
+    const reportListItems = recentReports.map((report) => ({
+        id: report.id,
+        tracking_code: report.tracking_code,
+        icon: <Flame className="size-4 text-emerald-600" />,
+        title: report.title,
+        description: (
+            <span className="flex items-center gap-1.5 text-xs text-neutral-500">
+                <span className="font-mono font-bold text-neutral-700 text-[11px]">{report.tracking_code}</span>
+                <span>•</span>
+                <span className="truncate">{report.regency_city}, {report.province}</span>
+            </span>
+        ),
+        meta: (
+            <div className="flex items-center gap-2">
+                {report.report_status === 'DISPATCHED' ? (
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200/80">
+                        <span className="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                        <span>{report.status_label || 'Ditugaskan ke OPD'}</span>
+                    </span>
+                ) : report.report_status === 'NEEDS_INFORMATION' ? (
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-amber-50 text-amber-800 border border-amber-200/80">
+                        <span className="size-1.5 rounded-full bg-amber-500" />
+                        <span>{report.status_label || 'Perlu Informasi'}</span>
+                    </span>
+                ) : report.report_status === 'VERIFIED' || report.report_status === 'RESOLVED_VERIFIED' ? (
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200/80">
+                        <span className="size-1.5 rounded-full bg-emerald-500" />
+                        <span>{report.status_label || 'Terverifikasi'}</span>
+                    </span>
+                ) : (
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-neutral-100 text-neutral-700 border border-neutral-200/70">
+                        <span className="size-1.5 rounded-full bg-neutral-400" />
+                        <span>{report.status_label || 'Baru Dikirim'}</span>
+                    </span>
+                )}
+                <span className="font-medium text-neutral-400 shrink-0 text-[10px] hidden sm:inline">
+                    {report.reported_occurrence_at
+                        ? new Date(report.reported_occurrence_at).toLocaleDateString('id-ID', {
+                              day: 'numeric',
+                              month: 'short',
+                          })
+                        : 'Baru'}
+                </span>
+            </div>
+        ),
+    }));
 
-                        {/* Display Heading */}
-                        <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-white leading-[1.08] text-balance">
-                            Pantau Karhutla. <br />
-                            <span className="text-[#E8F1EB] font-medium">Kawal Penanganannya.</span>
-                        </h1>
-
-                        <p className="text-base sm:text-lg text-[#E8F1EB]/85 leading-relaxed max-w-2xl font-normal text-pretty">
-                            JAGAIN menghubungkan pelaporan masyarakat di seluruh wilayah Kalimantan dengan verifikasi berjenjang, penugasan resmi OPD (BPBD, Manggala Agni, Damkar), dan audit tindak lanjut yang dapat dipertanggungjawabkan ke publik.
-                        </p>
-
-                        {/* Dual Action CTAs */}
-                        <div className="flex flex-wrap items-center gap-3 pt-2">
-                            <Link
-                                href="/lapor"
-                                className="group inline-flex items-center gap-2.5 px-6 py-3 rounded-full bg-white text-[#174B35] font-semibold text-xs sm:text-sm hover:bg-[#F3F7F4] shadow-sm active:scale-[0.98] transition-all"
-                            >
-                                <FileText className="size-4 text-[#216B49]" />
-                                <span>Kirim Laporan Karhutla</span>
-                                <span className="size-5 rounded-full bg-[#E8F1EB] flex items-center justify-center text-[#174B35] group-hover:translate-x-0.5 transition-transform">
-                                    <ArrowRight className="size-3" />
+    // MagicBento Grid Items: Geospatial Observation, Analytics, Governance, and Recent Reports
+    const bentoItems: MagicBentoItem[] = [
+        {
+            id: 'geospatial-map',
+            colSpan: 8,
+            content: (
+                <div className="flex flex-col h-full justify-between bg-white">
+                    {/* Card Header */}
+                    <div className="p-5 sm:p-6 flex items-start justify-between gap-4 border-b border-neutral-100">
+                        <div className="space-y-1 min-w-0 flex-1">
+                            <div className="flex items-center gap-2 mb-1">
+                                <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-50 border border-emerald-200/80 text-emerald-800 text-[10px] font-bold uppercase tracking-wider">
+                                    <span className="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                                    <span>Observasi Geospasial</span>
+                                </div>
+                                <span className="hidden md:inline-flex items-center gap-1 text-[11px] font-semibold text-neutral-600 bg-neutral-100/90 px-2.5 py-0.5 rounded-full border border-neutral-200/70">
+                                    <Activity className="size-3 text-emerald-600" />
+                                    <span>Live Feed 5 Provinsi</span>
                                 </span>
-                            </Link>
-
-                            <Link
-                                href="/peta"
-                                className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[#216B49]/60 hover:bg-[#216B49] text-white border border-white/20 font-semibold text-xs sm:text-sm active:scale-[0.98] transition-all"
-                            >
-                                <Eye className="size-4" />
-                                <span>Buka Peta Pantau Kalimantan</span>
-                            </Link>
-                        </div>
-                    </div>
-
-                    {/* Double-Bezel Stats Enclosure */}
-                    <div className="mt-14 p-1.5 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md">
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 bg-[#174B35]/70 p-4 sm:p-5 rounded-xl border border-white/10">
-                            <div className="space-y-1">
-                                <div className="text-[11px] uppercase tracking-wider text-[#E8F1EB]/70 font-medium">
-                                    Total Laporan Masuk
-                                </div>
-                                <div className="text-2xl sm:text-3xl font-bold font-mono tracking-tight text-white tabular-nums">
-                                    {stats.total_reports}
-                                </div>
-                                <div className="text-[10px] text-[#E8F1EB]/60">Tercatat di Kalimantan</div>
                             </div>
-
-                            <div className="space-y-1">
-                                <div className="text-[11px] uppercase tracking-wider text-[#E8F1EB]/70 font-medium">
-                                    Terverifikasi Valid
-                                </div>
-                                <div className="text-2xl sm:text-3xl font-bold font-mono tracking-tight text-white tabular-nums">
-                                    {stats.verified_reports}
-                                </div>
-                                <div className="text-[10px] text-[#E8F1EB]/60">Pemeriksaan koordinat & bukti</div>
-                            </div>
-
-                            <div className="space-y-1">
-                                <div className="text-[11px] uppercase tracking-wider text-[#E8F1EB]/70 font-medium">
-                                    Penugasan Aktif OPD
-                                </div>
-                                <div className="text-2xl sm:text-3xl font-bold font-mono tracking-tight text-white tabular-nums">
-                                    {stats.active_dispatched}
-                                </div>
-                                <div className="text-[10px] text-[#E8F1EB]/60">Diteruskan ke regu darat</div>
-                            </div>
-
-                            <div className="space-y-1">
-                                <div className="text-[11px] uppercase tracking-wider text-[#E8F1EB]/70 font-medium">
-                                    Penanganan Terverifikasi
-                                </div>
-                                <div className="text-2xl sm:text-3xl font-bold font-mono tracking-tight text-white tabular-nums">
-                                    {stats.resolved_reports}
-                                </div>
-                                <div className="text-[10px] text-[#E8F1EB]/60">Selesai dievaluasi tuntas</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            {/* Map Preview Section */}
-            <section className="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
-                <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 gap-4 border-b border-[#DDE3DE] pb-4">
-                    <div>
-                        <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[#216B49] mb-1.5">
-                            <Compass className="size-3.5" />
-                            <span>Observasi Geospasial Aktif</span>
-                        </div>
-                        <h2 className="text-2xl sm:text-3xl font-bold text-[#171C19] tracking-tight">
-                            Sebaran Titik Laporan Karhutla di Kalimantan
-                        </h2>
-                        <p className="text-xs sm:text-sm text-[#68716B] mt-1 max-w-2xl leading-relaxed text-pretty">
-                            Peta sebaran laporan masyarakat terverifikasi dan titik panas satelit. Klik titik mana saja untuk meninjau status penanganan dan kronologi audit.
-                        </p>
-                    </div>
-
-                    <Link
-                        href="/peta"
-                        className="group inline-flex items-center gap-1.5 text-xs font-semibold text-[#216B49] hover:text-[#174B35] shrink-0 self-start sm:self-auto py-1"
-                    >
-                        <span>Buka Peta Layar Penuh</span>
-                        <ArrowRight className="size-3.5 group-hover:translate-x-1 transition-transform" />
-                    </Link>
-                </div>
-
-                <div className="rounded-2xl border border-[#DDE3DE] overflow-hidden shadow-xs">
-                    <KarhutlaMap reports={recentReports} height="460px" />
-                </div>
-            </section>
-
-            {/* Recent Reports Stream */}
-            <section className="py-16 bg-[#F3F7F4] border-y border-[#DDE3DE] px-4 sm:px-6 lg:px-8">
-                <div className="max-w-7xl mx-auto">
-                    <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 gap-3">
-                        <div>
-                            <div className="text-xs font-bold uppercase tracking-wider text-[#216B49] mb-1">
-                                Transparansi Alur Publik
-                            </div>
-                            <h2 className="text-2xl sm:text-3xl font-bold text-[#171C19] tracking-tight">
-                                Laporan Terkini & Status Penanganan
+                            <h2 className="text-xl sm:text-2xl font-black text-neutral-900 tracking-tight">
+                                Sebaran Titik Api Lapangan
                             </h2>
-                            <p className="text-xs sm:text-sm text-[#68716B] mt-1">
-                                Setiap perkembangan penanganan dicatat secara terbuka tanpa menyamarkan identitas data
+                            <p className="text-xs text-neutral-500 leading-relaxed max-w-lg truncate sm:whitespace-normal">
+                                Pantauan spasial laporan warga terverifikasi dan anomali termal satelit di daratan Kalimantan.
                             </p>
                         </div>
                         <Link
                             href="/peta"
-                            className="text-xs font-semibold text-[#216B49] hover:underline shrink-0"
+                            className="group bg-neutral-900 hover:bg-black text-white text-xs font-bold px-4 py-2 rounded-full inline-flex items-center gap-2 transition-all shadow-xs active:scale-95 shrink-0 mt-0.5"
                         >
-                            Lihat Semua ({stats.total_reports} Laporan) →
+                            <span>Buka Peta Penuh</span>
+                            <ArrowRight className="size-3.5 transition-transform group-hover:translate-x-0.5 text-[#10e57a]" />
                         </Link>
                     </div>
 
-                    {recentReports.length === 0 ? (
-                        <div className="bg-white border border-[#DDE3DE] rounded-xl p-10 text-center text-[#68716B]">
-                            <p className="text-sm">Belum ada laporan publik yang tercatat saat ini.</p>
-                            <Link href="/lapor" className="inline-block mt-3 text-xs font-semibold text-[#216B49] underline">
-                                Kirim laporan pertama Anda
-                            </Link>
-                        </div>
-                    ) : (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            {recentReports.map((report) => (
-                                <div
-                                    key={report.id}
-                                    className="bg-white border border-[#DDE3DE] rounded-xl p-5 shadow-xs hover:border-[#216B49] hover:shadow-sm transition-all flex flex-col justify-between"
-                                >
-                                    <div className="space-y-3">
-                                        <div className="flex items-center justify-between gap-2">
-                                            <span className="text-[11px] font-mono font-medium px-2 py-0.5 rounded bg-[#F3F7F4] border border-[#DDE3DE] text-[#343B36]">
-                                                {report.tracking_code}
-                                            </span>
-                                            <StatusBadge status={report.report_status} label={report.status_label} size="sm" />
-                                        </div>
-
-                                        <h3 className="font-semibold text-sm text-[#171C19] line-clamp-2 leading-snug">
-                                            {report.title}
-                                        </h3>
-
-                                        <p className="text-xs text-[#68716B] line-clamp-2 leading-relaxed">
-                                            {report.location_description}
-                                        </p>
-
-                                        <div className="space-y-1.5 text-[11px] text-[#343B36] border-t border-[#DDE3DE]/60 pt-2.5">
-                                            <div className="flex items-center gap-1.5 text-[#68716B]">
-                                                <MapPin className="size-3.5 text-[#216B49] shrink-0" />
-                                                <span className="truncate">{report.regency_city}, {report.province}</span>
-                                            </div>
-                                            {report.fire_condition && (
-                                                <FireConditionBadge condition={report.fire_condition} />
-                                            )}
-                                        </div>
-                                    </div>
-
-                                    <div className="pt-3 border-t border-[#DDE3DE]/80 mt-4 flex items-center justify-between text-xs">
-                                        <span className="text-[11px] text-[#68716B] font-mono">
-                                            {report.reported_occurrence_at
-                                                ? new Date(report.reported_occurrence_at).toLocaleDateString('id-ID', {
-                                                      day: 'numeric',
-                                                      month: 'short',
-                                                      year: 'numeric',
-                                                  })
-                                                : 'Terkini'}
-                                        </span>
-                                        <Link
-                                            href={`/laporan-publik/${report.tracking_code}`}
-                                            className="font-semibold text-[#216B49] hover:text-[#174B35] inline-flex items-center gap-1"
-                                        >
-                                            <span>Lihat Kronologi</span>
-                                            <ArrowRight className="size-3" />
-                                        </Link>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    )}
-                </div>
-            </section>
-
-            {/* How It Works — Connected Pipeline */}
-            <section className="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
-                <div className="text-center max-w-2xl mx-auto mb-14">
-                    <div className="text-xs font-bold uppercase tracking-wider text-[#216B49] mb-1.5">
-                        Alur Akuntabilitas
-                    </div>
-                    <h2 className="text-2xl sm:text-3xl font-bold text-[#171C19] tracking-tight">
-                        Bagaimana JAGAIN Bekerja
-                    </h2>
-                    <p className="text-xs sm:text-sm text-[#68716B] mt-1.5">
-                        Alur terstruktur 4 tahap untuk menjamin setiap informasi kebakaran tertangani dan terdata
-                    </p>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                    {/* Stage 1 */}
-                    <div className="bg-white border border-[#DDE3DE] rounded-xl p-5 shadow-xs relative flex flex-col justify-between">
-                        <div>
-                            <div className="size-8 rounded-full bg-[#E8F1EB] text-[#174B35] font-bold flex items-center justify-center text-xs mb-3 font-mono">
-                                01
-                            </div>
-                            <h3 className="font-bold text-sm text-[#171C19] mb-1.5">
-                                Pelaporan Warga
-                            </h3>
-                            <p className="text-xs text-[#68716B] leading-relaxed">
-                                Masyarakat mengirim titik koordinat, deskripsi lokasi, dan bukti foto tanpa membahayakan keselamatan diri.
-                            </p>
-                        </div>
-                        <div className="mt-4 pt-2 border-t border-[#DDE3DE]/60 text-[10px] text-[#216B49] font-medium">
-                            Kode Lacak Unik Diterbitkan
-                        </div>
-                    </div>
-
-                    {/* Stage 2 */}
-                    <div className="bg-white border border-[#DDE3DE] rounded-xl p-5 shadow-xs relative flex flex-col justify-between">
-                        <div>
-                            <div className="size-8 rounded-full bg-[#E8F1EB] text-[#216B49] font-bold flex items-center justify-center text-xs mb-3 font-mono">
-                                02
-                            </div>
-                            <h3 className="font-bold text-sm text-[#171C19] mb-1.5">
-                                Verifikasi Internal
-                            </h3>
-                            <p className="text-xs text-[#68716B] leading-relaxed">
-                                Admin memeriksa kelengkapan data, memvalidasi koordinat Kalimantan, dan mengecek anomali duplikasi laporan.
-                            </p>
-                        </div>
-                        <div className="mt-4 pt-2 border-t border-[#DDE3DE]/60 text-[10px] text-[#216B49] font-medium">
-                            Status Validasi Dicatat
-                        </div>
-                    </div>
-
-                    {/* Stage 3 */}
-                    <div className="bg-white border border-[#DDE3DE] rounded-xl p-5 shadow-xs relative flex flex-col justify-between">
-                        <div>
-                            <div className="size-8 rounded-full bg-[#E8F1EB] text-[#39845C] font-bold flex items-center justify-center text-xs mb-3 font-mono">
-                                03
-                            </div>
-                            <h3 className="font-bold text-sm text-[#171C19] mb-1.5">
-                                Penugasan OPD
-                            </h3>
-                            <p className="text-xs text-[#68716B] leading-relaxed">
-                                Laporan diteruskan ke instansi penanganan (BPBD, Manggala Agni, atau Damkar) sesuai wilayah kewenangan.
-                            </p>
-                        </div>
-                        <div className="mt-4 pt-2 border-t border-[#DDE3DE]/60 text-[10px] text-[#216B49] font-medium">
-                            Regu Lapangan Ditugaskan
-                        </div>
-                    </div>
-
-                    {/* Stage 4 */}
-                    <div className="bg-white border border-[#DDE3DE] rounded-xl p-5 shadow-xs relative flex flex-col justify-between">
-                        <div>
-                            <div className="size-8 rounded-full bg-[#E8F1EB] text-[#174B35] font-bold flex items-center justify-center text-xs mb-3 font-mono">
-                                04
-                            </div>
-                            <h3 className="font-bold text-sm text-[#171C19] mb-1.5">
-                                Audit & Verifikasi Akhir
-                            </h3>
-                            <p className="text-xs text-[#68716B] leading-relaxed">
-                                OPD mencatat progres dan bukti penanganan. Evaluasi akhir menentukan status penyelesaian sebelum ditutup.
-                            </p>
-                        </div>
-                        <div className="mt-4 pt-2 border-t border-[#DDE3DE]/60 text-[10px] text-[#216B49] font-medium">
-                            Jejak Audit Terbuka
-                        </div>
+                    {/* Map View */}
+                    <div className="flex-1 w-full relative min-h-[385px]">
+                        <KarhutlaMap reports={recentReports} height="385px" className="border-0 rounded-none w-full h-full" />
                     </div>
                 </div>
-            </section>
-
-            {/* Safety Callout Banner */}
-            <section className="bg-[#174B35] text-white py-12 px-4 sm:px-6 lg:px-8 mb-12 mx-4 sm:mx-8 rounded-2xl shadow-sm">
-                <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
-                    <div className="space-y-2">
-                        <div className="flex items-center gap-2 text-[#E8F1EB] font-bold text-sm">
-                            <Shield className="size-5 text-[#E8F1EB]" />
-                            <span>Utamakan Keselamatan Diri & Keluarga</span>
+            ),
+        },
+        {
+            id: 'analytics-ledger',
+            colSpan: 4,
+            content: (
+                <div className="flex flex-col h-full justify-between p-6 sm:p-7 bg-white">
+                    {/* Card Header */}
+                    <div>
+                        <div className="flex items-center justify-between gap-2 mb-1.5">
+                            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-50 border border-emerald-200/80 text-emerald-800 text-[10px] font-bold uppercase tracking-wider">
+                                <span className="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                                <span>Akuntabilitas Terbuka</span>
+                            </div>
+                            <span className="text-[11px] font-semibold text-neutral-400 flex items-center gap-1">
+                                <ShieldCheck className="size-3.5 text-emerald-600" />
+                                <span>SOP Terbuka</span>
+                            </span>
                         </div>
-                        <p className="text-xs text-[#E8F1EB]/85 max-w-2xl leading-relaxed">
-                            Jangan pernah mendekati lidah api aktif atau memasuki area lahan gambut berasap tebal demi mengambil foto atau video bukti. Keselamatan jiwa selalu menjadi prioritas mutlak.
+                        <h2 className="text-xl sm:text-2xl font-black text-neutral-900 tracking-tight">
+                            Rekap Data Real-Time
+                        </h2>
+                        <p className="text-xs text-neutral-500 mt-1 leading-relaxed">
+                            Agregat penanganan karhutla publik tanpa latensi tertutup.
                         </p>
                     </div>
-                    <Link
-                        href="/panduan-keselamatan"
-                        className="px-5 py-2.5 rounded-full bg-white text-[#174B35] font-semibold text-xs shrink-0 hover:bg-[#F3F7F4] active:scale-[0.98] transition-all"
-                    >
-                        Baca Panduan Keselamatan Lengkap
-                    </Link>
+
+                    {/* Unified 2x2 Metric Tiles with Rich Details */}
+                    <div className="grid grid-cols-2 gap-3 py-3 my-auto">
+                        {/* 1. Laporan */}
+                        <div className="p-3.5 sm:p-4 rounded-2xl bg-neutral-50/80 border border-neutral-200/70 hover:bg-neutral-100/70 transition-all flex flex-col justify-between">
+                            <div className="flex items-center justify-between mb-1.5">
+                                <span className="text-[10px] uppercase tracking-wider text-neutral-500 font-bold">
+                                    Laporan
+                                </span>
+                                <div className="size-6 sm:size-7 rounded-xl bg-neutral-200/70 text-neutral-700 flex items-center justify-center">
+                                    <FileText className="size-3.5" />
+                                </div>
+                            </div>
+                            <div className="text-2xl sm:text-3xl font-black text-neutral-900 tabular-nums">
+                                <CountUp to={stats.total_reports} duration={1.6} />
+                            </div>
+                            <div className="flex items-center justify-between text-[11px] text-neutral-500 mt-1.5 pt-1.5 border-t border-neutral-200/50">
+                                <span>Total Masuk</span>
+                                <span className="text-[10px] font-semibold text-neutral-600 bg-neutral-200/60 px-1.5 py-0.5 rounded">Publik</span>
+                            </div>
+                        </div>
+
+                        {/* 2. Validasi */}
+                        <div className="p-3.5 sm:p-4 rounded-2xl bg-emerald-50/40 border border-emerald-200/60 hover:bg-emerald-50/70 transition-all flex flex-col justify-between">
+                            <div className="flex items-center justify-between mb-1.5">
+                                <span className="text-[10px] uppercase tracking-wider text-emerald-800 font-bold">
+                                    Validasi
+                                </span>
+                                <div className="size-6 sm:size-7 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center">
+                                    <CheckCircle2 className="size-3.5" />
+                                </div>
+                            </div>
+                            <div className="text-2xl sm:text-3xl font-black text-emerald-700 tabular-nums">
+                                <CountUp to={stats.verified_reports} duration={1.6} delay={0.1} />
+                            </div>
+                            <div className="flex items-center justify-between text-[11px] text-emerald-800/80 mt-1.5 pt-1.5 border-t border-emerald-200/50">
+                                <span>Terverifikasi</span>
+                                <span className="text-[10px] font-bold text-emerald-700 bg-emerald-100 px-1.5 py-0.5 rounded">
+                                    {stats.total_reports > 0 ? Math.round((stats.verified_reports / stats.total_reports) * 100) : 0}%
+                                </span>
+                            </div>
+                        </div>
+
+                        {/* 3. Disposisi */}
+                        <div className="p-3.5 sm:p-4 rounded-2xl bg-sky-50/40 border border-sky-200/60 hover:bg-sky-50/70 transition-all flex flex-col justify-between">
+                            <div className="flex items-center justify-between mb-1.5">
+                                <span className="text-[10px] uppercase tracking-wider text-sky-800 font-bold">
+                                    Disposisi
+                                </span>
+                                <div className="size-6 sm:size-7 rounded-xl bg-sky-100 text-sky-700 flex items-center justify-center">
+                                    <Flame className="size-3.5" />
+                                </div>
+                            </div>
+                            <div className="text-2xl sm:text-3xl font-black text-sky-700 tabular-nums">
+                                <CountUp to={stats.active_dispatched} duration={1.6} delay={0.2} />
+                            </div>
+                            <div className="flex items-center justify-between text-[11px] text-sky-800/80 mt-1.5 pt-1.5 border-t border-sky-200/50">
+                                <span>Regu OPD Aktif</span>
+                                <span className="text-[10px] font-bold text-sky-700 bg-sky-100 px-1.5 py-0.5 rounded">Operasi</span>
+                            </div>
+                        </div>
+
+                        {/* 4. Selesai */}
+                        <div className="p-3.5 sm:p-4 rounded-2xl bg-neutral-900 text-white border border-neutral-800 hover:bg-black transition-all flex flex-col justify-between">
+                            <div className="flex items-center justify-between mb-1.5">
+                                <span className="text-[10px] uppercase tracking-wider text-neutral-400 font-bold">
+                                    Selesai
+                                </span>
+                                <div className="size-6 sm:size-7 rounded-xl bg-neutral-800 text-[#10e57a] flex items-center justify-center">
+                                    <ShieldCheck className="size-3.5" />
+                                </div>
+                            </div>
+                            <div className="text-2xl sm:text-3xl font-black text-white tabular-nums">
+                                <CountUp to={stats.resolved_reports} duration={1.6} delay={0.3} />
+                            </div>
+                            <div className="flex items-center justify-between text-[11px] text-neutral-400 mt-1.5 pt-1.5 border-t border-neutral-800">
+                                <span>Tuntas Diaudit</span>
+                                <span className="text-[10px] font-bold text-[#10e57a] bg-neutral-800 px-1.5 py-0.5 rounded">Tutup</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Funnel Progress Tracker (fills empty space seamlessly) */}
+                    <div className="p-3.5 rounded-2xl bg-neutral-50/90 border border-neutral-200/70 my-1">
+                        <div className="flex items-center justify-between text-xs mb-2">
+                            <span className="text-[11px] font-bold text-neutral-800 flex items-center gap-1.5">
+                                <span className="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                                Status Alur Laporan
+                            </span>
+                            <span className="text-[10px] font-semibold text-neutral-500">
+                                Total {stats.total_reports} Register
+                            </span>
+                        </div>
+                        <div className="w-full h-2 rounded-full bg-neutral-200/70 overflow-hidden flex gap-0.5 p-0.5">
+                            <div
+                                style={{ width: `${stats.total_reports > 0 ? Math.max(15, (stats.resolved_reports / stats.total_reports) * 100) : 25}%` }}
+                                className="bg-neutral-900 rounded-full transition-all duration-500"
+                                title="Selesai Diaudit"
+                            />
+                            <div
+                                style={{ width: `${stats.total_reports > 0 ? Math.max(15, (stats.active_dispatched / stats.total_reports) * 100) : 25}%` }}
+                                className="bg-sky-500 rounded-full transition-all duration-500"
+                                title="Regu Lapangan"
+                            />
+                            <div
+                                style={{ width: `${stats.total_reports > 0 ? Math.max(20, (stats.verified_reports / stats.total_reports) * 100) : 50}%` }}
+                                className="bg-emerald-500 rounded-full transition-all duration-500"
+                                title="Terverifikasi"
+                            />
+                        </div>
+                        <div className="flex items-center justify-between text-[10px] text-neutral-500 mt-2 font-medium">
+                            <span className="flex items-center gap-1">
+                                <span className="size-1.5 rounded-full bg-emerald-500" />
+                                Terverifikasi
+                            </span>
+                            <span className="flex items-center gap-1">
+                                <span className="size-1.5 rounded-full bg-sky-500" />
+                                Disposisi OPD
+                            </span>
+                            <span className="flex items-center gap-1">
+                                <span className="size-1.5 rounded-full bg-neutral-900" />
+                                Tuntas
+                            </span>
+                        </div>
+                    </div>
+
+                    {/* Card Footer Link */}
+                    <div className="pt-3 border-t border-neutral-100 flex items-center justify-between text-xs mt-auto">
+                        <span className="text-neutral-400 font-medium text-[11px]">Register publik terintegrasi</span>
+                        <Link
+                            href="/tentang-kami"
+                            className="text-xs font-bold text-neutral-900 hover:text-emerald-600 flex items-center gap-1.5 transition-colors group"
+                        >
+                            <span>Metodologi Audit</span>
+                            <ArrowRight className="size-3 group-hover:translate-x-0.5 transition-transform" />
+                        </Link>
+                    </div>
                 </div>
-            </section>
+            ),
+        },
+        {
+            id: 'governance-workflow',
+            colSpan: 5,
+            content: (
+                <div className="flex flex-col h-full justify-between p-6 sm:p-7">
+                    {/* Header */}
+                    <div>
+                        <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-800 text-[10px] font-bold uppercase tracking-wider mb-2">
+                            <span className="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                            <span>Tata Kelola Respon</span>
+                        </div>
+                        <h2 className="text-xl sm:text-2xl font-black text-neutral-900 tracking-tight">
+                            Alur Pengawalan
+                        </h2>
+                    </div>
+
+                    {/* Interactive Stepper */}
+                    <div className="my-auto py-2">
+                        <Stepper
+                            initialStep={1}
+                            indicator="numbers"
+                            orientation="horizontal"
+                            theme="light"
+                            accentColor="#10e57a"
+                            frame={false}
+                            backButtonText="Kembali"
+                            nextButtonText="Lanjut"
+                            completeButtonText="Selesai"
+                            showFooter={true}
+                            className="w-full"
+                        >
+                            <Step title="01 Lapor" description="Koordinat warga">
+                                <div className="bg-neutral-50/90 rounded-2xl p-4 border border-neutral-200/70 space-y-1">
+                                    <h4 className="text-xs sm:text-[13px] font-bold text-neutral-900">
+                                        1. Lapor & Catat Koordinat
+                                    </h4>
+                                    <p className="text-[11px] sm:text-xs text-neutral-500 leading-relaxed font-normal">
+                                        Warga mengirim bukti foto dan koordinat presisi dari zona aman. Kode lacak unik terbit seketika tanpa perantara.
+                                    </p>
+                                </div>
+                            </Step>
+                            <Step title="02 Validasi" description="Cek lapangan">
+                                <div className="bg-neutral-50/90 rounded-2xl p-4 border border-neutral-200/70 space-y-1">
+                                    <h4 className="text-xs sm:text-[13px] font-bold text-neutral-900">
+                                        2. Verifikasi Internal Tim JAGAIN
+                                    </h4>
+                                    <p className="text-[11px] sm:text-xs text-neutral-500 leading-relaxed font-normal">
+                                        Pemeriksaan konsistensi geospasial, keaslian foto visual, dan pencocokan dengan anomali termal satelit NASA.
+                                    </p>
+                                </div>
+                            </Step>
+                            <Step title="03 Disposisi" description="Regu dinas">
+                                <div className="bg-neutral-50/90 rounded-2xl p-4 border border-neutral-200/70 space-y-1">
+                                    <h4 className="text-xs sm:text-[13px] font-bold text-neutral-900">
+                                        3. Disposisi Instansi OPD
+                                    </h4>
+                                    <p className="text-[11px] sm:text-xs text-neutral-500 leading-relaxed font-normal">
+                                        Laporan resmi diteruskan ke posko BPBD, Manggala Agni KLHK, atau Damkar setempat untuk respon lapangan.
+                                    </p>
+                                </div>
+                            </Step>
+                            <Step title="04 Audit" description="Register publik">
+                                <div className="bg-neutral-50/90 rounded-2xl p-4 border border-neutral-200/70 space-y-1">
+                                    <h4 className="text-xs sm:text-[13px] font-bold text-neutral-900">
+                                        4. Audit Penutupan Terbuka
+                                    </h4>
+                                    <p className="text-[11px] sm:text-xs text-neutral-500 leading-relaxed font-normal">
+                                        Catatan kronologis dan status penanganan tersimpan permanen di basis data terbuka untuk akuntabilitas publik.
+                                    </p>
+                                </div>
+                            </Step>
+                        </Stepper>
+                    </div>
+
+                    {/* Footer */}
+                    <div className="pt-3 border-t border-neutral-100 flex items-center justify-between text-xs">
+                        <span className="text-neutral-400 font-medium text-[11px]">SOP Transparansi Sipil</span>
+                        <Link
+                            href="/panduan-keselamatan"
+                            className="text-xs font-bold text-neutral-900 hover:text-emerald-600 flex items-center gap-1 transition-colors"
+                        >
+                            <span>Panduan Warga</span>
+                            <ArrowRight className="size-3" />
+                        </Link>
+                    </div>
+                </div>
+            ),
+        },
+        {
+            id: 'verified-reports',
+            colSpan: 7,
+            content: (
+                <div className="flex flex-col h-full justify-between p-6 sm:p-7">
+                    {/* Header */}
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-800 text-[10px] font-bold uppercase tracking-wider mb-2">
+                                <span className="size-1.5 rounded-full bg-emerald-500" />
+                                <span>Dokumen Terverifikasi</span>
+                            </div>
+                            <h2 className="text-xl sm:text-2xl font-black text-neutral-900 tracking-tight">
+                                Laporan Terkini
+                            </h2>
+                        </div>
+                        <Link
+                            href="/peta"
+                            className="group text-xs font-semibold text-neutral-500 hover:text-neutral-950 inline-flex items-center gap-1 transition-colors"
+                        >
+                            <span>Semua Laporan ({stats.total_reports})</span>
+                            <ArrowRight className="size-3 transition-transform group-hover:translate-x-0.5" />
+                        </Link>
+                    </div>
+
+                    {/* Animated Report Feed */}
+                    {recentReports.length === 0 ? (
+                        <div className="text-center py-12 text-xs text-neutral-400">
+                            Belum ada laporan terdaftar dalam arsip publik.
+                        </div>
+                    ) : (
+                        <div className="my-auto py-2">
+                            <AnimatedList
+                                items={reportListItems}
+                                onItemSelect={(item) => {
+                                    if (item?.tracking_code) {
+                                        router.visit(`/laporan-publik/${item.tracking_code}`);
+                                    }
+                                }}
+                                animation="pop"
+                                theme="light"
+                                accentColor="#10e57a"
+                                radius={12}
+                                gap={8}
+                                width="100%"
+                                maxHeight={270}
+                                frame={false}
+                                showGradients={true}
+                                displayScrollbar={true}
+                            />
+                        </div>
+                    )}
+
+                    {/* Footer */}
+                    <div className="pt-3 border-t border-neutral-100 flex items-center justify-between text-xs">
+                        <span className="text-neutral-400 font-medium text-[11px]">Pembaruan posko & satelit</span>
+                        <Link
+                            href="/peta"
+                            className="text-xs font-bold text-neutral-900 hover:text-emerald-600 flex items-center gap-1 transition-colors"
+                        >
+                            <span>Arsip Lengkap</span>
+                            <ArrowRight className="size-3" />
+                        </Link>
+                    </div>
+                </div>
+            ),
+        },
+    ];
+
+    return (
+        <div className="min-h-screen flex flex-col bg-white text-neutral-900 selection:bg-[#10e57a] selection:text-black font-sans antialiased">
+            <Head title="JAGAIN — Platform Transparansi Karhutla Kalimantan" />
+
+            <Navbar />
+
+            <main className="flex-1">
+                {/* =========================================================================
+                    1. LIQUID HERO SECTION (Cyber Green #10E57A + Organic Wave)
+                    Massive typography, generous breathing room, crisp minimal copy
+                    ========================================================================= */}
+                <section className="relative bg-[#10e57a] text-black overflow-hidden liquid-wave-hero pt-32 sm:pt-36 lg:pt-40 pb-16 sm:pb-20 px-4 sm:px-6 lg:px-8 shadow-[0_20px_50px_rgba(16,229,122,0.25)] z-20">
+                    <div className="max-w-6xl mx-auto w-full relative z-10">
+                        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+                            {/* Left Column: Massive Headline & Crisp Subtitle with AnimatedContent */}
+                            <div className="lg:col-span-7">
+                                <AnimatedContent
+                                    distance={36}
+                                    direction="vertical"
+                                    duration={0.8}
+                                    delay={0.1}
+                                    ease="power3.out"
+                                    className="space-y-6 text-left"
+                                >
+                                    <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-black text-[#10e57a] text-[10px] font-bold tracking-[0.2em] uppercase shadow-sm">
+                                        <span className="size-2 rounded-full bg-[#10e57a] animate-pulse" />
+                                        <span>REGISTER PUBLIK RESMI KALIMANTAN</span>
+                                    </div>
+
+                                    <h1 className="text-5xl sm:text-7xl lg:text-[84px] font-black tracking-[-0.04em] text-black leading-[0.92] uppercase text-balance">
+                                        PANTAU KARHUTLA.{' '}
+                                        <span className="block text-black/85 font-extrabold tracking-tight mt-1">
+                                            KAWAL PENANGANAN.
+                                        </span>
+                                    </h1>
+
+                                    <p className="text-base sm:text-lg font-medium text-black/80 max-w-lg leading-relaxed">
+                                        Platform independen untuk mengawal laporan kebakaran hutan dan lahan Kalimantan. Data terbuka, koordinat presisi, dan tuntas diaudit.
+                                    </p>
+
+                                    {/* Action CTAs: SpecularButton for Lapor Karhutla */}
+                                    <div className="flex flex-wrap items-center gap-4 pt-2">
+                                        <SpecularButton
+                                            size="md"
+                                            radius={999}
+                                            tint="#000000"
+                                            tintOpacity={1}
+                                            textColor="#ffffff"
+                                            lineColor="#10e57a"
+                                            baseColor="#27272a"
+                                            intensity={1.4}
+                                            idleIntensity={0.5}
+                                            glow={1.2}
+                                            followMouse
+                                            onClick={() => router.visit('/lapor')}
+                                            className="font-bold text-sm pl-5 pr-2 py-1.5 shadow-xl active:scale-95 transition-all"
+                                        >
+                                            <span className="flex items-center gap-2.5">
+                                                <span>Lapor Karhutla</span>
+                                                <span className="size-7 rounded-full bg-white/20 text-[#10e57a] flex items-center justify-center">
+                                                    <ArrowRight className="size-3.5" />
+                                                </span>
+                                            </span>
+                                        </SpecularButton>
+
+                                        <Link
+                                            href="/peta"
+                                            className="border-2 border-black/30 hover:border-black text-black px-6 py-2.5 rounded-full font-bold text-sm transition-all hover:scale-105 active:scale-95"
+                                        >
+                                            Buka Peta Sebaran
+                                        </Link>
+                                    </div>
+                                </AnimatedContent>
+                            </div>
+
+                            {/* Right Column: Clean Tracker Card wrapped in TiltedCard */}
+                            <div className="lg:col-span-5">
+                                <AnimatedContent
+                                    distance={40}
+                                    direction="vertical"
+                                    duration={0.8}
+                                    delay={0.25}
+                                    ease="power3.out"
+                                >
+                                    <TiltedCard
+                                        containerWidth="100%"
+                                        containerHeight="360px"
+                                        imageWidth="100%"
+                                        imageHeight="360px"
+                                        rotateAmplitude={12}
+                                        scaleOnHover={1.03}
+                                        glare={0.4}
+                                        glareColor="#ffffff"
+                                        shadow={0.3}
+                                        radius={32}
+                                        showTooltip={false}
+                                        flipOnClick={false}
+                                        className="w-full"
+                                    >
+                                        <div className="w-full h-full rounded-[2rem] bg-white/95 backdrop-blur-2xl border border-white/80 p-6 sm:p-7 shadow-[0_20px_50px_-10px_rgba(0,0,0,0.12)] text-neutral-900 flex flex-col justify-between">
+                                            {/* Header */}
+                                            <div className="flex items-center justify-between pb-3 border-b border-neutral-100">
+                                                <div>
+                                                    <span className="text-[10px] uppercase tracking-[0.15em] text-neutral-500 font-bold block">
+                                                        PENGURUTAN REGISTER
+                                                    </span>
+                                                    <h3 className="text-lg font-black text-neutral-950 tracking-tight">
+                                                        Lacak Progres Laporan
+                                                    </h3>
+                                                </div>
+
+                                                <div className="bg-black text-[#10e57a] px-3 py-1 rounded-full text-[10px] font-bold tracking-wider uppercase inline-flex items-center gap-1.5 shadow-xs">
+                                                    <span className="size-1.5 rounded-full bg-[#10e57a] animate-ping" />
+                                                    <span>ONLINE</span>
+                                                </div>
+                                            </div>
+
+                                            {/* Minimalist Search Form */}
+                                            <form onSubmit={handleLookup} className="space-y-2 py-1">
+                                                <div className="flex items-center gap-2 bg-neutral-100/90 rounded-full p-1 border border-neutral-200/80 shadow-inner">
+                                                    <Search className="size-4 text-neutral-400 ml-3 shrink-0" />
+                                                    <input
+                                                        type="text"
+                                                        placeholder="Contoh: JG-XXXXXX"
+                                                        value={lookupCode}
+                                                        onChange={(e) => setLookupCode(e.target.value)}
+                                                        className="bg-transparent text-xs font-bold text-neutral-900 placeholder-neutral-400 focus:outline-none flex-1 px-2 py-1 uppercase"
+                                                    />
+                                                    <button
+                                                        type="submit"
+                                                        className="bg-black text-white hover:bg-neutral-800 font-bold text-xs px-4 py-2 rounded-full hover:scale-105 active:scale-95 transition-all shadow-xs"
+                                                    >
+                                                        Cari
+                                                    </button>
+                                                </div>
+                                            </form>
+
+                                            {/* Clean Stat Strip with CountUp */}
+                                            <div className="grid grid-cols-3 gap-2.5 pt-1 text-center">
+                                                <div className="bg-neutral-50/90 border border-neutral-200/60 rounded-2xl p-3">
+                                                    <div className="text-xl font-black text-neutral-900 tabular-nums">
+                                                        <CountUp to={stats.total_reports} duration={1.5} />
+                                                    </div>
+                                                    <div className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider mt-0.5">
+                                                        Laporan
+                                                    </div>
+                                                </div>
+                                                <div className="bg-neutral-50/90 border border-neutral-200/60 rounded-2xl p-3">
+                                                    <div className="text-xl font-black text-emerald-600 tabular-nums">
+                                                        <CountUp to={stats.verified_reports} duration={1.5} delay={0.1} />
+                                                    </div>
+                                                    <div className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider mt-0.5">
+                                                        Valid
+                                                    </div>
+                                                </div>
+                                                <div className="bg-neutral-50/90 border border-neutral-200/60 rounded-2xl p-3">
+                                                    <div className="text-xl font-black text-sky-600 tabular-nums">
+                                                        <CountUp to={stats.active_dispatched} duration={1.5} delay={0.2} />
+                                                    </div>
+                                                    <div className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider mt-0.5">
+                                                        OPD
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </TiltedCard>
+                                </AnimatedContent>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                {/* =========================================================================
+                    2. TRUST BADGES & LOGO LOOP (Pure White Background + Reactive Reel)
+                    Spacious breathing room below wave shape
+                    ========================================================================= */}
+                <section className="pt-14 sm:pt-16 pb-16 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto w-full text-center">
+                    <AnimatedContent distance={24} duration={0.8} threshold={0.15}>
+                        {/* Micro-pills */}
+                        <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4">
+                            <div className="bg-neutral-50 hover:bg-white text-neutral-800 border border-neutral-200/90 px-4 py-2 rounded-full text-xs font-semibold shadow-xs flex items-center gap-2.5 transition-all">
+                                <span className="size-2 rounded-full bg-emerald-500" />
+                                <span>100% Audit Terbuka</span>
+                            </div>
+                            <div className="bg-neutral-50 hover:bg-white text-neutral-800 border border-neutral-200/90 px-4 py-2 rounded-full text-xs font-semibold shadow-xs flex items-center gap-2.5 transition-all">
+                                <Satellite className="size-3.5 text-emerald-600" />
+                                <span>NASA FIRMS & BMKG</span>
+                            </div>
+                            <div className="bg-neutral-50 hover:bg-white text-neutral-800 border border-neutral-200/90 px-4 py-2 rounded-full text-xs font-semibold shadow-xs flex items-center gap-2.5 transition-all">
+                                <CheckCircle2 className="size-3.5 text-emerald-600" />
+                                <span>Verifikasi Berlapis</span>
+                            </div>
+                            <div className="bg-neutral-50 hover:bg-white text-neutral-800 border border-neutral-200/90 px-4 py-2 rounded-full text-xs font-semibold shadow-xs flex items-center gap-2.5 transition-all">
+                                <Shield className="size-3.5 text-emerald-600" />
+                                <span>Akuntabilitas OPD</span>
+                            </div>
+                        </div>
+
+                        {/* Infinite Smooth Logo Loop */}
+                        <div className="mt-12 sm:mt-14">
+                            <div className="text-[10px] uppercase tracking-[0.2em] text-neutral-400 mb-6 font-semibold">
+                                INTEGRASI SUMBER DATA & MITRA OBSERVASI
+                            </div>
+
+                            <div className="relative overflow-hidden py-1">
+                                <LogoLoop
+                                    logos={partnerLogos}
+                                    speed={55}
+                                    direction="left"
+                                    logoHeight={34}
+                                    gap={24}
+                                    fadeOut={true}
+                                    fadeOutWidth={0.15}
+                                    scaleOnHover={true}
+                                    ariaLabel="Mitra Observasi dan Sumber Data Jagain"
+                                />
+                            </div>
+                        </div>
+                    </AnimatedContent>
+                </section>
+
+                {/* =========================================================================
+                    3. MAGIC BENTO GRID (Geospatial, Analytics, Governance, Reports)
+                    Reactive glowing borders, cursor spotlight & click ripples
+                    ========================================================================= */}
+                <section className="px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto w-full pb-20">
+                    <AnimatedContent distance={40} duration={0.9} threshold={0.1}>
+                        <MagicBento
+                            items={bentoItems}
+                            columns={12}
+                            rowHeight="auto"
+                            gap={24}
+                            radius={24}
+                            theme="light"
+                            glowColor="#10e57a"
+                            enableBorderGlow={true}
+                            enableSpotlight={true}
+                            spotlightRadius={320}
+                            clickEffect={true}
+                            enableTilt={false}
+                            enableMagnetism={false}
+                            intro={false}
+                        />
+                    </AnimatedContent>
+                </section>
+
+                {/* =========================================================================
+                    4. PEATLAND CRITICAL SAFETY NOTICE (Clean Light Amber Card)
+                    ========================================================================= */}
+                <section className="px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto w-full pb-24">
+                    <AnimatedContent distance={30} duration={0.8} threshold={0.15}>
+                        <BorderGlow
+                            edgeSensitivity={30}
+                            glowColor="38 90 60"
+                            backgroundColor="#fffdf5"
+                            borderRadius={28}
+                            glowRadius={40}
+                            glowIntensity={1.2}
+                            coneSpread={28}
+                            animated={true}
+                            colors={['#f59e0b', '#ef4444', '#f97316']}
+                            fillOpacity={0.15}
+                            className="w-full bg-gradient-to-br from-amber-500/10 via-amber-50/60 to-white border border-amber-300/70 shadow-sm"
+                        >
+                            <div className="p-6 sm:p-10">
+                                <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative z-10">
+                                    <div className="space-y-2.5 max-w-2xl">
+                                        <div className="inline-flex items-center gap-2 text-xs uppercase tracking-wider text-amber-900 bg-amber-100/90 px-3.5 py-1 rounded-full border border-amber-300/80 font-bold">
+                                            <AlertTriangle className="size-3.5 shrink-0 text-amber-700" />
+                                            <span>Pemberitahuan Keselamatan Gambut</span>
+                                        </div>
+                                        <h3 className="text-xl sm:text-2xl font-black text-neutral-950 leading-tight">
+                                            Jangan Dekati Area Gambut Hanya Demi Dokumentasi
+                                        </h3>
+                                        <p className="text-xs sm:text-sm text-neutral-700 leading-relaxed">
+                                            Lahan gambut membakar di bawah tanah (kedalaman 1–3 meter). Rongga abu panas dapat runtuh seketika saat diinjak. Utamakan keselamatan jiwa.
+                                        </p>
+                                    </div>
+
+                                    <div className="flex flex-wrap items-center gap-3 shrink-0">
+                                        <Link
+                                            href="/panduan-keselamatan"
+                                            className="border border-neutral-300 hover:border-neutral-900 bg-white text-neutral-800 text-xs font-semibold px-4 py-2 rounded-full transition-colors shadow-xs"
+                                        >
+                                            Panduan Krisis
+                                        </Link>
+                                        <a
+                                            href="tel:112"
+                                            className="bg-amber-400 hover:bg-amber-300 text-black text-xs font-bold px-4 py-2 rounded-full transition-all shadow-xs"
+                                        >
+                                            Darurat: Hubungi 112
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </BorderGlow>
+                    </AnimatedContent>
+                </section>
+            </main>
 
             <Footer />
         </div>

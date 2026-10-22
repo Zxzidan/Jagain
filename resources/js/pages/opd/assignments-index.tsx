@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Head, Link, router } from '@inertiajs/react';
 import StatusBadge from '@/components/status-badge';
-import { Building, FileText, ArrowLeft, ArrowRight, Eye, Search } from 'lucide-react';
+import { Building, ArrowLeft, ArrowRight } from 'lucide-react';
 
 interface AssignmentItem {
     id: number;
@@ -55,42 +55,43 @@ export default function OpdAssignmentsIndex({
     };
 
     return (
-        <div className="p-4 sm:p-6 lg:p-8 space-y-6 bg-[#F3F7F4] min-h-screen text-[#171C19]">
+        <div className="min-h-screen bg-[#f0eee6] text-[#141413] p-4 sm:p-6 lg:p-8 space-y-6">
             <Head title={`Daftar Penugasan ${agency.code} — JAGAIN`} />
 
-            {/* OPD Header Card */}
-            <div className="bg-white border border-[#DDE3DE] rounded-2xl p-6 sm:p-8 shadow-xs">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                    <div className="space-y-1">
-                        <div className="text-xs text-[#216B49] font-bold uppercase tracking-wider mb-0.5">
-                            {agency.name} ({agency.code})
-                        </div>
-                        <h1 className="text-xl sm:text-2xl font-bold text-[#171C19] flex items-center gap-2">
-                            <Building className="size-5 text-[#174B35]" />
-                            Daftar Penugasan Karhutla ({assignments.total} Total)
-                        </h1>
+            {/* Header Bar */}
+            <div className="border-b border-[#cccbc8] pb-5 flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+                <div className="space-y-1">
+                    <div className="inline-flex items-center gap-2 text-[11px] font-mono tracking-wider uppercase text-[#87867f]">
+                        <Building className="size-3.5 text-[#141413]" />
+                        <span>{agency.name} ({agency.code})</span>
                     </div>
-
-                    <Link
-                        href="/opd/dashboard"
-                        className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#174B35] hover:underline"
-                    >
-                        <ArrowLeft className="size-3.5" />
-                        Kembali ke Dashboard OPD
-                    </Link>
+                    <h1 className="text-2xl sm:text-3xl font-serif font-normal text-[#141413]">
+                        Daftar Penugasan Lapangan
+                    </h1>
+                    <p className="text-sm font-sans text-[#87867f]">
+                        Tugas penanganan kebakaran hutan dan lahan yang didelegasikan oleh administrator kepada instansi Anda ({assignments.total} total penugasan).
+                    </p>
                 </div>
+
+                <Link
+                    href="/opd/dashboard"
+                    className="inline-flex items-center gap-1.5 text-xs font-sans font-medium text-[#141413] hover:text-[#d97757] transition-colors self-start sm:self-center"
+                >
+                    <ArrowLeft className="size-3.5" />
+                    <span>Kembali ke Dashboard OPD</span>
+                </Link>
             </div>
 
-            <div className="space-y-6">
+            <div className="space-y-4">
                 {/* Filter Tabs */}
-                <div className="flex flex-wrap items-center gap-2">
+                <div className="flex flex-wrap items-center gap-2 text-xs">
                     <button
                         type="button"
                         onClick={() => handleFilterChange('')}
-                        className={`px-3.5 py-1.5 rounded-full text-xs font-bold border transition-colors ${
+                        className={`px-3 py-1.5 rounded-lg text-xs font-sans transition-colors border ${
                             !status
-                                ? 'bg-[#174B35] text-white border-[#174B35]'
-                                : 'bg-white text-[#343B36] border-[#DDE3DE] hover:bg-[#F3F7F4]'
+                                ? 'bg-[#141413] text-[#faf9f5] border-[#141413] font-medium'
+                                : 'bg-[#faf9f5] text-[#141413] border-[#cccbc8] hover:bg-[#e3dacc]'
                         }`}
                     >
                         Semua Status ({assignments.total})
@@ -100,10 +101,10 @@ export default function OpdAssignmentsIndex({
                             key={opt.value}
                             type="button"
                             onClick={() => handleFilterChange(opt.value)}
-                            className={`px-3.5 py-1.5 rounded-full text-xs font-medium border transition-colors ${
+                            className={`px-3 py-1.5 rounded-lg text-xs font-sans transition-colors border ${
                                 status === opt.value
-                                    ? 'bg-[#174B35] text-white border-[#174B35]'
-                                    : 'bg-white text-[#343B36] border-[#DDE3DE] hover:bg-[#F3F7F4]'
+                                    ? 'bg-[#141413] text-[#faf9f5] border-[#141413] font-medium'
+                                    : 'bg-[#faf9f5] text-[#141413] border-[#cccbc8] hover:bg-[#e3dacc]'
                             }`}
                         >
                             {opt.label}
@@ -112,56 +113,58 @@ export default function OpdAssignmentsIndex({
                 </div>
 
                 {/* Table */}
-                <div className="bg-white border border-[#DDE3DE] rounded-2xl overflow-hidden shadow-xs">
+                <div className="bg-[#faf9f5] border border-[#cccbc8] rounded-2xl overflow-hidden shadow-xs">
                     <div className="overflow-x-auto">
                         <table className="w-full text-left text-xs">
-                            <thead className="bg-[#F3F7F4] border-b border-[#DDE3DE] text-[#343B36] uppercase tracking-wider text-[11px] font-semibold">
+                            <thead className="bg-[#e3dacc]/40 border-b border-[#cccbc8] text-[#141413] uppercase tracking-wider text-[11px] font-sans font-semibold">
                                 <tr>
-                                    <th className="py-3.5 px-4">Kode Laporan</th>
-                                    <th className="py-3.5 px-4">Judul Insiden</th>
-                                    <th className="py-3.5 px-4">Kategori & Lokasi</th>
-                                    <th className="py-3.5 px-4">Status Tugas</th>
-                                    <th className="py-3.5 px-4">Waktu Penugasan</th>
-                                    <th className="py-3.5 px-4 text-right">Aksi</th>
+                                    <th className="py-3 px-4">Kode Lacak Laporan</th>
+                                    <th className="py-3 px-4">Judul Kejadian</th>
+                                    <th className="py-3 px-4">Wilayah Operasi</th>
+                                    <th className="py-3 px-4">Status Penugasan</th>
+                                    <th className="py-3 px-4">Waktu Ditugaskan</th>
+                                    <th className="py-3 px-4 text-right">Aksi</th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-[#DDE3DE]">
+                            <tbody className="divide-y divide-[#cccbc8]/60">
                                 {assignments.data.length === 0 ? (
                                     <tr>
-                                        <td colSpan={6} className="py-12 text-center text-[#68716B]">
-                                            Tidak ada penugasan dengan status ini.
+                                        <td colSpan={6} className="py-12 text-center text-[#87867f] font-serif text-sm">
+                                            Tidak ada penugasan yang sesuai dengan kriteria filter ini.
                                         </td>
                                     </tr>
                                 ) : (
                                     assignments.data.map((asg) => (
-                                        <tr key={asg.id} className="hover:bg-[#F3F7F4]/50 transition-colors">
-                                            <td className="py-3.5 px-4 font-mono font-bold text-[#171C19]">
-                                                {asg.report.tracking_code}
+                                        <tr key={asg.id} className="hover:bg-[#f0eee6]/60 transition-colors">
+                                            <td className="py-3.5 px-4 font-mono whitespace-nowrap">
+                                                <span className="px-2 py-0.5 rounded bg-[#e3dacc]/70 text-[#141413] border border-[#cccbc8] text-[11px] font-medium">
+                                                    {asg.report.tracking_code}
+                                                </span>
                                             </td>
-                                            <td className="py-3.5 px-4 font-bold text-[#171C19] max-w-xs truncate">
-                                                {asg.report.title}
+                                            <td className="py-3.5 px-4 max-w-xs">
+                                                <div className="font-serif font-semibold text-sm text-[#141413] truncate">{asg.report.title}</div>
+                                                {asg.notes && (
+                                                    <div className="text-[11px] font-sans text-[#87867f] truncate mt-0.5">
+                                                        Instruksi: {asg.notes}
+                                                    </div>
+                                                )}
                                             </td>
-                                            <td className="py-3.5 px-4 text-[#343B36]">
-                                                <div className="font-semibold text-[#174B35]">
-                                                    {asg.report.category?.name || 'Umum'}
-                                                </div>
-                                                <div className="text-[11px] text-[#68716B]">
-                                                    {asg.report.regency_city}, {asg.report.province}
-                                                </div>
+                                            <td className="py-3.5 px-4 font-sans text-[#87867f]">
+                                                {asg.report.regency_city}, {asg.report.province}
                                             </td>
-                                            <td className="py-3.5 px-4">
+                                            <td className="py-3.5 px-4 whitespace-nowrap">
                                                 <StatusBadge status={asg.assignment_status} size="sm" />
                                             </td>
-                                            <td className="py-3.5 px-4 text-[11px] font-mono text-[#68716B] whitespace-nowrap">
+                                            <td className="py-3.5 px-4 font-mono text-[11px] text-[#87867f] whitespace-nowrap">
                                                 {new Date(asg.assigned_at).toLocaleString('id-ID')}
                                             </td>
-                                            <td className="py-3.5 px-4 text-right">
+                                            <td className="py-3.5 px-4 text-right whitespace-nowrap">
                                                 <Link
                                                     href={`/opd/tugas/${asg.id}`}
-                                                    className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#216B49] hover:bg-[#174B35] text-white font-bold rounded-lg text-xs transition-colors shadow-xs active:scale-[0.98]"
+                                                    className="inline-flex items-center gap-1 text-xs font-sans font-medium text-[#141413] hover:text-[#d97757] transition-colors"
                                                 >
-                                                    <Eye className="size-3" />
-                                                    Tindak Lanjut
+                                                    <span>Tindak Lanjut</span>
+                                                    <ArrowRight className="size-3" />
                                                 </Link>
                                             </td>
                                         </tr>
@@ -170,32 +173,32 @@ export default function OpdAssignmentsIndex({
                             </tbody>
                         </table>
                     </div>
-
-                    {/* Pagination */}
-                    {assignments.last_page > 1 && (
-                        <div className="p-4 border-t border-[#DDE3DE] bg-[#F3F7F4] flex items-center justify-between text-xs">
-                            <span className="text-[#68716B]">
-                                Halaman {assignments.current_page} dari {assignments.last_page}
-                            </span>
-                            <div className="flex items-center gap-1">
-                                {assignments.links.map((link, idx) => (
-                                    <button
-                                        key={idx}
-                                        type="button"
-                                        disabled={!link.url}
-                                        onClick={() => link.url && router.get(link.url, {}, { preserveState: true })}
-                                        className={`px-3 py-1.5 rounded-lg text-xs border ${
-                                            link.active
-                                                ? 'bg-[#174B35] text-white border-[#174B35]'
-                                                : 'bg-white text-[#343B36] border-[#DDE3DE] hover:bg-[#F3F7F4] disabled:opacity-40'
-                                        }`}
-                                        dangerouslySetInnerHTML={{ __html: link.label }}
-                                    />
-                                ))}
-                            </div>
-                        </div>
-                    )}
                 </div>
+
+                {/* Pagination */}
+                {assignments.last_page > 1 && (
+                    <div className="p-3 border border-[#cccbc8] bg-[#faf9f5] rounded-xl flex items-center justify-between text-xs">
+                        <span className="text-[#87867f] font-sans">
+                            Halaman {assignments.current_page} dari {assignments.last_page}
+                        </span>
+                        <div className="flex items-center gap-1">
+                            {assignments.links.map((link, idx) => (
+                                <button
+                                    key={idx}
+                                    type="button"
+                                    disabled={!link.url}
+                                    onClick={() => link.url && router.get(link.url, {}, { preserveState: true })}
+                                    className={`px-3 py-1 rounded text-xs border font-sans ${
+                                        link.active
+                                            ? 'bg-[#141413] text-[#faf9f5] border-[#141413] font-medium'
+                                            : 'bg-[#faf9f5] text-[#141413] border-[#cccbc8] hover:bg-[#e3dacc] disabled:opacity-40'
+                                    }`}
+                                    dangerouslySetInnerHTML={{ __html: link.label }}
+                                />
+                            ))}
+                        </div>
+                    </div>
+                )}
             </div>
         </div>
     );

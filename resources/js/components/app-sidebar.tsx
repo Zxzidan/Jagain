@@ -68,11 +68,11 @@ export function AppSidebar() {
         : '/laporan-saya';
 
     return (
-        <Sidebar collapsible="icon" variant="inset" className="border-r border-[#DDE3DE] dark:border-[#343B36]">
-            <SidebarHeader className="border-b border-[#DDE3DE]/60 dark:border-[#343B36]/60 pb-3">
+        <Sidebar collapsible="icon" variant="inset" className="border-r border-[#cccbc8] bg-[#f0eee6]">
+            <SidebarHeader className="border-b border-[#cccbc8] pb-3 bg-[#f0eee6]">
                 <SidebarMenu>
                     <SidebarMenuItem>
-                        <SidebarMenuButton size="lg" asChild className="hover:bg-[#E8F1EB] dark:hover:bg-[#1F2522]">
+                        <SidebarMenuButton size="lg" asChild className="hover:bg-[#e3dacc]">
                             <Link href={homeUrl} prefetch>
                                 <AppLogo showTagline={false} />
                             </Link>
@@ -81,11 +81,11 @@ export function AppSidebar() {
                 </SidebarMenu>
             </SidebarHeader>
 
-            <SidebarContent className="px-2 py-3">
+            <SidebarContent className="px-2 py-3 bg-[#f0eee6]">
                 <NavMain items={navItems} />
             </SidebarContent>
 
-            <SidebarFooter className="border-t border-[#DDE3DE]/60 dark:border-[#343B36]/60 pt-2">
+            <SidebarFooter className="border-t border-[#cccbc8] pt-2 bg-[#f0eee6]">
                 <NavFooter items={footerNavItems} className="mt-auto" />
                 <NavUser />
             </SidebarFooter>
