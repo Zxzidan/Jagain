@@ -115,6 +115,13 @@ class Report extends Model
             if (! isset($report->lock_version)) {
                 $report->lock_version = 1;
             }
+
+            if (empty($report->category) && ! empty($report->category_id)) {
+                $cat = Category::find($report->category_id) ?? ReportCategory::find($report->category_id);
+                $report->category = $cat?->slug ?? $cat?->name ?? 'umum';
+            } elseif (empty($report->category)) {
+                $report->category = 'umum';
+            }
         });
     }
 
@@ -185,6 +192,27 @@ class Report extends Model
             : $this->belongsTo(ReportCategory::class, 'category_id');
     }
 
+    public function getCategoryAttribute(): mixed
+    {
+        if ($this->relationLoaded('category')) {
+            $cat = $this->getRelation('category');
+            if ($cat) {
+                return $cat;
+            }
+        }
+
+        if (! empty($this->attributes['category_id'])) {
+            $cat = Category::find($this->attributes['category_id']) ?? ReportCategory::find($this->attributes['category_id']);
+            if ($cat) {
+                $this->setRelation('category', $cat);
+
+                return $cat;
+            }
+        }
+
+        return $this->attributes['category'] ?? null;
+    }
+
     /**
      * @return HasMany<Evidence, $this>
      */
@@ -240,17 +268,29 @@ class Report extends Model
         $fireVal = $this->fire_condition instanceof FireCondition ? $this->fire_condition->value : (string) ($this->fire_condition ?? 'UNKNOWN');
         $fireLabel = $this->fire_condition instanceof FireCondition ? $this->fire_condition->label() : (FireCondition::tryFrom($fireVal)?->label() ?? $fireVal);
 
+        $catObj = $this->category;
+        $categoryData = null;
+        if (is_object($catObj)) {
+            $categoryData = [
+                'id' => $catObj->id,
+                'name' => $catObj->name,
+                'slug' => $catObj->slug,
+            ];
+        } elseif (is_string($catObj) && ! empty($catObj)) {
+            $categoryData = [
+                'id' => $this->category_id ?? 0,
+                'name' => ucfirst(str_replace(['-', '_'], ' ', $catObj)),
+                'slug' => $catObj,
+            ];
+        }
+
         return [
             'id' => $this->id,
             'tracking_code' => $this->tracking_code,
             'report_number' => $this->report_number,
             'title' => $this->title,
             'description' => $this->description,
-            'category' => $this->category ? [
-                'id' => $this->category->id,
-                'name' => $this->category->name,
-                'slug' => $this->category->slug,
-            ] : null,
+            'category' => $categoryData,
             'latitude' => $this->latitude,
             'longitude' => $this->longitude,
             'province' => $this->province,

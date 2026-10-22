@@ -65,7 +65,7 @@ class AdminExportController extends Controller
                         $report->id,
                         $report->title,
                         $report->report_status,
-                        $report->category->name,
+                        is_object($report->category) ? $report->category->name : ($report->category ?? '-'),
                         $report->latitude,
                         $report->longitude,
                         $report->location_description,
