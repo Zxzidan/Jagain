@@ -1,26 +1,71 @@
-import AppLogoIcon from '@/components/app-logo-icon';
+import React from 'react';
 
 interface AppLogoProps {
     showTagline?: boolean;
     className?: string;
+    dark?: boolean;
+    variant?: 'full' | 'icon' | 'auto';
 }
 
-export default function AppLogo({ showTagline = false, className = '', dark = false }: AppLogoProps & { dark?: boolean }) {
-    return (
-        <div className={`flex items-center gap-3 ${className}`}>
-            <div className="flex aspect-square size-9 items-center justify-center rounded-xl bg-black text-[#10e57a] border border-[#10e57a]/30 shrink-0 shadow-[0_0_15px_rgba(16,229,122,0.2)]">
-                <AppLogoIcon className="size-5 text-[#10e57a]" />
-            </div>
-            <div className="flex flex-col text-left justify-center">
-                <span className={`font-sans font-black tracking-wider uppercase text-sm leading-none ${dark ? 'text-white' : 'text-current'}`}>
-                    JAGAIN
-                </span>
+export default function AppLogo({
+    showTagline = false,
+    className = '',
+    dark = false,
+    variant = 'auto',
+}: AppLogoProps) {
+    if (variant === 'icon') {
+        return (
+            <img
+                src="/images/logo-icon.png"
+                alt="Jagain"
+                className={`h-8 w-auto object-contain ${className}`}
+            />
+        );
+    }
+
+    if (variant === 'full') {
+        return (
+            <div className={`inline-flex items-center gap-2.5 ${className}`}>
+                <img
+                    src={dark ? '/images/logo-white.png' : '/images/logo.png'}
+                    alt="jagain"
+                    className="h-8 w-auto object-contain"
+                />
                 {showTagline && (
-                    <span className={`text-[11px] font-sans font-medium tracking-tight mt-1 opacity-70 ${dark ? 'text-white' : 'text-current'}`}>
-                        Pantau Karhutla. Kawal Penanganannya.
+                    <span
+                        className={`text-[10px] font-sans font-semibold tracking-tight border-l pl-2 leading-none ${
+                            dark ? 'border-neutral-700 text-neutral-400' : 'border-neutral-300 text-neutral-500'
+                        }`}
+                    >
+                        Pantau Karhutla
                     </span>
                 )}
             </div>
+        );
+    }
+
+    // Default 'auto' variant: shows icon when sidebar collapsed, full logo otherwise
+    return (
+        <div className={`inline-flex items-center gap-2.5 ${className}`}>
+            <img
+                src="/images/logo-icon.png"
+                alt="jagain"
+                className="size-8 object-contain shrink-0 hidden group-data-[collapsible=icon]:block"
+            />
+            <img
+                src={dark ? '/images/logo-white.png' : '/images/logo.png'}
+                alt="jagain"
+                className="h-8 w-auto object-contain group-data-[collapsible=icon]:hidden"
+            />
+            {showTagline && (
+                <span
+                    className={`text-[10px] font-sans font-semibold tracking-tight border-l pl-2 leading-none group-data-[collapsible=icon]:hidden ${
+                        dark ? 'border-neutral-700 text-neutral-400' : 'border-neutral-300 text-neutral-500'
+                    }`}
+                >
+                    Pantau Karhutla
+                </span>
+            )}
         </div>
     );
 }

@@ -14,8 +14,14 @@ return new class extends Migration
                 if (! Schema::hasColumn('reports', 'tracking_code')) {
                     $table->string('tracking_code', 32)->nullable()->index()->after('id');
                 }
+                if (! Schema::hasColumn('reports', 'report_number')) {
+                    $table->string('report_number', 50)->nullable()->index()->after('id');
+                }
                 if (! Schema::hasColumn('reports', 'category_id')) {
                     $table->unsignedBigInteger('category_id')->nullable()->index()->after('created_by_user_id');
+                }
+                if (! Schema::hasColumn('reports', 'category')) {
+                    $table->string('category', 100)->nullable()->after('category_id');
                 }
                 if (! Schema::hasColumn('reports', 'province')) {
                     $table->string('province')->nullable()->after('longitude');
@@ -35,6 +41,12 @@ return new class extends Migration
                 if (! Schema::hasColumn('reports', 'lock_version')) {
                     $table->unsignedInteger('lock_version')->default(1)->after('is_simulated');
                 }
+                if (! Schema::hasColumn('reports', 'admin_notes')) {
+                    $table->text('admin_notes')->nullable()->after('lock_version');
+                }
+                if (! Schema::hasColumn('reports', 'additional_information')) {
+                    $table->text('additional_information')->nullable()->after('information_requested');
+                }
                 if (! Schema::hasColumn('reports', 'close_reason')) {
                     $table->text('close_reason')->nullable()->after('additional_information');
                 }
@@ -46,15 +58,42 @@ return new class extends Migration
                 }
             });
 
-            // Backfill tracking_code if null
-            DB::table('reports')->whereNull('tracking_code')->update([
-                'tracking_code' => DB::raw('report_number'),
-            ]);
+            // Backfill tracking_code and report_number safely
+            if (Schema::hasColumn('reports', 'report_number') && Schema::hasColumn('reports', 'tracking_code')) {
+                DB::table('reports')->whereNull('tracking_code')->whereNotNull('report_number')->update([
+                    'tracking_code' => DB::raw('report_number'),
+                ]);
+
+                DB::table('reports')->whereNull('report_number')->whereNotNull('tracking_code')->update([
+                    'report_number' => DB::raw('tracking_code'),
+                ]);
+            }
+
+            // Ensure any existing reports have tracking codes generated
+            $reportsWithoutCode = DB::table('reports')
+                ->where(function ($q) {
+                    $q->whereNull('tracking_code');
+                    if (Schema::hasColumn('reports', 'report_number')) {
+                        $q->orWhereNull('report_number');
+                    }
+                })
+                ->get(['id']);
+
+            foreach ($reportsWithoutCode as $rep) {
+                $code = 'JGN-'.date('Ym').'-'.strtoupper(\Illuminate\Support\Str::random(5));
+                $updates = ['tracking_code' => $code];
+                if (Schema::hasColumn('reports', 'report_number')) {
+                    $updates['report_number'] = $code;
+                }
+                DB::table('reports')->where('id', $rep->id)->update($updates);
+            }
 
             // Backfill lock_version if null
-            DB::table('reports')->whereNull('lock_version')->update([
-                'lock_version' => 1,
-            ]);
+            if (Schema::hasColumn('reports', 'lock_version')) {
+                DB::table('reports')->whereNull('lock_version')->update([
+                    'lock_version' => 1,
+                ]);
+            }
         }
 
         if (Schema::hasTable('evidence')) {
@@ -62,7 +101,19 @@ return new class extends Migration
                 if (! Schema::hasColumn('evidence', 'file_path')) {
                     $table->string('file_path')->nullable()->after('uploaded_by_user_id');
                 }
+                if (! Schema::hasColumn('evidence', 'storage_key')) {
+                    $table->string('storage_key')->nullable()->after('file_path');
+                }
             });
+
+            if (Schema::hasColumn('evidence', 'file_path') && Schema::hasColumn('evidence', 'storage_key')) {
+                DB::table('evidence')->whereNull('file_path')->whereNotNull('storage_key')->update([
+                    'file_path' => DB::raw('storage_key'),
+                ]);
+                DB::table('evidence')->whereNull('storage_key')->whereNotNull('file_path')->update([
+                    'storage_key' => DB::raw('file_path'),
+                ]);
+            }
         }
 
         if (Schema::hasTable('report_status_histories')) {

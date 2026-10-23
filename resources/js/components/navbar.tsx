@@ -79,13 +79,13 @@ export default function Navbar() {
                     <Link
                         href="/"
                         className="flex items-center gap-2.5 focus:outline-none group select-none"
+                        aria-label="Beranda Jagain"
                     >
-                        <div className="size-9 rounded-xl bg-black text-[#10e57a] flex items-center justify-center text-xs font-sans font-black shadow-xs group-hover:scale-105 transition-transform">
-                            JG
-                        </div>
-                        <span className="font-sans text-sm font-black uppercase tracking-wider text-neutral-900 group-hover:text-emerald-700 transition-colors">
-                            JAGAIN
-                        </span>
+                        <img
+                            src="/images/logo.png"
+                            alt="jagain"
+                            className="h-8 sm:h-8.5 w-auto object-contain group-hover:scale-105 transition-transform"
+                        />
                     </Link>
                 </div>
 
@@ -104,7 +104,7 @@ export default function Navbar() {
                                     active
                                         ? scrolled || !isHomePage
                                             ? 'bg-neutral-950 text-white font-bold shadow-xs'
-                                            : 'bg-black text-[#10e57a] font-bold shadow-xs'
+                                            : 'bg-black text-white font-bold shadow-xs'
                                         : scrolled || !isHomePage
                                         ? 'text-neutral-600 hover:text-black hover:bg-neutral-100'
                                         : 'text-black/85 hover:text-black hover:bg-black/10'
@@ -150,7 +150,7 @@ export default function Navbar() {
                                         </DropdownMenuItem>
                                         <DropdownMenuItem asChild>
                                             <Link href="/admin/laporan" className="cursor-pointer text-xs flex items-center gap-2 px-3 py-2 rounded-xl text-neutral-700 hover:text-black hover:bg-neutral-100">
-                                                <Flame className="size-3.5 text-orange-500" />
+                                                <Flame className="size-3.5 text-neutral-700" />
                                                 <span>Antrean Verifikasi</span>
                                             </Link>
                                         </DropdownMenuItem>
@@ -200,9 +200,9 @@ export default function Navbar() {
                                         href="/logout"
                                         method="post"
                                         as="button"
-                                        className="w-full text-left text-xs text-rose-600 hover:bg-rose-50 px-3 py-2 cursor-pointer flex items-center gap-2 rounded-xl transition-colors"
+                                        className="w-full text-left text-xs text-neutral-800 hover:bg-neutral-100 px-3 py-2 cursor-pointer flex items-center gap-2 rounded-xl transition-colors font-medium"
                                     >
-                                        <LogOut className="size-3.5" />
+                                        <LogOut className="size-3.5 text-neutral-600" />
                                         <span>Keluar</span>
                                     </Link>
                                 </DropdownMenuItem>
@@ -239,7 +239,7 @@ export default function Navbar() {
                     >
                         <span className="flex items-center gap-2">
                             <span>Lapor Karhutla</span>
-                            <span className="size-6 rounded-lg bg-black text-[#10e57a] flex items-center justify-center">
+                            <span className="size-6 rounded-lg bg-black text-white flex items-center justify-center">
                                 <ArrowRight className="size-3.5" />
                             </span>
                         </span>
@@ -329,7 +329,7 @@ export default function Navbar() {
                                     href="/logout"
                                     method="post"
                                     as="button"
-                                    className="w-full text-left px-4 py-2 text-xs font-bold text-rose-600 hover:bg-rose-50 rounded-xl"
+                                    className="w-full text-left px-4 py-2 text-xs font-semibold text-neutral-800 hover:bg-neutral-100 rounded-xl"
                                 >
                                     Keluar
                                 </Link>

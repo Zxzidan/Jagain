@@ -1,27 +1,28 @@
 import { Link } from '@inertiajs/react';
 import { ShieldAlert, PhoneCall, CheckCircle2 } from 'lucide-react';
+import GrassBreezeBackdrop from '@/components/grass-breeze-backdrop';
 
 export default function Footer() {
     return (
-        <footer className="bg-[#10e57a] text-neutral-950 border-t border-black/10 pt-16 pb-12 font-sans relative">
-            <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <footer className="bg-[#10e57a] text-neutral-950 border-t border-black/10 pt-16 pb-12 font-sans relative overflow-hidden">
+            <GrassBreezeBackdrop />
+            <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
                 <div className="grid grid-cols-1 md:grid-cols-12 gap-10 lg:gap-12 pb-14 border-b border-black/15">
                     {/* Col 1: Identity & Scope (4 cols) */}
                     <div className="md:col-span-4 space-y-4">
-                        <Link href="/" className="inline-flex items-center gap-2.5 focus:outline-none group">
-                            <div className="size-8 rounded-full bg-black text-[#10e57a] border border-black flex items-center justify-center text-xs font-black shadow-sm group-hover:scale-105 transition-transform">
-                                JG
-                            </div>
-                            <span className="font-sans text-sm font-black uppercase tracking-wider text-black">
-                                JAGAIN
-                            </span>
+                        <Link href="/" className="inline-flex items-center gap-2.5 focus:outline-none group" aria-label="Beranda Jagain">
+                            <img
+                                src="/images/logo.png"
+                                alt="jagain"
+                                className="h-8 w-auto object-contain group-hover:scale-105 transition-transform"
+                            />
                         </Link>
 
                         <p className="text-xs text-neutral-900/80 leading-relaxed max-w-sm font-medium">
                             Platform independen transparansi karhutla Kalimantan. Mengawal laporan warga, pantauan satelit, dan audit lapangan secara terbuka.
                         </p>
 
-                        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-black text-[#10e57a] text-[10px] font-bold tracking-wider shadow-xs">
+                        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-black text-white text-[10px] font-bold tracking-wider shadow-xs">
                             <span className="size-1.5 rounded-full bg-[#10e57a] animate-pulse" />
                             <span>5 PROVINSI KALIMANTAN</span>
                         </div>
@@ -97,7 +98,7 @@ export default function Footer() {
                         
                         <div className="p-4 rounded-2xl bg-neutral-950 text-white border border-black/30 shadow-md space-y-3">
                             <div className="flex items-center gap-2 text-xs font-bold text-white">
-                                <ShieldAlert className="size-4 text-amber-400 shrink-0" />
+                                <ShieldAlert className="size-4 text-emerald-400 shrink-0" />
                                 <span>Krisis Api Mengancam?</span>
                             </div>
                             <p className="text-[11px] text-neutral-300 leading-relaxed font-normal">
@@ -111,7 +112,7 @@ export default function Footer() {
                                     <PhoneCall className="size-3.5 text-black" />
                                     <span>Hotline Bebas Pulsa</span>
                                 </span>
-                                <span className="bg-black text-[#10e57a] font-black text-xs px-2.5 py-0.5 rounded-md shadow-xs">
+                                <span className="bg-black text-white font-black text-xs px-2.5 py-0.5 rounded-md shadow-xs">
                                     112
                                 </span>
                             </a>

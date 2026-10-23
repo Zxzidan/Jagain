@@ -406,6 +406,252 @@ body::-webkit-scrollbar,
     animation: pulseGlow 3s ease-in-out infinite;
 }
 
+/* ==========================================================================
+   KALIMANTAN RAINFOREST BREEZE ANIMATIONS
+   Organic wind swaying with multi-layered phase shifts & GPU transforms
+   ========================================================================== */
+
+@keyframes treeBreezeLeft {
+    0%, 100% {
+        transform: rotate(0deg) skewX(0deg);
+    }
+    28% {
+        transform: rotate(1.4deg) skewX(-0.5deg);
+    }
+    60% {
+        transform: rotate(-0.6deg) skewX(0.3deg);
+    }
+    82% {
+        transform: rotate(0.9deg) skewX(-0.3deg);
+    }
+}
+
+@keyframes treeBreezeRight {
+    0%, 100% {
+        transform: rotate(0deg) skewX(0deg);
+    }
+    26% {
+        transform: rotate(-1.5deg) skewX(0.6deg);
+    }
+    58% {
+        transform: rotate(0.7deg) skewX(-0.3deg);
+    }
+    84% {
+        transform: rotate(-0.8deg) skewX(0.4deg);
+    }
+}
+
+@keyframes branchSwayGentle {
+    0%, 100% {
+        transform: rotate(0deg);
+    }
+    35% {
+        transform: rotate(2.8deg);
+    }
+    72% {
+        transform: rotate(-1.5deg);
+    }
+}
+
+@keyframes branchSwayLively {
+    0%, 100% {
+        transform: rotate(0deg) scale(1);
+    }
+    30% {
+        transform: rotate(-3.5deg) scale(1.015, 0.985);
+    }
+    75% {
+        transform: rotate(2.2deg) scale(0.985, 1.015);
+    }
+}
+
+@keyframes vinePendulum {
+    0%, 100% {
+        transform: rotate(0deg);
+    }
+    25% {
+        transform: rotate(5deg);
+    }
+    60% {
+        transform: rotate(-4deg);
+    }
+    85% {
+        transform: rotate(2deg);
+    }
+}
+
+@keyframes leafFlutter {
+    0%, 100% {
+        transform: scale(1) rotate(0deg);
+    }
+    50% {
+        transform: scale(1.03, 0.97) rotate(2deg);
+    }
+}
+
+@keyframes floatingLeafDrift1 {
+    0% {
+        transform: translate(0, 0) rotate(0deg);
+        opacity: 0;
+    }
+    18% {
+        opacity: 0.85;
+    }
+    82% {
+        opacity: 0.85;
+    }
+    100% {
+        transform: translate(95px, 50px) rotate(190deg);
+        opacity: 0;
+    }
+}
+
+@keyframes floatingLeafDrift2 {
+    0% {
+        transform: translate(0, 0) rotate(0deg);
+        opacity: 0;
+    }
+    20% {
+        opacity: 0.85;
+    }
+    80% {
+        opacity: 0.85;
+    }
+    100% {
+        transform: translate(-95px, 45px) rotate(-180deg);
+        opacity: 0;
+    }
+}
+
+.animate-tree-left {
+    transform-origin: 10% 100%;
+    animation: treeBreezeLeft 7.8s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+    will-change: transform;
+}
+
+.animate-tree-right {
+    transform-origin: 90% 100%;
+    animation: treeBreezeRight 8.4s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+    will-change: transform;
+}
+
+.animate-tree-bg-left {
+    transform-origin: 15% 100%;
+    animation: treeBreezeLeft 9.2s cubic-bezier(0.45, 0.05, 0.55, 0.95) -2.5s infinite;
+    will-change: transform;
+}
+
+.animate-tree-bg-right {
+    transform-origin: 85% 100%;
+    animation: treeBreezeRight 9.8s cubic-bezier(0.45, 0.05, 0.55, 0.95) -3s infinite;
+    will-change: transform;
+}
+
+.animate-branch-1 {
+    animation: branchSwayGentle 5.2s ease-in-out infinite;
+    will-change: transform;
+}
+
+.animate-branch-2 {
+    animation: branchSwayLively 4.5s ease-in-out -1.5s infinite;
+    will-change: transform;
+}
+
+.animate-branch-3 {
+    animation: branchSwayGentle 6.1s ease-in-out -2.8s infinite;
+    will-change: transform;
+}
+
+.animate-vine-1 {
+    transform-origin: top center;
+    animation: vinePendulum 6.4s ease-in-out infinite;
+    will-change: transform;
+}
+
+.animate-vine-2 {
+    transform-origin: top center;
+    animation: vinePendulum 5.5s ease-in-out -2s infinite;
+    will-change: transform;
+}
+
+.animate-foliage-rustle {
+    animation: leafFlutter 3.4s ease-in-out infinite;
+    will-change: transform;
+}
+
+.animate-floating-leaf-1 {
+    animation: floatingLeafDrift1 10s ease-in-out infinite;
+}
+
+.animate-floating-leaf-2 {
+    animation: floatingLeafDrift2 11.5s ease-in-out -4.5s infinite;
+}
+
+/* Tropical Meadow & Reeds Wind Breeze Keyframes */
+@keyframes grassBreezeWave1 {
+    0%, 100% {
+        transform: rotate(0deg) skewX(0deg);
+    }
+    35% {
+        transform: rotate(2.5deg) skewX(-1.2deg);
+    }
+    72% {
+        transform: rotate(-1.5deg) skewX(0.8deg);
+    }
+}
+
+@keyframes grassBreezeWave2 {
+    0%, 100% {
+        transform: rotate(0deg) skewX(0deg);
+    }
+    38% {
+        transform: rotate(-2.8deg) skewX(1.4deg);
+    }
+    75% {
+        transform: rotate(1.5deg) skewX(-0.8deg);
+    }
+}
+
+@keyframes grassBreezeWave3 {
+    0%, 100% {
+        transform: rotate(0deg);
+    }
+    45% {
+        transform: rotate(2.2deg);
+    }
+    80% {
+        transform: rotate(-1.5deg);
+    }
+}
+
+.animate-grass-1 {
+    transform-box: fill-box;
+    transform-origin: bottom center;
+    animation: grassBreezeWave1 4.4s ease-in-out infinite;
+    will-change: transform;
+}
+
+.animate-grass-2 {
+    transform-box: fill-box;
+    transform-origin: bottom center;
+    animation: grassBreezeWave2 5.2s ease-in-out -1.6s infinite;
+    will-change: transform;
+}
+
+.animate-grass-3 {
+    transform-box: fill-box;
+    transform-origin: bottom center;
+    animation: grassBreezeWave3 6.0s ease-in-out -3.2s infinite;
+    will-change: transform;
+}
+
+.animate-grass-4 {
+    transform-box: fill-box;
+    transform-origin: bottom center;
+    animation: grassBreezeWave1 3.8s ease-in-out -2.1s infinite;
+    will-change: transform;
+}
+
 /* Glassmorphism Styles per Design System */
 .glass-panel-clean {
     background: #ffffff;
@@ -536,16 +782,9 @@ body::-webkit-scrollbar,
     transform: scale(0.95);
 }
 
-/* Liquid Balanced Hero Radius */
+/* Hero Section Transitions */
 .liquid-wave-hero {
-    border-bottom-left-radius: 48px;
-    border-bottom-right-radius: 48px;
-}
-@media (min-width: 768px) {
-    .liquid-wave-hero {
-        border-bottom-left-radius: 64px;
-        border-bottom-right-radius: 64px;
-    }
+    border-bottom: 1px solid rgba(0, 0, 0, 0.12);
 }
 .btn-ivory {
     background-color: var(--color-ivory-light);

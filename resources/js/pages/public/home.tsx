@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Head, Link, router } from '@inertiajs/react';
 import Navbar from '@/components/navbar';
 import Footer from '@/components/footer';
+import ForestBreezeBackdrop from '@/components/forest-breeze-backdrop';
 import KarhutlaMap, { MapReport } from '@/components/karhutla-map';
 import StatusBadge from '@/components/status-badge';
 import AnimatedContent from '@/components/react-bits/AnimatedContent';
@@ -10,6 +11,7 @@ import SpecularButton from '@/components/react-bits/SpecularButton';
 import MagicBento, { type MagicBentoItem } from '@/components/react-bits/MagicBento';
 import CountUp from '@/components/react-bits/CountUp';
 import Stepper, { Step } from '@/components/react-bits/Stepper';
+import GlareHover from '@/components/react-bits/GlareHover';
 import TiltedCard, { TiltedCardLayer } from '@/components/react-bits/TiltedCard';
 import AnimatedList from '@/components/react-bits/AnimatedList';
 import BorderGlow from '@/components/react-bits/BorderGlow';
@@ -63,7 +65,7 @@ export default function Home({ stats, recentReports }: HomeProps) {
         {
             node: (
                 <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-neutral-100 hover:bg-neutral-200/80 border border-neutral-200 font-mono text-xs font-bold text-neutral-800 tracking-wider shadow-xs transition-colors">
-                    <span className="size-2 rounded-full bg-sky-500" />
+                    <span className="size-2 rounded-full bg-emerald-500" />
                     <span>BMKG INDONESIA</span>
                 </div>
             ),
@@ -73,7 +75,7 @@ export default function Home({ stats, recentReports }: HomeProps) {
         {
             node: (
                 <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-neutral-100 hover:bg-neutral-200/80 border border-neutral-200 font-mono text-xs font-bold text-neutral-800 tracking-wider shadow-xs transition-colors">
-                    <span className="size-2 rounded-full bg-amber-500" />
+                    <span className="size-2 rounded-full bg-emerald-500" />
                     <span>KLHK SIPONGI+</span>
                 </div>
             ),
@@ -93,7 +95,7 @@ export default function Home({ stats, recentReports }: HomeProps) {
         {
             node: (
                 <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-neutral-100 hover:bg-neutral-200/80 border border-neutral-200 font-mono text-xs font-bold text-neutral-800 tracking-wider shadow-xs transition-colors">
-                    <span className="size-2 rounded-full bg-purple-500" />
+                    <span className="size-2 rounded-full bg-emerald-500" />
                     <span>BRIN GEOSPASIAL</span>
                 </div>
             ),
@@ -128,17 +130,17 @@ export default function Home({ stats, recentReports }: HomeProps) {
         meta: (
             <div className="flex items-center gap-2">
                 {report.report_status === 'DISPATCHED' ? (
-                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200/80">
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-50 text-neutral-800 border border-emerald-200/80">
                         <span className="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
                         <span>{report.status_label || 'Ditugaskan ke OPD'}</span>
                     </span>
                 ) : report.report_status === 'NEEDS_INFORMATION' ? (
-                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-amber-50 text-amber-800 border border-amber-200/80">
-                        <span className="size-1.5 rounded-full bg-amber-500" />
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-neutral-100 text-neutral-800 border border-neutral-200/80">
+                        <span className="size-1.5 rounded-full bg-neutral-500" />
                         <span>{report.status_label || 'Perlu Informasi'}</span>
                     </span>
                 ) : report.report_status === 'VERIFIED' || report.report_status === 'RESOLVED_VERIFIED' ? (
-                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200/80">
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-50 text-neutral-800 border border-emerald-200/80">
                         <span className="size-1.5 rounded-full bg-emerald-500" />
                         <span>{report.status_label || 'Terverifikasi'}</span>
                     </span>
@@ -151,9 +153,9 @@ export default function Home({ stats, recentReports }: HomeProps) {
                 <span className="font-medium text-neutral-400 shrink-0 text-[10px] hidden sm:inline">
                     {report.reported_occurrence_at
                         ? new Date(report.reported_occurrence_at).toLocaleDateString('id-ID', {
-                              day: 'numeric',
-                              month: 'short',
-                          })
+                            day: 'numeric',
+                            month: 'short',
+                        })
                         : 'Baru'}
                 </span>
             </div>
@@ -166,39 +168,84 @@ export default function Home({ stats, recentReports }: HomeProps) {
             id: 'geospatial-map',
             colSpan: 8,
             content: (
-                <div className="flex flex-col h-full justify-between bg-white">
-                    {/* Card Header */}
-                    <div className="p-5 sm:p-6 flex items-start justify-between gap-4 border-b border-neutral-100">
-                        <div className="space-y-1 min-w-0 flex-1">
-                            <div className="flex items-center gap-2 mb-1">
-                                <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-50 border border-emerald-200/80 text-emerald-800 text-[10px] font-bold uppercase tracking-wider">
-                                    <span className="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                                    <span>Observasi Geospasial</span>
-                                </div>
-                                <span className="hidden md:inline-flex items-center gap-1 text-[11px] font-semibold text-neutral-600 bg-neutral-100/90 px-2.5 py-0.5 rounded-full border border-neutral-200/70">
-                                    <Activity className="size-3 text-emerald-600" />
-                                    <span>Live Feed 5 Provinsi</span>
-                                </span>
+                <div className="flex flex-col h-full justify-between p-6 sm:p-7 bg-white">
+                    {/* Header */}
+                    <div className="flex items-start justify-between gap-4">
+                        <div className="min-w-0 flex-1">
+                            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-50 text-neutral-800 text-[10px] font-bold uppercase tracking-wider mb-2">
+                                <span className="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                                <span>Observasi Geospasial</span>
                             </div>
                             <h2 className="text-xl sm:text-2xl font-black text-neutral-900 tracking-tight">
                                 Sebaran Titik Api Lapangan
                             </h2>
-                            <p className="text-xs text-neutral-500 leading-relaxed max-w-lg truncate sm:whitespace-normal">
+                            <p className="text-xs text-neutral-500 mt-1 leading-relaxed max-w-lg">
                                 Pantauan spasial laporan warga terverifikasi dan anomali termal satelit di daratan Kalimantan.
                             </p>
                         </div>
                         <Link
                             href="/peta"
-                            className="group bg-neutral-900 hover:bg-black text-white text-xs font-bold px-4 py-2 rounded-full inline-flex items-center gap-2 transition-all shadow-xs active:scale-95 shrink-0 mt-0.5"
+                            className="group text-xs font-semibold text-neutral-500 hover:text-neutral-950 inline-flex items-center gap-1 transition-colors shrink-0 mt-1"
                         >
                             <span>Buka Peta Penuh</span>
-                            <ArrowRight className="size-3.5 transition-transform group-hover:translate-x-0.5 text-[#10e57a]" />
+                            <ArrowRight className="size-3 transition-transform group-hover:translate-x-0.5" />
                         </Link>
                     </div>
 
-                    {/* Map View */}
-                    <div className="flex-1 w-full relative min-h-[385px]">
-                        <KarhutlaMap reports={recentReports} height="385px" className="border-0 rounded-none w-full h-full" />
+                    {/* Framed Map Widget (Framed like Stepper & AnimatedList widgets) */}
+                    <div className="my-auto py-2">
+                        <div className="relative rounded-2xl border border-neutral-200/80 overflow-hidden shadow-xs bg-neutral-100 min-h-[300px]">
+                            {/* Live Satellite & Station Sync Floating Chip */}
+                            <div className="absolute top-3 right-3 z-[400] flex items-center gap-2 pointer-events-none">
+                                <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/95 backdrop-blur-md border border-neutral-200/80 text-[10px] font-bold text-neutral-700 shadow-xs">
+                                    <Activity className="size-3 text-emerald-600 animate-pulse" />
+                                    <span>Live Feed NASA FIRMS & BMKG</span>
+                                </div>
+                            </div>
+
+                            {/* 5 Kalimantan Provinces Monitored Chip */}
+                            <div className="absolute bottom-3 left-3 z-[400] pointer-events-none hidden sm:block">
+                                <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/95 backdrop-blur-md border border-neutral-200/80 text-[10px] font-bold text-neutral-800 shadow-xs">
+                                    <span className="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                                    <span>5 Provinsi Terpantau</span>
+                                </div>
+                            </div>
+
+                            <KarhutlaMap
+                                reports={recentReports}
+                                height="300px"
+                                minHeight="300px"
+                                showLegend={false}
+                                showSimulatedNotice={false}
+                                className="border-0 rounded-none w-full h-full"
+                            />
+                        </div>
+                    </div>
+
+                    {/* Standardized Card Footer */}
+                    <div className="pt-3 border-t border-neutral-100 flex items-center justify-between text-xs">
+                        <div className="flex flex-wrap items-center gap-2.5 sm:gap-4 text-[11px] text-neutral-600">
+                            <span className="flex items-center gap-1.5">
+                                <span className="size-2 rounded-full bg-[#10e57a] ring-2 ring-emerald-500/30 animate-pulse" />
+                                <span className="font-semibold text-neutral-800">Terverifikasi</span>
+                            </span>
+                            <span className="flex items-center gap-1.5">
+                                <span className="size-2 rounded-full bg-neutral-400" />
+                                <span className="font-medium text-neutral-600">Laporan Baru</span>
+                            </span>
+                            <span className="flex items-center gap-1.5">
+                                <span className="size-2 rounded-full bg-neutral-900 ring-2 ring-neutral-700/20" />
+                                <span className="font-medium text-neutral-600">Hotspot Satelit</span>
+                            </span>
+                        </div>
+
+                        <Link
+                            href="/peta"
+                            className="text-xs font-bold text-neutral-900 hover:text-black flex items-center gap-1 transition-colors group shrink-0"
+                        >
+                            <span>Eksplorasi Spasial</span>
+                            <ArrowRight className="size-3 group-hover:translate-x-0.5 transition-transform" />
+                        </Link>
                     </div>
                 </div>
             ),
@@ -210,8 +257,8 @@ export default function Home({ stats, recentReports }: HomeProps) {
                 <div className="flex flex-col h-full justify-between p-6 sm:p-7 bg-white">
                     {/* Card Header */}
                     <div>
-                        <div className="flex items-center justify-between gap-2 mb-1.5">
-                            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-50 border border-emerald-200/80 text-emerald-800 text-[10px] font-bold uppercase tracking-wider">
+                        <div className="flex items-center justify-between gap-2 mb-2">
+                            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-50 text-neutral-800 text-[10px] font-bold uppercase tracking-wider">
                                 <span className="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
                                 <span>Akuntabilitas Terbuka</span>
                             </div>
@@ -250,42 +297,42 @@ export default function Home({ stats, recentReports }: HomeProps) {
                         </div>
 
                         {/* 2. Validasi */}
-                        <div className="p-3.5 sm:p-4 rounded-2xl bg-emerald-50/40 border border-emerald-200/60 hover:bg-emerald-50/70 transition-all flex flex-col justify-between">
+                        <div className="p-3.5 sm:p-4 rounded-2xl bg-neutral-50/80 border border-neutral-200/70 hover:bg-neutral-100/70 transition-all flex flex-col justify-between">
                             <div className="flex items-center justify-between mb-1.5">
-                                <span className="text-[10px] uppercase tracking-wider text-emerald-800 font-bold">
+                                <span className="text-[10px] uppercase tracking-wider text-neutral-500 font-bold">
                                     Validasi
                                 </span>
-                                <div className="size-6 sm:size-7 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center">
-                                    <CheckCircle2 className="size-3.5" />
+                                <div className="size-6 sm:size-7 rounded-xl bg-emerald-100 text-neutral-800 flex items-center justify-center">
+                                    <CheckCircle2 className="size-3.5 text-emerald-600" />
                                 </div>
                             </div>
-                            <div className="text-2xl sm:text-3xl font-black text-emerald-700 tabular-nums">
+                            <div className="text-2xl sm:text-3xl font-black text-neutral-900 tabular-nums">
                                 <CountUp to={stats.verified_reports} duration={1.6} delay={0.1} />
                             </div>
-                            <div className="flex items-center justify-between text-[11px] text-emerald-800/80 mt-1.5 pt-1.5 border-t border-emerald-200/50">
+                            <div className="flex items-center justify-between text-[11px] text-neutral-500 mt-1.5 pt-1.5 border-t border-neutral-200/50">
                                 <span>Terverifikasi</span>
-                                <span className="text-[10px] font-bold text-emerald-700 bg-emerald-100 px-1.5 py-0.5 rounded">
+                                <span className="text-[10px] font-bold text-neutral-800 bg-neutral-200/60 px-1.5 py-0.5 rounded">
                                     {stats.total_reports > 0 ? Math.round((stats.verified_reports / stats.total_reports) * 100) : 0}%
                                 </span>
                             </div>
                         </div>
 
                         {/* 3. Disposisi */}
-                        <div className="p-3.5 sm:p-4 rounded-2xl bg-sky-50/40 border border-sky-200/60 hover:bg-sky-50/70 transition-all flex flex-col justify-between">
+                        <div className="p-3.5 sm:p-4 rounded-2xl bg-neutral-50/80 border border-neutral-200/70 hover:bg-neutral-100/70 transition-all flex flex-col justify-between">
                             <div className="flex items-center justify-between mb-1.5">
-                                <span className="text-[10px] uppercase tracking-wider text-sky-800 font-bold">
+                                <span className="text-[10px] uppercase tracking-wider text-neutral-500 font-bold">
                                     Disposisi
                                 </span>
-                                <div className="size-6 sm:size-7 rounded-xl bg-sky-100 text-sky-700 flex items-center justify-center">
-                                    <Flame className="size-3.5" />
+                                <div className="size-6 sm:size-7 rounded-xl bg-neutral-200/70 text-neutral-700 flex items-center justify-center">
+                                    <Flame className="size-3.5 text-neutral-700" />
                                 </div>
                             </div>
-                            <div className="text-2xl sm:text-3xl font-black text-sky-700 tabular-nums">
+                            <div className="text-2xl sm:text-3xl font-black text-neutral-900 tabular-nums">
                                 <CountUp to={stats.active_dispatched} duration={1.6} delay={0.2} />
                             </div>
-                            <div className="flex items-center justify-between text-[11px] text-sky-800/80 mt-1.5 pt-1.5 border-t border-sky-200/50">
+                            <div className="flex items-center justify-between text-[11px] text-neutral-500 mt-1.5 pt-1.5 border-t border-neutral-200/50">
                                 <span>Regu OPD Aktif</span>
-                                <span className="text-[10px] font-bold text-sky-700 bg-sky-100 px-1.5 py-0.5 rounded">Operasi</span>
+                                <span className="text-[10px] font-bold text-neutral-700 bg-neutral-200/60 px-1.5 py-0.5 rounded">Operasi</span>
                             </div>
                         </div>
 
@@ -295,8 +342,8 @@ export default function Home({ stats, recentReports }: HomeProps) {
                                 <span className="text-[10px] uppercase tracking-wider text-neutral-400 font-bold">
                                     Selesai
                                 </span>
-                                <div className="size-6 sm:size-7 rounded-xl bg-neutral-800 text-[#10e57a] flex items-center justify-center">
-                                    <ShieldCheck className="size-3.5" />
+                                <div className="size-6 sm:size-7 rounded-xl bg-neutral-800 text-white flex items-center justify-center">
+                                    <ShieldCheck className="size-3.5 text-emerald-400" />
                                 </div>
                             </div>
                             <div className="text-2xl sm:text-3xl font-black text-white tabular-nums">
@@ -304,7 +351,7 @@ export default function Home({ stats, recentReports }: HomeProps) {
                             </div>
                             <div className="flex items-center justify-between text-[11px] text-neutral-400 mt-1.5 pt-1.5 border-t border-neutral-800">
                                 <span>Tuntas Diaudit</span>
-                                <span className="text-[10px] font-bold text-[#10e57a] bg-neutral-800 px-1.5 py-0.5 rounded">Tutup</span>
+                                <span className="text-[10px] font-bold text-neutral-200 bg-neutral-800 px-1.5 py-0.5 rounded">Tutup</span>
                             </div>
                         </div>
                     </div>
@@ -328,7 +375,7 @@ export default function Home({ stats, recentReports }: HomeProps) {
                             />
                             <div
                                 style={{ width: `${stats.total_reports > 0 ? Math.max(15, (stats.active_dispatched / stats.total_reports) * 100) : 25}%` }}
-                                className="bg-sky-500 rounded-full transition-all duration-500"
+                                className="bg-neutral-400 rounded-full transition-all duration-500"
                                 title="Regu Lapangan"
                             />
                             <div
@@ -343,7 +390,7 @@ export default function Home({ stats, recentReports }: HomeProps) {
                                 Terverifikasi
                             </span>
                             <span className="flex items-center gap-1">
-                                <span className="size-1.5 rounded-full bg-sky-500" />
+                                <span className="size-1.5 rounded-full bg-neutral-400" />
                                 Disposisi OPD
                             </span>
                             <span className="flex items-center gap-1">
@@ -358,7 +405,7 @@ export default function Home({ stats, recentReports }: HomeProps) {
                         <span className="text-neutral-400 font-medium text-[11px]">Register publik terintegrasi</span>
                         <Link
                             href="/tentang-kami"
-                            className="text-xs font-bold text-neutral-900 hover:text-emerald-600 flex items-center gap-1.5 transition-colors group"
+                            className="text-xs font-bold text-neutral-900 hover:text-black flex items-center gap-1.5 transition-colors group"
                         >
                             <span>Metodologi Audit</span>
                             <ArrowRight className="size-3 group-hover:translate-x-0.5 transition-transform" />
@@ -374,7 +421,7 @@ export default function Home({ stats, recentReports }: HomeProps) {
                 <div className="flex flex-col h-full justify-between p-6 sm:p-7">
                     {/* Header */}
                     <div>
-                        <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-800 text-[10px] font-bold uppercase tracking-wider mb-2">
+                        <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-50 text-neutral-800 text-[10px] font-bold uppercase tracking-wider mb-2">
                             <span className="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
                             <span>Tata Kelola Respon</span>
                         </div>
@@ -446,7 +493,7 @@ export default function Home({ stats, recentReports }: HomeProps) {
                         <span className="text-neutral-400 font-medium text-[11px]">SOP Transparansi Sipil</span>
                         <Link
                             href="/panduan-keselamatan"
-                            className="text-xs font-bold text-neutral-900 hover:text-emerald-600 flex items-center gap-1 transition-colors"
+                            className="text-xs font-bold text-neutral-900 hover:text-black flex items-center gap-1 transition-colors"
                         >
                             <span>Panduan Warga</span>
                             <ArrowRight className="size-3" />
@@ -463,7 +510,7 @@ export default function Home({ stats, recentReports }: HomeProps) {
                     {/* Header */}
                     <div className="flex items-center justify-between">
                         <div>
-                            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-800 text-[10px] font-bold uppercase tracking-wider mb-2">
+                            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-50 text-neutral-800 text-[10px] font-bold uppercase tracking-wider mb-2">
                                 <span className="size-1.5 rounded-full bg-emerald-500" />
                                 <span>Dokumen Terverifikasi</span>
                             </div>
@@ -513,7 +560,7 @@ export default function Home({ stats, recentReports }: HomeProps) {
                         <span className="text-neutral-400 font-medium text-[11px]">Pembaruan posko & satelit</span>
                         <Link
                             href="/peta"
-                            className="text-xs font-bold text-neutral-900 hover:text-emerald-600 flex items-center gap-1 transition-colors"
+                            className="text-xs font-bold text-neutral-900 hover:text-black flex items-center gap-1 transition-colors"
                         >
                             <span>Arsip Lengkap</span>
                             <ArrowRight className="size-3" />
@@ -532,14 +579,15 @@ export default function Home({ stats, recentReports }: HomeProps) {
 
             <main className="flex-1">
                 {/* =========================================================================
-                    1. LIQUID HERO SECTION (Cyber Green #10E57A + Organic Wave)
-                    Massive typography, generous breathing room, crisp minimal copy
+                    1. ORGANIC WAVE HERO SECTION (Cyber Green #10E57A + Forest Breeze)
+                    Natural rolling terrain wave divider, generous breathing room
                     ========================================================================= */}
-                <section className="relative bg-[#10e57a] text-black overflow-hidden liquid-wave-hero pt-32 sm:pt-36 lg:pt-40 pb-16 sm:pb-20 px-4 sm:px-6 lg:px-8 shadow-[0_20px_50px_rgba(16,229,122,0.25)] z-20">
+                <section className="relative bg-[#10e57a] text-black overflow-hidden pt-32 sm:pt-36 lg:pt-40 pb-24 sm:pb-28 lg:pb-36 px-4 sm:px-6 lg:px-8 z-20">
+                    <ForestBreezeBackdrop variant="hero" />
                     <div className="max-w-6xl mx-auto w-full relative z-10">
                         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
                             {/* Left Column: Massive Headline & Crisp Subtitle with AnimatedContent */}
-                            <div className="lg:col-span-7">
+                            <div className="lg:col-span-7 relative">
                                 <AnimatedContent
                                     distance={36}
                                     direction="vertical"
@@ -548,19 +596,19 @@ export default function Home({ stats, recentReports }: HomeProps) {
                                     ease="power3.out"
                                     className="space-y-6 text-left"
                                 >
-                                    <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-black text-[#10e57a] text-[10px] font-bold tracking-[0.2em] uppercase shadow-sm">
+                                    <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-black text-white text-[10px] font-bold tracking-[0.2em] uppercase shadow-sm">
                                         <span className="size-2 rounded-full bg-[#10e57a] animate-pulse" />
                                         <span>REGISTER PUBLIK RESMI KALIMANTAN</span>
                                     </div>
 
-                                    <h1 className="text-5xl sm:text-7xl lg:text-[84px] font-black tracking-[-0.04em] text-black leading-[0.92] uppercase text-balance">
+                                    <h1 className="text-5xl sm:text-7xl lg:text-[84px] font-black tracking-[-0.04em] text-white leading-[0.92] uppercase text-balance">
                                         PANTAU KARHUTLA.{' '}
-                                        <span className="block text-black/85 font-extrabold tracking-tight mt-1">
+                                        <span className="block text-white font-extrabold tracking-tight mt-1">
                                             KAWAL PENANGANAN.
                                         </span>
                                     </h1>
 
-                                    <p className="text-base sm:text-lg font-medium text-black/80 max-w-lg leading-relaxed">
+                                    <p className="text-base sm:text-lg font-semibold text-white max-w-lg leading-relaxed">
                                         Platform independen untuk mengawal laporan kebakaran hutan dan lahan Kalimantan. Data terbuka, koordinat presisi, dan tuntas diaudit.
                                     </p>
 
@@ -583,7 +631,7 @@ export default function Home({ stats, recentReports }: HomeProps) {
                                         >
                                             <span className="flex items-center gap-2.5">
                                                 <span>Lapor Karhutla</span>
-                                                <span className="size-7 rounded-full bg-white/20 text-[#10e57a] flex items-center justify-center">
+                                                <span className="size-7 rounded-full bg-white/20 text-white flex items-center justify-center">
                                                     <ArrowRight className="size-3.5" />
                                                 </span>
                                             </span>
@@ -591,7 +639,7 @@ export default function Home({ stats, recentReports }: HomeProps) {
 
                                         <Link
                                             href="/peta"
-                                            className="border-2 border-black/30 hover:border-black text-black px-6 py-2.5 rounded-full font-bold text-sm transition-all hover:scale-105 active:scale-95"
+                                            className="bg-black/50 hover:bg-black/70 text-white border-2 border-white/70 hover:border-white px-6 py-2.5 rounded-full font-bold text-sm transition-all shadow-md backdrop-blur-xs hover:scale-105 active:scale-95"
                                         >
                                             Buka Peta Sebaran
                                         </Link>
@@ -599,7 +647,7 @@ export default function Home({ stats, recentReports }: HomeProps) {
                                 </AnimatedContent>
                             </div>
 
-                            {/* Right Column: Clean Tracker Card wrapped in TiltedCard */}
+                            {/* Right Column: Clean Tracker Card wrapped in GlareHover */}
                             <div className="lg:col-span-5">
                                 <AnimatedContent
                                     distance={40}
@@ -608,22 +656,23 @@ export default function Home({ stats, recentReports }: HomeProps) {
                                     delay={0.25}
                                     ease="power3.out"
                                 >
-                                    <TiltedCard
-                                        containerWidth="100%"
-                                        containerHeight="360px"
-                                        imageWidth="100%"
-                                        imageHeight="360px"
-                                        rotateAmplitude={12}
-                                        scaleOnHover={1.03}
-                                        glare={0.4}
+                                    <GlareHover
+                                        width="100%"
+                                        height="auto"
+                                        borderRadius="2rem"
+                                        mode="hover"
+                                        variant="streak"
                                         glareColor="#ffffff"
-                                        shadow={0.3}
-                                        radius={32}
-                                        showTooltip={false}
-                                        flipOnClick={false}
-                                        className="w-full"
+                                        glareOpacity={0.5}
+                                        glareSize={30}
+                                        softness={0.6}
+                                        glareAngle={-45}
+                                        blendMode="screen"
+                                        rimGlint={true}
+                                        transitionDuration={650}
+                                        className="w-full shadow-[0_20px_50px_-10px_rgba(0,0,0,0.12)] hover:shadow-[0_25px_60px_-10px_rgba(0,0,0,0.2)] transition-shadow duration-300"
                                     >
-                                        <div className="w-full h-full rounded-[2rem] bg-white/95 backdrop-blur-2xl border border-white/80 p-6 sm:p-7 shadow-[0_20px_50px_-10px_rgba(0,0,0,0.12)] text-neutral-900 flex flex-col justify-between">
+                                        <div className="w-full h-full rounded-[2rem] bg-white/95 backdrop-blur-2xl border border-white/80 p-6 sm:p-7 text-neutral-900 flex flex-col justify-between min-h-[355px]">
                                             {/* Header */}
                                             <div className="flex items-center justify-between pb-3 border-b border-neutral-100">
                                                 <div>
@@ -635,7 +684,7 @@ export default function Home({ stats, recentReports }: HomeProps) {
                                                     </h3>
                                                 </div>
 
-                                                <div className="bg-black text-[#10e57a] px-3 py-1 rounded-full text-[10px] font-bold tracking-wider uppercase inline-flex items-center gap-1.5 shadow-xs">
+                                                <div className="bg-black text-white px-3 py-1 rounded-full text-[10px] font-bold tracking-wider uppercase inline-flex items-center gap-1.5 shadow-xs">
                                                     <span className="size-1.5 rounded-full bg-[#10e57a] animate-ping" />
                                                     <span>ONLINE</span>
                                                 </div>
@@ -654,7 +703,7 @@ export default function Home({ stats, recentReports }: HomeProps) {
                                                     />
                                                     <button
                                                         type="submit"
-                                                        className="bg-black text-white hover:bg-neutral-800 font-bold text-xs px-4 py-2 rounded-full hover:scale-105 active:scale-95 transition-all shadow-xs"
+                                                        className="bg-black text-white hover:bg-neutral-800 font-bold text-xs px-4 py-2 rounded-full hover:scale-105 active:scale-95 transition-all shadow-xs cursor-pointer"
                                                     >
                                                         Cari
                                                     </button>
@@ -672,7 +721,7 @@ export default function Home({ stats, recentReports }: HomeProps) {
                                                     </div>
                                                 </div>
                                                 <div className="bg-neutral-50/90 border border-neutral-200/60 rounded-2xl p-3">
-                                                    <div className="text-xl font-black text-emerald-600 tabular-nums">
+                                                    <div className="text-xl font-black text-neutral-900 tabular-nums">
                                                         <CountUp to={stats.verified_reports} duration={1.5} delay={0.1} />
                                                     </div>
                                                     <div className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider mt-0.5">
@@ -680,7 +729,7 @@ export default function Home({ stats, recentReports }: HomeProps) {
                                                     </div>
                                                 </div>
                                                 <div className="bg-neutral-50/90 border border-neutral-200/60 rounded-2xl p-3">
-                                                    <div className="text-xl font-black text-sky-600 tabular-nums">
+                                                    <div className="text-xl font-black text-neutral-900 tabular-nums">
                                                         <CountUp to={stats.active_dispatched} duration={1.5} delay={0.2} />
                                                     </div>
                                                     <div className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider mt-0.5">
@@ -689,10 +738,41 @@ export default function Home({ stats, recentReports }: HomeProps) {
                                                 </div>
                                             </div>
                                         </div>
-                                    </TiltedCard>
+                                    </GlareHover>
                                 </AnimatedContent>
                             </div>
                         </div>
+                    </div>
+
+                    {/* Organic Rolling Terrain Wave Divider (Aliran Gelombang Asimetris Halus) */}
+                    <div className="absolute inset-x-0 -bottom-1 pointer-events-none z-10 leading-none">
+                        <svg
+                            viewBox="0 0 1440 90"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="w-full h-[45px] sm:h-[65px] lg:h-[85px] block"
+                            preserveAspectRatio="none"
+                        >
+                            <defs>
+                                <linearGradient id="waveRidgeGlow" x1="0%" y1="0%" x2="100%" y2="0%">
+                                    <stop offset="0%" stopColor="#01240e" stopOpacity="0.25" />
+                                    <stop offset="50%" stopColor="#045624" stopOpacity="0.08" />
+                                    <stop offset="100%" stopColor="#01240e" stopOpacity="0.3" />
+                                </linearGradient>
+                            </defs>
+                            {/* Subtle terrain ridge accent line */}
+                            <path
+                                d="M0 45 C280 24 540 78 820 48 C1100 18 1280 62 1440 38"
+                                stroke="url(#waveRidgeGlow)"
+                                strokeWidth="2.5"
+                                fill="none"
+                            />
+                            {/* Seamless Organic White Wave Cutting into Cyber Green */}
+                            <path
+                                d="M0 90 L1440 90 L1440 38 C1280 62 1100 18 820 48 C540 78 280 24 0 45 Z"
+                                fill="#ffffff"
+                            />
+                        </svg>
                     </div>
                 </section>
 
@@ -771,28 +851,28 @@ export default function Home({ stats, recentReports }: HomeProps) {
                 </section>
 
                 {/* =========================================================================
-                    4. PEATLAND CRITICAL SAFETY NOTICE (Clean Light Amber Card)
+                    4. PEATLAND CRITICAL SAFETY NOTICE (Monochrome & Green Card)
                     ========================================================================= */}
                 <section className="px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto w-full pb-24">
                     <AnimatedContent distance={30} duration={0.8} threshold={0.15}>
                         <BorderGlow
                             edgeSensitivity={30}
                             glowColor="38 90 60"
-                            backgroundColor="#fffdf5"
+                            backgroundColor="#ffffff"
                             borderRadius={28}
                             glowRadius={40}
                             glowIntensity={1.2}
                             coneSpread={28}
                             animated={true}
-                            colors={['#f59e0b', '#ef4444', '#f97316']}
+                            colors={['#10e57a', '#059669', '#10e57a']}
                             fillOpacity={0.15}
-                            className="w-full bg-gradient-to-br from-amber-500/10 via-amber-50/60 to-white border border-amber-300/70 shadow-sm"
+                            className="w-full bg-white border border-neutral-200/80 shadow-sm"
                         >
                             <div className="p-6 sm:p-10">
                                 <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative z-10">
                                     <div className="space-y-2.5 max-w-2xl">
-                                        <div className="inline-flex items-center gap-2 text-xs uppercase tracking-wider text-amber-900 bg-amber-100/90 px-3.5 py-1 rounded-full border border-amber-300/80 font-bold">
-                                            <AlertTriangle className="size-3.5 shrink-0 text-amber-700" />
+                                        <div className="inline-flex items-center gap-2 text-xs uppercase tracking-wider text-neutral-900 bg-neutral-100 px-3.5 py-1 rounded-full border border-neutral-200/80 font-bold">
+                                            <AlertTriangle className="size-3.5 shrink-0 text-neutral-800" />
                                             <span>Pemberitahuan Keselamatan Gambut</span>
                                         </div>
                                         <h3 className="text-xl sm:text-2xl font-black text-neutral-950 leading-tight">
@@ -812,7 +892,7 @@ export default function Home({ stats, recentReports }: HomeProps) {
                                         </Link>
                                         <a
                                             href="tel:112"
-                                            className="bg-amber-400 hover:bg-amber-300 text-black text-xs font-bold px-4 py-2 rounded-full transition-all shadow-xs"
+                                            className="bg-[#10e57a] hover:bg-emerald-400 text-black text-xs font-bold px-4 py-2 rounded-full transition-all shadow-xs"
                                         >
                                             Darurat: Hubungi 112
                                         </a>

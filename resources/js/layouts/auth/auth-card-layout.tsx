@@ -24,11 +24,11 @@ export default function AuthCardLayout({
             <div className="flex w-full max-w-md flex-col gap-6">
                 <Link
                     href={home()}
-                    className="flex items-center gap-2 self-center font-medium"
-                >
-                    <div className="flex h-9 w-9 items-center justify-center">
-                        <AppLogoIcon className="size-9 fill-current text-black dark:text-white" />
-                    </div>
+                    <img
+                        src="/images/logo.png"
+                        alt="jagain"
+                        className="h-9 w-auto object-contain"
+                    />
                 </Link>
 
                 <div className="flex flex-col gap-6">

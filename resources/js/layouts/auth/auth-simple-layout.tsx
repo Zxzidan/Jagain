@@ -31,16 +31,16 @@ export default function AuthSimpleLayout({
                         <Link
                             href={home()}
                             className="inline-flex flex-col items-center gap-2 group"
+                            aria-label="Beranda Jagain"
                         >
-                            <div className="size-11 rounded-xl bg-[#141413] text-[#faf9f5] flex items-center justify-center transition-opacity group-hover:opacity-90">
-                                <AppLogoIcon className="size-6" />
-                            </div>
-                            <div className="flex items-center gap-2">
-                                <span className="font-sans font-bold tracking-tight text-[#141413] text-base">JAGAIN</span>
-                                <span className="text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded bg-[#e3dacc]/70 text-[#141413] border border-[#cccbc8]">
-                                    Sistem Masuk
-                                </span>
-                            </div>
+                            <img
+                                src="/images/logo.png"
+                                alt="jagain"
+                                className="h-10 w-auto object-contain transition-transform group-hover:scale-105"
+                            />
+                            <span className="text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded bg-[#e3dacc]/70 text-[#141413] border border-[#cccbc8]">
+                                Sistem Masuk
+                            </span>
                         </Link>
 
                         <div className="space-y-1">

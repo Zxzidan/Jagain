@@ -48,6 +48,9 @@ interface KarhutlaMapProps {
     onSelectCoordinates?: (coords: { lat: number; lng: number }) => void;
     className?: string;
     height?: string;
+    minHeight?: string;
+    showLegend?: boolean;
+    showSimulatedNotice?: boolean;
 }
 
 export default function KarhutlaMap({
@@ -58,6 +61,9 @@ export default function KarhutlaMap({
     onSelectCoordinates,
     className = '',
     height = '500px',
+    minHeight,
+    showLegend = true,
+    showSimulatedNotice = true,
 }: KarhutlaMapProps) {
     const mapContainerRef = useRef<HTMLDivElement>(null);
     const mapInstanceRef = useRef<L.Map | null>(null);
@@ -155,7 +161,7 @@ export default function KarhutlaMap({
             return L.divIcon({
                 className: 'custom-map-pin-sat',
                 html: `
-                    <div style="background-color: #f97316; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid #ffffff; box-shadow: 0 0 12px rgba(249,115,22,0.6); color: #ffffff;">
+                    <div style="background-color: #171717; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid #ffffff; box-shadow: 0 0 10px rgba(0,0,0,0.5); color: #ffffff;">
                         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                             <circle cx="12" cy="12" r="2"/>
                             <path d="M16.2 7.8c2.3 2.3 2.3 6.1 0 8.5"/>
@@ -200,7 +206,7 @@ export default function KarhutlaMap({
             const popupContent = `
                 <div style="min-width: 240px; font-family: Inter, sans-serif; font-size: 12px; color: #111827; background: #ffffff; padding: 14px; border-radius: 16px; border: 1px solid #e5e7eb; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                        <span style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: #047857; font-family: monospace; background: #d1fae5; padding: 2px 8px; border-radius: 9999px;">
+                        <span style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: #111827; font-family: monospace; background: #e5e7eb; padding: 2px 8px; border-radius: 9999px;">
                             ${rep.tracking_code}
                         </span>
                         <span style="font-size: 11px; color: #6b7280; font-weight: 500;">
@@ -211,8 +217,8 @@ export default function KarhutlaMap({
                         ${rep.title}
                     </div>
                     <div style="background: #f9fafb; padding: 8px 10px; border-radius: 12px; margin-bottom: 10px; border: 1px solid #f3f4f6;">
-                        <div style="font-weight: 600; color: #047857; font-size: 11px;">Status: ${rep.status_label}</div>
-                        ${rep.fire_condition_label ? `<div style="font-size: 10px; color: #b45309; margin-top: 2px; font-weight: 500;">Kondisi: ${rep.fire_condition_label}</div>` : ''}
+                        <div style="font-weight: 600; color: #111827; font-size: 11px;">Status: ${rep.status_label}</div>
+                        ${rep.fire_condition_label ? `<div style="font-size: 10px; color: #4b5563; margin-top: 2px; font-weight: 500;">Kondisi: ${rep.fire_condition_label}</div>` : ''}
                     </div>
                     <a href="/laporan-publik/${rep.tracking_code}" style="display: block; text-align: center; background: #111827; color: #ffffff; padding: 7px 14px; border-radius: 9999px; text-decoration: none; font-weight: 700; font-size: 11px;">
                         Lihat Register Publik →
@@ -231,7 +237,7 @@ export default function KarhutlaMap({
             });
 
             const simulationBadge = obs.is_simulated
-                ? `<div style="display: inline-block; background: #fef2f2; border: 1px solid #fecaca; color: #b91c1c; font-weight: 700; font-size: 9px; padding: 2px 6px; border-radius: 9999px; margin-bottom: 6px;">
+                ? `<div style="display: inline-block; background: #f3f4f6; border: 1px solid #e5e7eb; color: #111827; font-weight: 700; font-size: 9px; padding: 2px 6px; border-radius: 9999px; margin-bottom: 6px;">
                      DATA SIMULASI
                    </div>`
                 : '';
@@ -239,14 +245,14 @@ export default function KarhutlaMap({
             const popupContent = `
                 <div style="min-width: 230px; font-family: Inter, sans-serif; font-size: 12px; color: #111827; background: #ffffff; padding: 14px; border-radius: 16px; border: 1px solid #e5e7eb; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);">
                     ${simulationBadge}
-                    <div style="font-size: 10px; font-weight: 700; text-transform: uppercase; color: #ea580c; margin-bottom: 4px; font-family: monospace;">
+                    <div style="font-size: 10px; font-weight: 700; text-transform: uppercase; color: #111827; margin-bottom: 4px; font-family: monospace;">
                         Titik Panas Satelit • ${obs.satellite_instrument}
                     </div>
                     <div style="font-size: 13px; font-weight: 800; color: #111827; margin-bottom: 8px;">
                         Deteksi Suhu Termal Radiatif
                     </div>
                     <div style="background: #f9fafb; border: 1px solid #f3f4f6; padding: 8px; border-radius: 12px; margin-bottom: 8px; font-size: 11px; color: #374151;">
-                        <div>Tingkat Kepercayaan: <strong style="color: #047857;">${obs.confidence_level}</strong></div>
+                        <div>Tingkat Kepercayaan: <strong style="color: #111827;">${obs.confidence_level}</strong></div>
                         ${obs.frp_mw ? `<div>Daya Radiasi (FRP): <strong>${obs.frp_mw} MW</strong></div>` : ''}
                         ${obs.brightness_kelvin ? `<div>Suhu Kecerahan: <strong>${obs.brightness_kelvin} K</strong></div>` : ''}
                         <div style="font-size: 10px; color: #6b7280; margin-top: 2px;">Waktu: ${new Date(obs.observed_at).toLocaleString('id-ID')}</div>
@@ -296,10 +302,10 @@ export default function KarhutlaMap({
     return (
         <div className={`relative flex flex-col overflow-hidden bg-neutral-100 ${className || 'border border-neutral-200 rounded-3xl'}`}>
             {/* Simulation Warning Banner if simulated data is visible */}
-            {hasSimulatedData && (
+            {hasSimulatedData && showSimulatedNotice && (
                 <div className="bg-neutral-50 border-b border-neutral-200 px-4 py-2 flex items-center justify-between text-xs text-neutral-700 z-20 font-sans">
                     <div className="flex items-center gap-2">
-                        <AlertTriangle className="size-3.5 text-amber-600" />
+                        <AlertTriangle className="size-3.5 text-neutral-800" />
                         <span>
                             <strong>Transparansi Data:</strong> Sebagian titik di peta merupakan <span className="font-semibold underline">DATA SIMULASI</span> berlabel untuk tujuan pengujian sistem.
                         </span>
@@ -311,7 +317,7 @@ export default function KarhutlaMap({
             )}
 
             {/* Map Container */}
-            <div ref={mapContainerRef} style={{ height, width: '100%', minHeight: '350px' }} className="z-10 focus:outline-none" />
+            <div ref={mapContainerRef} style={{ height, width: '100%', minHeight: minHeight ?? (height ? 'auto' : '350px') }} className="z-10 focus:outline-none" />
 
             {/* Interactive Mode Helper overlay */}
             {interactiveSelectMode && (
@@ -321,28 +327,30 @@ export default function KarhutlaMap({
             )}
 
             {/* Map Legend */}
-            <div className="bg-white/95 backdrop-blur-md border-t border-neutral-200/80 px-4 sm:px-6 py-3 text-xs text-neutral-700 flex flex-wrap items-center justify-between gap-3 z-20 font-sans">
-                <div className="flex flex-wrap items-center gap-2.5 sm:gap-4">
-                    <span className="font-bold text-neutral-900 text-[11px] uppercase tracking-wider">Keterangan:</span>
-                    <div className="flex items-center gap-1.5 bg-neutral-100/80 px-2.5 py-1 rounded-full border border-neutral-200/70">
-                        <span className="size-2 rounded-full bg-[#10e57a] ring-2 ring-emerald-500/30 animate-pulse" />
-                        <span className="font-semibold text-neutral-800 text-[11px]">Laporan Terverifikasi</span>
+            {showLegend && (
+                <div className="bg-white/95 backdrop-blur-md border-t border-neutral-200/80 px-4 sm:px-6 py-3 text-xs text-neutral-700 flex flex-wrap items-center justify-between gap-3 z-20 font-sans">
+                    <div className="flex flex-wrap items-center gap-2.5 sm:gap-4">
+                        <span className="font-bold text-neutral-900 text-[11px] uppercase tracking-wider">Keterangan:</span>
+                        <div className="flex items-center gap-1.5 bg-neutral-100/80 px-2.5 py-1 rounded-full border border-neutral-200/70">
+                            <span className="size-2 rounded-full bg-[#10e57a] ring-2 ring-emerald-500/30 animate-pulse" />
+                            <span className="font-semibold text-neutral-800 text-[11px]">Laporan Terverifikasi</span>
+                        </div>
+                        <div className="flex items-center gap-1.5 bg-neutral-100/80 px-2.5 py-1 rounded-full border border-neutral-200/70">
+                            <span className="size-2 rounded-full bg-neutral-500 ring-2 ring-neutral-400/20" />
+                            <span className="font-semibold text-neutral-800 text-[11px]">Laporan Baru</span>
+                        </div>
+                        <div className="flex items-center gap-1.5 bg-neutral-100/80 px-2.5 py-1 rounded-full border border-neutral-200/70">
+                            <span className="size-2 rounded-full bg-neutral-900 ring-2 ring-neutral-700/20" />
+                            <span className="font-semibold text-neutral-800 text-[11px]">Titik Panas Satelit</span>
+                        </div>
                     </div>
-                    <div className="flex items-center gap-1.5 bg-neutral-100/80 px-2.5 py-1 rounded-full border border-neutral-200/70">
-                        <span className="size-2 rounded-full bg-neutral-500 ring-2 ring-neutral-400/20" />
-                        <span className="font-semibold text-neutral-800 text-[11px]">Laporan Baru</span>
-                    </div>
-                    <div className="flex items-center gap-1.5 bg-neutral-100/80 px-2.5 py-1 rounded-full border border-neutral-200/70">
-                        <span className="size-2 rounded-full bg-orange-500 ring-2 ring-orange-400/20" />
-                        <span className="font-semibold text-neutral-800 text-[11px]">Titik Panas Satelit</span>
-                    </div>
-                </div>
 
-                <div className="text-[11px] text-neutral-600 flex items-center gap-1.5 bg-neutral-50 px-2.5 py-1 rounded-full border border-neutral-200/70 font-medium">
-                    <span className="size-1.5 rounded-full bg-emerald-500" />
-                    <span>Cakupan: 5 Provinsi Kalimantan</span>
+                    <div className="text-[11px] text-neutral-600 flex items-center gap-1.5 bg-neutral-50 px-2.5 py-1 rounded-full border border-neutral-200/70 font-medium">
+                        <span className="size-1.5 rounded-full bg-emerald-500" />
+                        <span>Cakupan: 5 Provinsi Kalimantan</span>
+                    </div>
                 </div>
-            </div>
+            )}
         </div>
     );
 }
