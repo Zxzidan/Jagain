@@ -7,11 +7,24 @@ use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminExportController;
 use App\Http\Controllers\Admin\AdminReportController;
 use Illuminate\Support\Facades\Route;
+use Inertia\Inertia;
 
-Route::inertia('/', 'welcome')->name('home');
+Route::get('/', function () {
+    if (app()->environment('local')) {
+        return redirect()->route('admin.dashboard');
+    }
+
+    return Inertia::render('welcome');
+})->name('home');
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::inertia('dashboard', 'dashboard')->name('dashboard');
+    Route::get('dashboard', function () {
+        if (auth()->user()?->isAdmin()) {
+            return redirect()->route('admin.dashboard');
+        }
+
+        return Inertia::render('dashboard');
+    })->name('dashboard');
 
     // Admin Route Group
     Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(function () {

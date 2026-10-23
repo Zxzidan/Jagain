@@ -234,15 +234,15 @@ export default function ReportsIndex({
                         </div>
                     ) : (
                         <div className="overflow-x-auto">
-                            <table className="w-full text-left text-sm">
-                                <thead className="border-b border-[#DDE3DE] bg-[#F3F7F4] text-xs font-semibold text-[#343B36] uppercase dark:border-neutral-800 dark:bg-neutral-800/60 dark:text-neutral-300">
+                            <table className="w-full min-w-[1020px] text-left text-sm">
+                                <thead className="border-b border-[#DDE3DE] bg-[#F3F7F4] text-xs font-semibold uppercase tracking-wider text-[#343B36] dark:border-neutral-800 dark:bg-neutral-800/60 dark:text-neutral-300">
                                     <tr>
-                                        <th scope="col" className="px-6 py-3.5">ID & Judul Laporan</th>
-                                        <th scope="col" className="px-6 py-3.5">Kategori</th>
-                                        <th scope="col" className="px-6 py-3.5">Lokasi</th>
-                                        <th scope="col" className="px-6 py-3.5">Status Laporan</th>
-                                        <th scope="col" className="px-6 py-3.5">Penugasan OPD</th>
-                                        <th scope="col" className="px-6 py-3.5 text-right">Aksi</th>
+                                        <th scope="col" className="w-[32%] min-w-[300px] px-6 py-4 text-center">ID & Judul Laporan</th>
+                                        <th scope="col" className="w-[15%] min-w-[140px] px-6 py-4 text-center">Kategori</th>
+                                        <th scope="col" className="w-[20%] min-w-[180px] px-6 py-4 text-center">Lokasi</th>
+                                        <th scope="col" className="w-[15%] min-w-[160px] px-6 py-4 text-center whitespace-nowrap">Status Laporan</th>
+                                        <th scope="col" className="w-[18%] min-w-[170px] px-6 py-4 text-center whitespace-nowrap">Penugasan OPD</th>
+                                        <th scope="col" className="px-6 py-4 text-center whitespace-nowrap">Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-[#DDE3DE] dark:divide-neutral-800">
@@ -251,78 +251,84 @@ export default function ReportsIndex({
                                             key={report.id}
                                             className="transition-colors hover:bg-[#F3F7F4]/40 dark:hover:bg-neutral-800/40"
                                         >
-                                            <td className="px-6 py-4">
-                                                <div className="flex items-center gap-2">
-                                                    <span className="font-mono text-xs font-bold text-[#216B49] dark:text-emerald-400">
+                                            <td className="px-6 py-5 align-middle">
+                                                <div className="flex items-start gap-3">
+                                                    <span className="shrink-0 mt-0.5 inline-flex items-center rounded-md bg-[#E8F1EB] px-2.5 py-1 font-mono text-xs font-bold text-[#216B49] dark:bg-emerald-950/70 dark:text-emerald-300">
                                                         #{report.id}
                                                     </span>
-                                                    <span className="font-semibold text-[#171C19] dark:text-white">
-                                                        {report.title}
-                                                    </span>
-                                                    {report.is_simulated && (
-                                                        <span className="rounded bg-neutral-200 px-1.5 py-0.5 text-[10px] font-bold text-neutral-700 dark:bg-neutral-800 dark:text-neutral-400">
-                                                            SIMULASI
-                                                        </span>
-                                                    )}
-                                                </div>
-                                                <div className="mt-1 text-xs text-[#68716B] dark:text-neutral-400">
-                                                    Pelapor: {report.creator?.name ?? 'Anonim'} &bull; Dibuat:{' '}
-                                                    {new Date(report.created_at).toLocaleDateString('id-ID', {
-                                                        day: 'numeric',
-                                                        month: 'short',
-                                                        year: 'numeric',
-                                                        hour: '2-digit',
-                                                        minute: '2-digit',
-                                                    })} WIB
+                                                    <div className="flex-1 min-w-0 text-justify">
+                                                        <div className="text-justify font-semibold text-sm leading-snug text-[#171C19] dark:text-white">
+                                                            {report.title}
+                                                            {report.is_simulated && (
+                                                                <span className="ml-2 inline-flex items-center rounded bg-neutral-200 px-1.5 py-0.5 text-[10px] font-bold text-neutral-700 dark:bg-neutral-800 dark:text-neutral-400 align-middle">
+                                                                    SIMULASI
+                                                                </span>
+                                                            )}
+                                                        </div>
+                                                        <div className="mt-1.5 text-xs text-[#68716B] dark:text-neutral-400 text-justify">
+                                                            Pelapor: <span className="font-medium text-neutral-800 dark:text-neutral-300">{report.creator?.name ?? 'Anonim'}</span> &bull; Dibuat:{' '}
+                                                            <span className="whitespace-nowrap">
+                                                                {new Date(report.created_at).toLocaleDateString('id-ID', {
+                                                                    day: 'numeric',
+                                                                    month: 'short',
+                                                                    year: 'numeric',
+                                                                    hour: '2-digit',
+                                                                    minute: '2-digit',
+                                                                })} WIB
+                                                            </span>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </td>
 
-                                            <td className="px-6 py-4">
-                                                <span className="inline-block rounded-md bg-neutral-100 px-2.5 py-1 text-xs font-medium text-neutral-800 dark:bg-neutral-800 dark:text-neutral-200">
+                                            <td className="px-6 py-5 align-middle text-center">
+                                                <span className="inline-flex items-center rounded-md bg-neutral-100 px-2.5 py-1 text-xs font-medium text-neutral-800 dark:bg-neutral-800 dark:text-neutral-200 leading-normal">
                                                     {report.category?.name ?? 'Umum'}
                                                 </span>
                                             </td>
 
-                                            <td className="px-6 py-4 text-xs text-[#68716B] dark:text-neutral-400">
-                                                <div className="flex items-center gap-1 text-[#171C19] dark:text-neutral-200">
-                                                    <MapPin className="size-3.5 shrink-0 text-[#216B49]" />
-                                                    <span className="truncate max-w-[200px] font-medium">
-                                                        {report.location_description ?? `${report.latitude}, ${report.longitude}`}
-                                                    </span>
-                                                </div>
-                                                <div className="mt-0.5 font-mono text-[10px] text-neutral-400">
-                                                    {report.latitude.toFixed(4)}, {report.longitude.toFixed(4)}
+                                            <td className="px-6 py-5 align-middle text-center text-xs text-[#68716B] dark:text-neutral-400">
+                                                <div className="inline-flex flex-col items-center">
+                                                    <div className="flex items-center justify-center gap-1.5 text-[#171C19] dark:text-neutral-200">
+                                                        <MapPin className="size-3.5 shrink-0 text-[#216B49] dark:text-emerald-400" />
+                                                        <span className="font-medium max-w-[240px] leading-snug line-clamp-2">
+                                                            {report.location_description ?? `${report.latitude}, ${report.longitude}`}
+                                                        </span>
+                                                    </div>
+                                                    <div className="mt-1 font-mono text-[10px] text-neutral-400 dark:text-neutral-500">
+                                                        {report.latitude.toFixed(4)}, {report.longitude.toFixed(4)}
+                                                    </div>
                                                 </div>
                                             </td>
 
-                                            <td className="px-6 py-4">
+                                            <td className="px-6 py-5 align-middle text-center whitespace-nowrap">
                                                 <StatusBadge status={report.report_status} />
                                             </td>
 
-                                            <td className="px-6 py-4 text-xs">
+                                            <td className="px-6 py-5 align-middle text-center text-xs">
                                                 {report.latest_assignment ? (
-                                                    <div>
-                                                        <span className="font-semibold text-[#171C19] dark:text-white">
+                                                    <div className="space-y-1">
+                                                        <span className="font-semibold text-[#171C19] dark:text-white leading-snug block">
                                                             {report.latest_assignment.agency?.name ?? 'Instansi'}
                                                         </span>
-                                                        <div className="mt-0.5 text-[11px] text-[#68716B] dark:text-neutral-400">
+                                                        <div className="text-[11px] text-[#68716B] dark:text-neutral-400">
                                                             Status: {report.latest_assignment.assignment_status}
                                                         </div>
                                                     </div>
                                                 ) : (
-                                                    <span className="text-[#68716B] dark:text-neutral-500 italic">
+                                                    <span className="text-neutral-400 dark:text-neutral-500 italic text-xs leading-normal inline-block">
                                                         Belum ditugaskan
                                                     </span>
                                                 )}
                                             </td>
 
-                                            <td className="px-6 py-4 text-right">
+                                            <td className="px-6 py-5 align-middle text-center whitespace-nowrap">
                                                 <Link
                                                     href={reportShow(report.id)}
-                                                    className="inline-flex items-center gap-1 rounded-md bg-[#216B49] px-3 py-1.5 text-xs font-semibold text-white shadow-2xs transition hover:bg-[#174B35]"
+                                                    className="inline-flex items-center gap-1.5 rounded-lg bg-[#216B49] px-3.5 py-1.5 text-xs font-semibold text-white shadow-xs transition hover:bg-[#174B35] focus:outline-none focus:ring-2 focus:ring-[#216B49]/40"
                                                 >
                                                     <span>Review</span>
-                                                    <span>&rarr;</span>
+                                                    <span aria-hidden="true">&rarr;</span>
                                                 </Link>
                                             </td>
                                         </tr>

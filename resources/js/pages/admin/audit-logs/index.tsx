@@ -171,15 +171,15 @@ export default function AuditLogsIndex({
                         </div>
                     ) : (
                         <div className="overflow-x-auto">
-                            <table className="w-full text-left text-sm">
-                                <thead className="border-b border-[#DDE3DE] bg-[#F3F7F4] text-xs font-semibold text-[#343B36] uppercase dark:border-neutral-800 dark:bg-neutral-800/60 dark:text-neutral-300">
+                            <table className="w-full min-w-[900px] text-left text-sm">
+                                <thead className="border-b border-[#DDE3DE] bg-[#F3F7F4] text-xs font-semibold uppercase tracking-wider text-[#343B36] dark:border-neutral-800 dark:bg-neutral-800/60 dark:text-neutral-300">
                                     <tr>
-                                        <th scope="col" className="px-6 py-3.5">Waktu Pencatatan</th>
-                                        <th scope="col" className="px-6 py-3.5">Tindakan (Action)</th>
-                                        <th scope="col" className="px-6 py-3.5">Aktor</th>
-                                        <th scope="col" className="px-6 py-3.5">Objek Entitas</th>
-                                        <th scope="col" className="px-6 py-3.5">Catatan / Alasan</th>
-                                        <th scope="col" className="px-6 py-3.5 text-right">Snapshot</th>
+                                        <th scope="col" className="px-6 py-4">Waktu Pencatatan</th>
+                                        <th scope="col" className="px-6 py-4">Tindakan (Action)</th>
+                                        <th scope="col" className="px-6 py-4">Aktor</th>
+                                        <th scope="col" className="px-6 py-4">Objek Entitas</th>
+                                        <th scope="col" className="px-6 py-4">Catatan / Alasan</th>
+                                        <th scope="col" className="px-6 py-4 text-right">Snapshot</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-[#DDE3DE] dark:divide-neutral-800">
@@ -188,9 +188,9 @@ export default function AuditLogsIndex({
                                             key={log.id}
                                             className="transition-colors hover:bg-[#F3F7F4]/40 dark:hover:bg-neutral-800/40"
                                         >
-                                            <td className="px-6 py-4 text-xs font-medium text-[#171C19] dark:text-neutral-200">
-                                                <div className="flex items-center gap-1.5">
-                                                    <Clock className="size-3.5 text-[#216B49]" />
+                                            <td className="px-6 py-5 align-middle text-xs font-medium text-[#171C19] dark:text-neutral-200">
+                                                <div className="flex items-center gap-1.5 whitespace-nowrap">
+                                                    <Clock className="size-3.5 text-[#216B49] dark:text-emerald-400" />
                                                     <span>
                                                         {new Date(log.created_at).toLocaleString('id-ID', {
                                                             day: 'numeric',
@@ -205,8 +205,8 @@ export default function AuditLogsIndex({
                                                 </div>
                                             </td>
 
-                                            <td className="px-6 py-4 font-mono text-xs font-semibold text-[#174B35] dark:text-emerald-400">
-                                                <span className="rounded bg-[#E8F1EB] px-2 py-0.5 text-xs font-medium text-[#174B35] dark:bg-emerald-950 dark:text-emerald-300">
+                                            <td className="px-6 py-5 align-middle font-mono text-xs font-semibold text-[#174B35] dark:text-emerald-400 whitespace-nowrap">
+                                                <span className="rounded bg-[#E8F1EB] px-2.5 py-1 text-xs font-medium text-[#174B35] dark:bg-emerald-950 dark:text-emerald-300">
                                                     {log.action}
                                                 </span>
                                             </td>
