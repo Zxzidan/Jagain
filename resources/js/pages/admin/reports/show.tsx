@@ -1,4 +1,5 @@
-import { Head, Link, useForm } from '@inertiajs/react';
+import React, { useState } from 'react';
+import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import {
     AlertCircle,
     AlertTriangle,
@@ -19,10 +20,8 @@ import {
     X,
     XCircle,
 } from 'lucide-react';
-import { useState } from 'react';
-import { FlashMessage } from '@/components/jagain/flash-message';
-import { StatusBadge } from '@/components/jagain/status-badge';
-import AppLayout from '@/layouts/app-layout';
+import { Button } from '@/components/ui/button';
+import { StatusBadge } from '@/components/reports/status-badge';
 import { dashboard as adminDashboard } from '@/routes/admin';
 import {
     assign as reportAssign,
@@ -30,24 +29,28 @@ import {
     show as reportShow,
     transition as reportTransition,
 } from '@/routes/admin/reports';
-import type { Agency, BreadcrumbItem, Report, ReportStatus } from '@/types';
+import type { Agency, Report, ReportStatus } from '@/types';
 
 type ReportShowProps = {
     report: Report;
     activeAgencies: Agency[];
     allowedTransitions: string[];
-    potentialDuplicates: Pick<Report, 'id' | 'title' | 'report_status' | 'created_at' | 'location_description'>[];
+    potentialDuplicates: Pick<
+        Report,
+        'id' | 'title' | 'report_status' | 'created_at' | 'location_description'
+    >[];
 };
 
 export default function ReportShow({
     report,
     activeAgencies,
     allowedTransitions,
-    potentialDuplicates,
+    potentialDuplicates = [],
 }: ReportShowProps) {
-    const [selectedEvidence, setSelectedEvidence] = useState<string | null>(null);
+    const page = usePage();
+    const flash = (page.props as any).flash;
 
-    // Modals
+    const [selectedEvidence, setSelectedEvidence] = useState<string | null>(null);
     const [isNeedsInfoModalOpen, setIsNeedsInfoModalOpen] = useState(false);
     const [isCloseModalOpen, setIsCloseModalOpen] = useState(false);
 
@@ -66,21 +69,6 @@ export default function ReportShow({
         note: '',
         lock_version: report.lock_version,
     });
-
-    const breadcrumbs: BreadcrumbItem[] = [
-        {
-            title: 'Admin JAGAIN',
-            href: adminDashboard(),
-        },
-        {
-            title: 'Antrean Laporan',
-            href: reportsIndex(),
-        },
-        {
-            title: `#${report.id} ${report.title.slice(0, 24)}...`,
-            href: reportsIndex(),
-        },
-    ];
 
     const executeTransition = (
         targetStatus: ReportStatus,
@@ -115,41 +103,90 @@ export default function ReportShow({
         });
     };
 
+    const formatDate = (isoString?: string | null) => {
+        if (!isoString) return '-';
+        try {
+            const date = new Date(isoString);
+            return (
+                new Intl.DateTimeFormat('id-ID', {
+                    day: 'numeric',
+                    month: 'short',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                }).format(date) + ' WIB'
+            );
+        } catch {
+            return isoString;
+        }
+    };
+
     return (
-        <AppLayout breadcrumbs={breadcrumbs}>
+        <>
             <Head title={`Review Laporan #${report.id} - JAGAIN Admin`} />
 
-            <div className="flex flex-1 flex-col gap-6 p-4 md:p-8">
-                <FlashMessage />
+            <div className="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-6 p-4 sm:p-6 lg:p-8">
+                {/* Flash Messages */}
+                {flash?.success && (
+                    <div
+                        role="status"
+                        className="flex items-center gap-3 rounded-xl border border-leaf-green/30 bg-soft-green/70 p-4 text-sm text-forest-green shadow-xs transition-all duration-200"
+                    >
+                        <CheckCircle2 className="size-5 shrink-0 text-primary-green" />
+                        <span className="font-medium">{flash.success}</span>
+                    </div>
+                )}
+                {flash?.error && (
+                    <div
+                        role="alert"
+                        className="flex items-center gap-3 rounded-xl border border-border-neutral bg-white p-4 text-sm text-dark-neutral shadow-xs transition-all duration-200"
+                    >
+                        <AlertCircle className="size-5 shrink-0 text-primary-green" />
+                        <span className="font-medium">{flash.error}</span>
+                    </div>
+                )}
 
-                {/* Back button & Header */}
-                <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
-                    <div className="flex items-center gap-3">
+                {/* Back button & Header Bar */}
+                <header className="flex flex-col justify-between gap-4 rounded-xl border border-border-neutral bg-white p-5 shadow-xs sm:flex-row sm:items-center sm:p-6">
+                    <div className="flex items-start gap-3.5">
                         <Link
-                            href={reportsIndex()}
-                            className="inline-flex size-9 items-center justify-center rounded-lg border border-[#DDE3DE] bg-white text-[#343B36] transition hover:bg-[#F3F7F4] dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-300"
+                            href={reportsIndex().url}
+                            className="inline-flex size-9 shrink-0 items-center justify-center rounded-lg border border-border-neutral bg-white text-dark-neutral shadow-xs transition hover:bg-pale-green hover:border-gray-neutral/40"
                             title="Kembali ke antrean"
                         >
                             <ArrowLeft className="size-4" />
                         </Link>
-                        <div>
-                            <div className="flex items-center gap-2">
-                                <span className="font-mono text-sm font-bold text-[#216B49] dark:text-emerald-400">
+                        <div className="space-y-1">
+                            <div className="flex flex-wrap items-center gap-2">
+                                <span className="badge badge-light font-mono font-bold">
                                     #{report.id}
                                 </span>
-                                <StatusBadge status={report.report_status} />
+                                <StatusBadge status={report.report_status} variant="neutral" />
                                 {report.is_simulated && (
-                                    <span className="rounded bg-neutral-200 px-2 py-0.5 text-[10px] font-bold text-neutral-800 dark:bg-neutral-800 dark:text-neutral-300">
-                                        DATA SIMULASI
+                                    <span className="badge badge-light text-amber-700 bg-amber-50 border border-amber-200">
+                                        SIMULASI
                                     </span>
                                 )}
                             </div>
-                            <h1 className="mt-1 text-xl font-bold tracking-tight text-[#171C19] sm:text-2xl dark:text-white">
+                            <h1 className="text-xl font-bold tracking-tight text-dark-neutral sm:text-2xl">
                                 {report.title}
                             </h1>
                         </div>
                     </div>
-                </div>
+
+                    <div className="flex shrink-0 items-center gap-2">
+                        <Button
+                            asChild
+                            variant="outline"
+                            size="sm"
+                            className="border-border-neutral bg-white text-xs font-semibold text-dark-neutral hover:bg-pale-green"
+                        >
+                            <Link href={reportsIndex().url}>
+                                <span>Antrean Laporan</span>
+                            </Link>
+                        </Button>
+                    </div>
+                </header>
 
                 {/* Main 2-column layout */}
                 <div className="grid gap-6 lg:grid-cols-3">
@@ -157,24 +194,24 @@ export default function ReportShow({
                     <div className="flex flex-col gap-6 lg:col-span-2">
                         {/* Potential Duplicates Warning Alert */}
                         {potentialDuplicates.length > 0 && (
-                            <div className="rounded-xl border border-amber-200 bg-amber-50/70 p-4 dark:border-amber-900/50 dark:bg-amber-950/20">
+                            <div className="rounded-xl border border-amber-200 bg-amber-50/80 p-4 text-xs shadow-xs">
                                 <div className="flex items-start gap-2.5">
-                                    <AlertTriangle className="size-5 shrink-0 text-amber-600 dark:text-amber-400" />
+                                    <AlertTriangle className="size-5 shrink-0 text-amber-600 mt-0.5" />
                                     <div>
-                                        <h3 className="text-sm font-semibold text-amber-900 dark:text-amber-200">
+                                        <h3 className="text-sm font-semibold text-amber-900">
                                             Perhatian: Ditemukan {potentialDuplicates.length} Laporan di Area Berdekatan
                                         </h3>
-                                        <p className="mt-0.5 text-xs text-amber-800 dark:text-amber-300">
-                                            Laporan di bawah ini memiliki kategori dan koordinat berdekatan (&plusmn;10 km). Periksa apakah laporan ini merupakan duplikat sebelum verifikasi:
+                                        <p className="mt-0.5 text-amber-800">
+                                            Laporan di bawah ini memiliki kategori dan koordinat berdekatan (&plusmn;10 km). Cek potensi duplikat sebelum validasi:
                                         </p>
-                                        <ul className="mt-2 list-inside list-disc text-xs text-amber-900 dark:text-amber-200">
+                                        <ul className="mt-2 list-inside list-disc space-y-1 text-amber-900">
                                             {potentialDuplicates.map((dup) => (
                                                 <li key={dup.id}>
                                                     <Link
-                                                        href={reportShow(dup.id)}
+                                                        href={reportShow(dup.id).url}
                                                         className="font-medium underline hover:text-amber-950"
                                                     >
-                                                        #{dup.id} — {dup.title}
+                                                        #{dup.id} &mdash; {dup.title}
                                                     </Link>{' '}
                                                     ({dup.report_status})
                                                 </li>
@@ -186,87 +223,72 @@ export default function ReportShow({
                         )}
 
                         {/* Report Core Information Card */}
-                        <div className="rounded-xl border border-[#DDE3DE] bg-white p-6 shadow-xs dark:border-neutral-800 dark:bg-neutral-900">
-                            <h2 className="text-base font-semibold text-[#171C19] dark:text-white">
+                        <div className="rounded-xl border border-border-neutral bg-white p-5 shadow-xs sm:p-6">
+                            <h2 className="text-base font-bold tracking-tight text-dark-neutral">
                                 Deskripsi Kejadian & Lokasi
                             </h2>
 
-                            <div className="mt-4 text-sm leading-relaxed text-[#343B36] whitespace-pre-wrap dark:text-neutral-300">
+                            <div className="mt-3 text-xs leading-relaxed text-dark-neutral whitespace-pre-wrap sm:text-sm">
                                 {report.description}
                             </div>
 
-                            <div className="mt-6 grid gap-4 border-t border-[#DDE3DE] pt-4 sm:grid-cols-2 dark:border-neutral-800">
+                            <div className="mt-5 grid gap-4 border-t border-border-neutral pt-4 sm:grid-cols-2">
                                 <div>
-                                    <span className="text-xs text-[#68716B] dark:text-neutral-400">
+                                    <span className="text-xs font-semibold text-gray-neutral">
                                         Kategori Laporan
                                     </span>
-                                    <div className="mt-0.5 font-medium text-[#171C19] dark:text-white">
+                                    <div className="mt-1 font-medium text-dark-neutral text-xs sm:text-sm">
                                         {report.category?.name ?? 'Umum'}
                                     </div>
                                 </div>
 
                                 <div>
-                                    <span className="text-xs text-[#68716B] dark:text-neutral-400">
+                                    <span className="text-xs font-semibold text-gray-neutral">
                                         Identitas Pelapor
                                     </span>
-                                    <div className="mt-0.5 flex items-center gap-1.5 font-medium text-[#171C19] dark:text-white">
-                                        <UserIcon className="size-4 text-[#216B49]" />
+                                    <div className="mt-1 flex items-center gap-1.5 font-medium text-dark-neutral text-xs sm:text-sm">
+                                        <UserIcon className="size-4 text-primary-green" />
                                         <span>{report.creator?.name ?? 'Anonim'}</span>
                                     </div>
                                 </div>
 
                                 <div>
-                                    <span className="text-xs text-[#68716B] dark:text-neutral-400">
+                                    <span className="text-xs font-semibold text-gray-neutral">
                                         Waktu Kejadian Dilaporkan
                                     </span>
-                                    <div className="mt-0.5 flex items-center gap-1.5 font-medium text-[#171C19] dark:text-white">
-                                        <Calendar className="size-4 text-[#216B49]" />
+                                    <div className="mt-1 flex items-center gap-1.5 font-medium text-dark-neutral text-xs sm:text-sm">
+                                        <Calendar className="size-4 text-primary-green" />
                                         <span>
-                                            {report.reported_occurrence_at
-                                                ? new Date(report.reported_occurrence_at).toLocaleString('id-ID', {
-                                                      day: 'numeric',
-                                                      month: 'long',
-                                                      year: 'numeric',
-                                                      hour: '2-digit',
-                                                      minute: '2-digit',
-                                                  }) + ' WIB'
-                                                : 'Tidak disebutkan'}
+                                            {formatDate(report.reported_occurrence_at)}
                                         </span>
                                     </div>
                                 </div>
 
                                 <div>
-                                    <span className="text-xs text-[#68716B] dark:text-neutral-400">
+                                    <span className="text-xs font-semibold text-gray-neutral">
                                         Waktu Masuk Sistem
                                     </span>
-                                    <div className="mt-0.5 flex items-center gap-1.5 font-medium text-[#171C19] dark:text-white">
-                                        <Clock className="size-4 text-[#216B49]" />
+                                    <div className="mt-1 flex items-center gap-1.5 font-medium text-dark-neutral text-xs sm:text-sm">
+                                        <Clock className="size-4 text-primary-green" />
                                         <span>
-                                            {new Date(report.created_at).toLocaleString('id-ID', {
-                                                day: 'numeric',
-                                                month: 'long',
-                                                year: 'numeric',
-                                                hour: '2-digit',
-                                                minute: '2-digit',
-                                            })}{' '}
-                                            WIB
+                                            {formatDate(report.created_at)}
                                         </span>
                                     </div>
                                 </div>
                             </div>
 
-                            {/* Location Section */}
-                            <div className="mt-4 rounded-lg bg-[#F3F7F4] p-4 dark:bg-neutral-800/50">
+                            {/* Location Box */}
+                            <div className="mt-5 rounded-lg border border-border-neutral bg-pale-green/60 p-4">
                                 <div className="flex items-start justify-between gap-2">
-                                    <div>
-                                        <div className="flex items-center gap-1.5 text-xs font-semibold text-[#174B35] dark:text-emerald-400">
-                                            <MapPin className="size-4" />
-                                            <span>Lokasi Karhutla</span>
+                                    <div className="space-y-1">
+                                        <div className="flex items-center gap-1.5 text-xs font-semibold text-forest-green">
+                                            <MapPin className="size-4 text-primary-green" />
+                                            <span>Titik Lokasi Karhutla</span>
                                         </div>
-                                        <p className="mt-1 text-sm font-medium text-[#171C19] dark:text-white">
-                                            {report.location_description ?? 'Tidak ada deskripsi alamat.'}
+                                        <p className="text-xs font-medium text-dark-neutral sm:text-sm">
+                                            {report.location_description ?? 'Tidak ada deskripsi detail alamat.'}
                                         </p>
-                                        <p className="mt-0.5 font-mono text-xs text-[#68716B] dark:text-neutral-400">
+                                        <p className="font-mono text-xs text-gray-neutral">
                                             Koordinat: {report.latitude}, {report.longitude}
                                         </p>
                                     </div>
@@ -275,42 +297,49 @@ export default function ReportShow({
                                         href={`https://www.google.com/maps/search/?api=1&query=${report.latitude},${report.longitude}`}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="inline-flex shrink-0 items-center gap-1 rounded-md border border-[#DDE3DE] bg-white px-2.5 py-1 text-xs font-semibold text-[#216B49] shadow-2xs hover:bg-[#E8F1EB] dark:border-neutral-700 dark:bg-neutral-800 dark:text-emerald-400"
+                                        className="inline-flex shrink-0 items-center gap-1.5 rounded-lg border border-border-neutral bg-white px-3 py-1.5 text-xs font-semibold text-primary-green shadow-xs hover:bg-pale-green"
                                     >
-                                        <span>Buka di Peta</span>
-                                        <ExternalLink className="size-3" />
+                                        <span>Buka Peta</span>
+                                        <ExternalLink className="size-3.5" />
                                     </a>
                                 </div>
                             </div>
                         </div>
 
                         {/* Evidence Gallery Card */}
-                        <div className="rounded-xl border border-[#DDE3DE] bg-white p-6 shadow-xs dark:border-neutral-800 dark:bg-neutral-900">
-                            <h2 className="text-base font-semibold text-[#171C19] dark:text-white">
-                                Berkas Bukti Lapangan ({report.evidence?.length ?? 0})
-                            </h2>
-                            <p className="text-xs text-[#68716B] dark:text-neutral-400">
-                                Foto atau dokumentasi yang diunggah pelapor untuk memvalidasi insiden.
-                            </p>
+                        <div className="rounded-xl border border-border-neutral bg-white p-5 shadow-xs sm:p-6">
+                            <div className="flex items-center justify-between">
+                                <div>
+                                    <h2 className="text-base font-bold tracking-tight text-dark-neutral">
+                                        Berkas Bukti Lapangan ({report.evidence?.length ?? 0})
+                                    </h2>
+                                    <p className="text-xs text-gray-neutral">
+                                        Foto atau dokumentasi lapangan yang diunggah pelapor
+                                    </p>
+                                </div>
+                            </div>
 
                             {!report.evidence || report.evidence.length === 0 ? (
-                                <div className="mt-4 rounded-lg border border-dashed border-[#DDE3DE] p-6 text-center text-xs text-[#68716B] dark:border-neutral-800">
+                                <div className="mt-4 rounded-xl border border-dashed border-border-neutral bg-pale-green/30 p-6 text-center text-xs text-gray-neutral">
                                     Tidak ada berkas bukti yang disertakan pada laporan ini.
                                 </div>
                             ) : (
-                                <div className="mt-4 grid gap-4 sm:grid-cols-2 md:grid-cols-3">
+                                <div className="mt-4 grid gap-3 sm:grid-cols-2 md:grid-cols-3">
                                     {report.evidence.map((ev) => (
                                         <div
                                             key={ev.id}
-                                            className="group relative overflow-hidden rounded-lg border border-[#DDE3DE] bg-[#F3F7F4] p-3 transition hover:border-[#216B49] dark:border-neutral-800 dark:bg-neutral-800/40"
+                                            className="group relative overflow-hidden rounded-lg border border-border-neutral bg-pale-green/40 p-3 transition hover:border-primary-green hover:bg-soft-green/30"
                                         >
-                                            <div className="flex aspect-video items-center justify-center rounded bg-[#E8F1EB] text-[#216B49] dark:bg-neutral-800">
-                                                <FileImage className="size-8" />
+                                            <div className="flex aspect-video items-center justify-center rounded-md bg-white border border-border-neutral/60 text-primary-green shadow-2xs">
+                                                <FileImage className="size-8 text-primary-green" />
                                             </div>
-                                            <div className="mt-2 truncate text-xs font-medium text-[#171C19] dark:text-white" title={ev.original_filename}>
+                                            <div
+                                                className="mt-2 truncate text-xs font-semibold text-dark-neutral"
+                                                title={ev.original_filename}
+                                            >
                                                 {ev.original_filename}
                                             </div>
-                                            <div className="text-[11px] text-[#68716B] dark:text-neutral-400">
+                                            <div className="text-[11px] text-gray-neutral">
                                                 {(ev.size_bytes / 1024).toFixed(0)} KB &bull; {ev.media_type}
                                             </div>
                                         </div>
@@ -320,54 +349,47 @@ export default function ReportShow({
                         </div>
 
                         {/* Chronology / Status History Timeline */}
-                        <div className="rounded-xl border border-[#DDE3DE] bg-white p-6 shadow-xs dark:border-neutral-800 dark:bg-neutral-900">
+                        <div className="rounded-xl border border-border-neutral bg-white p-5 shadow-xs sm:p-6">
                             <div className="flex items-center gap-2">
-                                <History className="size-4 text-[#216B49]" />
-                                <h2 className="text-base font-semibold text-[#171C19] dark:text-white">
+                                <History className="size-4 text-primary-green" />
+                                <h2 className="text-base font-bold tracking-tight text-dark-neutral">
                                     Kronologi & Riwayat Perubahan Status
                                 </h2>
                             </div>
-                            <p className="text-xs text-[#68716B] dark:text-neutral-400">
-                                Jejak audit transisi status yang tercatat secara permanen sesuai FR-09.
+                            <p className="text-xs text-gray-neutral">
+                                Jejak audit transisi status yang tercatat permanen sesuai standar akuntabilitas JAGAIN
                             </p>
 
-                            <ol className="relative mt-6 border-l border-[#DDE3DE] ml-3 dark:border-neutral-800">
-                                {report.status_histories?.map((history, idx) => (
-                                    <li key={history.id} className="mb-6 ml-6 last:mb-0">
-                                        <span className="absolute -left-3 flex size-6 items-center justify-center rounded-full bg-[#E8F1EB] text-[#216B49] ring-4 ring-white dark:bg-emerald-950 dark:text-emerald-400 dark:ring-neutral-900">
+                            <ol className="relative mt-5 ml-3 border-l border-border-neutral">
+                                {report.status_histories?.map((history) => (
+                                    <li key={history.id} className="mb-5 ml-6 last:mb-0">
+                                        <span className="absolute -left-3 flex size-6 items-center justify-center rounded-full bg-soft-green text-primary-green ring-4 ring-white">
                                             <CheckCircle2 className="size-3.5" />
                                         </span>
-                                        <div className="flex items-center gap-2">
-                                            <StatusBadge status={history.to_status} />
-                                            <span className="text-xs text-[#68716B] dark:text-neutral-400">
-                                                {new Date(history.created_at).toLocaleString('id-ID', {
-                                                    day: 'numeric',
-                                                    month: 'short',
-                                                    year: 'numeric',
-                                                    hour: '2-digit',
-                                                    minute: '2-digit',
-                                                })}{' '}
-                                                WIB
+                                        <div className="flex flex-wrap items-center gap-2">
+                                            <StatusBadge status={history.to_status} variant="neutral" />
+                                            <span className="text-xs text-gray-neutral">
+                                                {formatDate(history.created_at)}
                                             </span>
                                         </div>
-                                        <div className="mt-1 text-xs text-[#343B36] dark:text-neutral-300">
-                                            Oleh:{' '}
-                                            <span className="font-semibold text-[#171C19] dark:text-white">
+                                        <div className="mt-1 text-xs text-dark-neutral">
+                                            Aktor:{' '}
+                                            <span className="font-semibold text-forest-green">
                                                 {history.actor?.name ?? 'Sistem'}
                                             </span>
                                         </div>
                                         {history.reason && (
-                                            <div className="mt-1 rounded bg-neutral-100 p-2 text-xs text-neutral-800 dark:bg-neutral-800 dark:text-neutral-200">
-                                                <span className="font-semibold">Alasan:</span> {history.reason}
+                                            <div className="mt-1.5 rounded-lg border border-border-neutral bg-pale-green/60 p-2 text-xs text-dark-neutral">
+                                                <span className="font-semibold text-forest-green">Alasan:</span> {history.reason}
                                             </div>
                                         )}
                                         {history.note && (
-                                            <p className="mt-1 text-xs text-neutral-600 dark:text-neutral-400">
+                                            <p className="mt-1 text-xs text-gray-neutral">
                                                 {history.note}
                                             </p>
                                         )}
                                         {history.public_note && (
-                                            <div className="mt-1 rounded border border-amber-200 bg-amber-50 p-2 text-xs text-amber-900 dark:border-amber-900/50 dark:bg-amber-950/30 dark:text-amber-200">
+                                            <div className="mt-1.5 rounded-lg border border-leaf-green/40 bg-soft-green/80 p-2.5 text-xs text-forest-green">
                                                 <span className="font-semibold">Instruksi ke Pelapor:</span>{' '}
                                                 {history.public_note}
                                             </div>
@@ -378,27 +400,26 @@ export default function ReportShow({
                         </div>
                     </div>
 
-                    {/* Right Column: Actions & OPD Dispatch (1 col) */}
+                    {/* Right Column: Actions & OPD Dispatch */}
                     <div className="flex flex-col gap-6">
                         {/* Status Transition Action Card */}
-                        <div className="rounded-xl border border-[#216B49]/30 bg-white p-6 shadow-xs dark:border-emerald-800/40 dark:bg-neutral-900">
+                        <div className="rounded-xl border border-border-neutral bg-white p-5 shadow-xs sm:p-6">
                             <div className="flex items-center gap-2">
-                                <Shield className="size-4 text-[#216B49]" />
-                                <h3 className="text-base font-semibold text-[#171C19] dark:text-white">
+                                <Shield className="size-4 text-primary-green" />
+                                <h3 className="text-base font-bold tracking-tight text-dark-neutral">
                                     Keputusan & Transisi Status
                                 </h3>
                             </div>
-                            <p className="mt-1 text-xs text-[#68716B] dark:text-neutral-400">
+                            <p className="mt-1 text-xs text-gray-neutral">
                                 Status saat ini:{' '}
-                                <span className="font-bold text-[#171C19] dark:text-white">
+                                <strong className="font-bold text-forest-green">
                                     {report.report_status}
-                                </span>
+                                </strong>
                             </p>
 
-                            {/* Transition options based on current status */}
                             <div className="mt-4 flex flex-col gap-2.5">
                                 {report.report_status === 'SUBMITTED' && (
-                                    <button
+                                    <Button
                                         type="button"
                                         disabled={transitionForm.processing}
                                         onClick={() =>
@@ -408,15 +429,15 @@ export default function ReportShow({
                                                 'Admin memulai pemeriksaan kelengkapan berkas.'
                                             )
                                         }
-                                        className="w-full rounded-lg bg-[#216B49] px-4 py-2.5 text-center text-xs font-semibold text-white transition hover:bg-[#174B35]"
+                                        className="w-full bg-primary-green px-4 py-2.5 text-xs font-semibold text-white shadow-xs hover:bg-forest-green"
                                     >
-                                        Mulai Pemeriksaan Laporan (UNDER_REVIEW)
-                                    </button>
+                                        Mulai Telaah Laporan (UNDER_REVIEW)
+                                    </Button>
                                 )}
 
                                 {report.report_status === 'UNDER_REVIEW' && (
                                     <>
-                                        <button
+                                        <Button
                                             type="button"
                                             disabled={transitionForm.processing}
                                             onClick={() =>
@@ -426,15 +447,15 @@ export default function ReportShow({
                                                     'Laporan telah diperiksa dan dinilai memenuhi kriteria verifikasi JAGAIN.'
                                                 )
                                             }
-                                            className="w-full rounded-lg bg-[#216B49] px-4 py-2.5 text-center text-xs font-semibold text-white transition hover:bg-[#174B35]"
+                                            className="w-full bg-primary-green px-4 py-2.5 text-xs font-semibold text-white shadow-xs hover:bg-forest-green"
                                         >
                                             Verifikasi Laporan Valid (VERIFIED)
-                                        </button>
+                                        </Button>
 
                                         <button
                                             type="button"
                                             onClick={() => setIsNeedsInfoModalOpen(true)}
-                                            className="w-full rounded-lg border border-amber-300 bg-amber-50 px-4 py-2 text-center text-xs font-semibold text-amber-900 transition hover:bg-amber-100 dark:border-amber-800 dark:bg-amber-950/40 dark:text-amber-200"
+                                            className="w-full rounded-lg border border-amber-300 bg-amber-50 px-4 py-2 text-center text-xs font-semibold text-amber-900 transition hover:bg-amber-100"
                                         >
                                             Minta Informasi Tambahan (NEEDS_INFORMATION)
                                         </button>
@@ -442,7 +463,7 @@ export default function ReportShow({
                                 )}
 
                                 {report.report_status === 'NEEDS_INFORMATION' && (
-                                    <button
+                                    <Button
                                         type="button"
                                         disabled={transitionForm.processing}
                                         onClick={() =>
@@ -452,14 +473,14 @@ export default function ReportShow({
                                                 'Melanjutkan pemeriksaan laporan setelah informasi diperbarui.'
                                             )
                                         }
-                                        className="w-full rounded-lg bg-[#216B49] px-4 py-2.5 text-center text-xs font-semibold text-white transition hover:bg-[#174B35]"
+                                        className="w-full bg-primary-green px-4 py-2.5 text-xs font-semibold text-white shadow-xs hover:bg-forest-green"
                                     >
                                         Kembalikan ke Pemeriksaan (UNDER_REVIEW)
-                                    </button>
+                                    </Button>
                                 )}
 
                                 {report.report_status === 'RESOLUTION_REVIEW' && (
-                                    <button
+                                    <Button
                                         type="button"
                                         disabled={transitionForm.processing}
                                         onClick={() =>
@@ -469,20 +490,20 @@ export default function ReportShow({
                                                 'Admin telah memeriksa bukti penanganan OPD dan menetapkan status administratif selesai.'
                                             )
                                         }
-                                        className="w-full rounded-lg bg-[#174B35] px-4 py-2.5 text-center text-xs font-semibold text-white transition hover:bg-[#216B49]"
+                                        className="w-full bg-forest-green px-4 py-2.5 text-xs font-semibold text-white shadow-xs hover:bg-primary-green"
                                     >
                                         Sahkan Selesai Terverifikasi (RESOLVED_VERIFIED)
-                                    </button>
+                                    </Button>
                                 )}
 
-                                {/* Destructive Close action allowed in active stages */}
+                                {/* Destructive Close action */}
                                 {['SUBMITTED', 'UNDER_REVIEW', 'NEEDS_INFORMATION', 'VERIFIED'].includes(
                                     report.report_status
                                 ) && (
                                     <button
                                         type="button"
                                         onClick={() => setIsCloseModalOpen(true)}
-                                        className="mt-2 w-full rounded-lg border border-rose-300 bg-rose-50 px-4 py-2 text-center text-xs font-semibold text-rose-800 transition hover:bg-rose-100 dark:border-rose-900/60 dark:bg-rose-950/30 dark:text-rose-300"
+                                        className="mt-1 w-full rounded-lg border border-rose-200 bg-rose-50 px-4 py-2 text-center text-xs font-semibold text-rose-800 transition hover:bg-rose-100"
                                     >
                                         Tutup Laporan dengan Alasan (CLOSED_WITH_REASON)
                                     </button>
@@ -502,15 +523,15 @@ export default function ReportShow({
                         </div>
 
                         {/* Agency Dispatch Card */}
-                        <div className="rounded-xl border border-[#DDE3DE] bg-white p-6 shadow-xs dark:border-neutral-800 dark:bg-neutral-900">
+                        <div className="rounded-xl border border-border-neutral bg-white p-5 shadow-xs sm:p-6">
                             <div className="flex items-center gap-2">
-                                <Building2 className="size-4 text-[#216B49]" />
-                                <h3 className="text-base font-semibold text-[#171C19] dark:text-white">
+                                <Building2 className="size-4 text-primary-green" />
+                                <h3 className="text-base font-bold tracking-tight text-dark-neutral">
                                     Penugasan ke Instansi (OPD)
                                 </h3>
                             </div>
-                            <p className="mt-1 text-xs text-[#68716B] dark:text-neutral-400">
-                                Teruskan laporan terverifikasi kepada instansi penanganan wilayah Kalimantan.
+                            <p className="mt-1 text-xs text-gray-neutral">
+                                Teruskan laporan terverifikasi kepada instansi penanganan wilayah Kalimantan
                             </p>
 
                             {report.report_status === 'VERIFIED' || report.report_status === 'DISPATCHED' ? (
@@ -518,7 +539,7 @@ export default function ReportShow({
                                     <div>
                                         <label
                                             htmlFor="agency_id"
-                                            className="block text-xs font-semibold text-[#343B36] dark:text-neutral-300"
+                                            className="block text-xs font-semibold text-dark-neutral"
                                         >
                                             Pilih Instansi / OPD Berwenang
                                         </label>
@@ -526,7 +547,7 @@ export default function ReportShow({
                                             id="agency_id"
                                             value={assignmentForm.data.agency_id}
                                             onChange={(e) => assignmentForm.setData('agency_id', e.target.value)}
-                                            className="mt-1 w-full rounded-lg border border-[#DDE3DE] bg-[#F3F7F4]/50 px-3 py-2 text-xs text-[#171C19] focus:border-[#216B49] focus:bg-white focus:outline-none dark:border-neutral-800 dark:bg-neutral-800 dark:text-white"
+                                            className="mt-1 w-full rounded-lg border border-border-neutral bg-pale-green/40 px-3 py-2 text-xs text-dark-neutral transition-colors focus:border-primary-green focus:bg-white focus:outline-hidden"
                                         >
                                             {activeAgencies.map((agency) => (
                                                 <option key={agency.id} value={agency.id}>
@@ -544,7 +565,7 @@ export default function ReportShow({
                                     <div>
                                         <label
                                             htmlFor="note"
-                                            className="block text-xs font-semibold text-[#343B36] dark:text-neutral-300"
+                                            className="block text-xs font-semibold text-dark-neutral"
                                         >
                                             Catatan Instruksi Penanganan (Opsional)
                                         </label>
@@ -554,22 +575,22 @@ export default function ReportShow({
                                             value={assignmentForm.data.note}
                                             onChange={(e) => assignmentForm.setData('note', e.target.value)}
                                             placeholder="Contoh: Mohon koordinasi dengan pos damkar terdekat..."
-                                            className="mt-1 w-full rounded-lg border border-[#DDE3DE] bg-[#F3F7F4]/50 p-2.5 text-xs text-[#171C19] focus:border-[#216B49] focus:bg-white focus:outline-none dark:border-neutral-800 dark:bg-neutral-800 dark:text-white"
+                                            className="mt-1 w-full rounded-lg border border-border-neutral bg-pale-green/40 p-2.5 text-xs text-dark-neutral transition-colors focus:border-primary-green focus:bg-white focus:outline-hidden"
                                         />
                                     </div>
 
-                                    <button
+                                    <Button
                                         type="submit"
                                         disabled={assignmentForm.processing}
-                                        className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-[#216B49] px-4 py-2.5 text-xs font-semibold text-white transition hover:bg-[#174B35] disabled:opacity-60"
+                                        className="bg-primary-green px-4 py-2.5 text-xs font-semibold text-white shadow-xs hover:bg-forest-green"
                                     >
-                                        <Send className="size-3.5" />
+                                        <Send className="size-3.5 mr-1.5" />
                                         <span>
                                             {report.report_status === 'DISPATCHED'
                                                 ? 'Tugaskan Ulang (Reassign)'
                                                 : 'Kirim Penugasan ke OPD'}
                                         </span>
-                                    </button>
+                                    </Button>
 
                                     {(assignmentForm.errors as Record<string, string | undefined>).report && (
                                         <p className="text-xs text-rose-600">
@@ -578,26 +599,28 @@ export default function ReportShow({
                                     )}
                                 </form>
                             ) : (
-                                <div className="mt-4 rounded-lg bg-[#F3F7F4] p-3 text-xs text-[#68716B] dark:bg-neutral-800/40 dark:text-neutral-400">
+                                <div className="mt-4 rounded-lg border border-border-neutral bg-pale-green/40 p-3 text-xs text-gray-neutral">
                                     Laporan harus diverifikasi valid (status VERIFIED) sebelum dapat ditugaskan ke instansi.
                                 </div>
                             )}
 
                             {/* Active assignment details if present */}
                             {report.latest_assignment && (
-                                <div className="mt-4 border-t border-[#DDE3DE] pt-4 dark:border-neutral-800">
-                                    <span className="text-xs font-semibold text-[#343B36] dark:text-neutral-300">
+                                <div className="mt-4 border-t border-border-neutral pt-4">
+                                    <span className="text-xs font-semibold text-dark-neutral">
                                         Penugasan Aktif Saat Ini:
                                     </span>
-                                    <div className="mt-2 rounded-lg border border-[#DDE3DE] bg-[#F3F7F4]/50 p-3 text-xs dark:border-neutral-800 dark:bg-neutral-800/50">
-                                        <div className="font-semibold text-[#171C19] dark:text-white">
+                                    <div className="mt-2 rounded-lg border border-border-neutral bg-pale-green/40 p-3 text-xs">
+                                        <div className="font-semibold text-dark-neutral">
                                             {report.latest_assignment.agency?.name}
                                         </div>
                                         <div className="mt-1 flex items-center gap-1.5">
-                                            <StatusBadge status={report.latest_assignment.assignment_status} />
+                                            <span className="badge badge-light">
+                                                {report.latest_assignment.assignment_status}
+                                            </span>
                                         </div>
                                         {report.latest_assignment.decline_reason && (
-                                            <div className="mt-2 rounded bg-rose-50 p-2 text-rose-900 dark:bg-rose-950/40 dark:text-rose-200">
+                                            <div className="mt-2 rounded bg-rose-50 p-2 text-rose-900 border border-rose-200">
                                                 <span className="font-semibold">Alasan Penolakan:</span>{' '}
                                                 {report.latest_assignment.decline_reason}
                                             </div>
@@ -612,34 +635,34 @@ export default function ReportShow({
 
             {/* Modal: Minta Informasi Tambahan */}
             {isNeedsInfoModalOpen && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-xs">
-                    <div className="w-full max-w-md rounded-xl bg-white p-6 shadow-xl dark:bg-neutral-900">
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-xs">
+                    <div className="w-full max-w-md rounded-2xl border border-border-neutral bg-white p-6 shadow-xl">
                         <div className="flex items-center justify-between">
-                            <h3 className="text-base font-bold text-[#171C19] dark:text-white">
+                            <h3 className="text-base font-bold text-dark-neutral">
                                 Minta Informasi Tambahan
                             </h3>
                             <button
                                 type="button"
                                 onClick={() => setIsNeedsInfoModalOpen(false)}
-                                className="rounded p-1 text-[#68716B] hover:bg-neutral-100 dark:hover:bg-neutral-800"
+                                className="rounded p-1 text-gray-neutral hover:bg-pale-green"
                             >
                                 <X className="size-4" />
                             </button>
                         </div>
-                        <p className="mt-1 text-xs text-[#68716B] dark:text-neutral-400">
-                            Pesan ini akan terlihat oleh pelapor pada halaman pelacakan status JAGAIN.
+                        <p className="mt-1 text-xs text-gray-neutral">
+                            Pesan ini akan terlihat oleh pelapor pada halaman detail dan pelacakan status.
                         </p>
 
                         <div className="mt-4">
-                            <label className="block text-xs font-semibold text-[#343B36] dark:text-neutral-300">
+                            <label className="block text-xs font-semibold text-dark-neutral">
                                 Instruksi yang Perlu Dilengkapi Pelapor *
                             </label>
                             <textarea
                                 rows={4}
                                 value={transitionForm.data.public_note}
                                 onChange={(e) => transitionForm.setData('public_note', e.target.value)}
-                                placeholder="Contoh: Mohon sebutkan patok batas desa atau arah angin di lokasi..."
-                                className="mt-1 w-full rounded-lg border border-[#DDE3DE] p-2.5 text-xs text-[#171C19] focus:border-[#216B49] focus:outline-none dark:border-neutral-800 dark:bg-neutral-800 dark:text-white"
+                                placeholder="Contoh: Mohon sebutkan patok batas desa atau titik acuan terdekat..."
+                                className="mt-1 w-full rounded-lg border border-border-neutral bg-pale-green/40 p-2.5 text-xs text-dark-neutral focus:border-primary-green focus:bg-white focus:outline-hidden"
                             />
                             {transitionForm.errors.note && (
                                 <p className="mt-1 text-xs text-rose-600">{transitionForm.errors.note}</p>
@@ -650,11 +673,11 @@ export default function ReportShow({
                             <button
                                 type="button"
                                 onClick={() => setIsNeedsInfoModalOpen(false)}
-                                className="rounded-lg border border-[#DDE3DE] px-3.5 py-2 text-xs font-semibold text-[#343B36] hover:bg-[#F3F7F4] dark:border-neutral-700 dark:text-neutral-300"
+                                className="rounded-lg border border-border-neutral px-3.5 py-2 text-xs font-semibold text-dark-neutral hover:bg-pale-green"
                             >
                                 Batal
                             </button>
-                            <button
+                            <Button
                                 type="button"
                                 disabled={transitionForm.processing || !transitionForm.data.public_note.trim()}
                                 onClick={() =>
@@ -665,10 +688,10 @@ export default function ReportShow({
                                         transitionForm.data.public_note
                                     )
                                 }
-                                className="rounded-lg bg-amber-600 px-4 py-2 text-xs font-semibold text-white transition hover:bg-amber-700 disabled:opacity-50"
+                                className="bg-primary-green px-4 py-2 text-xs font-semibold text-white shadow-xs hover:bg-forest-green"
                             >
-                                Kirim Permintaan Info
-                            </button>
+                                Kirim Permintaan
+                            </Button>
                         </div>
                     </div>
                 </div>
@@ -676,34 +699,34 @@ export default function ReportShow({
 
             {/* Modal: Tutup Laporan (Destructive Action) */}
             {isCloseModalOpen && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-xs">
-                    <div className="w-full max-w-md rounded-xl bg-white p-6 shadow-xl dark:bg-neutral-900">
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-xs">
+                    <div className="w-full max-w-md rounded-2xl border border-border-neutral bg-white p-6 shadow-xl">
                         <div className="flex items-start gap-3">
-                            <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-rose-100 text-rose-600 dark:bg-rose-950/60 dark:text-rose-400">
+                            <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-rose-100 text-rose-600">
                                 <XCircle className="size-5" />
                             </div>
                             <div>
-                                <h3 className="text-base font-bold text-rose-900 dark:text-rose-200">
+                                <h3 className="text-base font-bold text-rose-900">
                                     Konfirmasi Penutupan Laporan
                                 </h3>
-                                <p className="mt-1 text-xs text-rose-700 dark:text-rose-300">
-                                    Aksi ini akan menghentikan proses verifikasi laporan. Alasan penutupan wajib dicatat dalam audit trail permanen.
+                                <p className="mt-1 text-xs text-rose-700">
+                                    Aksi ini akan menghentikan proses verifikasi laporan. Alasan penutupan wajib dicatat dalam audit trail.
                                 </p>
                             </div>
                         </div>
 
                         <div className="mt-4">
-                            <label className="block text-xs font-semibold text-[#343B36] dark:text-neutral-300">
+                            <label className="block text-xs font-semibold text-dark-neutral">
                                 Alasan Penutupan Laporan *
                             </label>
                             <select
                                 value={transitionForm.data.reason}
                                 onChange={(e) => transitionForm.setData('reason', e.target.value)}
-                                className="mt-1 w-full rounded-lg border border-[#DDE3DE] bg-white p-2.5 text-xs text-[#171C19] focus:border-rose-500 focus:outline-none dark:border-neutral-800 dark:bg-neutral-800 dark:text-white"
+                                className="mt-1 w-full rounded-lg border border-border-neutral bg-white p-2.5 text-xs text-dark-neutral focus:border-rose-500 focus:outline-hidden"
                             >
                                 <option value="">-- Pilih Alasan Penutupan --</option>
                                 <option value="Laporan Duplikat dari Titik yang Sama">Laporan Duplikat dari Titik yang Sama</option>
-                                <option value="Bukan Kebakaran Hutan atau Lahan">Bukan Kebakaran Hutan atau Lahan (Di luar cakupan JAGAIN)</option>
+                                <option value="Bukan Kebakaran Hutan atau Lahan">Bukan Kebakaran Hutan atau Lahan (Di luar cakupan)</option>
                                 <option value="Informasi Palsu atau Tidak Dapat Diverifikasi">Informasi Palsu atau Tidak Dapat Diverifikasi</option>
                                 <option value="Lokasi Berada di Luar Wilayah Operasional">Lokasi Berada di Luar Wilayah Operasional</option>
                             </select>
@@ -713,7 +736,7 @@ export default function ReportShow({
                         </div>
 
                         <div className="mt-3">
-                            <label className="block text-xs font-semibold text-[#343B36] dark:text-neutral-300">
+                            <label className="block text-xs font-semibold text-dark-neutral">
                                 Catatan Penjelasan Tambahan (Opsional)
                             </label>
                             <textarea
@@ -721,7 +744,7 @@ export default function ReportShow({
                                 value={transitionForm.data.note}
                                 onChange={(e) => transitionForm.setData('note', e.target.value)}
                                 placeholder="Jelaskan detail pertimbangan penutupan..."
-                                className="mt-1 w-full rounded-lg border border-[#DDE3DE] p-2 text-xs text-[#171C19] focus:border-rose-500 focus:outline-none dark:border-neutral-800 dark:bg-neutral-800 dark:text-white"
+                                className="mt-1 w-full rounded-lg border border-border-neutral p-2 text-xs text-dark-neutral focus:border-rose-500 focus:outline-hidden"
                             />
                         </div>
 
@@ -729,11 +752,11 @@ export default function ReportShow({
                             <button
                                 type="button"
                                 onClick={() => setIsCloseModalOpen(false)}
-                                className="rounded-lg border border-[#DDE3DE] px-3.5 py-2 text-xs font-semibold text-[#343B36] hover:bg-[#F3F7F4] dark:border-neutral-700 dark:text-neutral-300"
+                                className="rounded-lg border border-border-neutral px-3.5 py-2 text-xs font-semibold text-dark-neutral hover:bg-pale-green"
                             >
                                 Batal
                             </button>
-                            <button
+                            <Button
                                 type="button"
                                 disabled={transitionForm.processing || !transitionForm.data.reason}
                                 onClick={() =>
@@ -743,14 +766,14 @@ export default function ReportShow({
                                         transitionForm.data.note
                                     )
                                 }
-                                className="rounded-lg bg-rose-600 px-4 py-2 text-xs font-semibold text-white transition hover:bg-rose-700 disabled:opacity-50"
+                                className="bg-rose-600 px-4 py-2 text-xs font-semibold text-white shadow-xs hover:bg-rose-700"
                             >
                                 Ya, Tutup Laporan Ini
-                            </button>
+                            </Button>
                         </div>
                     </div>
                 </div>
             )}
-        </AppLayout>
+        </>
     );
 }
