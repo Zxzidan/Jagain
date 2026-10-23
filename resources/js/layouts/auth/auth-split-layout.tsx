@@ -17,6 +17,7 @@ export default function AuthSplitLayout({
                 <Link
                     href={home()}
                     className="relative z-20 flex items-center text-lg font-medium"
+                >
                     <img
                         src="/images/logo-white.png"
                         alt="jagain"

@@ -93,10 +93,6 @@ export default function MapPage({
                     <AnimatedContent distance={25} duration={0.8} threshold={0.1}>
                         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
                             <div>
-                                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200/80 text-emerald-800 text-[10px] sm:text-xs font-bold uppercase tracking-wider mb-3">
-                                    <span className="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                                    <span>Geospatial Registry Kalimantan</span>
-                                </div>
                                 <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-neutral-950 tracking-tight">
                                     Peta Sebaran Karhutla
                                 </h1>

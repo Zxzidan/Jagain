@@ -50,66 +50,55 @@ export default function Home({ stats, recentReports }: HomeProps) {
         }
     };
 
-    // Partner & Data Sources Logos for LogoLoop
+    // Partner & Data Sources Logos for LogoLoop (pure logos without background)
     const partnerLogos = [
         {
             node: (
-                <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-neutral-100 hover:bg-neutral-200/80 border border-neutral-200 font-mono text-xs font-bold text-neutral-800 tracking-wider shadow-xs transition-colors">
-                    <Satellite className="size-3.5 text-emerald-600" />
-                    <span>NASA FIRMS</span>
-                </div>
+                <img
+                    src="/images/LOGO%20INSTANSI/BRIN.png"
+                    alt="BRIN Geospasial"
+                    title="BRIN Geospasial (Badan Riset dan Inovasi Nasional)"
+                    className="h-[84px] sm:h-[88px] w-auto max-w-none object-contain select-none"
+                    loading="lazy"
+                />
             ),
-            title: 'NASA FIRMS',
+            title: 'BRIN Geospasial',
             hoverColor: '#10e57a',
         },
         {
-            node: (
-                <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-neutral-100 hover:bg-neutral-200/80 border border-neutral-200 font-mono text-xs font-bold text-neutral-800 tracking-wider shadow-xs transition-colors">
-                    <span className="size-2 rounded-full bg-emerald-500" />
-                    <span>BMKG INDONESIA</span>
-                </div>
-            ),
-            title: 'BMKG',
+            src: '/images/LOGO%20INSTANSI/BPBD.png',
+            alt: 'BPBD 5 Provinsi Kalimantan',
+            title: 'BPBD 5 Provinsi Kalimantan',
             hoverColor: '#10e57a',
         },
         {
-            node: (
-                <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-neutral-100 hover:bg-neutral-200/80 border border-neutral-200 font-mono text-xs font-bold text-neutral-800 tracking-wider shadow-xs transition-colors">
-                    <span className="size-2 rounded-full bg-emerald-500" />
-                    <span>KLHK SIPONGI+</span>
-                </div>
-            ),
-            title: 'KLHK SIPONGI',
+            src: '/images/LOGO%20INSTANSI/nasa-firms.png',
+            alt: 'NASA FIRMS',
+            title: 'NASA FIRMS (Fire Information for Resource Management System)',
             hoverColor: '#10e57a',
         },
         {
-            node: (
-                <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-neutral-100 hover:bg-neutral-200/80 border border-neutral-200 font-mono text-xs font-bold text-neutral-800 tracking-wider shadow-xs transition-colors">
-                    <Shield className="size-3.5 text-emerald-600" />
-                    <span>BNPB PUSDALOPS</span>
-                </div>
-            ),
-            title: 'BNPB',
+            src: '/images/LOGO%20INSTANSI/BMKG.png',
+            alt: 'BMKG Indonesia',
+            title: 'BMKG (Badan Meteorologi, Klimatologi, dan Geofisika)',
             hoverColor: '#10e57a',
         },
         {
-            node: (
-                <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-neutral-100 hover:bg-neutral-200/80 border border-neutral-200 font-mono text-xs font-bold text-neutral-800 tracking-wider shadow-xs transition-colors">
-                    <span className="size-2 rounded-full bg-emerald-500" />
-                    <span>BRIN GEOSPASIAL</span>
-                </div>
-            ),
-            title: 'BRIN',
+            src: '/images/LOGO%20INSTANSI/sipongi.png',
+            alt: 'KLHK Sipongi+',
+            title: 'KLHK Sipongi+ (Sistem Informasi Pengendalian Karhutla)',
             hoverColor: '#10e57a',
         },
         {
-            node: (
-                <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-neutral-100 hover:bg-neutral-200/80 border border-neutral-200 font-mono text-xs font-bold text-neutral-800 tracking-wider shadow-xs transition-colors">
-                    <CheckCircle2 className="size-3.5 text-emerald-600" />
-                    <span>BPBD 5 PROVINSI</span>
-                </div>
-            ),
-            title: 'BPBD 5 PROVINSI',
+            src: '/images/LOGO%20INSTANSI/BNPB.png',
+            alt: 'BNPB Pusdalops',
+            title: 'BNPB (Badan Nasional Penanggulangan Bencana)',
+            hoverColor: '#10e57a',
+        },
+        {
+            src: '/images/LOGO%20INSTANSI/perhutani.png',
+            alt: 'Kementerian Kehutanan RI',
+            title: 'Kementerian Kehutanan Republik Indonesia',
             hoverColor: '#10e57a',
         },
     ];
@@ -780,41 +769,21 @@ export default function Home({ stats, recentReports }: HomeProps) {
                     2. TRUST BADGES & LOGO LOOP (Pure White Background + Reactive Reel)
                     Spacious breathing room below wave shape
                     ========================================================================= */}
-                <section className="pt-14 sm:pt-16 pb-16 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto w-full text-center">
+                <section className="pt-10 sm:pt-14 pb-14 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto w-full text-center">
                     <AnimatedContent distance={24} duration={0.8} threshold={0.15}>
-                        {/* Micro-pills */}
-                        <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4">
-                            <div className="bg-neutral-50 hover:bg-white text-neutral-800 border border-neutral-200/90 px-4 py-2 rounded-full text-xs font-semibold shadow-xs flex items-center gap-2.5 transition-all">
-                                <span className="size-2 rounded-full bg-emerald-500" />
-                                <span>100% Audit Terbuka</span>
-                            </div>
-                            <div className="bg-neutral-50 hover:bg-white text-neutral-800 border border-neutral-200/90 px-4 py-2 rounded-full text-xs font-semibold shadow-xs flex items-center gap-2.5 transition-all">
-                                <Satellite className="size-3.5 text-emerald-600" />
-                                <span>NASA FIRMS & BMKG</span>
-                            </div>
-                            <div className="bg-neutral-50 hover:bg-white text-neutral-800 border border-neutral-200/90 px-4 py-2 rounded-full text-xs font-semibold shadow-xs flex items-center gap-2.5 transition-all">
-                                <CheckCircle2 className="size-3.5 text-emerald-600" />
-                                <span>Verifikasi Berlapis</span>
-                            </div>
-                            <div className="bg-neutral-50 hover:bg-white text-neutral-800 border border-neutral-200/90 px-4 py-2 rounded-full text-xs font-semibold shadow-xs flex items-center gap-2.5 transition-all">
-                                <Shield className="size-3.5 text-emerald-600" />
-                                <span>Akuntabilitas OPD</span>
-                            </div>
-                        </div>
-
                         {/* Infinite Smooth Logo Loop */}
-                        <div className="mt-12 sm:mt-14">
-                            <div className="text-[10px] uppercase tracking-[0.2em] text-neutral-400 mb-6 font-semibold">
+                        <div>
+                            <div className="text-xs sm:text-sm uppercase tracking-[0.22em] text-neutral-600 mb-8 font-bold">
                                 INTEGRASI SUMBER DATA & MITRA OBSERVASI
                             </div>
 
-                            <div className="relative overflow-hidden py-1">
+                            <div className="relative overflow-hidden py-8">
                                 <LogoLoop
                                     logos={partnerLogos}
-                                    speed={55}
+                                    speed={40}
                                     direction="left"
-                                    logoHeight={34}
-                                    gap={24}
+                                    logoHeight={80}
+                                    gap={76}
                                     fadeOut={true}
                                     fadeOutWidth={0.15}
                                     scaleOnHover={true}

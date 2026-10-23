@@ -24,6 +24,8 @@ export default function AuthCardLayout({
             <div className="flex w-full max-w-md flex-col gap-6">
                 <Link
                     href={home()}
+                    className="flex items-center justify-center"
+                >
                     <img
                         src="/images/logo.png"
                         alt="jagain"
