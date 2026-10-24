@@ -6,7 +6,7 @@ import KarhutlaMap, { MapReport, MapObservation } from '@/components/karhutla-ma
 import StatusBadge from '@/components/status-badge';
 import AnimatedContent from '@/components/react-bits/AnimatedContent';
 import AnimatedList from '@/components/react-bits/AnimatedList';
-import { MapPin, RotateCcw, Satellite, ArrowRight, ShieldAlert, Filter, ChevronDown, Activity, Flame } from 'lucide-react';
+import { RotateCcw, Satellite, ArrowRight, ShieldAlert, Filter, ChevronDown, Flame } from 'lucide-react';
 
 interface MapPageProps {
     reports: MapReport[];
@@ -93,8 +93,12 @@ export default function MapPage({
                     <AnimatedContent distance={25} duration={0.8} threshold={0.1}>
                         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
                             <div>
+                                <p className="font-mono text-[11px] text-neutral-400 tracking-wide mb-1">
+                                    01 / Observasi Geospasial
+                                </p>
                                 <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-neutral-950 tracking-tight">
                                     Peta Sebaran Karhutla
+                                    <span className="text-neutral-400"> Kalimantan.</span>
                                 </h1>
                                 <p className="text-sm text-neutral-500 mt-2 font-medium max-w-2xl leading-relaxed">
                                     Menampilkan <span className="font-bold text-neutral-900 tabular-nums">{reports.length}</span> laporan warga terverifikasi &{' '}
@@ -102,20 +106,34 @@ export default function MapPage({
                                 </p>
                             </div>
 
-                            {/* Satellite Hotspot Layer Toggle */}
-                            <label className="inline-flex items-center gap-2.5 px-5 py-2.5 bg-neutral-50 hover:bg-neutral-100 border border-neutral-200/90 rounded-full text-xs font-semibold text-neutral-800 cursor-pointer select-none transition-all shrink-0 shadow-xs">
-                                <input
-                                    type="checkbox"
-                                    checked={showSatelliteHotspots}
-                                    onChange={(e) => setShowSatelliteHotspots(e.target.checked)}
-                                    className="accent-[#10e57a] size-4 rounded cursor-pointer"
-                                />
-                                <Satellite className="size-4 text-emerald-600" />
-                                <span>Layer Satelit FIRMS ({observations.length})</span>
-                            </label>
+                            {/* Satellite Hotspot Layer Switch (Matching Beranda) */}
+                            {observations.length > 0 && (
+                                <button
+                                    id="toggle-satellite-layer"
+                                    type="button"
+                                    role="switch"
+                                    aria-checked={showSatelliteHotspots}
+                                    onClick={() => setShowSatelliteHotspots((v) => !v)}
+                                    className="group inline-flex items-center gap-2.5 h-10 pl-3.5 pr-2 rounded-full border border-neutral-200 bg-white text-xs font-semibold text-neutral-800 hover:border-neutral-300 active:scale-[0.98] transition-[transform,border-color] duration-200 cursor-pointer shadow-xs shrink-0 self-start md:self-auto"
+                                >
+                                    <Satellite className="size-3.5 text-neutral-500" />
+                                    <span>Layer Satelit ({observations.length})</span>
+                                    <span
+                                        className={`relative h-6 w-10 rounded-full transition-colors duration-300 ${
+                                            showSatelliteHotspots ? 'bg-[#10e57a]' : 'bg-neutral-200'
+                                        }`}
+                                    >
+                                        <span
+                                            className={`absolute top-0.5 left-0.5 size-5 rounded-full bg-white shadow-[0_1px_3px_rgba(0,0,0,0.18)] transition-transform duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] ${
+                                                showSatelliteHotspots ? 'translate-x-4' : 'translate-x-0'
+                                            }`}
+                                        />
+                                    </span>
+                                </button>
+                            )}
                         </div>
 
-                        {/* Filter Bar with Pill Elements */}
+                        {/* Filter Bar with Sleek Pill Elements */}
                         <div className="flex flex-wrap items-center gap-2.5 font-sans text-xs">
                             <div className="relative">
                                 <select
@@ -178,7 +196,7 @@ export default function MapPage({
                                 <button
                                     type="button"
                                     onClick={handleResetFilter}
-                                    className="px-4 py-2.5 text-xs text-neutral-600 hover:text-black border border-neutral-200 bg-white rounded-full hover:bg-neutral-100 flex items-center gap-1.5 cursor-pointer transition-colors shadow-xs"
+                                    className="px-4 py-2.5 text-xs font-semibold text-neutral-600 hover:text-black border border-neutral-200 bg-white rounded-full hover:bg-neutral-100 flex items-center gap-1.5 cursor-pointer transition-colors shadow-xs"
                                     title="Reset Filter"
                                 >
                                     <RotateCcw className="size-3.5" />
@@ -189,78 +207,113 @@ export default function MapPage({
                     </AnimatedContent>
                 </section>
 
-                {/* Main Geospatial Registry Area */}
+                {/* Main Geospatial Registry Area (Matching Beranda Map Structure) */}
                 <section className="pt-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
                     <AnimatedContent distance={30} duration={0.9} threshold={0.1}>
-                        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-                            {/* Map Container: 8 cols */}
-                            <div className="lg:col-span-8 rounded-3xl p-2 bg-neutral-50/70 border border-neutral-200/80 shadow-sm relative">
-                                <KarhutlaMap
-                                    reports={reports}
-                                    observations={displayedObservations}
-                                    selectedCoordinates={
-                                        selectedReportForFocus
-                                            ? { lat: selectedReportForFocus.latitude, lng: selectedReportForFocus.longitude }
-                                            : null
-                                    }
-                                    height="680px"
-                                    className="rounded-2xl border-0 w-full"
-                                />
-                            </div>
-
-                            {/* Sidebar Registry: 4 cols */}
-                            <div className="lg:col-span-4 bg-white border border-neutral-200/90 rounded-3xl flex flex-col h-[696px] p-5 sm:p-6 font-sans shadow-sm">
-                                <div className="flex items-center justify-between pb-4 border-b border-neutral-100 mb-2">
-                                    <div>
-                                        <div className="flex items-center gap-1.5 mb-1">
-                                            <span className="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                                            <h2 className="font-sans text-xs font-bold uppercase tracking-wider text-neutral-900">
-                                                Daftar Titik Laporan
-                                            </h2>
-                                        </div>
-                                        <span className="text-xs text-neutral-400 block font-medium">
-                                            Klik baris untuk memusatkan peta
-                                        </span>
-                                    </div>
-                                    <span className="text-xs font-bold px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200 tabular-nums">
-                                        {reports.length} Titik
-                                    </span>
-                                </div>
-
-                                <div className="flex-1 min-h-0 pt-2">
-                                    {reports.length === 0 ? (
-                                        <div className="text-center py-24 text-xs text-neutral-400 px-4 space-y-3">
-                                            <ShieldAlert className="size-8 mx-auto text-neutral-400" />
-                                            <p className="font-medium">Tidak ada laporan yang sesuai dengan kriteria filter saat ini.</p>
-                                            <button
-                                                type="button"
-                                                onClick={handleResetFilter}
-                                                className="text-xs font-bold text-emerald-700 hover:underline"
-                                            >
-                                                Reset seluruh filter
-                                            </button>
-                                        </div>
-                                    ) : (
-                                        <AnimatedList
-                                            items={mapReportItems}
-                                            onItemSelect={(item) => {
-                                                if (item?.report) {
-                                                    setSelectedReportForFocus(item.report);
-                                                }
-                                            }}
-                                            animation="pop"
-                                            theme="light"
-                                            accentColor="#10e57a"
-                                            radius={12}
-                                            gap={8}
-                                            width="100%"
-                                            maxHeight={580}
-                                            frame={false}
-                                            showGradients={true}
-                                            displayScrollbar={true}
+                        <div className="rounded-[28px] border border-neutral-200/80 bg-white p-3 sm:p-4 shadow-xs">
+                            <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_380px] gap-4 items-stretch">
+                                {/* Left: Frameless Precision Map Column */}
+                                <div className="flex flex-col min-w-0">
+                                    <div className="relative flex-1 rounded-[20px] overflow-hidden ring-1 ring-neutral-200/80 bg-neutral-100 min-h-[580px] lg:min-h-[640px]">
+                                        <KarhutlaMap
+                                            reports={reports}
+                                            observations={displayedObservations}
+                                            selectedCoordinates={
+                                                selectedReportForFocus
+                                                    ? { lat: selectedReportForFocus.latitude, lng: selectedReportForFocus.longitude }
+                                                    : null
+                                            }
+                                            height="100%"
+                                            minHeight="580px"
+                                            showLegend={true}
+                                            showSimulatedNotice={true}
+                                            className="rounded-none border-0 w-full h-full"
                                         />
-                                    )}
+                                    </div>
+
+                                    {/* Bottom Info Strip matching Beranda */}
+                                    <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-2 pt-3.5 px-1 text-[12px] text-neutral-500">
+                                        <div className="flex flex-wrap items-center gap-x-5 gap-y-1.5">
+                                            <span className="inline-flex items-center gap-2">
+                                                <span className="size-2 rounded-full bg-neutral-900" />
+                                                <span className="font-semibold text-neutral-900 tabular-nums">{reports.length}</span>
+                                                laporan warga
+                                            </span>
+                                            <span className="inline-flex items-center gap-2">
+                                                <span className="size-2 rounded-full bg-[#10e57a]" />
+                                                <span className="font-semibold text-neutral-900 tabular-nums">{displayedObservations.length}</span>
+                                                anomali termal FIRMS
+                                            </span>
+                                            {selectedReportForFocus && (
+                                                <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-neutral-800 bg-neutral-100 pl-2.5 pr-1.5 py-0.5 rounded-full">
+                                                    <span>Fokus: {selectedReportForFocus.tracking_code}</span>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => setSelectedReportForFocus(null)}
+                                                        className="size-4 rounded-full bg-neutral-200 hover:bg-neutral-300 text-neutral-700 flex items-center justify-center text-[10px] cursor-pointer"
+                                                        title="Hapus fokus kamera"
+                                                    >
+                                                        ✕
+                                                    </button>
+                                                </span>
+                                            )}
+                                        </div>
+                                        <span className="text-neutral-400">Sumber: NASA FIRMS, BMKG, validasi publik</span>
+                                    </div>
                                 </div>
+
+                                {/* Right: Clean White Sidebar Registry (Matching Beranda Right Panel) */}
+                                <aside className="relative flex flex-col rounded-[20px] bg-white border border-neutral-200/80 text-neutral-950 p-5 sm:p-6 shadow-xs h-[640px]">
+                                    <div className="pb-4 border-b border-neutral-100">
+                                        <div className="flex items-center justify-between">
+                                            <p className="font-mono text-[11px] text-neutral-400 tracking-wide">02 / Arsip Laporan</p>
+                                            <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-emerald-50 text-neutral-800 border border-emerald-200/80 tabular-nums">
+                                                {reports.length} Titik
+                                            </span>
+                                        </div>
+                                        <h2 className="mt-2 text-2xl font-black tracking-[-0.03em] leading-tight text-neutral-950">
+                                            Daftar Titik Laporan
+                                        </h2>
+                                        <p className="mt-1 text-xs text-neutral-500 leading-relaxed">
+                                            Pilih baris laporan untuk memusatkan posisi kamera peta.
+                                        </p>
+                                    </div>
+
+                                    <div className="flex-1 min-h-0 pt-3">
+                                        {reports.length === 0 ? (
+                                            <div className="text-center py-24 text-xs text-neutral-400 px-4 space-y-3">
+                                                <ShieldAlert className="size-8 mx-auto text-neutral-400" />
+                                                <p className="font-medium">Tidak ada laporan yang sesuai dengan kriteria filter saat ini.</p>
+                                                <button
+                                                    type="button"
+                                                    onClick={handleResetFilter}
+                                                    className="text-xs font-bold text-neutral-900 hover:text-black underline cursor-pointer"
+                                                >
+                                                    Reset seluruh filter
+                                                </button>
+                                            </div>
+                                        ) : (
+                                            <AnimatedList
+                                                items={mapReportItems}
+                                                onItemSelect={(item) => {
+                                                    if (item?.report) {
+                                                        setSelectedReportForFocus(item.report);
+                                                    }
+                                                }}
+                                                animation="pop"
+                                                theme="light"
+                                                accentColor="#10e57a"
+                                                radius={12}
+                                                gap={8}
+                                                width="100%"
+                                                maxHeight={480}
+                                                frame={false}
+                                                showGradients={true}
+                                                displayScrollbar={true}
+                                            />
+                                        )}
+                                    </div>
+                                </aside>
                             </div>
                         </div>
                     </AnimatedContent>

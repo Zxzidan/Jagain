@@ -21,12 +21,9 @@ import {
     Shield,
     AlertTriangle,
     Search,
-    CheckCircle2,
     Satellite,
-    FileText,
     Flame,
     ShieldCheck,
-    Activity,
 } from 'lucide-react';
 
 interface HomeProps {
@@ -165,241 +162,157 @@ export default function Home({
     const bentoItems: MagicBentoItem[] = [
         {
             id: 'geospatial-map',
-            colSpan: 8,
+            colSpan: 12,
             content: (
-                <div className="flex flex-col h-full justify-between p-6 sm:p-7 bg-white">
-                    {/* Header */}
-                    <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
-                        <div className="min-w-0 flex-1">
-                            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-50 text-neutral-800 text-[10px] font-bold uppercase tracking-wider mb-2">
-                                <span className="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                                <span>Observasi Geospasial</span>
+                <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_360px] gap-3 p-3 bg-white h-full">
+                    {/* Left: Map column */}
+                    <div className="flex flex-col min-w-0 px-3 pt-4 pb-1 sm:px-4">
+                        <div className="flex flex-col md:flex-row md:items-end justify-between gap-5 pb-5">
+                            <div className="min-w-0">
+                                <p className="font-mono text-[11px] text-neutral-400 tracking-wide">
+                                    01 / Observasi geospasial
+                                </p>
+                                <h2 className="mt-2 text-[28px] sm:text-[34px] leading-[1.05] font-black tracking-[-0.035em] text-neutral-950">
+                                    Sebaran titik api
+                                    <span className="text-neutral-400"> di lapangan.</span>
+                                </h2>
                             </div>
-                            <h2 className="text-xl sm:text-2xl font-black text-neutral-900 tracking-tight">
-                                Sebaran Titik Api Lapangan
-                            </h2>
-                            <p className="text-xs text-neutral-500 mt-1 leading-relaxed max-w-lg">
-                                Menampilkan <span className="font-bold text-neutral-900 tabular-nums">{mapReports.length}</span> laporan warga terverifikasi &{' '}
-                                <span className="font-bold text-emerald-600 tabular-nums">{displayedObservations.length}</span> anomali termal satelit FIRMS.
-                            </p>
-                        </div>
-                        <div className="flex flex-wrap items-center gap-2.5 shrink-0 mt-1">
-                            {observations.length > 0 && (
-                                <label className="inline-flex items-center gap-2 px-3 py-1.5 bg-neutral-50 hover:bg-neutral-100 border border-neutral-200/90 rounded-full text-xs font-semibold text-neutral-800 cursor-pointer select-none transition-all shadow-xs">
-                                    <input
-                                        type="checkbox"
-                                        checked={showSatelliteHotspots}
-                                        onChange={(e) => setShowSatelliteHotspots(e.target.checked)}
-                                        className="accent-[#10e57a] size-3.5 rounded cursor-pointer"
-                                    />
-                                    <Satellite className="size-3.5 text-emerald-600" />
-                                    <span>Layer Satelit ({observations.length})</span>
-                                </label>
-                            )}
-                            <Link
-                                href="/peta"
-                                className="group text-xs font-semibold text-neutral-500 hover:text-neutral-950 inline-flex items-center gap-1 transition-colors"
-                            >
-                                <span>Buka Peta Penuh</span>
-                                <ArrowRight className="size-3 transition-transform group-hover:translate-x-0.5" />
-                            </Link>
-                        </div>
-                    </div>
 
-                    {/* Framed Map Widget - Exact match to /peta container style & features */}
-                    <div className="my-auto py-3">
-                        <div className="rounded-3xl p-2 bg-neutral-50/70 border border-neutral-200/80 shadow-sm relative">
+                            <div className="flex items-center gap-2 shrink-0">
+                                {observations.length > 0 && (
+                                    <button
+                                        id="toggle-satellite-layer"
+                                        type="button"
+                                        role="switch"
+                                        aria-checked={showSatelliteHotspots}
+                                        onClick={() => setShowSatelliteHotspots((v) => !v)}
+                                        className="group inline-flex items-center gap-2.5 h-9 pl-3 pr-1.5 rounded-full border border-neutral-200 bg-white text-xs font-semibold text-neutral-800 hover:border-neutral-300 active:scale-[0.98] transition-[transform,border-color] duration-200 cursor-pointer"
+                                    >
+                                        <Satellite className="size-3.5 text-neutral-500" />
+                                        <span>Satelit</span>
+                                        <span
+                                            className={`relative h-6 w-10 rounded-full transition-colors duration-300 ${
+                                                showSatelliteHotspots ? 'bg-[#10e57a]' : 'bg-neutral-200'
+                                            }`}
+                                        >
+                                            <span
+                                                className={`absolute top-0.5 left-0.5 size-5 rounded-full bg-white shadow-[0_1px_3px_rgba(0,0,0,0.18)] transition-transform duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] ${
+                                                    showSatelliteHotspots ? 'translate-x-4' : 'translate-x-0'
+                                                }`}
+                                            />
+                                        </span>
+                                    </button>
+                                )}
+                                <Link
+                                    id="open-full-map"
+                                    href="/peta"
+                                    className="group inline-flex items-center gap-2 h-9 pl-4 pr-1.5 rounded-full bg-neutral-950 text-white text-xs font-semibold hover:bg-black active:scale-[0.98] transition-transform duration-200"
+                                >
+                                    <span>Peta penuh</span>
+                                    <span className="size-6 rounded-full bg-[#10e57a] text-black flex items-center justify-center transition-transform duration-300 group-hover:translate-x-0.5">
+                                        <ArrowRight className="size-3" />
+                                    </span>
+                                </Link>
+                            </div>
+                        </div>
+
+                        <div className="relative flex-1 rounded-[20px] overflow-hidden ring-1 ring-neutral-200/80">
                             <KarhutlaMap
                                 reports={mapReports}
                                 observations={displayedObservations}
-                                height="480px"
+                                height="500px"
                                 minHeight="440px"
                                 showLegend={true}
                                 showSimulatedNotice={true}
-                                className="rounded-2xl border-0 w-full"
+                                className="rounded-none border-0 w-full"
                             />
+                        </div>
+
+                        <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-2 pt-4 text-[12px] text-neutral-500">
+                            <div className="flex flex-wrap items-center gap-x-5 gap-y-1.5">
+                                <span className="inline-flex items-center gap-2">
+                                    <span className="size-2 rounded-full bg-neutral-900" />
+                                    <span className="font-semibold text-neutral-900 tabular-nums">{mapReports.length}</span>
+                                    laporan warga
+                                </span>
+                                <span className="inline-flex items-center gap-2">
+                                    <span className="size-2 rounded-full bg-[#10e57a]" />
+                                    <span className="font-semibold text-neutral-900 tabular-nums">{displayedObservations.length}</span>
+                                    anomali termal FIRMS
+                                </span>
+                            </div>
+                            <span className="text-neutral-400">Sumber: NASA FIRMS, BMKG, validasi publik</span>
                         </div>
                     </div>
 
-                    {/* Standardized Card Footer */}
-                    <div className="pt-3 border-t border-neutral-100 flex items-center justify-between text-xs">
-                        <span className="text-neutral-500 text-[11px] font-medium flex items-center gap-1.5">
-                            <Activity className="size-3.5 text-emerald-600 animate-pulse" />
-                            <span>Sinkronisasi otomatis feed NASA FIRMS, BMKG & validasi publik</span>
-                        </span>
+                    {/* Right: Clean White ledger panel */}
+                    <aside className="relative flex flex-col rounded-[20px] bg-white border border-neutral-200/80 text-neutral-950 p-6 sm:p-7 shadow-xs">
+                        <div className="relative">
+                            <div className="flex items-center justify-between">
+                                <p className="font-mono text-[11px] text-neutral-400 tracking-wide">02 / Akuntabilitas</p>
+                                <span className="inline-flex items-center gap-1.5 text-[11px] font-medium text-neutral-600">
+                                    <ShieldCheck className="size-3.5 text-emerald-600" />
+                                    SOP terbuka
+                                </span>
+                            </div>
+                            <h2 className="mt-2 text-2xl font-black tracking-[-0.03em] leading-tight text-neutral-950">
+                                Rekap penanganan
+                            </h2>
+                            <p className="mt-1.5 text-[13px] text-neutral-500 leading-relaxed">
+                                Agregat publik dari seluruh laporan yang tercatat di register.
+                            </p>
+                        </div>
+
+                        <div className="relative mt-7 pt-6 border-t border-neutral-100">
+                            <div className="text-[11px] font-semibold uppercase tracking-wider text-neutral-400">Total laporan masuk</div>
+                            <div className="mt-1 flex items-baseline gap-2">
+                                <span className="text-[64px] leading-none font-black tracking-[-0.05em] text-neutral-950 tabular-nums">
+                                    <CountUp to={stats.total_reports} duration={1.6} />
+                                </span>
+                                <span className="text-xs font-medium text-neutral-400">register</span>
+                            </div>
+                        </div>
+
+                        <ul className="relative mt-7 space-y-5">
+                            {[
+                                { label: 'Terverifikasi', value: stats.verified_reports, delay: 0.1 },
+                                { label: 'Disposisi regu OPD', value: stats.active_dispatched, delay: 0.2 },
+                                { label: 'Tuntas diaudit', value: stats.resolved_reports, delay: 0.3 },
+                            ].map((row) => {
+                                const pct = stats.total_reports > 0 ? Math.round((row.value / stats.total_reports) * 100) : 0;
+                                return (
+                                    <li key={row.label}>
+                                        <div className="flex items-baseline justify-between gap-3">
+                                            <span className="text-[13px] font-medium text-neutral-700">{row.label}</span>
+                                            <span className="flex items-baseline gap-2">
+                                                <span className="text-[11px] font-mono text-neutral-400 tabular-nums">{pct}%</span>
+                                                <span className="text-xl font-bold text-neutral-950 tabular-nums">
+                                                    <CountUp to={row.value} duration={1.6} delay={row.delay} />
+                                                </span>
+                                            </span>
+                                        </div>
+                                        <div className="mt-2 h-[3px] w-full rounded-full bg-neutral-100 overflow-hidden">
+                                            <div
+                                                className="h-full rounded-full bg-[#10e57a] transition-[width] duration-700 ease-out"
+                                                style={{ width: `${pct}%` }}
+                                            />
+                                        </div>
+                                    </li>
+                                );
+                            })}
+                        </ul>
 
                         <Link
-                            href="/peta"
-                            className="text-xs font-bold text-neutral-900 hover:text-black flex items-center gap-1 transition-colors group shrink-0"
-                        >
-                            <span>Eksplorasi Spasial</span>
-                            <ArrowRight className="size-3 group-hover:translate-x-0.5 transition-transform" />
-                        </Link>
-                    </div>
-                </div>
-            ),
-        },
-        {
-            id: 'analytics-ledger',
-            colSpan: 4,
-            content: (
-                <div className="flex flex-col h-full justify-between p-6 sm:p-7 bg-white">
-                    {/* Card Header */}
-                    <div>
-                        <div className="flex items-center justify-between gap-2 mb-2">
-                            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-50 text-neutral-800 text-[10px] font-bold uppercase tracking-wider">
-                                <span className="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                                <span>Akuntabilitas Terbuka</span>
-                            </div>
-                            <span className="text-[11px] font-semibold text-neutral-400 flex items-center gap-1">
-                                <ShieldCheck className="size-3.5 text-emerald-600" />
-                                <span>SOP Terbuka</span>
-                            </span>
-                        </div>
-                        <h2 className="text-xl sm:text-2xl font-black text-neutral-900 tracking-tight">
-                            Rekap Data Real-Time
-                        </h2>
-                        <p className="text-xs text-neutral-500 mt-1 leading-relaxed">
-                            Agregat penanganan karhutla publik tanpa latensi tertutup.
-                        </p>
-                    </div>
-
-                    {/* Unified 2x2 Metric Tiles with Rich Details */}
-                    <div className="grid grid-cols-2 gap-3 py-3 my-auto">
-                        {/* 1. Laporan */}
-                        <div className="p-3.5 sm:p-4 rounded-2xl bg-neutral-50/80 border border-neutral-200/70 hover:bg-neutral-100/70 transition-all flex flex-col justify-between">
-                            <div className="flex items-center justify-between mb-1.5">
-                                <span className="text-[10px] uppercase tracking-wider text-neutral-500 font-bold">
-                                    Laporan
-                                </span>
-                                <div className="size-6 sm:size-7 rounded-xl bg-neutral-200/70 text-neutral-700 flex items-center justify-center">
-                                    <FileText className="size-3.5" />
-                                </div>
-                            </div>
-                            <div className="text-2xl sm:text-3xl font-black text-neutral-900 tabular-nums">
-                                <CountUp to={stats.total_reports} duration={1.6} />
-                            </div>
-                            <div className="flex items-center justify-between text-[11px] text-neutral-500 mt-1.5 pt-1.5 border-t border-neutral-200/50">
-                                <span>Total Masuk</span>
-                                <span className="text-[10px] font-semibold text-neutral-600 bg-neutral-200/60 px-1.5 py-0.5 rounded">Publik</span>
-                            </div>
-                        </div>
-
-                        {/* 2. Validasi */}
-                        <div className="p-3.5 sm:p-4 rounded-2xl bg-neutral-50/80 border border-neutral-200/70 hover:bg-neutral-100/70 transition-all flex flex-col justify-between">
-                            <div className="flex items-center justify-between mb-1.5">
-                                <span className="text-[10px] uppercase tracking-wider text-neutral-500 font-bold">
-                                    Validasi
-                                </span>
-                                <div className="size-6 sm:size-7 rounded-xl bg-emerald-100 text-neutral-800 flex items-center justify-center">
-                                    <CheckCircle2 className="size-3.5 text-emerald-600" />
-                                </div>
-                            </div>
-                            <div className="text-2xl sm:text-3xl font-black text-neutral-900 tabular-nums">
-                                <CountUp to={stats.verified_reports} duration={1.6} delay={0.1} />
-                            </div>
-                            <div className="flex items-center justify-between text-[11px] text-neutral-500 mt-1.5 pt-1.5 border-t border-neutral-200/50">
-                                <span>Terverifikasi</span>
-                                <span className="text-[10px] font-bold text-neutral-800 bg-neutral-200/60 px-1.5 py-0.5 rounded">
-                                    {stats.total_reports > 0 ? Math.round((stats.verified_reports / stats.total_reports) * 100) : 0}%
-                                </span>
-                            </div>
-                        </div>
-
-                        {/* 3. Disposisi */}
-                        <div className="p-3.5 sm:p-4 rounded-2xl bg-neutral-50/80 border border-neutral-200/70 hover:bg-neutral-100/70 transition-all flex flex-col justify-between">
-                            <div className="flex items-center justify-between mb-1.5">
-                                <span className="text-[10px] uppercase tracking-wider text-neutral-500 font-bold">
-                                    Disposisi
-                                </span>
-                                <div className="size-6 sm:size-7 rounded-xl bg-neutral-200/70 text-neutral-700 flex items-center justify-center">
-                                    <Flame className="size-3.5 text-neutral-700" />
-                                </div>
-                            </div>
-                            <div className="text-2xl sm:text-3xl font-black text-neutral-900 tabular-nums">
-                                <CountUp to={stats.active_dispatched} duration={1.6} delay={0.2} />
-                            </div>
-                            <div className="flex items-center justify-between text-[11px] text-neutral-500 mt-1.5 pt-1.5 border-t border-neutral-200/50">
-                                <span>Regu OPD Aktif</span>
-                                <span className="text-[10px] font-bold text-neutral-700 bg-neutral-200/60 px-1.5 py-0.5 rounded">Operasi</span>
-                            </div>
-                        </div>
-
-                        {/* 4. Selesai */}
-                        <div className="p-3.5 sm:p-4 rounded-2xl bg-neutral-900 text-white border border-neutral-800 hover:bg-black transition-all flex flex-col justify-between">
-                            <div className="flex items-center justify-between mb-1.5">
-                                <span className="text-[10px] uppercase tracking-wider text-neutral-400 font-bold">
-                                    Selesai
-                                </span>
-                                <div className="size-6 sm:size-7 rounded-xl bg-neutral-800 text-white flex items-center justify-center">
-                                    <ShieldCheck className="size-3.5 text-emerald-400" />
-                                </div>
-                            </div>
-                            <div className="text-2xl sm:text-3xl font-black text-white tabular-nums">
-                                <CountUp to={stats.resolved_reports} duration={1.6} delay={0.3} />
-                            </div>
-                            <div className="flex items-center justify-between text-[11px] text-neutral-400 mt-1.5 pt-1.5 border-t border-neutral-800">
-                                <span>Tuntas Diaudit</span>
-                                <span className="text-[10px] font-bold text-neutral-200 bg-neutral-800 px-1.5 py-0.5 rounded">Tutup</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Funnel Progress Tracker (fills empty space seamlessly) */}
-                    <div className="p-3.5 rounded-2xl bg-neutral-50/90 border border-neutral-200/70 my-1">
-                        <div className="flex items-center justify-between text-xs mb-2">
-                            <span className="text-[11px] font-bold text-neutral-800 flex items-center gap-1.5">
-                                <span className="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                                Status Alur Laporan
-                            </span>
-                            <span className="text-[10px] font-semibold text-neutral-500">
-                                Total {stats.total_reports} Register
-                            </span>
-                        </div>
-                        <div className="w-full h-2 rounded-full bg-neutral-200/70 overflow-hidden flex gap-0.5 p-0.5">
-                            <div
-                                style={{ width: `${stats.total_reports > 0 ? Math.max(15, (stats.resolved_reports / stats.total_reports) * 100) : 25}%` }}
-                                className="bg-neutral-900 rounded-full transition-all duration-500"
-                                title="Selesai Diaudit"
-                            />
-                            <div
-                                style={{ width: `${stats.total_reports > 0 ? Math.max(15, (stats.active_dispatched / stats.total_reports) * 100) : 25}%` }}
-                                className="bg-neutral-400 rounded-full transition-all duration-500"
-                                title="Regu Lapangan"
-                            />
-                            <div
-                                style={{ width: `${stats.total_reports > 0 ? Math.max(20, (stats.verified_reports / stats.total_reports) * 100) : 50}%` }}
-                                className="bg-emerald-500 rounded-full transition-all duration-500"
-                                title="Terverifikasi"
-                            />
-                        </div>
-                        <div className="flex items-center justify-between text-[10px] text-neutral-500 mt-2 font-medium">
-                            <span className="flex items-center gap-1">
-                                <span className="size-1.5 rounded-full bg-emerald-500" />
-                                Terverifikasi
-                            </span>
-                            <span className="flex items-center gap-1">
-                                <span className="size-1.5 rounded-full bg-neutral-400" />
-                                Disposisi OPD
-                            </span>
-                            <span className="flex items-center gap-1">
-                                <span className="size-1.5 rounded-full bg-neutral-900" />
-                                Tuntas
-                            </span>
-                        </div>
-                    </div>
-
-                    {/* Card Footer Link */}
-                    <div className="pt-3 border-t border-neutral-100 flex items-center justify-between text-xs mt-auto">
-                        <span className="text-neutral-400 font-medium text-[11px]">Register publik terintegrasi</span>
-                        <Link
+                            id="audit-methodology-link"
                             href="/tentang-kami"
-                            className="text-xs font-bold text-neutral-900 hover:text-black flex items-center gap-1.5 transition-colors group"
+                            className="relative group mt-auto pt-8 flex items-center justify-between text-[13px] font-semibold text-neutral-900 hover:text-black transition-colors"
                         >
-                            <span>Metodologi Audit</span>
-                            <ArrowRight className="size-3 group-hover:translate-x-0.5 transition-transform" />
+                            <span className="border-b border-neutral-200 group-hover:border-neutral-950 transition-colors pb-0.5">
+                                Metodologi audit
+                            </span>
+                            <ArrowRight className="size-4 text-neutral-900 transition-transform duration-300 group-hover:translate-x-1" />
                         </Link>
-                    </div>
+                    </aside>
                 </div>
             ),
         },
