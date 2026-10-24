@@ -114,7 +114,7 @@ export default function SafetyGuide() {
     }));
 
     return (
-        <div className="min-h-screen flex flex-col bg-white text-neutral-900 selection:bg-[#10e57a] selection:text-black font-sans antialiased">
+        <div className="min-h-screen flex flex-col bg-white text-neutral-900 selection:bg-[#10e57a] selection:text-black font-sans antialiased overflow-x-hidden w-full max-w-full">
             <Head title="Panduan Keselamatan & Mitigasi Karhutla Kalimantan — JAGAIN" />
             <Navbar />
 

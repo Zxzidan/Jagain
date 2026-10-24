@@ -23,10 +23,13 @@
             })();
         </script>
 
-        {{-- Inline style to set the HTML background color to clean white & hide scrollbar --}}
+        {{-- Inline style to set the HTML background color to clean white, prevent horizontal overflow & hide scrollbar --}}
         <style>
             html, body {
                 background-color: #ffffff;
+                overflow-x: hidden;
+                max-width: 100vw;
+                width: 100%;
                 scrollbar-width: none; /* Firefox */
                 -ms-overflow-style: none; /* IE and Edge */
             }

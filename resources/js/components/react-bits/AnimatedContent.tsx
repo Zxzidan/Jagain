@@ -178,7 +178,10 @@ export default function AnimatedContent({
       });
       tl.fromTo(targets, from, to, scrub ? 0 : Math.max(delay, 0));
 
-      if (trigger === 'mount') {
+      const rect = el.getBoundingClientRect();
+      const inViewport = rect.top < window.innerHeight * 1.15 && rect.bottom > -100;
+
+      if (trigger === 'mount' || inViewport) {
         tl.play();
         return;
       }
@@ -240,7 +243,7 @@ export default function AnimatedContent({
   ]);
 
   return (
-    <div ref={ref} className={className} style={{ visibility: 'hidden', ...style }} {...props}>
+    <div ref={ref} className={className} style={{ ...style }} {...props}>
       {children}
     </div>
   );

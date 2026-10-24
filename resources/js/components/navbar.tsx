@@ -323,7 +323,7 @@ export default function Navbar() {
                     id="mobile-navigation"
                     role="navigation"
                     aria-label="Navigasi Utama Mobile"
-                    className="md:hidden w-full bg-white/98 backdrop-blur-3xl border-b border-neutral-200/90 px-4 sm:px-6 py-5 shadow-2xl space-y-4 text-neutral-900 max-h-[calc(100vh-4rem)] overflow-y-auto animate-in fade-in slide-in-from-top-2 duration-200"
+                    className="md:hidden w-full max-w-full overflow-x-hidden bg-white/98 backdrop-blur-3xl border-b border-neutral-200/90 px-4 sm:px-6 py-5 shadow-2xl space-y-4 text-neutral-900 max-h-[calc(100vh-4rem)] overflow-y-auto animate-in fade-in slide-in-from-top-2 duration-200"
                 >
                     {/* User Role Card (If Logged In) */}
                     {user && (

@@ -87,7 +87,7 @@ export default function ReportTracker({ report }: ReportTrackerProps) {
     };
 
     return (
-        <div className="p-4 sm:p-6 lg:p-8 space-y-6 bg-[#f0eee6] min-h-screen text-[#141413] selection:bg-[#e3dacc] selection:text-[#141413]">
+        <div className="p-4 sm:p-6 lg:p-8 space-y-6 bg-[#f0eee6] min-h-screen text-[#141413] selection:bg-[#e3dacc] selection:text-[#141413] overflow-x-hidden w-full max-w-full">
             <Head title={`Pelacakan Laporan ${report.tracking_code} — JAGAIN`} />
 
             {/* Top Navigation Bar */}
@@ -333,6 +333,7 @@ export default function ReportTracker({ report }: ReportTrackerProps) {
                                 },
                             ]}
                             height="280px"
+                            showLegend={false}
                         />
                     </div>
                 </div>

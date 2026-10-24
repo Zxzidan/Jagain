@@ -83,7 +83,7 @@ export default function MapPage({
     }));
 
     return (
-        <div className="min-h-screen flex flex-col bg-white text-neutral-900 selection:bg-[#10e57a] selection:text-black font-sans antialiased">
+        <div className="min-h-screen flex flex-col bg-white text-neutral-900 selection:bg-[#10e57a] selection:text-black font-sans antialiased overflow-x-hidden w-full max-w-full">
             <Head title="Peta Sebaran Karhutla Kalimantan — JAGAIN" />
             <Navbar />
 
@@ -133,13 +133,13 @@ export default function MapPage({
                             )}
                         </div>
 
-                        {/* Filter Bar with Sleek Pill Elements */}
-                        <div className="flex flex-wrap items-center gap-2.5 font-sans text-xs">
-                            <div className="relative">
+                        {/* Filter Bar with Sleek Responsive Pill Elements */}
+                        <div className="flex flex-col sm:flex-row sm:flex-wrap items-stretch sm:items-center gap-2.5 font-sans text-xs">
+                            <div className="relative w-full sm:w-auto">
                                 <select
                                     value={selectedProvince}
                                     onChange={(e) => setSelectedProvince(e.target.value)}
-                                    className="appearance-none bg-neutral-50 hover:bg-neutral-100/90 border border-neutral-200 rounded-full pl-4 pr-9 py-2.5 text-neutral-800 focus:outline-none focus:border-neutral-400 cursor-pointer font-medium text-xs transition-colors shadow-xs"
+                                    className="w-full sm:w-auto appearance-none bg-neutral-50 hover:bg-neutral-100/90 border border-neutral-200 rounded-full pl-4 pr-9 py-2.5 text-neutral-800 focus:outline-none focus:border-neutral-400 cursor-pointer font-medium text-xs transition-colors shadow-xs"
                                 >
                                     <option value="">Seluruh Provinsi Kalimantan</option>
                                     {provinces.map((prov) => (
@@ -151,11 +151,11 @@ export default function MapPage({
                                 <ChevronDown className="size-3.5 text-neutral-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
                             </div>
 
-                            <div className="relative">
+                            <div className="relative w-full sm:w-auto">
                                 <select
                                     value={selectedCategory}
                                     onChange={(e) => setSelectedCategory(e.target.value)}
-                                    className="appearance-none bg-neutral-50 hover:bg-neutral-100/90 border border-neutral-200 rounded-full pl-4 pr-9 py-2.5 text-neutral-800 focus:outline-none focus:border-neutral-400 cursor-pointer font-medium text-xs transition-colors shadow-xs"
+                                    className="w-full sm:w-auto appearance-none bg-neutral-50 hover:bg-neutral-100/90 border border-neutral-200 rounded-full pl-4 pr-9 py-2.5 text-neutral-800 focus:outline-none focus:border-neutral-400 cursor-pointer font-medium text-xs transition-colors shadow-xs"
                                 >
                                     <option value="">Seluruh Kategori Laporan</option>
                                     {categories.map((cat) => (
@@ -167,11 +167,11 @@ export default function MapPage({
                                 <ChevronDown className="size-3.5 text-neutral-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
                             </div>
 
-                            <div className="relative">
+                            <div className="relative w-full sm:w-auto">
                                 <select
                                     value={selectedStatus}
                                     onChange={(e) => setSelectedStatus(e.target.value)}
-                                    className="appearance-none bg-neutral-50 hover:bg-neutral-100/90 border border-neutral-200 rounded-full pl-4 pr-9 py-2.5 text-neutral-800 focus:outline-none focus:border-neutral-400 cursor-pointer font-medium text-xs transition-colors shadow-xs"
+                                    className="w-full sm:w-auto appearance-none bg-neutral-50 hover:bg-neutral-100/90 border border-neutral-200 rounded-full pl-4 pr-9 py-2.5 text-neutral-800 focus:outline-none focus:border-neutral-400 cursor-pointer font-medium text-xs transition-colors shadow-xs"
                                 >
                                     <option value="">Seluruh Status Laporan</option>
                                     <option value="SUBMITTED">Baru Dikirim</option>
@@ -186,7 +186,7 @@ export default function MapPage({
                             <button
                                 type="button"
                                 onClick={handleApplyFilter}
-                                className="bg-[#10e57a] hover:bg-[#0ba856] text-black font-bold px-5 py-2.5 rounded-full text-xs flex items-center gap-2 shadow-xs transition-all active:scale-95 cursor-pointer ml-auto sm:ml-0"
+                                className="w-full sm:w-auto bg-[#10e57a] hover:bg-[#0ba856] text-black font-bold px-5 py-2.5 rounded-full text-xs flex items-center justify-center gap-2 shadow-xs transition-all active:scale-95 cursor-pointer sm:ml-auto"
                             >
                                 <Filter className="size-3.5" />
                                 <span>Terapkan Filter</span>
@@ -196,7 +196,7 @@ export default function MapPage({
                                 <button
                                     type="button"
                                     onClick={handleResetFilter}
-                                    className="px-4 py-2.5 text-xs font-semibold text-neutral-600 hover:text-black border border-neutral-200 bg-white rounded-full hover:bg-neutral-100 flex items-center gap-1.5 cursor-pointer transition-colors shadow-xs"
+                                    className="w-full sm:w-auto px-4 py-2.5 text-xs font-semibold text-neutral-600 hover:text-black border border-neutral-200 bg-white rounded-full hover:bg-neutral-100 flex items-center justify-center gap-1.5 cursor-pointer transition-colors shadow-xs"
                                     title="Reset Filter"
                                 >
                                     <RotateCcw className="size-3.5" />
@@ -214,7 +214,7 @@ export default function MapPage({
                             <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_380px] gap-4 items-stretch">
                                 {/* Left: Frameless Precision Map Column */}
                                 <div className="flex flex-col min-w-0">
-                                    <div className="relative flex-1 rounded-[20px] overflow-hidden ring-1 ring-neutral-200/80 bg-neutral-100 min-h-[580px] lg:min-h-[640px]">
+                                    <div className="relative flex-1 rounded-[20px] overflow-hidden ring-1 ring-neutral-200/80 bg-neutral-100 min-h-[380px] sm:min-h-[460px] lg:min-h-[580px]">
                                         <KarhutlaMap
                                             reports={reports}
                                             observations={displayedObservations}
@@ -223,11 +223,11 @@ export default function MapPage({
                                                     ? { lat: selectedReportForFocus.latitude, lng: selectedReportForFocus.longitude }
                                                     : null
                                             }
-                                            height="100%"
-                                            minHeight="580px"
-                                            showLegend={true}
+                                            height="500px"
+                                            minHeight="380px"
+                                            showLegend={false}
                                             showSimulatedNotice={true}
-                                            className="rounded-none border-0 w-full h-full"
+                                            className="rounded-none border-0 w-full"
                                         />
                                     </div>
 

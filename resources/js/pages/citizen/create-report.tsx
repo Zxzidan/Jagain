@@ -66,7 +66,7 @@ export default function CreateReport({ categories, provinces }: CreateReportProp
     };
 
     return (
-        <div className="flex-1 py-8 px-4 sm:px-6 lg:px-8 bg-[#F8FAF9] dark:bg-[#0D120F] min-h-screen text-[#171C19] dark:text-[#F3F7F4] font-sans">
+        <div className="flex-1 py-8 px-4 sm:px-6 lg:px-8 bg-[#F8FAF9] dark:bg-[#0D120F] min-h-screen text-[#171C19] dark:text-[#F3F7F4] font-sans overflow-x-hidden w-full max-w-full">
             <Head title="Formulir Pelaporan Karhutla — JAGAIN" />
 
             <div className="max-w-4xl mx-auto w-full space-y-8">
@@ -237,6 +237,7 @@ export default function CreateReport({ categories, provinces }: CreateReportProp
                                         selectedCoordinates={selectedCoords}
                                         onSelectCoordinates={handleMapClick}
                                         height="340px"
+                                        showLegend={false}
                                     />
                                 </div>
 

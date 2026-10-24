@@ -220,9 +220,9 @@ export default function Home({
                             <KarhutlaMap
                                 reports={mapReports}
                                 observations={displayedObservations}
-                                height="500px"
-                                minHeight="440px"
-                                showLegend={true}
+                                height="460px"
+                                minHeight="360px"
+                                showLegend={false}
                                 showSimulatedNotice={true}
                                 className="rounded-none border-0 w-full"
                             />
@@ -474,7 +474,7 @@ export default function Home({
     ];
 
     return (
-        <div className="min-h-screen flex flex-col bg-white text-neutral-900 selection:bg-[#10e57a] selection:text-black font-sans antialiased">
+        <div className="min-h-screen flex flex-col bg-white text-neutral-900 selection:bg-[#10e57a] selection:text-black font-sans antialiased overflow-x-hidden w-full max-w-full">
             <Head title="JAGAIN — Platform Transparansi Karhutla Kalimantan" />
 
             <Navbar />

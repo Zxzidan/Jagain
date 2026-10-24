@@ -72,7 +72,7 @@ export default function ReportDetailPage({ report }: ReportDetailProps) {
     };
 
     return (
-        <div className="min-h-screen flex flex-col bg-white text-neutral-900 selection:bg-[#10e57a] selection:text-black font-sans antialiased">
+        <div className="min-h-screen flex flex-col bg-white text-neutral-900 selection:bg-[#10e57a] selection:text-black font-sans antialiased overflow-x-hidden w-full max-w-full">
             <Head title={`Laporan ${report.tracking_code} — JAGAIN`} />
             <Navbar />
 
@@ -320,7 +320,7 @@ export default function ReportDetailPage({ report }: ReportDetailProps) {
                             </div>
 
                             <div className="rounded-2xl overflow-hidden border border-neutral-200">
-                                <KarhutlaMap reports={[report]} height="240px" />
+                                <KarhutlaMap reports={[report]} height="240px" showLegend={false} />
                             </div>
                         </div>
 
