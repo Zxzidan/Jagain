@@ -112,7 +112,7 @@ export function ThemeInlineSelector({ className }: { className?: string }) {
     return (
         <div
             className={cn(
-                'flex items-center gap-1 rounded-lg bg-neutral-100 p-1 dark:bg-neutral-800',
+                'flex items-center gap-1 rounded-lg bg-neutral-100 p-1 dark:bg-neutral-800 w-full',
                 className,
             )}
             role="radiogroup"
@@ -128,13 +128,13 @@ export function ThemeInlineSelector({ className }: { className?: string }) {
                         aria-checked={isActive}
                         onClick={() => updateAppearance(value)}
                         className={cn(
-                            'flex flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium transition-colors',
+                            'flex flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-md px-1.5 py-1 text-xs font-medium transition-colors whitespace-nowrap',
                             isActive
-                                ? 'bg-white text-neutral-900 shadow-xs dark:bg-neutral-700 dark:text-neutral-100'
+                                ? 'bg-white text-neutral-900 shadow-xs dark:bg-neutral-700 dark:text-neutral-100 font-semibold'
                                 : 'text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-200',
                         )}
                     >
-                        <Icon className="size-3.5" />
+                        <Icon className="size-3.5 shrink-0" />
                         <span>{label}</span>
                     </button>
                 );
