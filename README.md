@@ -1,16 +1,124 @@
 # JAGAIN — Jaga Hutan, Kawal Penanganan
 
-> **"Pantau Karhutla. Kawal Penanganannya."**
-
-Platform transparansi dan akuntabilitas pelaporan serta tindak lanjut kebakaran hutan dan lahan (karhutla), difokuskan pada wilayah pulau Kalimantan (Kalimantan Barat, Kalimantan Tengah, Kalimantan Selatan, Kalimantan Timur, dan Kalimantan Utara).
-
-JAGAIN memadukan pelaporan masyarakat yang terverifikasi, pelacakan transparan tindak lanjut lintas instansi operasional (BPBD, Manggala Agni KLHK, Damkar), audit trail forensik yang tidak dapat diubah secara sepihak, serta pemantauan titik observasi satelit.
+> **JAGAIN** adalah platform transparansi dan akuntabilitas pelaporan serta pengawalan tindak lanjut kebakaran hutan dan lahan (karhutla) berbasis peta geospasial di wilayah Kalimantan. Platform ini menghubungkan laporan masyarakat yang terverifikasi dengan respon cepat instansi operasional (BPBD, Manggala Agni, Damkar) yang diawasi melalui audit trail forensik transparan.
 
 ---
 
-## 1. Panduan Cepat & Akun Demo
+## 📌 Ketentuan First Draft Submission (MIA 2026)
 
-Aplikasi telah dilengkapi seeder basis data lengkap dengan akun percontohan untuk setiap peran:
+### 1. Judul Project & Deskripsi Singkat
+- **Judul Project**: **JAGAIN — Jaga Hutan, Kawal Penanganan**
+- **Deskripsi Singkat**: JAGAIN adalah platform transparansi dan akuntabilitas penanggulangan kebakaran hutan dan lahan (karhutla) di Kalimantan yang memadukan pelaporan warga terverifikasi koordinat, audit trail penanganan lintas instansi, dan integrasi titik observasi satelit. Sistem ini memastikan setiap insiden tertangani secara nyata dan transparan tanpa ada laporan yang terabaikan.
+
+---
+
+### 2. Tech Stack yang Digunakan
+- **Backend & Arsitektur**:
+  - **PHP 8.3+** (Direkomendasikan PHP 8.4)
+  - **Laravel 12** (MVC, Domain State Machines, Object-Level Authorization)
+  - **Laravel Fortify** (Autentikasi Aman & Pengelolaan Sesi)
+  - **SQLite** (Default pengembangan lokal cepat / PostgreSQL & MySQL Ready)
+- **Frontend & UI/UX**:
+  - **React 19** & **TypeScript**
+  - **Inertia.js v3** (Modern Monolith SPA)
+  - **Tailwind CSS v4** & **Radix UI**
+  - **Lucide React Icons**
+- **Geospasial & Kartografi**:
+  - **Leaflet** & **React-Leaflet**
+  - **CartoDB Positron Basemap**
+  - Geofencing batas wilayah pulau Kalimantan & custom pin marker risiko karhutla
+- **Tooling, Testing & Kualitas Kode**:
+  - **Vite & Vite-Plus** (Build tool & HMR)
+  - **Pest 5** (Automated Feature, Security, and State Machine Testing)
+  - **PHPStan Level 7** (Static Analysis & Type Safety)
+  - **Laravel Pint** (Standar Format PSR-12)
+
+---
+
+### 3. Cara Menjalankan Project (Clone => Install => Run)
+
+#### Langkah 1: Kloning Repositori
+```bash
+git clone https://github.com/Zxzidan/Jagain.git
+cd Jagain
+```
+
+#### Langkah 2: Instalasi Dependensi & Persiapan Basis Data
+```bash
+# 1. Pasang dependensi PHP (Backend) & JavaScript (Frontend)
+composer install
+npm install
+
+# 2. Salin environment konfigurasi dan buat application key
+cp .env.example .env
+php artisan key:generate
+
+# 3. Siapkan database SQLite dan jalankan migrasi beserta data seeder
+touch database/database.sqlite
+php artisan migrate:fresh --seed
+
+# 4. Buat symbolic link untuk berkas media bukti laporan
+php artisan storage:link
+```
+
+#### Langkah 3: Menjalankan Aplikasi
+
+##### Opsi A: Menggunakan Laravel Herd (Rekomendasi)
+Jika menggunakan **Laravel Herd**, project sudah terhubung di `http://jagain.test`. Cukup jalankan:
+```bash
+npm run dev
+```
+Buka browser dan akses: **`http://jagain.test`**
+
+##### Opsi B: Menggunakan Dev Server Bawaan
+Jalankan dev server secara simultan:
+```bash
+composer run dev
+```
+*Atau jalankan di dua terminal terpisah:*
+- **Terminal 1 (Backend):** `php artisan serve` (berjalan di `http://127.0.0.1:8000`)
+- **Terminal 2 (Frontend):** `npm run dev`
+
+Buka browser dan akses: **`http://localhost:8000`**
+
+---
+
+### 4. Progress Saat Ini
+Aplikasi telah mengimplementasikan seluruh alur kerja inti (*end-to-end*) mencakup portal publik, pelaporan warga, verifikasi admin, penanganan instansi operasional, serta pengujian terotomatisasi:
+
+- [x] **Halaman Publik & Landing Page**:
+  - **Landing Page Interaktif (`/`)**: Menampilkan statistik karhutla real-time, ringkasan laporan terbaru, banner peringatan darurat (Call 112), serta alur kerja transparansi JAGAIN.
+  - **Peta Geospasial Karhutla (`/peta`)**: Peta interaktif Leaflet pulau Kalimantan dengan filter status, titik koordinat laporan publik, dan layer observasi titik panas satelit (*data simulasi berlabel transparan*).
+  - **Pelacakan Laporan Publik (`/laporan-publik/{tracking_code}`)**: Pelacakan transparan perkembangan status laporan tanpa membocorkan data pribadi pelapor (*Zero-Leakage PII*).
+  - **Halaman Edukasi & Informasi**: Panduan Keselamatan Karhutla (`/panduan-keselamatan`) dan Tentang Kami (`/tentang-kami`).
+
+- [x] **Portal Pelaporan Warga (Citizen Portal)**:
+  - **Formulir Laporan Karhutla (`/lapor`)**: Form pelaporan dengan pin point peta otomatis di wilayah Kalimantan, deteksi duplikasi, dan upload bukti foto kejadian.
+  - **Daftar Laporan Saya (`/laporan-saya`)**: Riwayat dan status laporan yang pernah dikirim oleh pengguna.
+  - **Tindak Lanjut Klarifikasi (`/laporan-saya/{code}`)**: Fitur interaktif bagi warga untuk menambahkan informasi/bukti tambahan jika diminta oleh verifikator (*status NEEDS_INFORMATION*).
+
+- [x] **Portal Verifikator & Administrator (`/admin`)**:
+  - **Dashboard Admin (`/admin/dashboard`)**: Metrik ringkasan status laporan, SLA respon instansi, dan grafik penanganan.
+  - **Manajemen & Verifikasi Laporan (`/admin/reports`)**: Antrean telaah laporan, validasi bukti, pembaruan status laporan sesuai *state-machine*, dan penugasan laporan (*dispatch*) ke instansi terkait.
+  - **Manajemen Instansi (`/admin/agencies`)**: Pengelolaan data OPD (BPBD, Manggala Agni KLHK, Dinas Pemadam Kebakaran).
+  - **Audit Trail Forensik (`/admin/audit-logs`)**: Rekam jejak immutable seluruh mutasi status, penugasan, dan perubahan data transaksional sistem.
+  - **Ekspor Data Laporan (`/admin/exports/reports`)**: Fitur rekapitulasi data laporan untuk kebutuhan analisis dan pelaporan formal.
+
+- [x] **Portal Petugas Lapangan OPD / Instansi (`/opd`)**:
+  - **Dashboard Tugas Instansi (`/opd/dashboard`)**: Antrean tugas penanganan karhutla khusus instansi terkait (terisolasi per instansi).
+  - **Respon & Penerimaan Tugas (`/opd/tugas/{id}`)**: Aksi terima penugasan atau tolak dengan alasan resmi wajib.
+  - **Pembaruan Progres & Bukti Lapangan**: Pencatatan log aktivitas pemadaman/patroli, upload foto penanganan, pembaruan kondisi fisik api (`fire_condition`), dan pengajuan review penyelesaian.
+
+- [x] **Kualitas Kode, Keamanan & Pengujian**:
+  - **Automated Tests**: 60 skenario automated feature & security test (Pest) mencakup alur pelaporan, validasi batas geofencing Kalimantan, otorisasi IDOR, dan state machine.
+  - **Keamanan Ketat**: Object-Level Authorization (`ReportPolicy` & `AssignmentPolicy`), sanitasi data PII publik, pencegahan manipulasi status lintas instansi.
+  - **Kerapian & Type Safety**: PHPStan Level 7 (Static Analysis) dan Laravel Pint (PSR-12).
+
+---
+
+## 🔑 Akun Uji Coba (Demo Accounts)
+
+Aplikasi telah dilengkapi seeder basis data dengan akun percontohan untuk setiap peran:
 
 | Peran | Email | Kata Sandi | Cakupan / Hak Akses |
 |---|---|---|---|
@@ -24,88 +132,7 @@ Aplikasi telah dilengkapi seeder basis data lengkap dengan akun percontohan untu
 
 ---
 
-## 2. Prasyarat Sistem
-
-- **PHP**: Versi `>= 8.2` (Direkomendasikan PHP 8.4)
-- **Ekstensi PHP**: `pdo_sqlite` (atau `pdo_mysql` / `pdo_pgsql`), `mbstring`, `fileinfo`, `gd` / `imagick`
-- **Composer**: Versi `>= 2.7`
-- **Node.js**: Versi `>= 20.x` (LTS)
-- **Package Manager**: `npm`
-
----
-
-## 3. Instalasi dan Setup Lokal
-
-### Langkah 1: Kloning & Pasang Dependensi
-```bash
-git clone <repository_url> jagain
-cd jagain
-
-# Pasang dependensi PHP (Backend)
-composer install
-
-# Pasang dependensi JavaScript (Frontend React & Leaflet)
-npm install
-```
-
-### Langkah 2: Konfigurasi Environment
-Salin file konfigurasi percontohan:
-```bash
-cp .env.example .env
-```
-Pastikan kunci aplikasi digenerate:
-```bash
-php artisan key:generate
-```
-
-Secara default, aplikasi menggunakan database SQLite lokal yang ringan dan cepat untuk pengujian:
-```env
-APP_NAME=JAGAIN
-APP_ENV=local
-APP_DEBUG=true
-APP_URL=http://jagain.test
-# (atau http://localhost:8000 jika menggunakan php artisan serve)
-
-DB_CONNECTION=sqlite
-# Database otomatis berada di database/database.sqlite
-```
-
-### Langkah 3: Siapkan Database & Seeder
-Buat file SQLite (jika belum ada) dan jalankan seluruh migration serta seeder data demo:
-```bash
-# Buat database sqlite kosong jika belum ada
-touch database/database.sqlite
-
-# Jalankan migrasi dan isi data awal Kalimantan
-php artisan migrate:fresh --seed
-
-# Buat symbolic link untuk media penyimpanan bukti laporan publik
-php artisan storage:link
-```
-
-### Langkah 4: Menjalankan Aplikasi
-
-#### Opsi A: Menggunakan Laravel Herd (Rekomendasi - Tanpa Perlu Serve)
-Project sudah terhubung ke Herd (`jagain.test`):
-1. Pastikan aplikasi **Laravel Herd** aktif di komputer Anda.
-2. Buka browser dan langsung akses: **`http://jagain.test`**
-*(Tidak perlu menjalankan `php artisan serve`)*.
-Jika sedang melakukan pengembangan UI secara aktif, cukup jalankan `npm run dev` untuk Vite HMR.
-
-#### Opsi B: Menggunakan CLI / Artisan Serve Biasa
-Jalankan dev server secara simultan menggunakan perintah bawaan:
-```bash
-composer run dev
-```
-Atau di dua terminal terpisah:
-- **Terminal 1 (Laravel Server):** `php artisan serve` (berjalan di `http://127.0.0.1:8000`)
-- **Terminal 2 (Vite Assets):** `npm run dev`
-
-Buka browser dan akses: **`http://localhost:8000`**
-
----
-
-## 4. Pengujian & Kualitas Kode
+## 🧪 Pengujian & Kualitas Kode
 
 JAGAIN dibangun dengan standar rekayasa perangkat lunak ketat (Clean Architecture, Domain State Machines, Object-Level Authorization, Static Analysis Level 7, dan PSR-12).
 
@@ -114,39 +141,28 @@ JAGAIN dibangun dengan standar rekayasa perangkat lunak ketat (Clean Architectur
 # Jalankan seluruh 60 skenario automated feature & security tests:
 vendor/bin/pest
 
-# Atau uji spesifik domain JAGAIN (20 skenario inti: alur pelaporan, batas koordinat Kalimantan, otorisasi IDOR, state machine, penugasan OPD):
+# Atau uji spesifik domain JAGAIN (alur pelaporan, batas koordinat Kalimantan, otorisasi IDOR, state machine, penugasan OPD):
 vendor/bin/pest tests/Feature/Jagain
 ```
 
-### Pemeriksaan Type Safety
+### Pemeriksaan Type Safety & Linting
 ```bash
-# Type check Backend (PHPStan Level 7 - Max memory 1G)
+# Type check Backend (PHPStan Level 7)
 composer types:check
 
 # Type check Frontend (TypeScript Compiler)
 npm run types:check
-```
 
-### Format Kode & Linting (Pint)
-```bash
-# Verifikasi format PSR-12 / Laravel Pint
+# Format Kode & Verifikasi PSR-12 (Laravel Pint)
 vendor/bin/pint --test
-
-# Memperbaiki format secara otomatis
-vendor/bin/pint
-```
-
-### Production Build
-```bash
-npm run build
 ```
 
 ---
 
-## 5. Arsitektur Domain & Model Data
+## 🏛️ Arsitektur Domain & Model Data
 
 ### A. Tiga Konsep Status yang Terpisah (Kebenaran Data)
-Sesuai ketetapan `prd.md` dan `TECHNICAL.md`, JAGAIN secara tegas membedakan 3 status berbeda agar tidak terjadi misinformasi kepada publik:
+JAGAIN secara tegas membedakan 3 status berbeda agar tidak terjadi misinformasi kepada publik:
 
 1. **Status Laporan (`report_status`)**: Siklus hidup administratif laporan masyarakat:
    - `SUBMITTED` -> Baru masuk dari warga.
@@ -178,7 +194,7 @@ Sesuai ketetapan `prd.md` dan `TECHNICAL.md`, JAGAIN secara tegas membedakan 3 s
 
 ---
 
-## 6. Status Integrasi Eksternal & Data Simulasi
+## 🛰️ Status Integrasi Eksternal & Data Simulasi
 
 - **Titik Panas Satelit:** Sesuai prinsip kejujuran data, dataset satelit saat ini menggunakan data percontohan yang diberi label transparan **`DATA SIMULASI`** pada tampilan peta, legenda, dan popup detail.
 - **Adapter Siap Integrasi:** Telah disediakan model `DataSource` dan tabel `external_observations` yang memisahkan waktu observasi fisik satelit (`observed_at`) dengan waktu data disinkronkan ke dalam sistem (`ingested_at`).
@@ -186,14 +202,5 @@ Sesuai ketetapan `prd.md` dan `TECHNICAL.md`, JAGAIN secara tegas membedakan 3 s
 
 ---
 
-## 7. Identitas Visual & Desain
-
-Desain antarmuka JAGAIN sepenuhnya mengikuti standar identitas visual `design.md`:
-- **Warna Utama**: Forest Green (`#174B35`), Primary Green (`#216B49`), Leaf Green (`#39845C`), Soft Green (`#E8F1EB`), Pale Green (`#F3F7F4`).
-- **Netral**: Deep Carbon Black (`#171C19`), Dark Neutral (`#343B36`), Gray Neutral (`#68716B`), Border Neutral (`#DDE3DE`), Pure White (`#FFFFFF`).
-- Bebas dari penggunaan emoji pada UI formal, menggunakan Lucide Icons resmi, komponen peta berbasis Leaflet dengan kartografi Positron yang bersih dan kontras tinggi untuk pemantauan titik karhutla Kalimantan.
-
----
-
-## 8. Lisensi & Hak Cipta
+## 📄 Lisensi & Hak Cipta
 Hak Cipta © 2026 Tim Pengembang JAGAIN. Dikembangkan untuk transparansi dan percepatan penanggulangan karhutla di Indonesia.
