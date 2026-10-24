@@ -18,7 +18,22 @@ class DevelopmentAutoLogin
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (app()->environment('local') && config('auth.dev_auto_login', true)) {
+        // If requesting logout, remember that user intentionally logged out
+        if ($request->is('logout')) {
+            $request->session()->put('manual_logout', true);
+            return $next($request);
+        }
+
+        // If user manually logged out, do not force auto login
+        if ($request->session()->get('manual_logout', false)) {
+            // Clear manual_logout flag if submitting login
+            if ($request->is('login') && $request->isMethod('post')) {
+                $request->session()->forget('manual_logout');
+            }
+            return $next($request);
+        }
+
+        if (app()->environment('local') && config('auth.dev_auto_login', false)) {
             if (! Auth::check()) {
                 $user = User::firstWhere('role', 'ADMIN') ?? User::first();
 

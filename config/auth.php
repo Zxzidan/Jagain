@@ -20,7 +20,7 @@ return [
         'passwords' => env('AUTH_PASSWORD_BROKER', 'users'),
     ],
 
-    'dev_auto_login' => env('DEV_AUTO_LOGIN', true),
+    'dev_auto_login' => env('DEV_AUTO_LOGIN', false),
 
     /*
     |--------------------------------------------------------------------------
