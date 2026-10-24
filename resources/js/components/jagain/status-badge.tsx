@@ -22,16 +22,16 @@ const statusConfig: Record<
     // Report statuses
     SUBMITTED: {
         label: 'Menunggu Telaah',
-        bg: 'bg-[#F3F7F4]',
-        text: 'text-[#343B36]',
-        border: 'border-[#DDE3DE]',
+        bg: 'bg-[#F3F7F4] dark:bg-neutral-800/80',
+        text: 'text-[#343B36] dark:text-neutral-200',
+        border: 'border-[#DDE3DE] dark:border-neutral-700',
         icon: Clock,
     },
     UNDER_REVIEW: {
         label: 'Sedang Diperiksa',
-        bg: 'bg-[#E8F1EB]',
-        text: 'text-[#174B35]',
-        border: 'border-[#39845C]/30',
+        bg: 'bg-[#E8F1EB] dark:bg-emerald-950/40',
+        text: 'text-[#174B35] dark:text-emerald-300',
+        border: 'border-[#39845C]/30 dark:border-emerald-800/50',
         icon: Clock,
     },
     NEEDS_INFORMATION: {
@@ -43,30 +43,30 @@ const statusConfig: Record<
     },
     VERIFIED: {
         label: 'Terverifikasi Valid',
-        bg: 'bg-[#E8F1EB]',
-        text: 'text-[#216B49]',
-        border: 'border-[#216B49]/40',
+        bg: 'bg-[#E8F1EB] dark:bg-emerald-950/50',
+        text: 'text-[#216B49] dark:text-emerald-300',
+        border: 'border-[#216B49]/40 dark:border-emerald-700/50',
         icon: CheckCircle2,
     },
     DISPATCHED: {
         label: 'Ditugaskan ke OPD',
-        bg: 'bg-[#E8F1EB]',
-        text: 'text-[#174B35]',
-        border: 'border-[#39845C]',
+        bg: 'bg-[#E8F1EB] dark:bg-emerald-950/50',
+        text: 'text-[#174B35] dark:text-emerald-300',
+        border: 'border-[#39845C] dark:border-emerald-700/60',
         icon: Send,
     },
     RESOLUTION_REVIEW: {
         label: 'Meninjau Hasil Penanganan',
-        bg: 'bg-[#E8F1EB]',
-        text: 'text-[#216B49]',
-        border: 'border-[#216B49]/50',
+        bg: 'bg-[#E8F1EB] dark:bg-emerald-950/40',
+        text: 'text-[#216B49] dark:text-emerald-300',
+        border: 'border-[#216B49]/50 dark:border-emerald-800/50',
         icon: Clock,
     },
     RESOLVED_VERIFIED: {
         label: 'Tindak Lanjut Selesai',
-        bg: 'bg-[#E8F1EB]',
-        text: 'text-[#174B35]',
-        border: 'border-[#174B35]',
+        bg: 'bg-[#E8F1EB] dark:bg-emerald-950/60',
+        text: 'text-[#174B35] dark:text-emerald-200',
+        border: 'border-[#174B35] dark:border-emerald-600',
         icon: CheckCircle2,
     },
     CLOSED_WITH_REASON: {
@@ -80,16 +80,16 @@ const statusConfig: Record<
     // Assignment statuses
     ASSIGNED: {
         label: 'Penugasan Dikirim',
-        bg: 'bg-[#E8F1EB]',
-        text: 'text-[#216B49]',
-        border: 'border-[#39845C]/30',
+        bg: 'bg-[#E8F1EB] dark:bg-emerald-950/40',
+        text: 'text-[#216B49] dark:text-emerald-300',
+        border: 'border-[#39845C]/30 dark:border-emerald-800/40',
         icon: Send,
     },
     RECEIVED_BY_AGENCY: {
         label: 'Diterima Instansi',
-        bg: 'bg-[#E8F1EB]',
-        text: 'text-[#174B35]',
-        border: 'border-[#174B35]/40',
+        bg: 'bg-[#E8F1EB] dark:bg-emerald-950/40',
+        text: 'text-[#174B35] dark:text-emerald-300',
+        border: 'border-[#174B35]/40 dark:border-emerald-800/50',
         icon: CheckCircle2,
     },
     DECLINED_BY_AGENCY: {
@@ -101,23 +101,23 @@ const statusConfig: Record<
     },
     IN_PROGRESS: {
         label: 'Penanganan Berlangsung',
-        bg: 'bg-[#E8F1EB]',
-        text: 'text-[#174B35]',
-        border: 'border-[#216B49]',
+        bg: 'bg-[#E8F1EB] dark:bg-emerald-950/50',
+        text: 'text-[#174B35] dark:text-emerald-300',
+        border: 'border-[#216B49] dark:border-emerald-700/60',
         icon: Flame,
     },
     SUBMITTED_FOR_REVIEW: {
         label: 'Diajukan untuk Review',
-        bg: 'bg-[#E8F1EB]',
-        text: 'text-[#216B49]',
-        border: 'border-[#39845C]',
+        bg: 'bg-[#E8F1EB] dark:bg-emerald-950/40',
+        text: 'text-[#216B49] dark:text-emerald-300',
+        border: 'border-[#39845C] dark:border-emerald-800/50',
         icon: Clock,
     },
     COMPLETED: {
         label: 'Penugasan Selesai',
-        bg: 'bg-[#E8F1EB]',
-        text: 'text-[#174B35]',
-        border: 'border-[#174B35]',
+        bg: 'bg-[#E8F1EB] dark:bg-emerald-950/60',
+        text: 'text-[#174B35] dark:text-emerald-200',
+        border: 'border-[#174B35] dark:border-emerald-600',
         icon: CheckCircle2,
     },
 };
@@ -135,7 +135,7 @@ export function StatusBadge({ status, className = '' }: StatusBadgeProps) {
 
     return (
         <span
-            className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-xs font-medium ${config.bg} ${config.text} ${config.border} ${className}`}
+            className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-medium whitespace-nowrap shadow-2xs ${config.bg} ${config.text} ${config.border} ${className}`}
         >
             <Icon className="size-3.5 shrink-0" />
             <span>{config.label}</span>

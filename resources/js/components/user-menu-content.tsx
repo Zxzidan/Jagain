@@ -6,6 +6,7 @@ import {
     DropdownMenuLabel,
     DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
+import { ThemeInlineSelector } from '@/components/theme-toggle';
 import { UserInfo } from '@/components/user-info';
 import { useMobileNavigation } from '@/hooks/use-mobile-navigation';
 import { logout } from '@/routes';
@@ -45,6 +46,13 @@ export function UserMenuContent({ user }: Props) {
                     </Link>
                 </DropdownMenuItem>
             </DropdownMenuGroup>
+            <DropdownMenuSeparator />
+            <div className="px-2 py-1.5">
+                <span className="mb-1.5 block text-[11px] font-semibold text-neutral-500 dark:text-neutral-400">
+                    Tema Tampilan
+                </span>
+                <ThemeInlineSelector />
+            </div>
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>
                 <Link

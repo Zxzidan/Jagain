@@ -5,6 +5,7 @@ import AppLogoIcon from '@/components/app-logo-icon';
 import { Breadcrumbs } from '@/components/breadcrumbs';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
+import { ThemeInlineSelector, ThemeToggle } from '@/components/theme-toggle';
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -138,6 +139,13 @@ export function AppHeader({ breadcrumbs = [] }: Props) {
                                                 </a>
                                             ))}
                                         </div>
+
+                                        <div className="pt-2">
+                                            <span className="mb-2 block text-xs font-semibold text-neutral-500 dark:text-neutral-400">
+                                                Tema Tampilan
+                                            </span>
+                                            <ThemeInlineSelector />
+                                        </div>
                                     </div>
                                 </div>
                             </SheetContent>
@@ -220,6 +228,7 @@ export function AppHeader({ breadcrumbs = [] }: Props) {
                                 ))}
                             </div>
                         </div>
+                        <ThemeToggle />
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                                 <Button

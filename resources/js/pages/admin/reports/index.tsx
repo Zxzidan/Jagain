@@ -1,10 +1,5 @@
-import React, { useState } from 'react';
-import { Head, Link, router, usePage } from '@inertiajs/react';
+import { Head, Link, router } from '@inertiajs/react';
 import {
-    AlertCircle,
-    ArrowRight,
-    CheckCircle2,
-    Clock,
     Download,
     FileText,
     Filter,
@@ -13,12 +8,15 @@ import {
     Search,
     Shield,
 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { StatusBadge } from '@/components/reports/status-badge';
+import { useState } from 'react';
+import { EmptyState } from '@/components/jagain/empty-state';
+import { FlashMessage } from '@/components/jagain/flash-message';
+import { StatusBadge } from '@/components/jagain/status-badge';
+import AppLayout from '@/layouts/app-layout';
 import { dashboard as adminDashboard } from '@/routes/admin';
 import { reports as reportsExport } from '@/routes/admin/exports';
 import { index as reportsIndex, show as reportShow } from '@/routes/admin/reports';
-import type { Category, PaginatedResponse, Report } from '@/types';
+import type { BreadcrumbItem, Category, PaginatedResponse, Report, ReportStatus } from '@/types';
 
 type ReportsIndexProps = {
     reports: PaginatedResponse<Report>;
@@ -49,14 +47,22 @@ export default function ReportsIndex({
     filters,
     statusCounts,
 }: ReportsIndexProps) {
-    const page = usePage();
-    const flash = (page.props as any).flash;
-
     const [search, setSearch] = useState(filters.search ?? '');
     const [status, setStatus] = useState(filters.status ?? '');
     const [categoryId, setCategoryId] = useState<string>(
         filters.category_id ? String(filters.category_id) : ''
     );
+
+    const breadcrumbs: BreadcrumbItem[] = [
+        {
+            title: 'Admin JAGAIN',
+            href: adminDashboard(),
+        },
+        {
+            title: 'Antrean & Laporan Karhutla',
+            href: reportsIndex(),
+        },
+    ];
 
     const applyFilters = (newStatus?: string, newCategory?: string, newSearch?: string) => {
         const query: Record<string, string | number> = {};
@@ -95,65 +101,25 @@ export default function ReportsIndex({
         router.get(reportsIndex.url(), {}, { replace: true });
     };
 
-    const formatDate = (isoString?: string | null) => {
-        if (!isoString) return '-';
-        try {
-            const date = new Date(isoString);
-            return (
-                new Intl.DateTimeFormat('id-ID', {
-                    day: 'numeric',
-                    month: 'short',
-                    year: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                }).format(date) + ' WIB'
-            );
-        } catch {
-            return isoString;
-        }
-    };
-
     return (
-        <>
+        <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Antrean & Laporan Karhutla - JAGAIN Admin" />
 
-            <div className="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-6 p-4 sm:p-6 lg:p-8">
-                {/* Flash Success & Error Notification */}
-                {flash?.success && (
-                    <div
-                        role="status"
-                        className="flex items-center gap-3 rounded-xl border border-leaf-green/30 bg-soft-green/70 p-4 text-sm text-forest-green shadow-xs transition-all duration-200"
-                    >
-                        <CheckCircle2 className="size-5 shrink-0 text-primary-green" />
-                        <span className="font-medium">{flash.success}</span>
-                    </div>
-                )}
-                {flash?.error && (
-                    <div
-                        role="alert"
-                        className="flex items-center gap-3 rounded-xl border border-border-neutral bg-white p-4 text-sm text-dark-neutral shadow-xs transition-all duration-200"
-                    >
-                        <AlertCircle className="size-5 shrink-0 text-primary-green" />
-                        <span className="font-medium">{flash.error}</span>
-                    </div>
-                )}
+            <div className="flex flex-1 flex-col gap-6 p-4 md:p-8">
+                <FlashMessage />
 
-                {/* Header Title & Actions */}
-                <header className="flex flex-col justify-between gap-4 rounded-xl border border-border-neutral bg-white p-5 shadow-xs sm:flex-row sm:items-center sm:p-6">
-                    <div className="space-y-1">
-                        <div className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-primary-green">
-                            <Shield className="size-4" />
-                            <span>Pusat Kendali Administrasi &bull; Review Pelaporan</span>
-                        </div>
-                        <h1 className="text-xl font-bold tracking-tight text-dark-neutral sm:text-2xl">
+                {/* Page Title & Actions */}
+                <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
+                    <div>
+                        <h1 className="text-2xl font-bold tracking-tight text-[#171C19] dark:text-white">
                             Antrean & Daftar Laporan Karhutla
                         </h1>
-                        <p className="text-xs text-gray-neutral sm:text-sm">
-                            Telaah keabsahan bukti foto, verifikasi koordinat lapangan, dan teruskan penugasan satuan OPD terkait.
+                        <p className="mt-1 text-sm text-[#68716B] dark:text-neutral-400">
+                            Pemeriksaan validitas, permintaan klarifikasi tambahan, dan koordinasi penugasan instansi.
                         </p>
                     </div>
 
-                    <div className="flex shrink-0 items-center gap-2.5">
+                    <div className="flex items-center gap-2">
                         <a
                             href={reportsExport.url({
                                 query: {
@@ -161,29 +127,16 @@ export default function ReportsIndex({
                                     category_id: categoryId || undefined,
                                 },
                             })}
-                            className="inline-flex items-center gap-2 rounded-lg border border-border-neutral bg-white px-3.5 py-2 text-xs font-semibold text-dark-neutral shadow-xs transition hover:bg-pale-green hover:border-gray-neutral/40"
+                            className="inline-flex items-center gap-2 rounded-lg border border-[#DDE3DE] bg-white px-3.5 py-2 text-xs font-semibold text-[#343B36] shadow-xs transition hover:bg-[#F3F7F4] dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-200 dark:hover:bg-neutral-800"
                         >
-                            <Download className="size-4 text-primary-green" />
-                            <span>Ekspor Data CSV</span>
+                            <Download className="size-4 text-[#216B49]" />
+                            <span>Ekspor CSV</span>
                         </a>
-
-                        <Button
-                            asChild
-                            size="sm"
-                            className="bg-primary-green text-xs font-semibold text-white shadow-xs hover:bg-forest-green"
-                        >
-                            <Link href={adminDashboard().url}>
-                                <span>Kembali ke Dasbor</span>
-                            </Link>
-                        </Button>
                     </div>
-                </header>
+                </div>
 
                 {/* Status Tab Filter Bar */}
-                <nav
-                    aria-label="Filter berdasarkan status laporan"
-                    className="no-scrollbar flex items-center gap-2 overflow-x-auto py-0.5 text-xs text-dark-neutral"
-                >
+                <div className="flex gap-1.5 overflow-x-auto border-b border-[#DDE3DE] pb-2 dark:border-neutral-800">
                     {statusTabs.map((tab) => {
                         const countKey = tab.key || 'ALL';
                         const count = statusCounts[countKey] ?? 0;
@@ -194,18 +147,18 @@ export default function ReportsIndex({
                                 key={tab.key}
                                 type="button"
                                 onClick={() => handleStatusClick(tab.key)}
-                                className={`inline-flex shrink-0 items-center gap-2 rounded-lg border px-3 py-1.5 font-medium transition-colors focus-visible:ring-2 focus-visible:ring-primary-green focus-visible:outline-hidden ${
+                                className={`inline-flex shrink-0 items-center gap-2 rounded-lg px-3 py-1.5 text-xs font-medium transition ${
                                     isActive
-                                        ? 'border-leaf-green/50 bg-soft-green font-semibold text-forest-green'
-                                        : 'border-border-neutral bg-white text-dark-neutral hover:border-gray-neutral/40 hover:bg-pale-green'
+                                        ? 'bg-[#216B49] text-white shadow-xs'
+                                        : 'text-[#68716B] hover:bg-[#E8F1EB] hover:text-[#174B35] dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-neutral-200'
                                 }`}
                             >
                                 <span>{tab.label}</span>
                                 <span
-                                    className={`rounded-full px-1.5 py-0.5 text-[10px] font-bold ${
+                                    className={`rounded-full px-1.5 py-0.2 text-[10px] font-bold ${
                                         isActive
-                                            ? 'bg-primary-green text-white'
-                                            : 'bg-pale-green text-gray-neutral border border-border-neutral'
+                                            ? 'bg-white/20 text-white'
+                                            : 'bg-neutral-200 text-neutral-700 dark:bg-neutral-800 dark:text-neutral-400'
                                     }`}
                                 >
                                     {count}
@@ -213,18 +166,18 @@ export default function ReportsIndex({
                             </button>
                         );
                     })}
-                </nav>
+                </div>
 
                 {/* Search & Category Filter Section */}
-                <div className="flex flex-col gap-3 rounded-xl border border-border-neutral bg-white p-4 shadow-xs sm:flex-row sm:items-center">
+                <div className="flex flex-col gap-3 rounded-xl border border-[#DDE3DE] bg-white p-4 shadow-xs sm:flex-row sm:items-center dark:border-neutral-800 dark:bg-neutral-900">
                     <form onSubmit={handleSearchSubmit} className="relative flex-1">
-                        <Search className="absolute top-1/2 left-3.5 size-4 -translate-y-1/2 text-gray-neutral" />
+                        <Search className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-[#68716B] dark:text-neutral-500" />
                         <input
                             type="text"
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
                             placeholder="Cari berdasarkan nomor ID, kata kunci judul, atau nama lokasi..."
-                            className="w-full rounded-lg border border-border-neutral bg-pale-green/40 py-2 pr-3.5 pl-10 text-xs text-dark-neutral placeholder-gray-neutral/70 transition-colors focus:border-primary-green focus:bg-white focus:outline-hidden"
+                            className="w-full rounded-lg border border-[#DDE3DE] bg-[#F3F7F4]/50 py-2 pr-3 pl-9 text-xs text-[#171C19] placeholder-[#68716B] focus:border-[#216B49] focus:bg-white focus:outline-none dark:border-neutral-800 dark:bg-neutral-800/60 dark:text-white dark:placeholder-neutral-500"
                         />
                     </form>
 
@@ -233,7 +186,7 @@ export default function ReportsIndex({
                             value={categoryId}
                             onChange={handleCategoryChange}
                             aria-label="Pilih Kategori Karhutla"
-                            className="rounded-lg border border-border-neutral bg-pale-green/40 px-3 py-2 text-xs text-dark-neutral transition-colors focus:border-primary-green focus:bg-white focus:outline-hidden"
+                            className="rounded-lg border border-[#DDE3DE] bg-[#F3F7F4]/50 px-3 py-2 text-xs text-[#343B36] focus:border-[#216B49] focus:bg-white focus:outline-none dark:border-neutral-800 dark:bg-neutral-800/60 dark:text-neutral-200"
                         >
                             <option value="">Semua Kategori</option>
                             {categories.map((c) => (
@@ -247,7 +200,7 @@ export default function ReportsIndex({
                             <button
                                 type="button"
                                 onClick={handleReset}
-                                className="inline-flex items-center gap-1.5 rounded-lg border border-border-neutral bg-white px-3 py-2 text-xs font-semibold text-gray-neutral transition hover:bg-pale-green hover:text-dark-neutral"
+                                className="inline-flex items-center gap-1 rounded-lg border border-transparent px-2.5 py-2 text-xs font-semibold text-[#68716B] hover:text-[#171C19] dark:text-neutral-400 dark:hover:text-white"
                                 title="Reset filter"
                             >
                                 <RotateCcw className="size-3.5" />
@@ -257,136 +210,155 @@ export default function ReportsIndex({
                     </div>
                 </div>
 
-                {/* Reports Container */}
-                <div className="space-y-4">
+                {/* Reports Table */}
+                <div className="rounded-xl border border-[#DDE3DE] bg-white shadow-xs dark:border-neutral-800 dark:bg-neutral-900">
                     {reports.data.length === 0 ? (
-                        <div className="rounded-xl border border-dashed border-border-neutral bg-white p-8 text-center shadow-xs sm:p-12">
-                            <div className="mx-auto flex size-12 items-center justify-center rounded-full border border-border-neutral/70 bg-pale-green text-gray-neutral">
-                                <FileText className="size-6 text-gray-neutral" />
-                            </div>
-                            <h3 className="mt-3.5 text-base font-semibold text-dark-neutral">
-                                Tidak Ada Laporan yang Sesuai Kriteria
-                            </h3>
-                            <p className="mx-auto mt-1 max-w-md text-xs leading-relaxed text-gray-neutral">
-                                Coba ubah kata kunci pencarian, ubah status filter, atau reset filter untuk menampilkan data lainnya.
-                            </p>
-                            {(search || status || categoryId) && (
-                                <div className="mt-5">
-                                    <Button
-                                        type="button"
-                                        onClick={handleReset}
-                                        className="h-auto bg-primary-green px-4 py-2 text-xs font-semibold text-white shadow-xs hover:bg-forest-green"
-                                    >
-                                        <RotateCcw className="size-3.5 mr-1.5" />
-                                        <span>Reset Semua Filter</span>
-                                    </Button>
-                                </div>
-                            )}
+                        <div className="p-12">
+                            <EmptyState
+                                icon={FileText}
+                                title="Tidak ada laporan yang sesuai kriteria"
+                                description="Ubah kata kunci pencarian atau reset filter untuk menampilkan data lainnya."
+                                action={
+                                    (search || status || categoryId) ? (
+                                        <button
+                                            type="button"
+                                            onClick={handleReset}
+                                            className="inline-flex items-center gap-1.5 rounded-lg bg-[#216B49] px-4 py-2 text-xs font-semibold text-white hover:bg-[#174B35]"
+                                        >
+                                            <RotateCcw className="size-3.5" />
+                                            <span>Reset Semua Filter</span>
+                                        </button>
+                                    ) : undefined
+                                }
+                            />
                         </div>
                     ) : (
-                        <div className="space-y-3">
-                            {reports.data.map((report) => (
-                                <article
-                                    key={report.id}
-                                    className="group rounded-xl border border-border-neutral bg-white p-4 shadow-xs transition-all duration-200 ease-out hover:-translate-y-0.5 hover:border-gray-neutral/30 hover:shadow-md sm:p-5"
-                                >
-                                    <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-                                        {/* Core Details */}
-                                        <div className="min-w-0 flex-1 space-y-2">
-                                            {/* Badges Row */}
-                                            <div className="flex flex-wrap items-center gap-2">
-                                                <span className="badge badge-light font-mono font-bold">
-                                                    #{report.id}
-                                                </span>
-                                                <StatusBadge
-                                                    status={report.report_status}
-                                                    variant="neutral"
-                                                />
-                                                {report.category && (
-                                                    <span className="badge badge-light">
-                                                        {report.category.name}
+                        <div className="overflow-x-auto">
+                            <table className="w-full min-w-[1020px] text-left text-sm">
+                                <thead className="border-b border-[#DDE3DE] bg-[#F3F7F4] text-xs font-semibold uppercase tracking-wider text-[#343B36] dark:border-neutral-800 dark:bg-neutral-800/60 dark:text-neutral-300">
+                                    <tr>
+                                        <th scope="col" className="w-[32%] min-w-[300px] px-6 py-4 text-center">ID & Judul Laporan</th>
+                                        <th scope="col" className="w-[15%] min-w-[140px] px-6 py-4 text-center">Kategori</th>
+                                        <th scope="col" className="w-[20%] min-w-[180px] px-6 py-4 text-center">Lokasi</th>
+                                        <th scope="col" className="w-[15%] min-w-[160px] px-6 py-4 text-center whitespace-nowrap">Status Laporan</th>
+                                        <th scope="col" className="w-[18%] min-w-[170px] px-6 py-4 text-center whitespace-nowrap">Penugasan OPD</th>
+                                        <th scope="col" className="px-6 py-4 text-center whitespace-nowrap">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-[#DDE3DE] dark:divide-neutral-800">
+                                    {reports.data.map((report) => (
+                                        <tr
+                                            key={report.id}
+                                            className="transition-colors hover:bg-[#F3F7F4]/40 dark:hover:bg-neutral-800/40"
+                                        >
+                                            <td className="px-6 py-5 align-middle">
+                                                <div className="flex items-start gap-3">
+                                                    <span className="shrink-0 mt-0.5 inline-flex items-center rounded-md bg-[#E8F1EB] px-2.5 py-1 font-mono text-xs font-bold text-[#216B49] dark:bg-emerald-950/70 dark:text-emerald-300">
+                                                        #{report.id}
                                                     </span>
-                                                )}
-                                                {report.is_simulated && (
-                                                    <span className="badge badge-light text-amber-700 bg-amber-50 border border-amber-200">
-                                                        SIMULASI
-                                                    </span>
-                                                )}
-                                                <span className="text-xs text-gray-neutral">
-                                                    Pelapor: <strong className="font-medium text-dark-neutral">{report.creator?.name || 'Anonim'}</strong>
-                                                </span>
-                                            </div>
-
-                                            {/* Title */}
-                                            <h3 className="line-clamp-1 text-base font-semibold text-dark-neutral transition-colors group-hover:text-primary-green sm:line-clamp-2">
-                                                <Link href={reportShow(report.id).url}>
-                                                    {report.title}
-                                                </Link>
-                                            </h3>
-
-                                            {/* Location, OPD Assignment, and Time */}
-                                            <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs text-gray-neutral">
-                                                <div className="flex min-w-0 items-center gap-1.5">
-                                                    <MapPin className="size-3.5 shrink-0 text-primary-green" />
-                                                    <span className="max-w-[280px] truncate font-medium text-forest-green sm:max-w-md">
-                                                        {report.location_description || `${report.latitude.toFixed(4)}, ${report.longitude.toFixed(4)}`}
-                                                    </span>
-                                                </div>
-
-                                                <div className="flex shrink-0 items-center gap-1.5">
-                                                    <Clock className="size-3.5 shrink-0 text-gray-neutral" />
-                                                    <span>Dibuat: {formatDate(report.created_at)}</span>
-                                                </div>
-
-                                                {report.latest_assignment && (
-                                                    <div className="inline-flex items-center gap-1.5 rounded bg-soft-green/60 px-2 py-0.5 text-[11px] font-medium text-forest-green">
-                                                        <span>Disposisi: {report.latest_assignment.agency?.name ?? 'OPD'} ({report.latest_assignment.assignment_status})</span>
+                                                    <div className="flex-1 min-w-0 text-justify">
+                                                        <div className="text-justify font-semibold text-sm leading-snug text-[#171C19] dark:text-white">
+                                                            {report.title}
+                                                            {report.is_simulated && (
+                                                                <span className="ml-2 inline-flex items-center rounded bg-neutral-200 px-1.5 py-0.5 text-[10px] font-bold text-neutral-700 dark:bg-neutral-800 dark:text-neutral-400 align-middle">
+                                                                    SIMULASI
+                                                                </span>
+                                                            )}
+                                                        </div>
+                                                        <div className="mt-1.5 text-xs text-[#68716B] dark:text-neutral-400 text-justify">
+                                                            Pelapor: <span className="font-medium text-neutral-800 dark:text-neutral-300">{report.creator?.name ?? 'Anonim'}</span> &bull; Dibuat:{' '}
+                                                            <span className="whitespace-nowrap">
+                                                                {new Date(report.created_at).toLocaleDateString('id-ID', {
+                                                                    day: 'numeric',
+                                                                    month: 'short',
+                                                                    year: 'numeric',
+                                                                    hour: '2-digit',
+                                                                    minute: '2-digit',
+                                                                })} WIB
+                                                            </span>
+                                                        </div>
                                                     </div>
-                                                )}
-                                            </div>
-                                        </div>
+                                                </div>
+                                            </td>
 
-                                        {/* Action Button */}
-                                        <div className="flex shrink-0 items-center justify-end pt-1 sm:justify-start lg:justify-end lg:pt-0">
-                                            <Button
-                                                asChild
-                                                size="sm"
-                                                className="h-9 w-full bg-primary-green px-3.5 text-xs font-semibold text-white shadow-xs transition-all hover:bg-forest-green active:scale-[0.98] sm:w-auto"
-                                            >
+                                            <td className="px-6 py-5 align-middle text-center">
+                                                <span className="inline-flex items-center rounded-md bg-neutral-100 px-2.5 py-1 text-xs font-medium text-neutral-800 dark:bg-neutral-800 dark:text-neutral-200 leading-normal">
+                                                    {report.category?.name ?? 'Umum'}
+                                                </span>
+                                            </td>
+
+                                            <td className="px-6 py-5 align-middle text-center text-xs text-[#68716B] dark:text-neutral-400">
+                                                <div className="inline-flex flex-col items-center">
+                                                    <div className="flex items-center justify-center gap-1.5 text-[#171C19] dark:text-neutral-200">
+                                                        <MapPin className="size-3.5 shrink-0 text-[#216B49] dark:text-emerald-400" />
+                                                        <span className="font-medium max-w-[240px] leading-snug line-clamp-2">
+                                                            {report.location_description ?? `${report.latitude}, ${report.longitude}`}
+                                                        </span>
+                                                    </div>
+                                                    <div className="mt-1 font-mono text-[10px] text-neutral-400 dark:text-neutral-500">
+                                                        {report.latitude.toFixed(4)}, {report.longitude.toFixed(4)}
+                                                    </div>
+                                                </div>
+                                            </td>
+
+                                            <td className="px-6 py-5 align-middle text-center whitespace-nowrap">
+                                                <StatusBadge status={report.report_status} />
+                                            </td>
+
+                                            <td className="px-6 py-5 align-middle text-center text-xs">
+                                                {report.latest_assignment ? (
+                                                    <div className="space-y-1">
+                                                        <span className="font-semibold text-[#171C19] dark:text-white leading-snug block">
+                                                            {report.latest_assignment.agency?.name ?? 'Instansi'}
+                                                        </span>
+                                                        <div className="text-[11px] text-[#68716B] dark:text-neutral-400">
+                                                            Status: {report.latest_assignment.assignment_status}
+                                                        </div>
+                                                    </div>
+                                                ) : (
+                                                    <span className="text-neutral-400 dark:text-neutral-500 italic text-xs leading-normal inline-block">
+                                                        Belum ditugaskan
+                                                    </span>
+                                                )}
+                                            </td>
+
+                                            <td className="px-6 py-5 align-middle text-center whitespace-nowrap">
                                                 <Link
-                                                    href={reportShow(report.id).url}
-                                                    className="flex items-center justify-center gap-1.5 text-white"
+                                                    href={reportShow(report.id)}
+                                                    className="inline-flex items-center gap-1.5 rounded-lg bg-[#216B49] px-3.5 py-1.5 text-xs font-semibold text-white shadow-xs transition hover:bg-[#174B35] focus:outline-none focus:ring-2 focus:ring-[#216B49]/40"
                                                 >
-                                                    <span>Review & Tindak Lanjut</span>
-                                                    <ArrowRight className="size-3.5 text-white transition-transform duration-150 group-hover:translate-x-0.5" />
+                                                    <span>Review</span>
+                                                    <span aria-hidden="true">&rarr;</span>
                                                 </Link>
-                                            </Button>
-                                        </div>
-                                    </div>
-                                </article>
-                            ))}
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
                         </div>
                     )}
 
-                    {/* Pagination */}
+                    {/* Pagination Links */}
                     {reports.links.length > 3 && (
-                        <div className="flex flex-col gap-3 rounded-xl border border-border-neutral bg-white p-4 shadow-xs sm:flex-row sm:items-center sm:justify-between">
-                            <div className="text-xs text-gray-neutral">
-                                Menampilkan <span className="font-semibold text-dark-neutral">{reports.from ?? 0}</span> - <span className="font-semibold text-dark-neutral">{reports.to ?? 0}</span> dari <span className="font-semibold text-dark-neutral">{reports.total}</span> laporan
+                        <div className="flex items-center justify-between border-t border-[#DDE3DE] px-6 py-3.5 dark:border-neutral-800">
+                            <div className="text-xs text-[#68716B] dark:text-neutral-400">
+                                Menampilkan <span className="font-medium text-[#171C19] dark:text-white">{reports.from ?? 0}</span> sampai{' '}
+                                <span className="font-medium text-[#171C19] dark:text-white">{reports.to ?? 0}</span> dari{' '}
+                                <span className="font-medium text-[#171C19] dark:text-white">{reports.total}</span> laporan
                             </div>
 
-                            <div className="flex flex-wrap items-center gap-1.5">
+                            <div className="flex items-center gap-1">
                                 {reports.links.map((link, idx) => (
                                     <Link
                                         key={idx}
                                         href={link.url ?? '#'}
                                         preserveState
-                                        className={`rounded-lg border px-3 py-1.5 text-xs font-medium transition ${
+                                        className={`rounded-md px-2.5 py-1 text-xs font-medium transition ${
                                             link.active
-                                                ? 'border-leaf-green/50 bg-soft-green font-semibold text-forest-green'
+                                                ? 'bg-[#216B49] text-white'
                                                 : link.url
-                                                ? 'border-border-neutral bg-white text-dark-neutral hover:border-gray-neutral/40 hover:bg-pale-green'
-                                                : 'border-border-neutral/40 bg-pale-green/40 text-gray-neutral/50 cursor-not-allowed'
+                                                ? 'text-[#343B36] hover:bg-[#F3F7F4] dark:text-neutral-300 dark:hover:bg-neutral-800'
+                                                : 'text-neutral-400 cursor-not-allowed'
                                         }`}
                                         dangerouslySetInnerHTML={{ __html: link.label }}
                                     />
@@ -396,6 +368,6 @@ export default function ReportsIndex({
                     )}
                 </div>
             </div>
-        </>
+        </AppLayout>
     );
 }
