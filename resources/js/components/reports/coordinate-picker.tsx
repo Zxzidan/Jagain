@@ -358,7 +358,7 @@ export function CoordinatePicker({
                         size="sm"
                         onClick={handleGpsClick}
                         disabled={gpsLoading}
-                        className="h-8 border-border-neutral bg-white px-2.5 text-xs font-medium text-forest-green shadow-2xs hover:border-leaf-green/50 hover:bg-soft-green"
+                        className="h-8 border-border-neutral bg-white px-2.5 text-xs font-medium text-forest-green shadow-2xs hover:border-leaf-green/50 hover:bg-soft-green dark:border-border-neutral dark:bg-card dark:hover:bg-[#1c2620]"
                     >
                         <Navigation
                             className={`size-3.5 text-primary-green ${gpsLoading ? 'animate-spin' : ''}`}
@@ -376,7 +376,7 @@ export function CoordinatePicker({
                                 size="sm"
                                 onClick={handleRecenter}
                                 title="Pusatkan peta ke penanda lokasi"
-                                className="h-8 border-border-neutral bg-white px-2.5 text-xs text-dark-neutral hover:bg-pale-green"
+                                className="h-8 border-border-neutral bg-white px-2.5 text-xs text-dark-neutral hover:bg-pale-green dark:border-border-neutral dark:bg-card dark:hover:bg-[#1c2620]"
                             >
                                 <LocateFixed className="size-3.5 text-gray-neutral" />
                                 <span className="hidden sm:inline">
@@ -390,7 +390,7 @@ export function CoordinatePicker({
                                 size="sm"
                                 onClick={handleClear}
                                 title="Hapus titik terpilih"
-                                className="h-8 px-2 text-xs text-gray-neutral hover:bg-pale-green hover:text-dark-neutral"
+                                className="h-8 px-2 text-xs text-gray-neutral hover:bg-pale-green hover:text-dark-neutral dark:hover:bg-[#1c2620] dark:hover:text-foreground"
                             >
                                 <Trash2 className="size-3.5" />
                                 <span className="hidden sm:inline">Hapus</span>
@@ -406,8 +406,8 @@ export function CoordinatePicker({
                     role={gpsStatus.type === 'error' ? 'alert' : 'status'}
                     className={`flex items-center gap-2 rounded-lg border p-2.5 text-xs transition-all ${
                         gpsStatus.type === 'error'
-                            ? 'border-border-neutral bg-pale-green/70 text-dark-neutral'
-                            : 'border-leaf-green/40 bg-soft-green text-forest-green'
+                            ? 'border-border-neutral bg-pale-green/70 text-dark-neutral dark:border-border-neutral dark:bg-[#1c2620]'
+                            : 'border-leaf-green/40 bg-soft-green text-forest-green dark:border-leaf-green/40 dark:bg-[#151c17]'
                     }`}
                 >
                     {gpsStatus.type === 'error' ? (
@@ -420,11 +420,11 @@ export function CoordinatePicker({
             )}
 
             {/* Interactive Leaflet Map Container */}
-            <div className="relative isolate overflow-hidden rounded-xl border border-border-neutral bg-pale-green/30 shadow-2xs">
+            <div className="relative isolate overflow-hidden rounded-xl border border-border-neutral bg-pale-green/30 shadow-2xs dark:border-border-neutral dark:bg-[#121814]">
                 {/* Status Overlay Badge on Top Left of Map */}
                 <div className="pointer-events-none absolute top-3 left-3 z-[1000] flex max-w-[calc(100%-24px)] flex-wrap items-center gap-2">
                     {hasLocation ? (
-                        <div className="pointer-events-auto flex items-center gap-1.5 rounded-lg border border-leaf-green/40 bg-white/95 px-2.5 py-1 text-xs font-semibold text-forest-green shadow-xs backdrop-blur-xs">
+                        <div className="pointer-events-auto flex items-center gap-1.5 rounded-lg border border-leaf-green/40 bg-white/95 px-2.5 py-1 text-xs font-semibold text-forest-green shadow-xs backdrop-blur-xs dark:border-leaf-green/50 dark:bg-[#151c17]/95">
                             <span className="size-2 animate-pulse rounded-full bg-primary-green" />
                             <span>Titik Terpilih:</span>
                             <span className="font-mono font-bold text-dark-neutral">
@@ -433,7 +433,7 @@ export function CoordinatePicker({
                             </span>
                         </div>
                     ) : (
-                        <div className="pointer-events-auto flex items-center gap-1.5 rounded-lg border border-border-neutral bg-white/95 px-2.5 py-1 text-xs text-gray-neutral shadow-xs backdrop-blur-xs">
+                        <div className="pointer-events-auto flex items-center gap-1.5 rounded-lg border border-border-neutral bg-white/95 px-2.5 py-1 text-xs text-gray-neutral shadow-xs backdrop-blur-xs dark:border-border-neutral dark:bg-[#151c17]/95">
                             <Crosshair className="size-3.5 text-primary-green" />
                             <span>Klik area peta untuk menentukan titik</span>
                         </div>
@@ -472,7 +472,7 @@ export function CoordinatePicker({
                             )}
                         </MapContainer>
                     ) : (
-                        <div className="flex h-full w-full items-center justify-center bg-pale-green text-gray-neutral">
+                        <div className="flex h-full w-full items-center justify-center bg-pale-green text-gray-neutral dark:bg-[#151c17]">
                             <div className="flex items-center gap-2 text-xs">
                                 <Compass className="size-4 animate-spin text-primary-green" />
                                 <span>
@@ -484,7 +484,7 @@ export function CoordinatePicker({
                 </div>
 
                 {/* Quick Presets Bar */}
-                <div className="border-t border-border-neutral bg-white p-3">
+                <div className="border-t border-border-neutral bg-white p-3 dark:border-border-neutral dark:bg-card">
                     <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                         <span className="text-[11px] font-semibold tracking-wider text-gray-neutral uppercase">
                             Preset Wilayah Acuan:
@@ -508,8 +508,8 @@ export function CoordinatePicker({
                                         }
                                         className={`rounded-md border px-2 py-1 text-xs font-medium transition-colors ${
                                             isCurrent
-                                                ? 'border-primary-green bg-soft-green font-semibold text-forest-green shadow-2xs'
-                                                : 'border-border-neutral bg-pale-green/50 text-dark-neutral hover:border-gray-neutral hover:bg-pale-green'
+                                                ? 'border-primary-green bg-soft-green font-semibold text-forest-green shadow-2xs dark:border-primary-green dark:bg-[#14251b]'
+                                                : 'border-border-neutral bg-pale-green/50 text-dark-neutral hover:border-gray-neutral hover:bg-pale-green dark:border-border-neutral dark:bg-[#151c17] dark:hover:bg-[#1c2620]'
                                         }`}
                                     >
                                         {preset.name}
@@ -525,7 +525,7 @@ export function CoordinatePicker({
             {(errorLatitude || errorLongitude) && (
                 <div
                     role="alert"
-                    className="flex items-center gap-2 rounded-lg border border-primary-green/40 bg-soft-green/60 p-2.5 text-xs text-forest-green"
+                    className="flex items-center gap-2 rounded-lg border border-primary-green/40 bg-soft-green/60 p-2.5 text-xs text-forest-green dark:border-primary-green/40 dark:bg-[#151c17]"
                 >
                     <AlertCircle className="size-4 shrink-0 text-primary-green" />
                     <span className="font-medium">

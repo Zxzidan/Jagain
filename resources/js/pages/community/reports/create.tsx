@@ -138,7 +138,7 @@ export default function ReportCreate() {
                 {/* Main Form */}
                 <form
                     onSubmit={handleSubmit}
-                    className="space-y-6 rounded-2xl border border-border-neutral bg-white p-5 shadow-xs sm:p-7"
+                    className="space-y-6 rounded-2xl border border-border-neutral bg-white p-5 shadow-xs dark:border-border-neutral dark:bg-card sm:p-7"
                 >
                     {/* Section 1: Ringkasan & Kategori */}
                     <div className="space-y-4">
@@ -203,13 +203,13 @@ export default function ReportCreate() {
                                             }
                                             className={`cursor-pointer rounded-xl border p-3 transition-all ${
                                                 isSelected
-                                                    ? 'border-black bg-white shadow-2xs'
-                                                    : 'border-border-neutral bg-white hover:border-gray-neutral hover:bg-neutral-50/50'
+                                                    ? 'border-primary-green bg-soft-green/30 shadow-2xs dark:border-primary-green dark:bg-[#1a2920]'
+                                                    : 'border-border-neutral bg-white hover:border-gray-neutral hover:bg-neutral-50/50 dark:border-border-neutral dark:bg-card dark:hover:bg-[#1a231d]'
                                             }`}
                                         >
                                             <div className="flex items-center justify-between">
                                                 <span
-                                                    className={`text-xs font-bold ${isSelected ? 'text-black' : 'text-dark-neutral'}`}
+                                                    className={`text-xs font-bold ${isSelected ? 'text-forest-green dark:text-emerald-400' : 'text-dark-neutral'}`}
                                                 >
                                                     {cat.label}
                                                 </span>
@@ -411,7 +411,7 @@ export default function ReportCreate() {
                                     </p>
                                     <label
                                         htmlFor="evidence"
-                                        className="mt-3 inline-flex cursor-pointer items-center gap-1.5 rounded-md border border-border-neutral bg-white px-3 py-1.5 text-xs font-medium text-dark-neutral transition-colors hover:bg-soft-green hover:text-forest-green"
+                                        className="mt-3 inline-flex cursor-pointer items-center gap-1.5 rounded-md border border-border-neutral bg-white px-3 py-1.5 text-xs font-medium text-dark-neutral transition-colors hover:bg-soft-green hover:text-forest-green dark:border-border-neutral dark:bg-[#151c17] dark:hover:bg-soft-green"
                                     >
                                         <Upload className="size-3.5" />
                                         <span>Pilih File dari Perangkat</span>

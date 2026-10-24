@@ -149,7 +149,7 @@ export function ReportMapViewer({
                                 onClick={() =>
                                     setRecenterCount((prev) => prev + 1)
                                 }
-                                className="h-7 border-border-neutral bg-white px-2.5 text-xs font-medium text-dark-neutral hover:bg-pale-green"
+                                className="h-7 border-border-neutral bg-white px-2.5 text-xs font-medium text-dark-neutral hover:bg-pale-green dark:border-border-neutral dark:bg-card dark:hover:bg-[#1c2620]"
                                 title="Pusatkan kembali ke titik koordinat"
                             >
                                 <LocateFixed className="mr-1 size-3.5 text-primary-green" />
@@ -160,7 +160,7 @@ export function ReportMapViewer({
                                 asChild
                                 variant="outline"
                                 size="sm"
-                                className="h-7 border-border-neutral bg-white px-2.5 text-xs font-medium text-dark-neutral hover:bg-pale-green"
+                                className="h-7 border-border-neutral bg-white px-2.5 text-xs font-medium text-dark-neutral hover:bg-pale-green dark:border-border-neutral dark:bg-card dark:hover:bg-[#1c2620]"
                             >
                                 <a
                                     href={googleMapsUrl}
@@ -178,11 +178,11 @@ export function ReportMapViewer({
             </div>
 
             {/* Map Container */}
-            <div className="relative isolate overflow-hidden rounded-xl border border-border-neutral bg-pale-green/30 shadow-2xs">
+            <div className="relative isolate overflow-hidden rounded-xl border border-border-neutral bg-pale-green/30 shadow-2xs dark:border-border-neutral dark:bg-[#121814]">
                 {/* Status Overlay Badge on Top Left */}
                 {hasValidCoords && (
                     <div className="pointer-events-none absolute top-3 left-3 z-[1000] flex max-w-[calc(100%-24px)] flex-wrap items-center gap-2">
-                        <div className="pointer-events-auto flex items-center gap-1.5 rounded-lg border border-leaf-green/40 bg-white/95 px-2.5 py-1 text-xs font-semibold text-forest-green shadow-xs backdrop-blur-xs">
+                        <div className="pointer-events-auto flex items-center gap-1.5 rounded-lg border border-leaf-green/40 bg-white/95 px-2.5 py-1 text-xs font-semibold text-forest-green shadow-xs backdrop-blur-xs dark:border-leaf-green/50 dark:bg-[#151c17]/95">
                             <span className="size-2 animate-pulse rounded-full bg-primary-green" />
                             <span>Titik Terverifikasi:</span>
                             <span className="font-mono font-bold text-dark-neutral">
@@ -250,12 +250,12 @@ export function ReportMapViewer({
                                 </Marker>
                             </MapContainer>
                         ) : (
-                            <div className="flex h-full w-full items-center justify-center bg-pale-green/40 p-6 text-center text-xs text-gray-neutral">
+                            <div className="flex h-full w-full items-center justify-center bg-pale-green/40 p-6 text-center text-xs text-gray-neutral dark:bg-[#151c17]">
                                 Koordinat lokasi tidak tersedia untuk laporan ini.
                             </div>
                         )
                     ) : (
-                        <div className="flex h-full w-full items-center justify-center bg-pale-green text-gray-neutral">
+                        <div className="flex h-full w-full items-center justify-center bg-pale-green text-gray-neutral dark:bg-[#151c17]">
                             <div className="flex items-center gap-2 text-xs">
                                 <Compass className="size-4 animate-spin text-primary-green" />
                                 <span>Memuat peta titik lokasi karhutla...</span>

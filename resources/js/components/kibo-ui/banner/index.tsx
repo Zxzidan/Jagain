@@ -50,7 +50,7 @@ export const Banner = ({
         <BannerContext.Provider value={{ show, setShow }}>
             <div
                 className={cn(
-                    'flex w-full items-center justify-between gap-3 border border-border-neutral bg-white px-4 py-3 text-dark-neutral shadow-2xs transition-all duration-200',
+                    'flex w-full items-center justify-between gap-3 border border-border-neutral bg-white px-4 py-3 text-dark-neutral shadow-2xs transition-all duration-200 dark:border-border dark:bg-card',
                     inset && 'rounded-xl',
                     className,
                 )}
@@ -73,7 +73,7 @@ export const BannerIcon = ({
 }: BannerIconProps) => (
     <div
         className={cn(
-            'flex size-8 shrink-0 items-center justify-center rounded-lg border border-border-neutral/80 bg-pale-green text-primary-green',
+            'flex size-8 shrink-0 items-center justify-center rounded-lg border border-border-neutral/80 bg-pale-green text-primary-green dark:border-border dark:bg-muted',
             className,
         )}
         {...props}
@@ -104,7 +104,7 @@ export const BannerAction = ({
 }: BannerActionProps) => (
     <Button
         className={cn(
-            'shrink-0 border-border-neutral text-xs font-semibold text-dark-neutral transition-colors hover:bg-pale-green',
+            'shrink-0 border-border-neutral text-xs font-semibold text-dark-neutral transition-colors hover:bg-pale-green dark:border-border dark:hover:bg-accent',
             className,
         )}
         size={size}
@@ -132,7 +132,7 @@ export const BannerClose = ({
     return (
         <Button
             className={cn(
-                'size-7 shrink-0 text-gray-neutral hover:bg-pale-green hover:text-dark-neutral',
+                'size-7 shrink-0 text-gray-neutral hover:bg-pale-green hover:text-dark-neutral dark:hover:bg-accent dark:hover:text-foreground',
                 className,
             )}
             onClick={handleClick}

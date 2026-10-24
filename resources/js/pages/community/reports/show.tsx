@@ -137,11 +137,11 @@ export default function ReportShow({ report }: Props) {
                 )}
 
                 {/* Header Card */}
-                <div className="rounded-2xl border border-border-neutral bg-white p-5 sm:p-6 shadow-xs">
-                    <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 border-b border-border-neutral pb-4">
+                <div className="rounded-2xl border border-border-neutral bg-white p-5 sm:p-6 shadow-xs dark:border-border-neutral dark:bg-card">
+                    <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 border-b border-border-neutral pb-4 dark:border-border-neutral">
                         <div className="space-y-1">
                             <div className="flex flex-wrap items-center gap-2">
-                                <span className="font-mono text-sm font-bold text-forest-green bg-soft-green px-2.5 py-1 rounded-md">
+                                <span className="font-mono text-sm font-bold text-forest-green bg-soft-green px-2.5 py-1 rounded-md dark:bg-soft-green dark:text-forest-green">
                                     {report.report_number}
                                 </span>
                                 <StatusBadge status={report.report_status} />
@@ -164,7 +164,7 @@ export default function ReportShow({ report }: Props) {
                     </div>
 
                     {/* Status explanation & distinction banner */}
-                    <div className="mt-4 flex items-start gap-3 rounded-xl border border-border-neutral bg-pale-green p-3 text-xs text-dark-neutral">
+                    <div className="mt-4 flex items-start gap-3 rounded-xl border border-border-neutral bg-pale-green p-3 text-xs text-dark-neutral dark:border-border-neutral dark:bg-[#15241b]">
                         <Info className="size-4 shrink-0 text-primary-green mt-0.5" />
                         <div>
                             <span className="font-bold text-forest-green">Pemberitahuan Status Transparansi: </span>
@@ -178,7 +178,7 @@ export default function ReportShow({ report }: Props) {
 
                 {/* Needs Information Action Section */}
                 {report.can_provide_additional_info && (
-                    <div className="rounded-2xl border-2 border-primary-green/60 bg-soft-green/70 p-5 sm:p-6 shadow-sm">
+                    <div className="rounded-2xl border-2 border-primary-green/60 bg-soft-green/70 p-5 sm:p-6 shadow-sm dark:border-primary-green/40 dark:bg-[#151c17]">
                         <div className="flex items-start gap-3">
                             <AlertCircle className="size-6 shrink-0 text-primary-green mt-0.5" />
                             <div className="space-y-2 flex-1">
@@ -190,7 +190,7 @@ export default function ReportShow({ report }: Props) {
                                 </p>
 
                                 {report.information_requested && (
-                                    <div className="rounded-lg border border-primary-green/30 bg-white p-3.5 text-xs text-dark-neutral font-medium">
+                                    <div className="rounded-lg border border-primary-green/30 bg-white p-3.5 text-xs text-dark-neutral font-medium dark:border-primary-green/40 dark:bg-[#1a241e]">
                                         "{report.information_requested}"
                                     </div>
                                 )}
@@ -207,7 +207,7 @@ export default function ReportShow({ report }: Props) {
                                             value={data.additional_information}
                                             onChange={(e) => setData('additional_information', e.target.value)}
                                             placeholder="Tuliskan keterangan tambahan yang diminta verifikator..."
-                                            className="mt-1 w-full rounded-md border border-border-neutral bg-white p-3 text-xs text-dark-neutral focus:border-primary-green focus:outline-none focus:ring-1 focus:ring-primary-green"
+                                            className="mt-1 w-full rounded-md border border-border-neutral bg-white p-3 text-xs text-dark-neutral focus:border-primary-green focus:outline-none focus:ring-1 focus:ring-primary-green dark:border-border-neutral dark:bg-[#151c17] dark:text-foreground"
                                             required
                                         />
                                         {errors.additional_information && (
@@ -226,7 +226,7 @@ export default function ReportShow({ report }: Props) {
                                             <div className="mt-1 flex items-center gap-2">
                                                 <label
                                                     htmlFor="additional_evidence"
-                                                    className="inline-flex cursor-pointer items-center gap-1.5 rounded-md border border-border-neutral bg-white px-3 py-1.5 text-xs font-medium text-dark-neutral hover:bg-pale-green"
+                                                    className="inline-flex cursor-pointer items-center gap-1.5 rounded-md border border-border-neutral bg-white px-3 py-1.5 text-xs font-medium text-dark-neutral hover:bg-pale-green dark:border-border-neutral dark:bg-card dark:hover:bg-[#1c2620]"
                                                 >
                                                     <Upload className="size-3.5" />
                                                     Pilih Foto Bukti
@@ -240,7 +240,7 @@ export default function ReportShow({ report }: Props) {
                                                 />
                                             </div>
                                         ) : (
-                                            <div className="mt-1 flex items-center gap-3 rounded-lg border border-border-neutral bg-white p-2">
+                                            <div className="mt-1 flex items-center gap-3 rounded-lg border border-border-neutral bg-white p-2 dark:border-border-neutral dark:bg-card">
                                                 <img
                                                     src={previewFile}
                                                     alt="Preview bukti susulan"
@@ -289,11 +289,11 @@ export default function ReportShow({ report }: Props) {
 
                 {/* Previously Provided Additional Information (if any) */}
                 {report.additional_information && (
-                    <div className="rounded-xl border border-border-neutral bg-white p-4 shadow-2xs">
+                    <div className="rounded-xl border border-border-neutral bg-white p-4 shadow-2xs dark:border-border-neutral dark:bg-card">
                         <h3 className="text-xs font-bold text-forest-green uppercase tracking-wider">
                             Informasi Tambahan yang Pernah Anda Berikan
                         </h3>
-                        <p className="mt-2 text-xs text-dark-neutral leading-relaxed bg-pale-green/40 p-3 rounded-lg">
+                        <p className="mt-2 text-xs text-dark-neutral leading-relaxed bg-pale-green/40 p-3 rounded-lg dark:bg-[#1a241e]">
                             {report.additional_information}
                         </p>
                     </div>
@@ -301,12 +301,12 @@ export default function ReportShow({ report }: Props) {
 
                 {/* Admin Notes to Reporter (if available) */}
                 {report.admin_notes && (
-                    <div className="rounded-xl border border-border-neutral bg-white p-4 shadow-2xs">
+                    <div className="rounded-xl border border-border-neutral bg-white p-4 shadow-2xs dark:border-border-neutral dark:bg-card">
                         <h3 className="text-xs font-bold text-forest-green uppercase tracking-wider flex items-center gap-1.5">
                             <Info className="size-3.5 text-primary-green" />
                             Catatan Resmi dari Tim Verifikator
                         </h3>
-                        <p className="mt-2 text-xs text-dark-neutral leading-relaxed bg-soft-green/40 p-3 rounded-lg">
+                        <p className="mt-2 text-xs text-dark-neutral leading-relaxed bg-soft-green/40 p-3 rounded-lg dark:bg-[#1a241e]">
                             {report.admin_notes}
                         </p>
                     </div>
@@ -316,12 +316,12 @@ export default function ReportShow({ report }: Props) {
                     {/* Left Column: Report Details & Evidence (2 cols) */}
                     <div className="lg:col-span-2 space-y-6">
                         {/* Details */}
-                        <div className="rounded-2xl border border-border-neutral bg-white p-5 sm:p-6 shadow-xs space-y-4">
+                        <div className="rounded-2xl border border-border-neutral bg-white p-5 sm:p-6 shadow-xs space-y-4 dark:border-border-neutral dark:bg-card">
                             <h2 className="text-sm font-bold text-forest-green uppercase tracking-wider border-b border-border-neutral pb-2">
                                 Rincian Deskripsi Kejadian
                             </h2>
 
-                            <div className="text-xs text-dark-neutral leading-relaxed whitespace-pre-line bg-pale-green/30 p-3.5 rounded-xl border border-border-neutral/60">
+                            <div className="text-xs text-dark-neutral leading-relaxed whitespace-pre-line bg-pale-green/30 p-3.5 rounded-xl border border-border-neutral/60 dark:bg-[#1a241e]">
                                 {report.description}
                             </div>
 
@@ -330,7 +330,7 @@ export default function ReportShow({ report }: Props) {
                                 <h3 className="text-xs font-semibold text-forest-green uppercase tracking-wider">
                                     Lokasi & Titik Koordinat
                                 </h3>
-                                <div className="rounded-xl border border-border-neutral bg-white p-4 space-y-3">
+                                <div className="rounded-xl border border-border-neutral bg-white p-4 space-y-3 dark:border-border-neutral dark:bg-[#151c17]">
                                     <div className="flex items-start gap-2.5 text-xs text-dark-neutral">
                                         <MapPin className="size-4 shrink-0 text-primary-green mt-0.5" />
                                         <div>
@@ -381,7 +381,7 @@ export default function ReportShow({ report }: Props) {
                                 </h3>
 
                                 {report.evidence.length === 0 ? (
-                                    <div className="rounded-xl border border-dashed border-border-neutral bg-pale-green/20 p-5 text-center text-xs text-gray-neutral">
+                                    <div className="rounded-xl border border-dashed border-border-neutral bg-pale-green/20 p-5 text-center text-xs text-gray-neutral dark:border-border-neutral dark:bg-[#1a241e]/50">
                                         Tidak ada file foto bukti yang dilampirkan pada laporan ini.
                                     </div>
                                 ) : (
@@ -389,13 +389,13 @@ export default function ReportShow({ report }: Props) {
                                         {report.evidence.map((item) => (
                                             <div
                                                 key={item.id}
-                                                className="overflow-hidden rounded-xl border border-border-neutral bg-white shadow-2xs"
+                                                className="overflow-hidden rounded-xl border border-border-neutral bg-white shadow-2xs dark:border-border-neutral dark:bg-card"
                                             >
                                                 <a
                                                     href={item.url}
                                                     target="_blank"
                                                     rel="noopener noreferrer"
-                                                    className="group block relative aspect-video bg-neutral-100 overflow-hidden"
+                                                    className="group block relative aspect-video bg-neutral-100 overflow-hidden dark:bg-[#151c17]"
                                                 >
                                                     <img
                                                         src={item.url}
@@ -424,7 +424,7 @@ export default function ReportShow({ report }: Props) {
 
                     {/* Right Column: Tracking Timeline (1 col) */}
                     <div className="space-y-4">
-                        <div className="rounded-2xl border border-border-neutral bg-white p-5 sm:p-6 shadow-xs">
+                        <div className="rounded-2xl border border-border-neutral bg-white p-5 sm:p-6 shadow-xs dark:border-border-neutral dark:bg-card">
                             <h2 className="text-sm font-bold text-forest-green uppercase tracking-wider border-b border-border-neutral pb-2 flex items-center gap-2">
                                 <Clock className="size-4 text-primary-green" />
                                 Kronologi Perjalanan Laporan
@@ -439,7 +439,7 @@ export default function ReportShow({ report }: Props) {
                                 {report.status_histories.map((hist, idx) => (
                                     <div key={hist.id} className="relative flex items-start gap-4">
                                         {/* Dot */}
-                                        <div className="relative z-10 flex size-6 shrink-0 items-center justify-center rounded-full border-2 border-primary-green bg-white shadow-2xs">
+                                        <div className="relative z-10 flex size-6 shrink-0 items-center justify-center rounded-full border-2 border-primary-green bg-white shadow-2xs dark:bg-card">
                                             <div className="size-2 rounded-full bg-primary-green" />
                                         </div>
 
@@ -456,7 +456,7 @@ export default function ReportShow({ report }: Props) {
                                             </div>
 
                                             {hist.note && (
-                                                <p className="text-xs text-dark-neutral bg-pale-green/60 p-2 rounded-md border border-border-neutral/50 mt-1 leading-normal">
+                                                <p className="text-xs text-dark-neutral bg-pale-green/60 p-2 rounded-md border border-border-neutral/50 mt-1 leading-normal dark:bg-[#1a241e]">
                                                     {hist.note}
                                                 </p>
                                             )}
@@ -472,7 +472,7 @@ export default function ReportShow({ report }: Props) {
                         </div>
 
                         {/* Safety Reminder */}
-                        <div className="rounded-xl border border-border-neutral bg-pale-green p-4 text-xs text-dark-neutral">
+                        <div className="rounded-xl border border-border-neutral bg-pale-green p-4 text-xs text-dark-neutral dark:border-border-neutral dark:bg-card">
                             <div className="font-semibold text-forest-green flex items-center gap-1.5">
                                 <Shield className="size-3.5 text-primary-green" />
                                 Transparansi Pelaporan

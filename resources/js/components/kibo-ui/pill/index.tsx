@@ -21,7 +21,7 @@ export const Pill = ({
 }: PillProps) => (
     <Badge
         className={cn(
-            'inline-flex items-center gap-2 rounded-full border border-border-neutral bg-white px-3 py-1 font-normal text-dark-neutral shadow-2xs transition-colors',
+            'inline-flex items-center gap-2 rounded-full border border-border-neutral bg-white px-3 py-1 font-normal text-dark-neutral shadow-2xs transition-colors dark:border-border dark:bg-card',
             className,
         )}
         variant={variant}
@@ -49,7 +49,7 @@ export type PillButtonProps = ComponentProps<typeof Button>;
 export const PillButton = ({ className, ...props }: PillButtonProps) => (
     <Button
         className={cn(
-            '-my-1 -mr-1.5 size-5 rounded-full p-0.5 text-gray-neutral hover:bg-pale-green hover:text-dark-neutral',
+            '-my-1 -mr-1.5 size-5 rounded-full p-0.5 text-gray-neutral hover:bg-pale-green hover:text-dark-neutral dark:hover:bg-accent dark:hover:text-foreground',
             className,
         )}
         size="icon"

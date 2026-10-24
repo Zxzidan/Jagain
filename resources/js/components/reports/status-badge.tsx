@@ -69,7 +69,7 @@ export function StatusBadge({
                 className={`badge badge-light ${className}`}
             >
                 {showIcon && (
-                    <Icon className="size-3.5 shrink-0 text-[#212529]" />
+                    <Icon className="size-3.5 shrink-0 text-[#212529] dark:text-zinc-200" />
                 )}
                 <span>{label}</span>
             </span>
@@ -80,7 +80,7 @@ export function StatusBadge({
         case 'SUBMITTED':
             return (
                 <span
-                    className={`inline-flex items-center gap-1.5 rounded-md border border-border-neutral bg-white px-2.5 py-0.5 text-xs font-medium text-dark-neutral ${className}`}
+                    className={`inline-flex items-center gap-1.5 rounded-md border border-border-neutral bg-white px-2.5 py-0.5 text-xs font-medium text-dark-neutral dark:border-border dark:bg-card dark:text-foreground ${className}`}
                 >
                     {showIcon && (
                         <Clock className="size-3.5 shrink-0 text-gray-neutral" />
@@ -91,7 +91,7 @@ export function StatusBadge({
         case 'UNDER_REVIEW':
             return (
                 <span
-                    className={`inline-flex items-center gap-1.5 rounded-md border border-border-neutral bg-white px-2.5 py-0.5 text-xs font-medium text-dark-neutral ${className}`}
+                    className={`inline-flex items-center gap-1.5 rounded-md border border-border-neutral bg-white px-2.5 py-0.5 text-xs font-medium text-dark-neutral dark:border-border dark:bg-card dark:text-foreground ${className}`}
                 >
                     {showIcon && (
                         <FileText className="size-3.5 shrink-0 text-gray-neutral" />
@@ -102,7 +102,7 @@ export function StatusBadge({
         case 'NEEDS_INFORMATION':
             return (
                 <span
-                    className={`inline-flex items-center gap-1.5 rounded-md border border-leaf-green/40 bg-soft-green/80 px-2.5 py-0.5 text-xs font-semibold text-forest-green ${className}`}
+                    className={`inline-flex items-center gap-1.5 rounded-md border border-leaf-green/40 bg-soft-green/80 px-2.5 py-0.5 text-xs font-semibold text-forest-green dark:border-leaf-green/50 dark:bg-soft-green ${className}`}
                 >
                     {showIcon && (
                         <AlertCircle className="size-3.5 shrink-0 text-primary-green" />
@@ -113,7 +113,7 @@ export function StatusBadge({
         case 'VERIFIED':
             return (
                 <span
-                    className={`inline-flex items-center gap-1.5 rounded-md border border-leaf-green/30 bg-soft-green/40 px-2.5 py-0.5 text-xs font-medium text-forest-green ${className}`}
+                    className={`inline-flex items-center gap-1.5 rounded-md border border-leaf-green/30 bg-soft-green/40 px-2.5 py-0.5 text-xs font-medium text-forest-green dark:border-leaf-green/40 dark:bg-soft-green ${className}`}
                 >
                     {showIcon && (
                         <CheckCircle2 className="size-3.5 shrink-0 text-primary-green" />
@@ -124,7 +124,7 @@ export function StatusBadge({
         case 'DISPATCHED':
             return (
                 <span
-                    className={`inline-flex items-center gap-1.5 rounded-md border border-border-neutral bg-white px-2.5 py-0.5 text-xs font-medium text-dark-neutral ${className}`}
+                    className={`inline-flex items-center gap-1.5 rounded-md border border-border-neutral bg-white px-2.5 py-0.5 text-xs font-medium text-dark-neutral dark:border-border dark:bg-card dark:text-foreground ${className}`}
                 >
                     {showIcon && (
                         <Send className="size-3.5 shrink-0 text-primary-green" />
@@ -135,7 +135,7 @@ export function StatusBadge({
         case 'RESOLUTION_REVIEW':
             return (
                 <span
-                    className={`inline-flex items-center gap-1.5 rounded-md border border-border-neutral bg-white px-2.5 py-0.5 text-xs font-medium text-dark-neutral ${className}`}
+                    className={`inline-flex items-center gap-1.5 rounded-md border border-border-neutral bg-white px-2.5 py-0.5 text-xs font-medium text-dark-neutral dark:border-border dark:bg-card dark:text-foreground ${className}`}
                 >
                     {showIcon && (
                         <FileCheck className="size-3.5 shrink-0 text-leaf-green" />
@@ -146,7 +146,7 @@ export function StatusBadge({
         case 'RESOLVED_VERIFIED':
             return (
                 <span
-                    className={`inline-flex items-center gap-1.5 rounded-md border border-leaf-green/30 bg-soft-green/50 px-2.5 py-0.5 text-xs font-semibold text-forest-green ${className}`}
+                    className={`inline-flex items-center gap-1.5 rounded-md border border-leaf-green/30 bg-soft-green/50 px-2.5 py-0.5 text-xs font-semibold text-forest-green dark:border-leaf-green/40 dark:bg-soft-green ${className}`}
                 >
                     {showIcon && (
                         <CheckCircle2 className="size-3.5 shrink-0 text-forest-green" />
@@ -157,7 +157,7 @@ export function StatusBadge({
         case 'CLOSED_WITH_REASON':
             return (
                 <span
-                    className={`inline-flex items-center gap-1.5 rounded-md border border-border-neutral bg-pale-green px-2.5 py-0.5 text-xs font-medium text-gray-neutral ${className}`}
+                    className={`inline-flex items-center gap-1.5 rounded-md border border-border-neutral bg-pale-green px-2.5 py-0.5 text-xs font-medium text-gray-neutral dark:border-border dark:bg-pale-green ${className}`}
                 >
                     {showIcon && (
                         <XCircle className="size-3.5 shrink-0 text-gray-neutral" />
@@ -168,7 +168,7 @@ export function StatusBadge({
         default:
             return (
                 <span
-                    className={`inline-flex items-center gap-1.5 rounded-md border border-border-neutral bg-white px-2.5 py-0.5 text-xs font-medium text-dark-neutral ${className}`}
+                    className={`inline-flex items-center gap-1.5 rounded-md border border-border-neutral bg-white px-2.5 py-0.5 text-xs font-medium text-dark-neutral dark:border-border dark:bg-card dark:text-foreground ${className}`}
                 >
                     {status}
                 </span>
@@ -224,7 +224,7 @@ export function FireConditionBadge({
                 className={`badge badge-light ${className}`}
                 title={title}
             >
-                <Icon className="size-3.5 shrink-0 text-[#212529]" />
+                <Icon className="size-3.5 shrink-0 text-[#212529] dark:text-zinc-200" />
                 <span>{label}</span>
             </span>
         );
@@ -234,7 +234,7 @@ export function FireConditionBadge({
         case 'REPORTED_ACTIVE':
             return (
                 <span
-                    className={`inline-flex items-center gap-1.5 rounded-md border border-border-neutral bg-white px-2.5 py-0.5 text-xs font-medium text-dark-neutral ${className}`}
+                    className={`inline-flex items-center gap-1.5 rounded-md border border-border-neutral bg-white px-2.5 py-0.5 text-xs font-medium text-dark-neutral dark:border-border dark:bg-card dark:text-foreground ${className}`}
                     title="Kondisi kebakaran berdasarkan pengamatan pelapor"
                 >
                     <Flame className="size-3.5 shrink-0 text-primary-green" />
@@ -244,7 +244,7 @@ export function FireConditionBadge({
         case 'OBSERVED_ACTIVE':
             return (
                 <span
-                    className={`inline-flex items-center gap-1.5 rounded-md border border-leaf-green/40 bg-soft-green/50 px-2.5 py-0.5 text-xs font-semibold text-forest-green ${className}`}
+                    className={`inline-flex items-center gap-1.5 rounded-md border border-leaf-green/40 bg-soft-green/50 px-2.5 py-0.5 text-xs font-semibold text-forest-green dark:border-leaf-green/50 dark:bg-soft-green ${className}`}
                     title="Kondisi kebakaran terkonfirmasi aktif oleh petugas di lapangan"
                 >
                     <ShieldAlert className="size-3.5 shrink-0 text-primary-green" />
@@ -254,7 +254,7 @@ export function FireConditionBadge({
         case 'OBSERVED_CONTAINED':
             return (
                 <span
-                    className={`inline-flex items-center gap-1.5 rounded-md border border-border-neutral bg-white px-2.5 py-0.5 text-xs font-medium text-dark-neutral ${className}`}
+                    className={`inline-flex items-center gap-1.5 rounded-md border border-border-neutral bg-white px-2.5 py-0.5 text-xs font-medium text-dark-neutral dark:border-border dark:bg-card dark:text-foreground ${className}`}
                     title="Api telah disekat / terkendali"
                 >
                     <Eye className="size-3.5 shrink-0 text-leaf-green" />
@@ -264,7 +264,7 @@ export function FireConditionBadge({
         case 'OBSERVED_EXTINGUISHED':
             return (
                 <span
-                    className={`inline-flex items-center gap-1.5 rounded-md border border-leaf-green/30 bg-soft-green/40 px-2.5 py-0.5 text-xs font-medium text-forest-green ${className}`}
+                    className={`inline-flex items-center gap-1.5 rounded-md border border-leaf-green/30 bg-soft-green/40 px-2.5 py-0.5 text-xs font-medium text-forest-green dark:border-leaf-green/40 dark:bg-soft-green ${className}`}
                     title="Kondisi kebakaran terobservasi telah padam oleh petugas berwenang"
                 >
                     <CheckCircle2 className="size-3.5 shrink-0 text-forest-green" />
@@ -275,7 +275,7 @@ export function FireConditionBadge({
         default:
             return (
                 <span
-                    className={`inline-flex items-center gap-1.5 rounded-md border border-border-neutral bg-pale-green px-2.5 py-0.5 text-xs font-medium text-gray-neutral ${className}`}
+                    className={`inline-flex items-center gap-1.5 rounded-md border border-border-neutral bg-pale-green px-2.5 py-0.5 text-xs font-medium text-gray-neutral dark:border-border dark:bg-pale-green ${className}`}
                     title="Kondisi fisik kebakaran di lapangan belum diobservasi secara langsung"
                 >
                     <HelpCircle className="size-3.5 shrink-0 text-gray-neutral" />

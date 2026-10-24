@@ -112,7 +112,7 @@ export default function Dashboard({
                 {flash?.error && (
                     <div
                         role="alert"
-                        className="flex items-center gap-3 rounded-xl border border-border-neutral bg-white p-4 text-sm text-dark-neutral shadow-xs transition-all duration-200"
+                        className="flex items-center gap-3 rounded-xl border border-border-neutral bg-white p-4 text-sm text-dark-neutral shadow-xs transition-all duration-200 dark:border-border-neutral dark:bg-card"
                     >
                         <AlertCircle className="size-5 shrink-0 text-primary-green" />
                         <span className="font-medium">{flash.error}</span>
@@ -123,13 +123,13 @@ export default function Dashboard({
                 {metrics.needs_info > 0 && (
                     <Banner
                         inset
-                        className="border-leaf-green/40 bg-soft-green/90 p-4 text-dark-neutral shadow-xs transition-all duration-200 hover:border-leaf-green/60 sm:p-5"
+                        className="border-leaf-green/40 bg-soft-green/90 p-4 text-dark-neutral shadow-xs transition-all duration-200 hover:border-leaf-green/60 dark:border-leaf-green/50 dark:bg-card sm:p-5"
                     >
                         <div className="flex w-full flex-col justify-between gap-4 sm:flex-row sm:items-center">
                             <div className="flex items-start gap-3.5">
                                 <BannerIcon
                                     icon={AlertCircle}
-                                    className="size-9 border-leaf-green/30 bg-white text-primary-green shadow-xs"
+                                    className="size-9 border-leaf-green/30 bg-white text-primary-green shadow-xs dark:border-leaf-green/50 dark:bg-[#1a231d]"
                                 />
                                 <div className="space-y-0.5">
                                     <BannerTitle className="text-sm font-semibold text-forest-green">
@@ -262,7 +262,7 @@ export default function Dashboard({
                                             </DialogStackDescription>
                                         </DialogStackHeader>
                                         <div className="my-4 space-y-2.5 text-xs leading-relaxed text-dark-neutral">
-                                            <div className="flex items-start gap-2.5 rounded-lg border border-border-neutral bg-pale-green/40 p-2.5">
+                                            <div className="flex items-start gap-2.5 rounded-lg border border-border-neutral bg-pale-green/40 p-2.5 dark:border-border-neutral dark:bg-[#18221b]/80">
                                                 <Clock className="mt-0.5 size-4 shrink-0 text-primary-green" />
                                                 <div>
                                                     <strong className="font-semibold text-forest-green">
@@ -277,7 +277,7 @@ export default function Dashboard({
                                                     </p>
                                                 </div>
                                             </div>
-                                            <div className="flex items-start gap-2.5 rounded-lg border border-border-neutral bg-pale-green/40 p-2.5">
+                                            <div className="flex items-start gap-2.5 rounded-lg border border-border-neutral bg-pale-green/40 p-2.5 dark:border-border-neutral dark:bg-[#18221b]/80">
                                                 <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-primary-green" />
                                                 <div>
                                                     <strong className="font-semibold text-forest-green">
@@ -291,7 +291,7 @@ export default function Dashboard({
                                                     </p>
                                                 </div>
                                             </div>
-                                            <div className="flex items-start gap-2.5 rounded-lg border border-border-neutral bg-pale-green/40 p-2.5">
+                                            <div className="flex items-start gap-2.5 rounded-lg border border-border-neutral bg-pale-green/40 p-2.5 dark:border-border-neutral dark:bg-[#18221b]/80">
                                                 <Shield className="mt-0.5 size-4 shrink-0 text-primary-green" />
                                                 <div>
                                                     <strong className="font-semibold text-forest-green">
@@ -334,7 +334,7 @@ export default function Dashboard({
                                             </DialogStackDescription>
                                         </DialogStackHeader>
                                         <div className="my-4 space-y-2.5 text-xs leading-relaxed text-dark-neutral">
-                                            <div className="flex items-start gap-2.5 rounded-lg border border-border-neutral bg-soft-green/60 p-2.5">
+                                            <div className="flex items-start gap-2.5 rounded-lg border border-border-neutral bg-soft-green/60 p-2.5 dark:border-border-neutral dark:bg-[#15241b]/90">
                                                 <ShieldAlert className="mt-0.5 size-4 shrink-0 text-primary-green" />
                                                 <div>
                                                     <strong className="font-semibold text-forest-green">
@@ -350,7 +350,7 @@ export default function Dashboard({
                                                     </p>
                                                 </div>
                                             </div>
-                                            <div className="flex items-start gap-2.5 rounded-lg border border-border-neutral bg-pale-green/40 p-2.5">
+                                            <div className="flex items-start gap-2.5 rounded-lg border border-border-neutral bg-pale-green/40 p-2.5 dark:border-border-neutral dark:bg-[#18221b]/80">
                                                 <MapPin className="mt-0.5 size-4 shrink-0 text-primary-green" />
                                                 <div>
                                                     <strong className="font-semibold text-forest-green">
@@ -395,7 +395,7 @@ export default function Dashboard({
                                             </DialogStackDescription>
                                         </DialogStackHeader>
                                         <div className="my-4 space-y-2.5 text-xs leading-relaxed text-dark-neutral">
-                                            <div className="flex items-start gap-2.5 rounded-lg border border-border-neutral bg-pale-green/40 p-2.5">
+                                            <div className="flex items-start gap-2.5 rounded-lg border border-border-neutral bg-pale-green/40 p-2.5 dark:border-border-neutral dark:bg-[#18221b]/80">
                                                 <Shield className="mt-0.5 size-4 shrink-0 text-primary-green" />
                                                 <div>
                                                     <strong className="font-semibold text-forest-green">
@@ -409,7 +409,7 @@ export default function Dashboard({
                                                     </p>
                                                 </div>
                                             </div>
-                                            <div className="flex items-start gap-2.5 rounded-lg border border-border-neutral bg-pale-green/40 p-2.5">
+                                            <div className="flex items-start gap-2.5 rounded-lg border border-border-neutral bg-pale-green/40 p-2.5 dark:border-border-neutral dark:bg-[#18221b]/80">
                                                 <FileText className="mt-0.5 size-4 shrink-0 text-primary-green" />
                                                 <div>
                                                     <strong className="font-semibold text-forest-green">
@@ -458,12 +458,12 @@ export default function Dashboard({
 
                     <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
                         {/* Metric 1: Total Reports */}
-                        <div className="group rounded-xl bg-white p-4 shadow-[0_10px_30px_rgba(0,0,0,0.08)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_14px_35px_rgba(0,0,0,0.11)] sm:p-5">
+                        <div className="group rounded-xl border border-border-neutral bg-white p-4 shadow-xs transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md dark:border-border-neutral dark:bg-card sm:p-5">
                             <div className="flex items-center justify-between">
                                 <span className="text-[11px] font-semibold tracking-wider text-gray-neutral uppercase">
                                     Total Laporan
                                 </span>
-                                <div className="flex size-7 items-center justify-center rounded-md bg-pale-green text-dark-neutral transition-colors">
+                                <div className="flex size-7 items-center justify-center rounded-md bg-pale-green text-dark-neutral transition-colors dark:bg-[#1c2620]">
                                     <FileText className="size-3.5 text-gray-neutral" />
                                 </div>
                             </div>
@@ -481,12 +481,12 @@ export default function Dashboard({
                         </div>
 
                         {/* Metric 2: Submitted & In Review */}
-                        <div className="group rounded-xl bg-white p-4 shadow-[0_10px_30px_rgba(0,0,0,0.08)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_14px_35px_rgba(0,0,0,0.11)] sm:p-5">
+                        <div className="group rounded-xl border border-border-neutral bg-white p-4 shadow-xs transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md dark:border-border-neutral dark:bg-card sm:p-5">
                             <div className="flex items-center justify-between">
                                 <span className="text-[11px] font-semibold tracking-wider text-gray-neutral uppercase">
                                     Dalam Telaah
                                 </span>
-                                <div className="flex size-7 items-center justify-center rounded-md bg-pale-green text-dark-neutral transition-colors">
+                                <div className="flex size-7 items-center justify-center rounded-md bg-pale-green text-dark-neutral transition-colors dark:bg-[#1c2620]">
                                     <Clock className="size-3.5 text-gray-neutral" />
                                 </div>
                             </div>
@@ -503,7 +503,7 @@ export default function Dashboard({
                                     Antrean verifikasi awal petugas
                                 </p>
                                 {metrics.needs_info > 0 && (
-                                    <Pill className="border-leaf-green/40 bg-soft-green/90 px-2 py-0.5 text-[10px] text-forest-green">
+                                    <Pill className="border-leaf-green/40 bg-soft-green/90 px-2 py-0.5 text-[10px] text-forest-green dark:border-leaf-green/50 dark:bg-soft-green">
                                         <PillIndicator
                                             variant="warning"
                                             pulse
@@ -517,12 +517,12 @@ export default function Dashboard({
                         </div>
 
                         {/* Metric 3: Verified & Dispatched */}
-                        <div className="group rounded-xl bg-white p-4 shadow-[0_10px_30px_rgba(0,0,0,0.08)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_14px_35px_rgba(0,0,0,0.11)] sm:p-5">
+                        <div className="group rounded-xl border border-border-neutral bg-white p-4 shadow-xs transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md dark:border-border-neutral dark:bg-card sm:p-5">
                             <div className="flex items-center justify-between">
                                 <span className="text-[11px] font-semibold tracking-wider text-gray-neutral uppercase">
                                     Terverifikasi
                                 </span>
-                                <div className="flex size-7 items-center justify-center rounded-md bg-soft-green/70 text-primary-green transition-colors">
+                                <div className="flex size-7 items-center justify-center rounded-md bg-soft-green/70 text-primary-green transition-colors dark:bg-[#1c2620]">
                                     <CheckCircle2 className="size-3.5 text-primary-green" />
                                 </div>
                             </div>
@@ -540,12 +540,12 @@ export default function Dashboard({
                         </div>
 
                         {/* Metric 4: Resolved / Closed */}
-                        <div className="group rounded-xl bg-white p-4 shadow-[0_10px_30px_rgba(0,0,0,0.08)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_14px_35px_rgba(0,0,0,0.11)] sm:p-5">
+                        <div className="group rounded-xl border border-border-neutral bg-white p-4 shadow-xs transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md dark:border-border-neutral dark:bg-card sm:p-5">
                             <div className="flex items-center justify-between">
                                 <span className="text-[11px] font-semibold tracking-wider text-gray-neutral uppercase">
                                     Selesai Ditangani
                                 </span>
-                                <div className="flex size-7 items-center justify-center rounded-md bg-pale-green text-dark-neutral transition-colors">
+                                <div className="flex size-7 items-center justify-center rounded-md bg-pale-green text-dark-neutral transition-colors dark:bg-[#1c2620]">
                                     <Shield className="size-3.5 text-gray-neutral" />
                                 </div>
                             </div>
@@ -574,40 +574,40 @@ export default function Dashboard({
                     </span>
                     <Link
                         href="/reports"
-                        className="shrink-0 rounded-lg border border-border-neutral bg-white px-3 py-1.5 font-medium text-dark-neutral transition-colors hover:border-gray-neutral/40 hover:bg-pale-green focus-visible:ring-2 focus-visible:ring-primary-green focus-visible:outline-hidden"
+                        className="shrink-0 rounded-lg border border-border-neutral bg-white px-3 py-1.5 font-medium text-dark-neutral transition-colors hover:border-gray-neutral/40 hover:bg-pale-green focus-visible:ring-2 focus-visible:ring-primary-green focus-visible:outline-hidden dark:border-border-neutral dark:bg-card dark:hover:bg-[#1c2620]"
                     >
                         Semua ({metrics.total})
                     </Link>
                     <Link
                         href="/reports?status=SUBMITTED"
-                        className="shrink-0 rounded-lg border border-border-neutral bg-white px-3 py-1.5 font-medium text-dark-neutral transition-colors hover:border-gray-neutral/40 hover:bg-pale-green focus-visible:ring-2 focus-visible:ring-primary-green focus-visible:outline-hidden"
+                        className="shrink-0 rounded-lg border border-border-neutral bg-white px-3 py-1.5 font-medium text-dark-neutral transition-colors hover:border-gray-neutral/40 hover:bg-pale-green focus-visible:ring-2 focus-visible:ring-primary-green focus-visible:outline-hidden dark:border-border-neutral dark:bg-card dark:hover:bg-[#1c2620]"
                     >
                         Terkirim ({metrics.submitted})
                     </Link>
                     <Link
                         href="/reports?status=UNDER_REVIEW"
-                        className="shrink-0 rounded-lg border border-border-neutral bg-white px-3 py-1.5 font-medium text-dark-neutral transition-colors hover:border-gray-neutral/40 hover:bg-pale-green focus-visible:ring-2 focus-visible:ring-primary-green focus-visible:outline-hidden"
+                        className="shrink-0 rounded-lg border border-border-neutral bg-white px-3 py-1.5 font-medium text-dark-neutral transition-colors hover:border-gray-neutral/40 hover:bg-pale-green focus-visible:ring-2 focus-visible:ring-primary-green focus-visible:outline-hidden dark:border-border-neutral dark:bg-card dark:hover:bg-[#1c2620]"
                     >
                         Dalam Telaah ({metrics.in_review})
                     </Link>
                     <Link
                         href="/reports?status=NEEDS_INFORMATION"
                         className={`shrink-0 rounded-lg border px-3 py-1.5 font-medium transition-colors focus-visible:ring-2 focus-visible:ring-primary-green focus-visible:outline-hidden ${metrics.needs_info > 0
-                                ? 'border-leaf-green/50 bg-soft-green font-semibold text-forest-green'
-                                : 'border-border-neutral bg-white text-dark-neutral hover:bg-pale-green'
+                                ? 'border-leaf-green/50 bg-soft-green font-semibold text-forest-green dark:border-leaf-green/60 dark:bg-soft-green'
+                                : 'border-border-neutral bg-white text-dark-neutral hover:bg-pale-green dark:border-border-neutral dark:bg-card dark:hover:bg-[#1c2620]'
                             }`}
                     >
                         Perlu Klarifikasi ({metrics.needs_info})
                     </Link>
                     <Link
                         href="/reports?status=VERIFIED"
-                        className="shrink-0 rounded-lg border border-border-neutral bg-white px-3 py-1.5 font-medium text-dark-neutral transition-colors hover:border-gray-neutral/40 hover:bg-pale-green focus-visible:ring-2 focus-visible:ring-primary-green focus-visible:outline-hidden"
+                        className="shrink-0 rounded-lg border border-border-neutral bg-white px-3 py-1.5 font-medium text-dark-neutral transition-colors hover:border-gray-neutral/40 hover:bg-pale-green focus-visible:ring-2 focus-visible:ring-primary-green focus-visible:outline-hidden dark:border-border-neutral dark:bg-card dark:hover:bg-[#1c2620]"
                     >
                         Terverifikasi ({metrics.verified})
                     </Link>
                     <Link
                         href="/reports?status=RESOLVED_VERIFIED"
-                        className="shrink-0 rounded-lg border border-border-neutral bg-white px-3 py-1.5 font-medium text-dark-neutral transition-colors hover:border-gray-neutral/40 hover:bg-pale-green focus-visible:ring-2 focus-visible:ring-primary-green focus-visible:outline-hidden"
+                        className="shrink-0 rounded-lg border border-border-neutral bg-white px-3 py-1.5 font-medium text-dark-neutral transition-colors hover:border-gray-neutral/40 hover:bg-pale-green focus-visible:ring-2 focus-visible:ring-primary-green focus-visible:outline-hidden dark:border-border-neutral dark:bg-card dark:hover:bg-[#1c2620]"
                     >
                         Tuntas Selesai ({metrics.resolved})
                     </Link>
@@ -651,8 +651,8 @@ export default function Dashboard({
 
                     {/* Empty State */}
                     {recentReports.length === 0 ? (
-                        <div className="rounded-xl border border-dashed border-border-neutral bg-white p-8 text-center shadow-xs sm:p-12">
-                            <div className="mx-auto flex size-12 items-center justify-center rounded-full border border-border-neutral/70 bg-pale-green text-gray-neutral">
+                        <div className="rounded-xl border border-dashed border-border-neutral bg-white p-8 text-center shadow-xs dark:border-border-neutral dark:bg-card sm:p-12">
+                            <div className="mx-auto flex size-12 items-center justify-center rounded-full border border-border-neutral/70 bg-pale-green text-gray-neutral dark:bg-[#1c2620]">
                                 <FileText className="size-6 text-gray-neutral" />
                             </div>
                             <h3 className="mt-3.5 text-base font-semibold text-dark-neutral">
@@ -685,7 +685,7 @@ export default function Dashboard({
                             {recentReports.map((report) => (
                                 <article
                                     key={report.id}
-                                    className="group rounded-xl border border-border-neutral bg-white p-4 shadow-xs transition-all duration-200 ease-out hover:-translate-y-0.5 hover:border-gray-neutral/30 hover:shadow-md sm:p-5"
+                                    className="group rounded-xl border border-border-neutral bg-white p-4 shadow-xs transition-all duration-200 ease-out hover:-translate-y-0.5 hover:border-gray-neutral/30 hover:shadow-md dark:border-border-neutral dark:bg-card dark:hover:border-leaf-green/40 dark:hover:bg-[#17201a] sm:p-5"
                                 >
                                     <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
                                         {/* Report Core Details */}
@@ -718,7 +718,7 @@ export default function Dashboard({
                                                 {/* Evidence Counter */}
                                                 {report.has_evidence && (
                                                     <span className="badge badge-light">
-                                                        <Camera className="size-3 shrink-0 text-[#212529]" />
+                                                        <Camera className="size-3 shrink-0 text-[#212529] dark:text-zinc-200" />
                                                         <span>
                                                             {
                                                                 report.evidence_count
@@ -730,7 +730,7 @@ export default function Dashboard({
                                             </div>
 
                                             {/* Title */}
-                                            <h3 className="line-clamp-1 text-base font-semibold text-dark-neutral transition-colors group-hover:text-primary-green sm:line-clamp-2">
+                                            <h3 className="line-clamp-1 text-base font-semibold text-dark-neutral transition-colors group-hover:text-primary-green dark:group-hover:text-leaf-green sm:line-clamp-2">
                                                 <Link
                                                     href={`/reports/${report.id}`}
                                                 >
@@ -784,7 +784,7 @@ export default function Dashboard({
                 </section>
 
                 {/* Transparency, Safety Guidelines & Civic Notice */}
-                <footer className="rounded-xl border border-border-neutral bg-pale-green/60 p-5 shadow-xs sm:p-6 lg:p-7">
+                <footer className="rounded-xl border border-border-neutral bg-pale-green/60 p-5 shadow-xs dark:border-border-neutral dark:bg-card/70 sm:p-6 lg:p-7">
                     <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:gap-8">
                         {/* Column 1: Safety Protocol */}
                         <div className="space-y-3">
@@ -832,7 +832,7 @@ export default function Dashboard({
                         </div>
 
                         {/* Column 2: Platform Transparency & Boundaries */}
-                        <div className="space-y-3 border-t border-border-neutral/80 pt-4 md:border-t-0 md:border-l md:pt-0 md:pl-6 lg:pl-8">
+                        <div className="space-y-3 border-t border-border-neutral/80 pt-4 dark:border-border-neutral md:border-t-0 md:border-l md:pt-0 md:pl-6 lg:pl-8">
                             <div className="flex items-center gap-2 text-forest-green">
                                 <Info className="size-4 shrink-0 text-primary-green" />
                                 <h3 className="text-sm font-bold tracking-tight text-dark-neutral">
