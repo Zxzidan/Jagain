@@ -1,7 +1,7 @@
 import { Link } from '@inertiajs/react';
 import { Breadcrumbs } from '@/components/breadcrumbs';
 import { SidebarTrigger } from '@/components/ui/sidebar';
-import { Globe, MapPin } from 'lucide-react';
+import { Globe, Map } from 'lucide-react';
 import type { BreadcrumbItem as BreadcrumbItemType } from '@/types';
 
 export function AppSidebarHeader({
@@ -10,23 +10,23 @@ export function AppSidebarHeader({
     breadcrumbs?: BreadcrumbItemType[];
 }) {
     return (
-        <header className="flex h-16 shrink-0 items-center justify-between border-b border-[#cccbc8] bg-[#faf9f5] px-4 sm:px-6 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
-            <div className="flex items-center gap-2">
-                <SidebarTrigger className="-ml-1 text-[#141413] hover:bg-[#e3dacc]" />
+        <header className="flex h-16 shrink-0 items-center justify-between border-b border-border bg-background px-4 sm:px-6 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 dark:bg-[#101512]">
+            <div className="flex items-center gap-3">
+                <SidebarTrigger className="-ml-1 text-foreground hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-lg p-1.5 transition-colors" />
                 <Breadcrumbs breadcrumbs={breadcrumbs} />
             </div>
 
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2.5">
                 <Link
                     href="/peta"
-                    className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[8px] border border-[#cccbc8] text-xs font-semibold text-[#141413] bg-[#faf9f5] hover:bg-[#e3dacc] transition-colors"
+                    className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-border text-xs font-semibold text-foreground bg-card hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors shadow-2xs"
                 >
-                    <MapPin className="size-3.5 text-[#87867f]" />
-                    Peta Karhutla
+                    <Map className="size-3.5 text-[#216B49] dark:text-[#10e57a]" />
+                    <span>Peta Karhutla</span>
                 </Link>
                 <Link
                     href="/"
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[8px] bg-[#e3dacc] text-xs font-semibold text-[#141413] border border-[#cccbc8] hover:bg-[#141413] hover:text-[#faf9f5] transition-colors"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#E8F1EB] text-xs font-bold text-[#174B35] border border-[#DDE3DE] hover:bg-[#216B49] hover:text-white dark:bg-emerald-950/60 dark:text-[#10e57a] dark:border-emerald-800/40 dark:hover:bg-[#10e57a] dark:hover:text-black transition-all shadow-2xs"
                 >
                     <Globe className="size-3.5" />
                     <span>Website Publik</span>

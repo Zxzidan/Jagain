@@ -74,8 +74,8 @@ export default function Navbar() {
                     scrolled ? 'h-14 sm:h-[60px]' : 'h-16 sm:h-[72px]'
                 }`}
             >
-                {/* Left Column: Brand Logo (flex-1 for perfect centering of nav) */}
-                <div className="flex items-center justify-start flex-1 min-w-0">
+                {/* Left Column: Brand Logo */}
+                <div className="flex items-center justify-start shrink-0">
                     <Link
                         href="/"
                         className="flex items-center gap-2.5 focus:outline-none group select-none"
@@ -89,10 +89,10 @@ export default function Navbar() {
                     </Link>
                 </div>
 
-                {/* Center Column: Desktop Navigation (Enlarged, proportioned with logo & login, NO outline) */}
+                {/* Center Column: Desktop Navigation */}
                 <nav
                     aria-label="Navigasi Utama"
-                    className="hidden md:flex items-center gap-1.5 font-sans border-0 outline-none"
+                    className="hidden lg:flex items-center gap-1 xl:gap-1.5 font-sans border-0 outline-none flex-1 justify-center min-w-0 px-2"
                 >
                     {navItems.map((item, idx) => {
                         const active = getActiveNavIndex() === idx;
@@ -100,7 +100,7 @@ export default function Navbar() {
                             <Link
                                 key={item.href}
                                 href={item.href}
-                                className={`h-9 px-4 text-sm font-semibold rounded-xl inline-flex items-center justify-center transition-all duration-200 select-none border-0 outline-none focus:outline-none focus:ring-0 ${
+                                className={`h-8.5 px-3 xl:px-3.5 text-xs xl:text-sm font-semibold rounded-xl inline-flex items-center justify-center transition-all duration-200 select-none whitespace-nowrap border-0 outline-none focus:outline-none focus:ring-0 ${
                                     active
                                         ? scrolled || !isHomePage
                                             ? 'bg-neutral-950 text-white font-bold shadow-xs'
@@ -116,22 +116,22 @@ export default function Navbar() {
                     })}
                 </nav>
 
-                {/* Right Column: Masuk & Actions (flex-1, justify-end) */}
-                <div className="hidden md:flex items-center justify-end flex-1 min-w-0 gap-2.5 font-sans">
+                {/* Right Column: Masuk & Actions */}
+                <div className="hidden md:flex items-center justify-end shrink-0 gap-2 xl:gap-2.5 font-sans">
                     {user ? (
                         <DropdownMenu>
                             <DropdownMenuTrigger
-                                className={`h-9 inline-flex items-center gap-2 px-3.5 text-sm text-neutral-800 rounded-xl transition-all border-0 outline-none focus:outline-none focus:ring-0 ${
+                                className={`h-9 inline-flex items-center gap-2 px-3 text-xs xl:text-sm text-neutral-800 rounded-xl transition-all border-0 outline-none focus:outline-none focus:ring-0 shrink-0 ${
                                     scrolled
                                         ? 'bg-neutral-100 hover:bg-neutral-200/70'
                                         : 'bg-black/10 hover:bg-black/15 backdrop-blur-sm'
                                 }`}
                             >
-                                <div className="size-5.5 rounded-lg bg-[#10e57a] text-black flex items-center justify-center text-[11px] font-black">
+                                <div className="size-5.5 rounded-lg bg-[#10e57a] text-black flex items-center justify-center text-[11px] font-black shrink-0">
                                     {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
                                 </div>
-                                <span className="max-w-[110px] truncate font-semibold text-sm">{user.name}</span>
-                                <ChevronDown className="size-3.5 text-neutral-500" />
+                                <span className="max-w-[100px] xl:max-w-[130px] truncate font-semibold text-xs xl:text-sm">{user.name}</span>
+                                <ChevronDown className="size-3.5 text-neutral-500 shrink-0" />
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end" className="w-56 mt-2 bg-white border border-neutral-200 rounded-2xl text-neutral-900 shadow-2xl p-2 backdrop-blur-xl">
                                 <DropdownMenuLabel className="font-normal px-3 py-2">
@@ -235,7 +235,7 @@ export default function Navbar() {
                         glow={1}
                         followMouse
                         onClick={() => router.visit('/lapor')}
-                        className="h-9 font-bold text-xs sm:text-sm pl-4 pr-1.5 inline-flex items-center shadow-[0_2px_12px_rgba(16,229,122,0.3)] active:scale-95"
+                        className="h-9 font-bold text-xs sm:text-sm pl-3.5 pr-1.5 inline-flex items-center shadow-[0_2px_12px_rgba(16,229,122,0.3)] active:scale-95 shrink-0 whitespace-nowrap"
                     >
                         <span className="flex items-center gap-2">
                             <span>Lapor Karhutla</span>

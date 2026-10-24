@@ -45,27 +45,27 @@ export default function MyReports({ reports, filters }: MyReportsProps) {
     };
 
     return (
-        <div className="p-4 sm:p-6 lg:p-8 space-y-6 text-[#141413] bg-[#f0eee6] min-h-screen">
+        <div className="p-4 sm:p-6 lg:p-8 space-y-6 text-[#171C19] dark:text-[#F3F7F4] bg-[#F8FAF9] dark:bg-[#0D120F] min-h-screen font-sans">
             <Head title="Laporan Saya — JAGAIN" />
 
             {/* Header Bar */}
-            <div className="border-b border-[#cccbc8] pb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 font-sans">
+            <div className="border-b border-[#DDE3DE] dark:border-neutral-800 pb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div className="space-y-1">
-                    <div className="inline-flex items-center gap-2 text-[10px] font-mono font-bold tracking-wider uppercase text-[#87867f]">
-                        <Shield className="size-3.5 text-[#d97757]" />
+                    <div className="inline-flex items-center gap-2 text-xs font-bold tracking-wider uppercase text-[#216B49] dark:text-[#10e57a]">
+                        <Shield className="size-4" />
                         <span>Portal Warga Pelapor</span>
                     </div>
-                    <h1 className="text-2xl sm:text-3xl font-serif text-[#141413] flex items-center gap-2">
+                    <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[#171C19] dark:text-white flex items-center gap-2">
                         <span>Riwayat Laporan Karhutla Saya ({reports.total})</span>
                     </h1>
-                    <p className="font-serif text-xs sm:text-sm text-[#87867f]">
+                    <p className="text-xs sm:text-sm text-[#68716B] dark:text-neutral-400">
                         Pantau perjalanan verifikasi dan respon instansi atas laporan yang telah Anda kirimkan.
                     </p>
                 </div>
 
                 <Link
                     href="/lapor"
-                    className="inline-flex items-center gap-2 px-5 py-2.5 text-xs font-semibold bg-[#d97757] hover:bg-[#c6613f] text-[#faf9f5] rounded-[8px] transition-colors shrink-0"
+                    className="inline-flex items-center gap-2 px-5 py-2.5 text-xs sm:text-sm font-bold bg-[#216B49] hover:bg-[#174B35] text-white rounded-xl shadow-[0_4px_16px_rgba(33,107,73,0.3)] transition-all shrink-0 active:scale-95"
                 >
                     <PlusCircle className="size-4" />
                     <span>Kirim Laporan Baru</span>
@@ -73,14 +73,14 @@ export default function MyReports({ reports, filters }: MyReportsProps) {
             </div>
 
             {/* Status Filter Tabs */}
-            <div className="flex flex-wrap items-center gap-2 text-xs font-sans">
+            <div className="flex flex-wrap items-center gap-2 text-xs font-semibold">
                 <button
                     type="button"
                     onClick={() => handleStatusFilter('')}
-                    className={`px-3.5 py-1.5 rounded-[8px] font-medium border transition-colors ${
+                    className={`px-3.5 py-1.5 rounded-xl border transition-all cursor-pointer ${
                         !filters.status
-                            ? 'bg-[#141413] text-[#faf9f5] border-[#141413]'
-                            : 'bg-[#faf9f5] text-[#141413] border-[#cccbc8] hover:bg-[#e3dacc]'
+                            ? 'bg-[#216B49] text-white border-[#216B49] shadow-xs'
+                            : 'bg-white dark:bg-neutral-900 text-[#343B36] dark:text-neutral-300 border-[#DDE3DE] dark:border-neutral-800 hover:bg-[#E8F1EB]'
                     }`}
                 >
                     Semua Status ({reports.total})
@@ -88,10 +88,10 @@ export default function MyReports({ reports, filters }: MyReportsProps) {
                 <button
                     type="button"
                     onClick={() => handleStatusFilter('SUBMITTED')}
-                    className={`px-3.5 py-1.5 rounded-[8px] font-medium border transition-colors ${
+                    className={`px-3.5 py-1.5 rounded-xl border transition-all cursor-pointer ${
                         filters.status === 'SUBMITTED'
-                            ? 'bg-[#141413] text-[#faf9f5] border-[#141413]'
-                            : 'bg-[#faf9f5] text-[#141413] border-[#cccbc8] hover:bg-[#e3dacc]'
+                            ? 'bg-[#216B49] text-white border-[#216B49] shadow-xs'
+                            : 'bg-white dark:bg-neutral-900 text-[#343B36] dark:text-neutral-300 border-[#DDE3DE] dark:border-neutral-800 hover:bg-[#E8F1EB]'
                     }`}
                 >
                     Baru Dikirim
@@ -99,10 +99,10 @@ export default function MyReports({ reports, filters }: MyReportsProps) {
                 <button
                     type="button"
                     onClick={() => handleStatusFilter('NEEDS_INFORMATION')}
-                    className={`px-3.5 py-1.5 rounded-[8px] font-medium border transition-colors ${
+                    className={`px-3.5 py-1.5 rounded-xl border transition-all cursor-pointer ${
                         filters.status === 'NEEDS_INFORMATION'
-                            ? 'bg-[#141413] text-[#faf9f5] border-[#141413]'
-                            : 'bg-[#faf9f5] text-[#141413] border-[#cccbc8] hover:bg-[#e3dacc]'
+                            ? 'bg-[#216B49] text-white border-[#216B49] shadow-xs'
+                            : 'bg-white dark:bg-neutral-900 text-[#343B36] dark:text-neutral-300 border-[#DDE3DE] dark:border-neutral-800 hover:bg-[#E8F1EB]'
                     }`}
                 >
                     Perlu Dilengkapi
@@ -110,10 +110,10 @@ export default function MyReports({ reports, filters }: MyReportsProps) {
                 <button
                     type="button"
                     onClick={() => handleStatusFilter('DISPATCHED')}
-                    className={`px-3.5 py-1.5 rounded-[8px] font-medium border transition-colors ${
+                    className={`px-3.5 py-1.5 rounded-xl border transition-all cursor-pointer ${
                         filters.status === 'DISPATCHED'
-                            ? 'bg-[#141413] text-[#faf9f5] border-[#141413]'
-                            : 'bg-[#faf9f5] text-[#141413] border-[#cccbc8] hover:bg-[#e3dacc]'
+                            ? 'bg-[#216B49] text-white border-[#216B49] shadow-xs'
+                            : 'bg-white dark:bg-neutral-900 text-[#343B36] dark:text-neutral-300 border-[#DDE3DE] dark:border-neutral-800 hover:bg-[#E8F1EB]'
                     }`}
                 >
                     Ditugaskan ke OPD
@@ -121,10 +121,10 @@ export default function MyReports({ reports, filters }: MyReportsProps) {
                 <button
                     type="button"
                     onClick={() => handleStatusFilter('RESOLVED_VERIFIED')}
-                    className={`px-3.5 py-1.5 rounded-[8px] font-medium border transition-colors ${
+                    className={`px-3.5 py-1.5 rounded-xl border transition-all cursor-pointer ${
                         filters.status === 'RESOLVED_VERIFIED'
-                            ? 'bg-[#141413] text-[#faf9f5] border-[#141413]'
-                            : 'bg-[#faf9f5] text-[#141413] border-[#cccbc8] hover:bg-[#e3dacc]'
+                            ? 'bg-[#216B49] text-white border-[#216B49] shadow-xs'
+                            : 'bg-white dark:bg-neutral-900 text-[#343B36] dark:text-neutral-300 border-[#DDE3DE] dark:border-neutral-800 hover:bg-[#E8F1EB]'
                     }`}
                 >
                     Selesai Terverifikasi
@@ -133,116 +133,91 @@ export default function MyReports({ reports, filters }: MyReportsProps) {
 
             {/* Reports List */}
             {reports.data.length === 0 ? (
-                <div className="border border-[#cccbc8] bg-[#faf9f5] rounded-[24px] p-12 text-center text-[#87867f] space-y-3 font-serif">
-                    <FileText className="size-8 text-[#87867f] mx-auto" />
-                    <h2 className="text-sm font-sans font-bold text-[#141413]">Belum ada laporan dalam kategori ini</h2>
-                    <p className="text-xs max-w-sm mx-auto text-[#87867f]">
+                <div className="border border-[#DDE3DE] dark:border-neutral-800 bg-white dark:bg-[#141A16] rounded-2xl p-12 text-center text-[#68716B] dark:text-neutral-400 space-y-3 shadow-xs">
+                    <FileText className="size-10 text-[#68716B] dark:text-neutral-500 mx-auto" />
+                    <h2 className="text-base font-bold text-[#171C19] dark:text-white">Belum ada laporan dalam kategori ini</h2>
+                    <p className="text-xs max-w-sm mx-auto text-[#68716B] dark:text-neutral-400">
                         Jika Anda melihat titik kebakaran di sekitar Anda, kirimkan laporan lengkap dengan koordinat GPS.
                     </p>
                     <div className="pt-2">
                         <Link
                             href="/lapor"
-                            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-[8px] bg-[#d97757] text-[#faf9f5] font-sans font-semibold text-xs hover:bg-[#c6613f] transition-colors"
+                            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#216B49] hover:bg-[#174B35] text-white font-bold text-xs transition-colors shadow-sm"
                         >
-                            <PlusCircle className="size-3.5" />
+                            <PlusCircle className="size-4" />
                             <span>Buat Laporan Baru</span>
                         </Link>
                     </div>
                 </div>
             ) : (
-                <div className="border border-[#cccbc8] rounded-[24px] overflow-hidden bg-[#faf9f5] divide-y divide-[#cccbc8]">
+                <div className="border border-[#DDE3DE] dark:border-neutral-800 rounded-2xl overflow-hidden bg-white dark:bg-[#141A16] divide-y divide-[#DDE3DE] dark:divide-neutral-800 shadow-xs">
                     {reports.data.map((report) => (
                         <div
                             key={report.id}
-                            className="p-6 hover:bg-[#f0eee6]/60 transition-colors flex flex-col md:flex-row md:items-center justify-between gap-4 font-sans"
+                            className="p-6 hover:bg-[#F3F7F4]/60 dark:hover:bg-neutral-900/50 transition-colors flex flex-col md:flex-row md:items-center justify-between gap-4"
                         >
                             <div className="space-y-2.5 flex-1 min-w-0">
                                 <div className="flex flex-wrap items-center gap-2">
-                                    <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-[3px] bg-[#f0eee6] text-[#141413] border border-[#cccbc8]">
+                                    <span className="font-mono text-xs font-bold px-2.5 py-1 rounded-lg bg-[#E8F1EB] text-[#174B35] border border-emerald-200 dark:bg-emerald-950/70 dark:text-emerald-300 dark:border-emerald-800/40">
                                         {report.tracking_code}
                                     </span>
                                     <StatusBadge status={report.report_status} size="sm" />
                                     {report.category && (
-                                        <span className="text-[11px] text-[#87867f] bg-[#f0eee6] px-2 py-0.5 rounded-[3px] border border-[#cccbc8]">
+                                        <span className="text-[11px] font-medium text-[#68716B] dark:text-neutral-400 bg-neutral-100 dark:bg-neutral-800 px-2.5 py-1 rounded-lg border border-neutral-200 dark:border-neutral-700">
                                             {report.category.name}
                                         </span>
                                     )}
                                 </div>
 
                                 <div>
-                                    <h2 className="text-base font-bold text-[#141413] hover:text-[#d97757] transition-colors">
+                                    <h2 className="text-base font-bold text-[#171C19] dark:text-white hover:text-[#216B49] dark:hover:text-[#10e57a] transition-colors">
                                         <Link href={`/laporan-saya/${report.tracking_code}`}>
                                             {report.title}
                                         </Link>
                                     </h2>
-                                    <p className="font-serif text-xs text-[#87867f] line-clamp-2 mt-0.5 leading-relaxed">
+                                    <p className="text-xs text-[#68716B] dark:text-neutral-400 line-clamp-2 mt-1 leading-relaxed">
                                         {report.description}
                                     </p>
                                 </div>
 
                                 {report.report_status === 'NEEDS_INFORMATION' && (
-                                    <div className="bg-[#f5e3c7] border border-[#e3dacc] p-3 rounded-[8px] text-xs text-[#141413] flex items-start gap-2 font-serif">
-                                        <AlertCircle className="size-4 text-[#d97757] shrink-0 mt-0.5" />
+                                    <div className="bg-[#E8F1EB] border border-emerald-300 p-3 rounded-xl text-xs text-[#174B35] dark:bg-emerald-950/50 dark:border-emerald-800 dark:text-emerald-200 flex items-start gap-2">
+                                        <AlertCircle className="size-4 text-[#216B49] dark:text-[#10e57a] shrink-0 mt-0.5" />
                                         <div>
-                                            <strong className="font-sans">Petugas Membutuhkan Informasi Tambahan:</strong> Buka detail laporan untuk melengkapi klarifikasi.
+                                            <strong className="font-bold">Petugas Membutuhkan Informasi Tambahan:</strong> Buka detail laporan untuk melengkapi klarifikasi.
                                         </div>
                                     </div>
                                 )}
 
-                                <div className="flex flex-wrap items-center gap-5 text-xs text-[#87867f] pt-1">
-                                    <div className="flex items-center gap-1 font-serif">
-                                        <MapPin className="size-3.5 text-[#87867f]" />
+                                <div className="flex flex-wrap items-center gap-5 text-xs text-[#68716B] dark:text-neutral-400 pt-1">
+                                    <div className="flex items-center gap-1.5">
+                                        <MapPin className="size-3.5 text-[#216B49] dark:text-[#10e57a]" />
                                         <span>{report.regency_city}, {report.province}</span>
                                     </div>
-                                    <div className="flex items-center gap-1 font-mono text-[11px]">
-                                        <Calendar className="size-3.5 text-[#87867f]" />
-                                        <span>{new Date(report.created_at).toLocaleDateString('id-ID')}</span>
+                                    <div className="flex items-center gap-1.5 font-mono text-[11px]">
+                                        <Calendar className="size-3.5 text-[#68716B]" />
+                                        <span>{new Date(report.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
                                     </div>
                                     {report.latest_assignment?.agency && (
-                                        <div className="flex items-center gap-1 font-medium text-[#141413]">
-                                            <Building className="size-3.5 text-[#87867f]" />
-                                            <span>OPD: {report.latest_assignment.agency.name}</span>
+                                        <div className="flex items-center gap-1.5 text-xs font-semibold text-[#174B35] dark:text-emerald-300">
+                                            <Building className="size-3.5" />
+                                            <span>Ditugaskan: {report.latest_assignment.agency.name}</span>
                                         </div>
                                     )}
                                 </div>
                             </div>
 
-                            <div className="shrink-0 flex items-center">
+                            <div className="flex items-center justify-end shrink-0">
                                 <Link
                                     href={`/laporan-saya/${report.tracking_code}`}
-                                    className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold bg-[#faf9f5] hover:bg-[#e3dacc] text-[#141413] border border-[#cccbc8] rounded-[8px] transition-colors w-full md:w-auto justify-center"
+                                    className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold text-[#216B49] bg-[#E8F1EB] hover:bg-[#216B49] hover:text-white dark:bg-emerald-950/60 dark:text-[#10e57a] dark:hover:bg-[#10e57a] dark:hover:text-black transition-all shadow-2xs"
                                 >
-                                    <span>Pantau Kronologi</span>
+                                    <span>Lacak Progres</span>
                                     <ArrowRight className="size-3.5" />
                                 </Link>
                             </div>
                         </div>
                     ))}
-                </div>
-            )}
-
-            {/* Pagination */}
-            {reports.last_page > 1 && (
-                <div className="p-4 border border-[#cccbc8] bg-[#faf9f5] rounded-[16px] flex items-center justify-between text-xs font-sans">
-                    <span className="text-[#87867f]">
-                        Halaman {reports.current_page} dari {reports.last_page}
-                    </span>
-                    <div className="flex items-center gap-1.5">
-                        {reports.links.map((link, idx) => (
-                            <button
-                                key={idx}
-                                type="button"
-                                disabled={!link.url}
-                                onClick={() => link.url && router.get(link.url, {}, { preserveState: true })}
-                                className={`px-3 py-1 rounded-[6px] text-xs border ${
-                                    link.active
-                                        ? 'bg-[#141413] text-[#faf9f5] border-[#141413]'
-                                        : 'bg-[#faf9f5] text-[#141413] border-[#cccbc8] hover:bg-[#e3dacc] disabled:opacity-40'
-                                }`}
-                                dangerouslySetInnerHTML={{ __html: link.label }}
-                            />
-                        ))}
-                    </div>
                 </div>
             )}
         </div>

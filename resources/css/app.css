@@ -188,72 +188,72 @@
     --radius-buttons: 8px;
 
     /* Surfaces from design.md */
-    --surface-canvas: #f0eee6;
-    --surface-card-surface: #faf9f5;
-    --surface-warm-feature-surface: #f5e3c7;
-    --surface-deep-warm-surface: #e3dacc;
-    --surface-inversion-surface: #141413;
+    --surface-canvas: #f8faf9;
+    --surface-card-surface: #ffffff;
+    --surface-warm-feature-surface: #e8f1eb;
+    --surface-deep-warm-surface: #e8f1eb;
+    --surface-inversion-surface: #171c19;
 
-    /* Canonical Semantic Tokens mapping to surfaces & warm tones */
-    --background: #f0eee6;
-    --foreground: #141413;
-    --card: #faf9f5;
-    --card-foreground: #141413;
-    --popover: #faf9f5;
-    --popover-foreground: #141413;
-    --primary: #d97757;
-    --primary-foreground: #faf9f5;
-    --secondary: #e3dacc;
-    --secondary-foreground: #141413;
-    --muted: #e3dacc;
-    --muted-foreground: #87867f;
-    --accent: #f5e3c7;
-    --accent-foreground: #141413;
-    --destructive: #c6613f;
-    --destructive-foreground: #faf9f5;
-    --border: #cccbc8;
-    --input: #cccbc8;
-    --ring: #d97757;
+    /* Canonical Semantic Tokens mapping to JAGAIN Forest/Primary Green & Neutrals */
+    --background: #f8faf9;
+    --foreground: #171c19;
+    --card: #ffffff;
+    --card-foreground: #171c19;
+    --popover: #ffffff;
+    --popover-foreground: #171c19;
+    --primary: #216b49;
+    --primary-foreground: #ffffff;
+    --secondary: #e8f1eb;
+    --secondary-foreground: #174b35;
+    --muted: #f3f7f4;
+    --muted-foreground: #68716b;
+    --accent: #e8f1eb;
+    --accent-foreground: #174b35;
+    --destructive: #dc2626;
+    --destructive-foreground: #ffffff;
+    --border: #dde3de;
+    --input: #dde3de;
+    --ring: #216b49;
     --radius: 0.5rem;
 
-    --sidebar: #f0eee6;
-    --sidebar-foreground: #141413;
-    --sidebar-primary: #141413;
-    --sidebar-primary-foreground: #faf9f5;
-    --sidebar-accent: #e3dacc;
-    --sidebar-accent-foreground: #141413;
-    --sidebar-border: #cccbc8;
-    --sidebar-ring: #d97757;
+    --sidebar: #ffffff;
+    --sidebar-foreground: #171c19;
+    --sidebar-primary: #216b49;
+    --sidebar-primary-foreground: #ffffff;
+    --sidebar-accent: #e8f1eb;
+    --sidebar-accent-foreground: #174b35;
+    --sidebar-border: #dde3de;
+    --sidebar-ring: #216b49;
 }
 
 .dark {
-    --background: #141413;
-    --foreground: #faf9f5;
-    --card: #1f1f1d;
-    --card-foreground: #faf9f5;
-    --popover: #1f1f1d;
-    --popover-foreground: #faf9f5;
-    --primary: #d97757;
-    --primary-foreground: #faf9f5;
-    --secondary: #2b2b28;
-    --secondary-foreground: #faf9f5;
-    --muted: #2b2b28;
-    --muted-foreground: #b0aea5;
-    --accent: #3d3d3a;
-    --accent-foreground: #faf9f5;
-    --destructive: #c6613f;
-    --destructive-foreground: #faf9f5;
-    --border: #3d3d3a;
-    --input: #3d3d3a;
-    --ring: #d97757;
-    --sidebar: #141413;
-    --sidebar-foreground: #faf9f5;
-    --sidebar-primary: #d97757;
-    --sidebar-primary-foreground: #faf9f5;
-    --sidebar-accent: #2b2b28;
-    --sidebar-accent-foreground: #faf9f5;
-    --sidebar-border: #3d3d3a;
-    --sidebar-ring: #d97757;
+    --background: #0d120f;
+    --foreground: #f3f7f4;
+    --card: #141a16;
+    --card-foreground: #f3f7f4;
+    --popover: #141a16;
+    --popover-foreground: #f3f7f4;
+    --primary: #10e57a;
+    --primary-foreground: #0d120f;
+    --secondary: #1a241e;
+    --secondary-foreground: #e8f1eb;
+    --muted: #1a241e;
+    --muted-foreground: #9ca3af;
+    --accent: #1a241e;
+    --accent-foreground: #10e57a;
+    --destructive: #ef4444;
+    --destructive-foreground: #ffffff;
+    --border: #232e27;
+    --input: #232e27;
+    --ring: #10e57a;
+    --sidebar: #101512;
+    --sidebar-foreground: #f3f7f4;
+    --sidebar-primary: #10e57a;
+    --sidebar-primary-foreground: #0d120f;
+    --sidebar-accent: #1a241e;
+    --sidebar-accent-foreground: #10e57a;
+    --sidebar-border: #232e27;
+    --sidebar-ring: #10e57a;
 }
 
 @layer base {
