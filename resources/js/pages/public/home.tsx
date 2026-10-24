@@ -620,7 +620,7 @@ export default function Home({ stats, recentReports }: HomeProps) {
                                         >
                                             <span className="flex items-center gap-2.5">
                                                 <span>Lapor Karhutla</span>
-                                                <span className="size-7 rounded-full bg-white/20 text-white flex items-center justify-center">
+                                                <span className="size-7 rounded-full bg-black/60 text-white flex items-center justify-center">
                                                     <ArrowRight className="size-3.5" />
                                                 </span>
                                             </span>
