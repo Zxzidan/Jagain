@@ -80,6 +80,14 @@ export default function ReportsIndex({ reports, filters, statuses }: Props) {
         }
     };
 
+    const formatCategory = (cat: any) => {
+        if (!cat) return 'Umum';
+        if (typeof cat === 'object') {
+            return cat.name || cat.slug || 'Umum';
+        }
+        return CATEGORY_LABELS[cat] || cat;
+    };
+
     return (
         <>
             <Head title="Daftar & Riwayat Laporan - JAGAIN" />
@@ -269,9 +277,7 @@ export default function ReportsIndex({ reports, filters, statuses }: Props) {
                                             <div className="min-w-0 flex-1 space-y-1.5">
                                                 <div className="flex items-center gap-2">
                                                     <span className="text-[11px] font-semibold tracking-wider text-primary-green uppercase">
-                                                        {CATEGORY_LABELS[
-                                                            report.category
-                                                        ] || report.category}
+                                                        {formatCategory(report.category)}
                                                     </span>
                                                 </div>
 

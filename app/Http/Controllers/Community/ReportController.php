@@ -52,7 +52,9 @@ class ReportController extends Controller
             'id' => $report->id,
             'report_number' => $report->report_number,
             'title' => $report->title,
-            'category' => $report->category,
+            'category' => is_object($report->category)
+                ? ($report->category->name ?? $report->category->slug ?? 'Umum')
+                : ($report->category ?? 'Umum'),
             'description' => Str::limit($report->description, 120),
             'location_description' => $report->location_description,
             'report_status' => $report->report_status->value,
@@ -165,7 +167,9 @@ class ReportController extends Controller
                 'id' => $report->id,
                 'report_number' => $report->report_number,
                 'title' => $report->title,
-                'category' => $report->category,
+                'category' => is_object($report->category)
+                    ? ($report->category->name ?? $report->category->slug ?? 'Umum')
+                    : ($report->category ?? 'Umum'),
                 'description' => $report->description,
                 'location_description' => $report->location_description,
                 'latitude' => $report->latitude,

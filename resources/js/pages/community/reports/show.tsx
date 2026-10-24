@@ -67,6 +67,14 @@ export default function ReportShow({ report }: Props) {
         }
     };
 
+    const formatCategory = (cat: any) => {
+        if (!cat) return 'Umum';
+        if (typeof cat === 'object') {
+            return cat.name || cat.slug || 'Umum';
+        }
+        return CATEGORY_LABELS[cat] || cat;
+    };
+
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) {
@@ -151,7 +159,7 @@ export default function ReportShow({ report }: Props) {
                                 {report.title}
                             </h1>
                             <div className="text-xs text-primary-green font-semibold uppercase tracking-wider">
-                                Kategori: {CATEGORY_LABELS[report.category] || report.category}
+                                Kategori: {formatCategory(report.category)}
                             </div>
                         </div>
 
@@ -367,7 +375,7 @@ export default function ReportShow({ report }: Props) {
                                     locationDescription={report.location_description}
                                     reportNumber={report.report_number}
                                     title={report.title}
-                                    categoryLabel={CATEGORY_LABELS[report.category] || report.category}
+                                    categoryLabel={formatCategory(report.category)}
                                 />
                             </div>
 

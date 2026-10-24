@@ -39,7 +39,7 @@ export interface ReportItem {
     id: number;
     report_number: string;
     title: string;
-    category: string;
+    category: string | { id?: number; name?: string; slug?: string };
     description: string;
     location_description: string;
     latitude: number;

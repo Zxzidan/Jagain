@@ -47,8 +47,9 @@ class DashboardController extends Controller
             ->map(fn (Report $report) => [
                 'id' => $report->id,
                 'report_number' => $report->report_number,
-                'title' => $report->title,
-                'category' => $report->category,
+                'category' => is_object($report->category)
+                    ? ($report->category->name ?? $report->category->slug ?? 'Umum')
+                    : ($report->category ?? 'Umum'),
                 'location_description' => $report->location_description,
                 'report_status' => $report->report_status->value,
                 'status_label' => $report->report_status->label(),

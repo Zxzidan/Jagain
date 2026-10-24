@@ -94,6 +94,14 @@ export default function Dashboard({
         }
     };
 
+    const formatCategory = (cat: any) => {
+        if (!cat) return 'Umum';
+        if (typeof cat === 'object') {
+            return cat.name || cat.slug || 'Umum';
+        }
+        return CATEGORY_LABELS[cat] || cat;
+    };
+
     return (
         <>
             <Head title="Dashboard Masyarakat - JAGAIN" />
@@ -710,9 +718,7 @@ export default function Dashboard({
 
                                                 {/* Category Tag */}
                                                 <span className="badge badge-light">
-                                                    {CATEGORY_LABELS[
-                                                        report.category
-                                                    ] || report.category}
+                                                    {formatCategory(report.category)}
                                                 </span>
 
                                                 {/* Evidence Counter */}
