@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import L from 'leaflet';
+import type * as LeafletType from 'leaflet';
 import { Info, AlertTriangle } from 'lucide-react';
 
 export interface MapReport {
@@ -66,54 +66,62 @@ export default function KarhutlaMap({
     showSimulatedNotice = true,
 }: KarhutlaMapProps) {
     const mapContainerRef = useRef<HTMLDivElement>(null);
-    const mapInstanceRef = useRef<L.Map | null>(null);
-    const markersLayerRef = useRef<L.LayerGroup | null>(null);
-    const selectedMarkerRef = useRef<L.Marker | null>(null);
+    const mapInstanceRef = useRef<LeafletType.Map | null>(null);
+    const markersLayerRef = useRef<LeafletType.LayerGroup | null>(null);
+    const selectedMarkerRef = useRef<LeafletType.Marker | null>(null);
 
     const hasSimulatedData = reports.some(r => r.is_simulated) || observations.some(o => o.is_simulated);
 
     useEffect(() => {
-        if (!mapContainerRef.current) return;
+        if (!mapContainerRef.current || typeof window === 'undefined') return;
 
-        // Initialize Map centered on Kalimantan
-        if (!mapInstanceRef.current) {
-            const initialLat = selectedCoordinates ? selectedCoordinates.lat : -0.7893;
-            const initialLng = selectedCoordinates ? selectedCoordinates.lng : 113.9213;
-            const initialZoom = selectedCoordinates ? 10 : 6;
+        let isMounted = true;
+        let timer: any = null;
+        let resizeObserver: ResizeObserver | null = null;
 
-            const map = L.map(mapContainerRef.current, {
-                center: [initialLat, initialLng],
-                zoom: initialZoom,
-                minZoom: 5,
-                maxZoom: 17,
-                attributionControl: true,
-            });
+        import('leaflet').then((leafletModule) => {
+            if (!isMounted || !mapContainerRef.current) return;
+            const L = (leafletModule.default || leafletModule) as typeof LeafletType;
 
-            // ESRI World Light Gray Canvas & Reference for modern, keyless, watermark-free map
-            L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
-                attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ | JAGAIN',
-                maxZoom: 16,
-            }).addTo(map);
+            // Initialize Map centered on Kalimantan
+            if (!mapInstanceRef.current) {
+                const initialLat = selectedCoordinates ? selectedCoordinates.lat : -0.7893;
+                const initialLng = selectedCoordinates ? selectedCoordinates.lng : 113.9213;
+                const initialZoom = selectedCoordinates ? 10 : 6;
 
-            L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Reference/MapServer/tile/{z}/{y}/{x}', {
-                maxZoom: 16,
-            }).addTo(map);
-
-            const markersLayer = L.layerGroup().addTo(map);
-            markersLayerRef.current = markersLayer;
-            mapInstanceRef.current = map;
-
-            // Handle Click for coordinate picker mode
-            if (interactiveSelectMode && onSelectCoordinates) {
-                map.on('click', (e: L.LeafletMouseEvent) => {
-                    const { lat, lng } = e.latlng;
-                    onSelectCoordinates({
-                        lat: parseFloat(lat.toFixed(6)),
-                        lng: parseFloat(lng.toFixed(6)),
-                    });
+                const map = L.map(mapContainerRef.current, {
+                    center: [initialLat, initialLng],
+                    zoom: initialZoom,
+                    minZoom: 5,
+                    maxZoom: 17,
+                    attributionControl: true,
                 });
+
+                // ESRI World Light Gray Canvas & Reference for modern, keyless, watermark-free map
+                L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
+                    attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ | JAGAIN',
+                    maxZoom: 16,
+                }).addTo(map);
+
+                L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Reference/MapServer/tile/{z}/{y}/{x}', {
+                    maxZoom: 16,
+                }).addTo(map);
+
+                const markersLayer = L.layerGroup().addTo(map);
+                markersLayerRef.current = markersLayer;
+                mapInstanceRef.current = map;
+
+                // Handle Click for coordinate picker mode
+                if (interactiveSelectMode && onSelectCoordinates) {
+                    map.on('click', (e: LeafletType.LeafletMouseEvent) => {
+                        const { lat, lng } = e.latlng;
+                        onSelectCoordinates({
+                            lat: parseFloat(lat.toFixed(6)),
+                            lng: parseFloat(lng.toFixed(6)),
+                        });
+                    });
+                }
             }
-        }
 
         const map = mapInstanceRef.current;
         const layer = markersLayerRef.current;
@@ -281,7 +289,6 @@ export default function KarhutlaMap({
         }
 
         // ResizeObserver to ensure map properly measures and never centers in ocean
-        let resizeObserver: ResizeObserver | null = null;
         if (mapContainerRef.current) {
             resizeObserver = new ResizeObserver(() => {
                 if (mapInstanceRef.current) {
@@ -290,9 +297,13 @@ export default function KarhutlaMap({
             });
             resizeObserver.observe(mapContainerRef.current);
         }
+        });
 
         return () => {
-            clearTimeout(timer);
+            isMounted = false;
+            if (timer) {
+                clearTimeout(timer);
+            }
             if (resizeObserver) {
                 resizeObserver.disconnect();
             }
