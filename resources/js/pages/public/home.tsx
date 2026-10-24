@@ -15,6 +15,7 @@ import GlareHover from '@/components/react-bits/GlareHover';
 import TiltedCard, { TiltedCardLayer } from '@/components/react-bits/TiltedCard';
 import AnimatedList from '@/components/react-bits/AnimatedList';
 import BorderGlow from '@/components/react-bits/BorderGlow';
+import ShinyText from '@/components/react-bits/ShinyText';
 import {
     MapPin,
     ArrowRight,
@@ -503,11 +504,30 @@ export default function Home({
                                         <span>REGISTER PUBLIK RESMI KALIMANTAN</span>
                                     </div>
 
-                                    <h1 className="text-4xl sm:text-6xl lg:text-[84px] font-black tracking-[-0.03em] text-white leading-[0.94] uppercase text-balance break-words">
-                                        PANTAU KARHUTLA.{' '}
-                                        <span className="block text-white font-extrabold tracking-tight mt-1">
-                                            KAWAL PENANGANAN.
-                                        </span>
+                                    <h1 className="text-4xl sm:text-6xl lg:text-[84px] font-black tracking-[-0.03em] leading-[0.94] uppercase text-balance break-words">
+                                        <ShinyText
+                                            text="PANTAU KARHUTLA."
+                                            color="#ffffff"
+                                            shineColor="#86efac"
+                                            speed={2.2}
+                                            shineWidth={42}
+                                            softness={0.7}
+                                            glow={0.4}
+                                            trigger="loop"
+                                            className="block"
+                                        />
+                                        <ShinyText
+                                            text="KAWAL PENANGANAN."
+                                            color="#ffffff"
+                                            shineColor="#86efac"
+                                            speed={2.2}
+                                            delay={0.3}
+                                            shineWidth={42}
+                                            softness={0.7}
+                                            glow={0.4}
+                                            trigger="loop"
+                                            className="block font-extrabold tracking-tight mt-1"
+                                        />
                                     </h1>
 
                                     <p className="text-base sm:text-lg font-semibold text-white max-w-lg leading-relaxed">
