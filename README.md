@@ -1,3 +1,11 @@
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="public/images/logo-white.png">
+    <source media="(prefers-color-scheme: light)" srcset="public/images/logo.png">
+    <img alt="JAGAIN Logo" src="public/images/logo.png" width="320">
+  </picture>
+</p>
+
 # JAGAIN — Jaga Hutan, Kawal Penanganan
 
 > **JAGAIN** adalah platform transparansi dan akuntabilitas pelaporan serta pengawalan tindak lanjut kebakaran hutan dan lahan (karhutla) berbasis peta geospasial di wilayah Kalimantan. Platform ini menghubungkan laporan masyarakat yang terverifikasi dengan respon cepat instansi operasional (BPBD, Manggala Agni, Damkar) yang diawasi melalui audit trail forensik transparan.
