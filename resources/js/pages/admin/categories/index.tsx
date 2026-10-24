@@ -116,7 +116,7 @@ export default function CategoriesIndex({ categories, filters }: CategoriesIndex
                     <button
                         type="button"
                         onClick={() => setIsCreateModalOpen(true)}
-                        className="inline-flex items-center gap-1.5 rounded-lg bg-[#216B49] px-4 py-2.5 text-xs font-semibold text-white shadow-xs transition hover:bg-[#174B35]"
+                        className="inline-flex w-full sm:w-auto justify-center items-center gap-1.5 rounded-lg bg-[#216B49] px-4 py-2.5 text-xs font-semibold text-white shadow-xs transition hover:bg-[#174B35]"
                     >
                         <Plus className="size-4" />
                         <span>Tambah Kategori Baru</span>
@@ -232,7 +232,7 @@ export default function CategoriesIndex({ categories, filters }: CategoriesIndex
             {/* Modal: Tambah Kategori */}
             {isCreateModalOpen && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-xs">
-                    <div className="w-full max-w-md rounded-xl bg-white p-6 shadow-xl dark:bg-neutral-900">
+                    <div className="w-full max-w-md rounded-xl bg-white p-6 shadow-xl dark:bg-neutral-900 max-h-[90vh] overflow-y-auto">
                         <div className="flex items-center justify-between">
                             <h3 className="text-base font-bold text-[#171C19] dark:text-white">
                                 Tambah Kategori Baru
@@ -301,7 +301,7 @@ export default function CategoriesIndex({ categories, filters }: CategoriesIndex
             {/* Modal: Edit Kategori */}
             {editingCategory && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-xs">
-                    <div className="w-full max-w-md rounded-xl bg-white p-6 shadow-xl dark:bg-neutral-900">
+                    <div className="w-full max-w-md rounded-xl bg-white p-6 shadow-xl dark:bg-neutral-900 max-h-[90vh] overflow-y-auto">
                         <div className="flex items-center justify-between">
                             <h3 className="text-base font-bold text-[#171C19] dark:text-white">
                                 Ubah Data Kategori

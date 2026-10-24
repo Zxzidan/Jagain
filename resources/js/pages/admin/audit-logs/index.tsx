@@ -279,7 +279,7 @@ export default function AuditLogsIndex({
             {/* Modal: Snapshot Detail */}
             {selectedLog && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-xs">
-                    <div className="w-full max-w-xl rounded-xl bg-white p-6 shadow-xl dark:bg-neutral-900">
+                    <div className="w-full max-w-xl rounded-xl bg-white p-6 shadow-xl dark:bg-neutral-900 max-h-[90vh] overflow-y-auto">
                         <div className="flex items-center justify-between">
                             <div>
                                 <h3 className="text-base font-bold text-[#171C19] dark:text-white">

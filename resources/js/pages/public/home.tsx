@@ -590,7 +590,7 @@ export default function Home({
                                         <span>REGISTER PUBLIK RESMI KALIMANTAN</span>
                                     </div>
 
-                                    <h1 className="text-5xl sm:text-7xl lg:text-[84px] font-black tracking-[-0.04em] text-white leading-[0.92] uppercase text-balance">
+                                    <h1 className="text-4xl sm:text-6xl lg:text-[84px] font-black tracking-[-0.03em] text-white leading-[0.94] uppercase text-balance break-words">
                                         PANTAU KARHUTLA.{' '}
                                         <span className="block text-white font-extrabold tracking-tight mt-1">
                                             KAWAL PENANGANAN.
@@ -688,7 +688,7 @@ export default function Home({
                                                         placeholder="Contoh: JG-XXXXXX"
                                                         value={lookupCode}
                                                         onChange={(e) => setLookupCode(e.target.value)}
-                                                        className="bg-transparent text-xs font-bold text-neutral-900 placeholder-neutral-400 focus:outline-none flex-1 px-2 py-1 uppercase"
+                                                        className="bg-transparent text-xs font-bold text-neutral-900 placeholder-neutral-400 focus:outline-none flex-1 px-2 py-1 uppercase min-w-0"
                                                     />
                                                     <button
                                                         type="submit"

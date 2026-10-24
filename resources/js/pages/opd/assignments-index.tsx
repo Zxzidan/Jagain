@@ -115,7 +115,7 @@ export default function OpdAssignmentsIndex({
                 {/* Table */}
                 <div className="bg-[#faf9f5] border border-[#cccbc8] rounded-2xl overflow-hidden shadow-xs">
                     <div className="overflow-x-auto">
-                        <table className="w-full text-left text-xs">
+                        <table className="w-full min-w-[720px] text-left text-xs">
                             <thead className="bg-[#e3dacc]/40 border-b border-[#cccbc8] text-[#141413] uppercase tracking-wider text-[11px] font-sans font-semibold">
                                 <tr>
                                     <th className="py-3 px-4">Kode Lacak Laporan</th>

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link, router, usePage } from '@inertiajs/react';
 import SpecularButton from '@/components/react-bits/SpecularButton';
 import {
@@ -12,6 +12,11 @@ import {
     Building2,
     ChevronDown,
     FileText,
+    Tags,
+    History,
+    PlusCircle,
+    LogIn,
+    Shield,
 } from 'lucide-react';
 import {
     DropdownMenu,
@@ -28,6 +33,7 @@ export default function Navbar() {
     const user = auth?.user;
     const currentPath = typeof window !== 'undefined' ? window.location.pathname : (url || '/');
     const isHomePage = currentPath === '/' || currentPath === '';
+    const headerRef = useRef<HTMLElement>(null);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
 
@@ -38,6 +44,39 @@ export default function Navbar() {
         handleScroll();
         window.addEventListener('scroll', handleScroll, { passive: true });
         return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
+
+    // Close on Escape key & close on Click Outside
+    useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.key === 'Escape') {
+                setMobileMenuOpen(false);
+            }
+        };
+
+        const handleClickOutside = (e: MouseEvent) => {
+            if (headerRef.current && !headerRef.current.contains(e.target as Node)) {
+                setMobileMenuOpen(false);
+            }
+        };
+
+        if (mobileMenuOpen) {
+            window.addEventListener('keydown', handleKeyDown);
+            document.addEventListener('mousedown', handleClickOutside);
+        }
+
+        return () => {
+            window.removeEventListener('keydown', handleKeyDown);
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [mobileMenuOpen]);
+
+    // Close mobile menu when navigating with Inertia
+    useEffect(() => {
+        const unregister = router.on('navigate', () => {
+            setMobileMenuOpen(false);
+        });
+        return () => unregister();
     }, []);
 
     const isActive = (path: string) => {
@@ -63,6 +102,7 @@ export default function Navbar() {
 
     return (
         <header
+            ref={headerRef}
             className={`fixed top-0 left-0 right-0 w-full z-50 transition-all duration-300 ease-out ${
                 scrolled
                     ? 'bg-white/85 backdrop-blur-2xl border-b border-neutral-200/80 shadow-[0_4px_24px_rgba(0,0,0,0.04)]'
@@ -149,13 +189,13 @@ export default function Navbar() {
                                             </Link>
                                         </DropdownMenuItem>
                                         <DropdownMenuItem asChild>
-                                            <Link href="/admin/laporan" className="cursor-pointer text-xs flex items-center gap-2 px-3 py-2 rounded-xl text-neutral-700 hover:text-black hover:bg-neutral-100">
+                                            <Link href="/admin/reports" className="cursor-pointer text-xs flex items-center gap-2 px-3 py-2 rounded-xl text-neutral-700 hover:text-black hover:bg-neutral-100">
                                                 <Flame className="size-3.5 text-neutral-700" />
                                                 <span>Antrean Verifikasi</span>
                                             </Link>
                                         </DropdownMenuItem>
                                         <DropdownMenuItem asChild>
-                                            <Link href="/admin/instansi" className="cursor-pointer text-xs flex items-center gap-2 px-3 py-2 rounded-xl text-neutral-700 hover:text-black hover:bg-neutral-100">
+                                            <Link href="/admin/agencies" className="cursor-pointer text-xs flex items-center gap-2 px-3 py-2 rounded-xl text-neutral-700 hover:text-black hover:bg-neutral-100">
                                                 <Building2 className="size-3.5 text-neutral-500" />
                                                 <span>Kelola Instansi</span>
                                             </Link>
@@ -246,7 +286,7 @@ export default function Navbar() {
                     </SpecularButton>
                 </div>
 
-                {/* Mobile Menu Button */}
+                {/* Mobile Menu Action Area */}
                 <div className="flex md:hidden items-center gap-2">
                     <SpecularButton
                         size="sm"
@@ -260,90 +300,223 @@ export default function Navbar() {
                         idleIntensity={0.3}
                         glow={0.8}
                         onClick={() => router.visit('/lapor')}
-                        className="font-bold text-xs px-3 py-1 shadow-xs"
+                        className="font-bold text-xs px-3 py-1.5 shadow-xs"
                     >
                         Lapor
                     </SpecularButton>
                     <button
                         type="button"
                         onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                        className="p-1.5 text-neutral-800 hover:bg-neutral-100 rounded-lg focus:outline-none transition-colors"
-                        aria-label="Toggle menu"
+                        className="p-2 text-neutral-800 hover:bg-neutral-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#10e57a]/50 transition-colors select-none min-h-[44px] min-w-[44px] flex items-center justify-center"
+                        aria-label={mobileMenuOpen ? 'Tutup menu navigasi' : 'Buka menu navigasi'}
+                        aria-expanded={mobileMenuOpen}
+                        aria-controls="mobile-navigation"
                     >
-                        {mobileMenuOpen ? <X className="size-5 text-emerald-600" /> : <Menu className="size-5" />}
+                        {mobileMenuOpen ? <X className="size-6 text-emerald-600" /> : <Menu className="size-6 text-neutral-900" />}
                     </button>
                 </div>
             </div>
 
-            {/* Mobile Navigation Dropdown */}
+            {/* Mobile Navigation Drawer / Dropdown */}
             {mobileMenuOpen && (
-                <div className="md:hidden w-full bg-white/98 backdrop-blur-3xl border-b border-neutral-200 px-6 py-5 shadow-2xl space-y-2 text-neutral-900">
-                    <Link
-                        href="/"
-                        onClick={() => setMobileMenuOpen(false)}
-                        className={`block px-4 py-2.5 rounded-xl text-sm font-semibold transition-colors ${
-                            isActive('/') ? 'bg-[#10e57a] text-black' : 'text-neutral-700 hover:text-black hover:bg-neutral-100'
-                        }`}
-                    >
-                        Beranda
-                    </Link>
-                    <Link
-                        href="/peta"
-                        onClick={() => setMobileMenuOpen(false)}
-                        className={`block px-4 py-2.5 rounded-xl text-sm font-semibold transition-colors ${
-                            isActive('/peta') ? 'bg-[#10e57a] text-black' : 'text-neutral-700 hover:text-black hover:bg-neutral-100'
-                        }`}
-                    >
-                        Peta Sebaran
-                    </Link>
-                    <Link
-                        href="/panduan-keselamatan"
-                        onClick={() => setMobileMenuOpen(false)}
-                        className={`block px-4 py-2.5 rounded-xl text-sm font-semibold transition-colors ${
-                            isActive('/panduan-keselamatan') ? 'bg-[#10e57a] text-black' : 'text-neutral-700 hover:text-black hover:bg-neutral-100'
-                        }`}
-                    >
-                        Panduan Keselamatan
-                    </Link>
-                    <Link
-                        href="/tentang-kami"
-                        onClick={() => setMobileMenuOpen(false)}
-                        className={`block px-4 py-2.5 rounded-xl text-sm font-semibold transition-colors ${
-                            isActive('/tentang-kami') ? 'bg-[#10e57a] text-black' : 'text-neutral-700 hover:text-black hover:bg-neutral-100'
-                        }`}
-                    >
-                        Transparansi
-                    </Link>
-
-                    <div className="border-t border-neutral-200 pt-3 mt-2">
-                        {user ? (
-                            <div className="space-y-1.5">
-                                <Link
-                                    href="/laporan-saya"
-                                    onClick={() => setMobileMenuOpen(false)}
-                                    className="block px-4 py-2 text-xs font-medium text-neutral-700 hover:text-black"
-                                >
-                                    Laporan Saya
-                                </Link>
-                                <Link
-                                    href="/logout"
-                                    method="post"
-                                    as="button"
-                                    className="w-full text-left px-4 py-2 text-xs font-semibold text-neutral-800 hover:bg-neutral-100 rounded-xl"
-                                >
-                                    Keluar
-                                </Link>
+                <div
+                    id="mobile-navigation"
+                    role="navigation"
+                    aria-label="Navigasi Utama Mobile"
+                    className="md:hidden w-full bg-white/98 backdrop-blur-3xl border-b border-neutral-200/90 px-4 sm:px-6 py-5 shadow-2xl space-y-4 text-neutral-900 max-h-[calc(100vh-4rem)] overflow-y-auto animate-in fade-in slide-in-from-top-2 duration-200"
+                >
+                    {/* User Role Card (If Logged In) */}
+                    {user && (
+                        <div className="p-3.5 rounded-2xl bg-neutral-50/90 border border-neutral-200/80 flex items-center justify-between gap-3">
+                            <div className="flex items-center gap-3 min-w-0">
+                                <div className="size-10 rounded-xl bg-[#10e57a] text-black font-black text-sm flex items-center justify-center shrink-0 shadow-xs">
+                                    {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
+                                </div>
+                                <div className="min-w-0">
+                                    <div className="font-bold text-xs text-neutral-950 truncate">{user.name}</div>
+                                    <div className="text-[11px] text-neutral-500 truncate">{user.email}</div>
+                                </div>
                             </div>
-                        ) : (
+                            <span className="shrink-0 text-[10px] font-bold px-2 py-0.5 rounded-full bg-neutral-200/80 text-neutral-800">
+                                {user.is_admin ? 'Admin' : user.is_agency ? 'OPD' : 'Masyarakat'}
+                            </span>
+                        </div>
+                    )}
+
+                    {/* Public Navigation Links */}
+                    <div className="space-y-1">
+                        <div className="px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-neutral-400">
+                            Halaman Utama
+                        </div>
+                        <Link
+                            href="/"
+                            onClick={() => setMobileMenuOpen(false)}
+                            className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-colors ${
+                                isActive('/') ? 'bg-[#10e57a] text-black font-bold' : 'text-neutral-700 hover:text-black hover:bg-neutral-100'
+                            }`}
+                        >
+                            <span>Beranda</span>
+                            <ArrowRight className="size-3.5 opacity-60" />
+                        </Link>
+                        <Link
+                            href="/peta"
+                            onClick={() => setMobileMenuOpen(false)}
+                            className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-colors ${
+                                isActive('/peta') ? 'bg-[#10e57a] text-black font-bold' : 'text-neutral-700 hover:text-black hover:bg-neutral-100'
+                            }`}
+                        >
+                            <span>Peta Sebaran Karhutla</span>
+                            <ArrowRight className="size-3.5 opacity-60" />
+                        </Link>
+                        <Link
+                            href="/panduan-keselamatan"
+                            onClick={() => setMobileMenuOpen(false)}
+                            className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-colors ${
+                                isActive('/panduan-keselamatan') ? 'bg-[#10e57a] text-black font-bold' : 'text-neutral-700 hover:text-black hover:bg-neutral-100'
+                            }`}
+                        >
+                            <span>Panduan Keselamatan</span>
+                            <ArrowRight className="size-3.5 opacity-60" />
+                        </Link>
+                        <Link
+                            href="/tentang-kami"
+                            onClick={() => setMobileMenuOpen(false)}
+                            className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-colors ${
+                                isActive('/tentang-kami') ? 'bg-[#10e57a] text-black font-bold' : 'text-neutral-700 hover:text-black hover:bg-neutral-100'
+                            }`}
+                        >
+                            <span>Transparansi & Provenance</span>
+                            <ArrowRight className="size-3.5 opacity-60" />
+                        </Link>
+                    </div>
+
+                    {/* Role-Specific Navigation Links */}
+                    {user?.is_admin && (
+                        <div className="space-y-1 pt-2 border-t border-neutral-100">
+                            <div className="px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-emerald-800 flex items-center gap-1.5">
+                                <LayoutDashboard className="size-3" />
+                                <span>Pusat Kendali Admin</span>
+                            </div>
+                            <Link
+                                href="/admin/dashboard"
+                                onClick={() => setMobileMenuOpen(false)}
+                                className="flex items-center gap-2.5 px-3.5 py-2 rounded-xl text-xs font-semibold text-neutral-800 hover:bg-neutral-100"
+                            >
+                                <LayoutDashboard className="size-3.5 text-emerald-600" />
+                                <span>Dashboard Admin</span>
+                            </Link>
+                            <Link
+                                href="/admin/reports"
+                                onClick={() => setMobileMenuOpen(false)}
+                                className="flex items-center gap-2.5 px-3.5 py-2 rounded-xl text-xs font-semibold text-neutral-800 hover:bg-neutral-100"
+                            >
+                                <Flame className="size-3.5 text-neutral-700" />
+                                <span>Antrean & Laporan Karhutla</span>
+                            </Link>
+                            <Link
+                                href="/admin/agencies"
+                                onClick={() => setMobileMenuOpen(false)}
+                                className="flex items-center gap-2.5 px-3.5 py-2 rounded-xl text-xs font-semibold text-neutral-800 hover:bg-neutral-100"
+                            >
+                                <Building2 className="size-3.5 text-neutral-600" />
+                                <span>Instansi & OPD Kewenangan</span>
+                            </Link>
+                            <Link
+                                href="/admin/categories"
+                                onClick={() => setMobileMenuOpen(false)}
+                                className="flex items-center gap-2.5 px-3.5 py-2 rounded-xl text-xs font-semibold text-neutral-800 hover:bg-neutral-100"
+                            >
+                                <Tags className="size-3.5 text-neutral-600" />
+                                <span>Kategori Karhutla</span>
+                            </Link>
+                            <Link
+                                href="/admin/audit-logs"
+                                onClick={() => setMobileMenuOpen(false)}
+                                className="flex items-center gap-2.5 px-3.5 py-2 rounded-xl text-xs font-semibold text-neutral-800 hover:bg-neutral-100"
+                            >
+                                <History className="size-3.5 text-neutral-600" />
+                                <span>Audit Trail Logs</span>
+                            </Link>
+                        </div>
+                    )}
+
+                    {user?.is_agency && (
+                        <div className="space-y-1 pt-2 border-t border-neutral-100">
+                            <div className="px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-emerald-800 flex items-center gap-1.5">
+                                <Building2 className="size-3" />
+                                <span>Operasional Petugas OPD</span>
+                            </div>
+                            <Link
+                                href="/opd/dashboard"
+                                onClick={() => setMobileMenuOpen(false)}
+                                className="flex items-center gap-2.5 px-3.5 py-2 rounded-xl text-xs font-semibold text-neutral-800 hover:bg-neutral-100"
+                            >
+                                <LayoutDashboard className="size-3.5 text-emerald-600" />
+                                <span>Dashboard Operasi OPD</span>
+                            </Link>
+                            <Link
+                                href="/opd/tugas"
+                                onClick={() => setMobileMenuOpen(false)}
+                                className="flex items-center gap-2.5 px-3.5 py-2 rounded-xl text-xs font-semibold text-neutral-800 hover:bg-neutral-100"
+                            >
+                                <FileText className="size-3.5 text-neutral-600" />
+                                <span>Daftar Penugasan Lapangan</span>
+                            </Link>
+                        </div>
+                    )}
+
+                    {/* Citizen & Account Links */}
+                    {user ? (
+                        <div className="space-y-1 pt-2 border-t border-neutral-100">
+                            <div className="px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-neutral-400">
+                                Akun & Pengaturan
+                            </div>
+                            <Link
+                                href="/laporan-saya"
+                                onClick={() => setMobileMenuOpen(false)}
+                                className="flex items-center gap-2.5 px-3.5 py-2 rounded-xl text-xs font-semibold text-neutral-800 hover:bg-neutral-100"
+                            >
+                                <FileText className="size-3.5 text-neutral-600" />
+                                <span>Laporan Saya</span>
+                            </Link>
+                            <Link
+                                href="/settings/profile"
+                                onClick={() => setMobileMenuOpen(false)}
+                                className="flex items-center gap-2.5 px-3.5 py-2 rounded-xl text-xs font-semibold text-neutral-800 hover:bg-neutral-100"
+                            >
+                                <UserIcon className="size-3.5 text-neutral-600" />
+                                <span>Profil & Keamanan Akun</span>
+                            </Link>
+                            <Link
+                                href="/logout"
+                                method="post"
+                                as="button"
+                                className="w-full text-left flex items-center gap-2.5 px-3.5 py-2.5 text-xs font-semibold text-rose-700 hover:bg-rose-50 rounded-xl transition-colors cursor-pointer"
+                            >
+                                <LogOut className="size-3.5" />
+                                <span>Keluar dari Akun</span>
+                            </Link>
+                        </div>
+                    ) : (
+                        <div className="space-y-2 pt-3 border-t border-neutral-100">
                             <Link
                                 href="/login"
                                 onClick={() => setMobileMenuOpen(false)}
-                                className="block text-center py-2 px-4 text-xs font-semibold text-neutral-800 bg-neutral-100 rounded-xl"
+                                className="w-full py-2.5 px-4 text-xs font-bold text-center text-neutral-900 bg-neutral-100 hover:bg-neutral-200 rounded-xl flex items-center justify-center gap-2 transition-colors"
                             >
-                                Masuk ke Akun
+                                <LogIn className="size-3.5" />
+                                <span>Masuk ke Akun</span>
                             </Link>
-                        )}
-                    </div>
+                            <Link
+                                href="/register"
+                                onClick={() => setMobileMenuOpen(false)}
+                                className="w-full py-2.5 px-4 text-xs font-bold text-center text-black bg-[#10e57a] hover:bg-[#0ba856] rounded-xl flex items-center justify-center gap-2 transition-colors shadow-xs"
+                            >
+                                <PlusCircle className="size-3.5" />
+                                <span>Daftar Akun Baru</span>
+                            </Link>
+                        </div>
+                    )}
                 </div>
             )}
         </header>

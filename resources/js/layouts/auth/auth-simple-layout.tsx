@@ -20,7 +20,7 @@ export default function AuthSimpleLayout({
                     <ArrowLeft className="size-3.5" />
                     <span>Kembali ke Beranda JAGAIN</span>
                 </Link>
-                <span className="text-[11px] font-mono text-[#87867f]">
+                <span className="text-[11px] font-mono text-[#87867f] hidden sm:inline">
                     Platform Transparansi Karhutla
                 </span>
             </div>
