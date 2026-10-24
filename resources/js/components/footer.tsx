@@ -96,17 +96,17 @@ export default function Footer() {
                             Tanggap Darurat
                         </h4>
                         
-                        <div className="p-4 rounded-2xl bg-neutral-950 text-white border border-black/30 shadow-md space-y-3">
-                            <div className="flex items-center gap-2 text-xs font-bold text-white">
-                                <ShieldAlert className="size-4 text-emerald-400 shrink-0" />
+                        <div className="p-4 rounded-2xl bg-white/90 backdrop-blur-xs border border-black/10 shadow-xs space-y-3">
+                            <div className="flex items-center gap-2 text-xs font-bold text-neutral-950">
+                                <ShieldAlert className="size-4 text-emerald-700 shrink-0" />
                                 <span>Krisis Api Mengancam?</span>
                             </div>
-                            <p className="text-[11px] text-neutral-300 leading-relaxed font-normal">
+                            <p className="text-[11px] text-neutral-700 leading-relaxed font-medium">
                                 Evakuasi mandiri dari arah asap dan segera hubungi posko darurat:
                             </p>
                             <a
                                 href="tel:112"
-                                className="flex items-center justify-between w-full px-3.5 py-2.5 rounded-xl bg-[#10e57a] hover:bg-[#0ba856] text-black text-xs font-black transition-all shadow-xs group"
+                                className="flex items-center justify-between w-full px-3.5 py-2.5 rounded-xl bg-[#10e57a] hover:bg-[#0ba856] text-black text-xs font-black transition-all shadow-xs group border border-black/10"
                             >
                                 <span className="flex items-center gap-2">
                                     <PhoneCall className="size-3.5 text-black" />
@@ -116,7 +116,7 @@ export default function Footer() {
                                     112
                                 </span>
                             </a>
-                            <div className="text-[10px] text-neutral-400 text-center font-medium">
+                            <div className="text-[10px] text-neutral-600 text-center font-medium">
                                 Siaga 24 Jam BPBD, Damkar & Basarnas
                             </div>
                         </div>
