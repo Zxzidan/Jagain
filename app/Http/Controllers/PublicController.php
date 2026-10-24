@@ -30,16 +30,45 @@ class PublicController extends Controller
             'simulated_hotspots' => ExternalObservation::where('is_simulated', true)->count(),
         ];
 
-        $recentReports = Report::publiclyVisible()
+        $reports = Report::publiclyVisible()
             ->with(['category', 'evidence', 'latestAssignment.agency'])
             ->latest()
-            ->take(6)
+            ->take(50)
             ->get()
             ->map(fn (Report $r) => $r->toPublicArray());
+
+        $recentReports = $reports->take(6)->values();
+
+        // External observations (hotspots from NASA FIRMS & BMKG)
+        $observations = ExternalObservation::with('dataSource')
+            ->latest('observed_at')
+            ->take(50)
+            ->get()
+            ->map(fn (ExternalObservation $obs) => [
+                'id' => $obs->id,
+                'external_record_id' => $obs->external_record_id,
+                'satellite_instrument' => $obs->satellite_instrument,
+                'confidence_level' => $obs->confidence_level,
+                'brightness_kelvin' => $obs->brightness_kelvin,
+                'frp_mw' => $obs->frp_mw,
+                'latitude' => $obs->latitude,
+                'longitude' => $obs->longitude,
+                'province' => $obs->province,
+                'regency_city' => $obs->regency_city,
+                'observed_at' => $obs->observed_at->toIso8601String(),
+                'is_simulated' => $obs->is_simulated,
+                'data_source' => [
+                    'name' => $obs->dataSource->name,
+                    'attribution' => $obs->dataSource->attribution_text,
+                    'source_type' => $obs->dataSource->source_type,
+                ],
+            ]);
 
         return Inertia::render('public/home', [
             'stats' => $stats,
             'recentReports' => $recentReports,
+            'reports' => $reports,
+            'observations' => $observations,
         ]);
     }
 

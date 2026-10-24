@@ -3,7 +3,7 @@ import { Head, Link, router } from '@inertiajs/react';
 import Navbar from '@/components/navbar';
 import Footer from '@/components/footer';
 import ForestBreezeBackdrop from '@/components/forest-breeze-backdrop';
-import KarhutlaMap, { MapReport } from '@/components/karhutla-map';
+import KarhutlaMap, { MapReport, MapObservation } from '@/components/karhutla-map';
 import StatusBadge from '@/components/status-badge';
 import AnimatedContent from '@/components/react-bits/AnimatedContent';
 import LogoLoop from '@/components/react-bits/LogoLoop';
@@ -38,10 +38,20 @@ interface HomeProps {
         simulated_hotspots: number;
     };
     recentReports: MapReport[];
+    reports?: MapReport[];
+    observations?: MapObservation[];
 }
 
-export default function Home({ stats, recentReports }: HomeProps) {
+export default function Home({
+    stats,
+    recentReports = [],
+    reports = [],
+    observations = [],
+}: HomeProps) {
     const [lookupCode, setLookupCode] = useState('');
+    const [showSatelliteHotspots, setShowSatelliteHotspots] = useState(true);
+    const displayedObservations = showSatelliteHotspots ? observations : [];
+    const mapReports = reports.length > 0 ? reports : recentReports;
 
     const handleLookup = (e: React.FormEvent) => {
         e.preventDefault();
@@ -159,7 +169,7 @@ export default function Home({ stats, recentReports }: HomeProps) {
             content: (
                 <div className="flex flex-col h-full justify-between p-6 sm:p-7 bg-white">
                     {/* Header */}
-                    <div className="flex items-start justify-between gap-4">
+                    <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
                         <div className="min-w-0 flex-1">
                             <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-50 text-neutral-800 text-[10px] font-bold uppercase tracking-wider mb-2">
                                 <span className="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
@@ -169,64 +179,54 @@ export default function Home({ stats, recentReports }: HomeProps) {
                                 Sebaran Titik Api Lapangan
                             </h2>
                             <p className="text-xs text-neutral-500 mt-1 leading-relaxed max-w-lg">
-                                Pantauan spasial laporan warga terverifikasi dan anomali termal satelit di daratan Kalimantan.
+                                Menampilkan <span className="font-bold text-neutral-900 tabular-nums">{mapReports.length}</span> laporan warga terverifikasi &{' '}
+                                <span className="font-bold text-emerald-600 tabular-nums">{displayedObservations.length}</span> anomali termal satelit FIRMS.
                             </p>
                         </div>
-                        <Link
-                            href="/peta"
-                            className="group text-xs font-semibold text-neutral-500 hover:text-neutral-950 inline-flex items-center gap-1 transition-colors shrink-0 mt-1"
-                        >
-                            <span>Buka Peta Penuh</span>
-                            <ArrowRight className="size-3 transition-transform group-hover:translate-x-0.5" />
-                        </Link>
+                        <div className="flex flex-wrap items-center gap-2.5 shrink-0 mt-1">
+                            {observations.length > 0 && (
+                                <label className="inline-flex items-center gap-2 px-3 py-1.5 bg-neutral-50 hover:bg-neutral-100 border border-neutral-200/90 rounded-full text-xs font-semibold text-neutral-800 cursor-pointer select-none transition-all shadow-xs">
+                                    <input
+                                        type="checkbox"
+                                        checked={showSatelliteHotspots}
+                                        onChange={(e) => setShowSatelliteHotspots(e.target.checked)}
+                                        className="accent-[#10e57a] size-3.5 rounded cursor-pointer"
+                                    />
+                                    <Satellite className="size-3.5 text-emerald-600" />
+                                    <span>Layer Satelit ({observations.length})</span>
+                                </label>
+                            )}
+                            <Link
+                                href="/peta"
+                                className="group text-xs font-semibold text-neutral-500 hover:text-neutral-950 inline-flex items-center gap-1 transition-colors"
+                            >
+                                <span>Buka Peta Penuh</span>
+                                <ArrowRight className="size-3 transition-transform group-hover:translate-x-0.5" />
+                            </Link>
+                        </div>
                     </div>
 
-                    {/* Framed Map Widget (Framed like Stepper & AnimatedList widgets) */}
-                    <div className="my-auto py-2">
-                        <div className="relative rounded-2xl border border-neutral-200/80 overflow-hidden shadow-xs bg-neutral-100 min-h-[300px]">
-                            {/* Live Satellite & Station Sync Floating Chip */}
-                            <div className="absolute top-3 right-3 z-[400] flex items-center gap-2 pointer-events-none">
-                                <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/95 backdrop-blur-md border border-neutral-200/80 text-[10px] font-bold text-neutral-700 shadow-xs">
-                                    <Activity className="size-3 text-emerald-600 animate-pulse" />
-                                    <span>Live Feed NASA FIRMS & BMKG</span>
-                                </div>
-                            </div>
-
-                            {/* 5 Kalimantan Provinces Monitored Chip */}
-                            <div className="absolute bottom-3 left-3 z-[400] pointer-events-none hidden sm:block">
-                                <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/95 backdrop-blur-md border border-neutral-200/80 text-[10px] font-bold text-neutral-800 shadow-xs">
-                                    <span className="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                                    <span>5 Provinsi Terpantau</span>
-                                </div>
-                            </div>
-
+                    {/* Framed Map Widget - Exact match to /peta container style & features */}
+                    <div className="my-auto py-3">
+                        <div className="rounded-3xl p-2 bg-neutral-50/70 border border-neutral-200/80 shadow-sm relative">
                             <KarhutlaMap
-                                reports={recentReports}
-                                height="300px"
-                                minHeight="300px"
-                                showLegend={false}
-                                showSimulatedNotice={false}
-                                className="border-0 rounded-none w-full h-full"
+                                reports={mapReports}
+                                observations={displayedObservations}
+                                height="480px"
+                                minHeight="440px"
+                                showLegend={true}
+                                showSimulatedNotice={true}
+                                className="rounded-2xl border-0 w-full"
                             />
                         </div>
                     </div>
 
                     {/* Standardized Card Footer */}
                     <div className="pt-3 border-t border-neutral-100 flex items-center justify-between text-xs">
-                        <div className="flex flex-wrap items-center gap-2.5 sm:gap-4 text-[11px] text-neutral-600">
-                            <span className="flex items-center gap-1.5">
-                                <span className="size-2 rounded-full bg-[#10e57a] ring-2 ring-emerald-500/30 animate-pulse" />
-                                <span className="font-semibold text-neutral-800">Terverifikasi</span>
-                            </span>
-                            <span className="flex items-center gap-1.5">
-                                <span className="size-2 rounded-full bg-neutral-400" />
-                                <span className="font-medium text-neutral-600">Laporan Baru</span>
-                            </span>
-                            <span className="flex items-center gap-1.5">
-                                <span className="size-2 rounded-full bg-neutral-900 ring-2 ring-neutral-700/20" />
-                                <span className="font-medium text-neutral-600">Hotspot Satelit</span>
-                            </span>
-                        </div>
+                        <span className="text-neutral-500 text-[11px] font-medium flex items-center gap-1.5">
+                            <Activity className="size-3.5 text-emerald-600 animate-pulse" />
+                            <span>Sinkronisasi otomatis feed NASA FIRMS, BMKG & validasi publik</span>
+                        </span>
 
                         <Link
                             href="/peta"
