@@ -2,9 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Enums\AssignmentStatus;
-use App\Enums\FireCondition;
-use App\Enums\ReportStatus;
 use App\Enums\UserRole;
 use App\Models\Agency;
 use App\Models\AgencyMembership;
@@ -15,7 +12,6 @@ use App\Models\Category;
 use App\Models\DataSource;
 use App\Models\Evidence;
 use App\Models\ExternalObservation;
-use App\Models\OperationalUpdate;
 use App\Models\Report;
 use App\Models\ReportCategory;
 use App\Models\ReportStatusHistory;
@@ -431,22 +427,22 @@ class DatabaseSeeder extends Seeder
                 'created_by_user_id' => $citizen->id,
                 'category_id' => $hutanCat->id,
                 'category' => $hutanCat->slug,
-            'title' => 'Dugaan Titik Api di Perbatasan Hutan Lindung Gunung Palung',
-            'description' => 'Terlihat kolom asap membubung tinggi dari arah bukit timur. Lokasi terpencil belum terjangkau jalan mobil.',
-            'latitude' => -1.2185000,
-            'longitude' => 110.1450000,
-            'province' => 'Kalimantan Barat',
-            'regency_city' => 'Kabupaten Kayong Utara',
-            'location_description' => 'Lereng timur laut kawasan penyangga, dekat Desa Sedahan Jaya',
-            'reported_occurrence_at' => now()->subMinutes(45),
-            'report_status' => 'SUBMITTED',
-            'fire_condition' => 'UNKNOWN',
-            'visibility' => 'PUBLIC',
-            'is_simulated' => false,
-            'lock_version' => 1,
-            'reporter_name' => 'Budi Santoso',
-            'reporter_phone' => '08190000004',
-        ]);
+                'title' => 'Dugaan Titik Api di Perbatasan Hutan Lindung Gunung Palung',
+                'description' => 'Terlihat kolom asap membubung tinggi dari arah bukit timur. Lokasi terpencil belum terjangkau jalan mobil.',
+                'latitude' => -1.2185000,
+                'longitude' => 110.1450000,
+                'province' => 'Kalimantan Barat',
+                'regency_city' => 'Kabupaten Kayong Utara',
+                'location_description' => 'Lereng timur laut kawasan penyangga, dekat Desa Sedahan Jaya',
+                'reported_occurrence_at' => now()->subMinutes(45),
+                'report_status' => 'SUBMITTED',
+                'fire_condition' => 'UNKNOWN',
+                'visibility' => 'PUBLIC',
+                'is_simulated' => false,
+                'lock_version' => 1,
+                'reporter_name' => 'Budi Santoso',
+                'reporter_phone' => '08190000004',
+            ]);
 
             ReportStatusHistory::create([
                 'report_id' => $report4->id,

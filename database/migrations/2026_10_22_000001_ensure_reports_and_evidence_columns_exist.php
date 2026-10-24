@@ -4,6 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Str;
 
 return new class extends Migration
 {
@@ -80,7 +81,7 @@ return new class extends Migration
                 ->get(['id']);
 
             foreach ($reportsWithoutCode as $rep) {
-                $code = 'JGN-'.date('Ym').'-'.strtoupper(\Illuminate\Support\Str::random(5));
+                $code = 'JGN-'.date('Ym').'-'.strtoupper(Str::random(5));
                 $updates = ['tracking_code' => $code];
                 if (Schema::hasColumn('reports', 'report_number')) {
                     $updates['report_number'] = $code;

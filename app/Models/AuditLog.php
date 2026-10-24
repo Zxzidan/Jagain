@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Database\Factories\AuditLogFactory;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -60,7 +61,8 @@ class AuditLog extends Model
 
     public function newEloquentBuilder($query)
     {
-        return new class($query) extends \Illuminate\Database\Eloquent\Builder {
+        return new class($query) extends Builder
+        {
             public function where($column, $operator = null, $value = null, $boolean = 'and')
             {
                 if ($column === 'entity_type' && is_string($operator) && $value === null) {

@@ -71,6 +71,7 @@ class Evidence extends Model
     public function getUrlAttribute(): string
     {
         $path = $this->file_path ?? $this->storage_key ?? '';
+
         return Storage::disk('public')->url($path);
     }
 

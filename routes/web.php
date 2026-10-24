@@ -14,7 +14,6 @@ use App\Http\Controllers\Community\ReportController;
 use App\Http\Controllers\PublicController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
 
 // Public Routes (Open to all visitors)
 Route::get('/', [PublicController::class, 'index'])->name('home');
