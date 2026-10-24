@@ -12,7 +12,6 @@ import {
 import { useState } from 'react';
 import { EmptyState } from '@/components/jagain/empty-state';
 import { FlashMessage } from '@/components/jagain/flash-message';
-import AppLayout from '@/layouts/app-layout';
 import { dashboard as adminDashboard } from '@/routes/admin';
 import {
     index as categoriesIndex,
@@ -97,7 +96,7 @@ export default function CategoriesIndex({ categories, filters }: CategoriesIndex
     };
 
     return (
-        <AppLayout breadcrumbs={breadcrumbs}>
+        <>
             <Head title="Kelola Kategori Laporan - JAGAIN Admin" />
 
             <div className="flex flex-1 flex-col gap-6 p-4 md:p-8">
@@ -362,6 +361,6 @@ export default function CategoriesIndex({ categories, filters }: CategoriesIndex
                     </div>
                 </div>
             )}
-        </AppLayout>
+        </>
     );
 }

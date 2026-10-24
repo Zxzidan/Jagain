@@ -12,8 +12,8 @@ import { useState } from 'react';
 import { EmptyState } from '@/components/jagain/empty-state';
 import { FlashMessage } from '@/components/jagain/flash-message';
 import { StatusBadge } from '@/components/jagain/status-badge';
-import AppLayout from '@/layouts/app-layout';
 import { dashboard as adminDashboard } from '@/routes/admin';
+
 import { reports as reportsExport } from '@/routes/admin/exports';
 import { index as reportsIndex, show as reportShow } from '@/routes/admin/reports';
 import type { BreadcrumbItem, Category, PaginatedResponse, Report, ReportStatus } from '@/types';
@@ -102,7 +102,7 @@ export default function ReportsIndex({
     };
 
     return (
-        <AppLayout breadcrumbs={breadcrumbs}>
+        <>
             <Head title="Antrean & Laporan Karhutla - JAGAIN Admin" />
 
             <div className="flex flex-1 flex-col gap-6 p-4 md:p-8">
@@ -368,6 +368,6 @@ export default function ReportsIndex({
                     )}
                 </div>
             </div>
-        </AppLayout>
+        </>
     );
 }
