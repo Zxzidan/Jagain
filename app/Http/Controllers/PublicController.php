@@ -64,11 +64,23 @@ class PublicController extends Controller
                 ],
             ]);
 
+        $categories = ReportCategory::where('is_active', true)->get(['id', 'name', 'slug']);
+
+        $provinces = [
+            'Kalimantan Barat',
+            'Kalimantan Tengah',
+            'Kalimantan Selatan',
+            'Kalimantan Timur',
+            'Kalimantan Utara',
+        ];
+
         return Inertia::render('public/home', [
             'stats' => $stats,
             'recentReports' => $recentReports,
             'reports' => $reports,
             'observations' => $observations,
+            'categories' => $categories,
+            'provinces' => $provinces,
         ]);
     }
 

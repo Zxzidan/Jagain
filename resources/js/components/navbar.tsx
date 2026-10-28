@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link, router, usePage } from '@inertiajs/react';
-import SpecularButton from '@/components/react-bits/SpecularButton';
 import {
     ArrowRight,
     Menu,
@@ -79,25 +78,81 @@ export default function Navbar() {
         return () => unregister();
     }, []);
 
-    const isActive = (path: string) => {
-        if (path === '/') return currentPath === '/';
-        return currentPath.startsWith(path);
-    };
-
     const navItems = [
-        { label: 'Beranda', href: '/' },
-        { label: 'Peta Sebaran', href: '/peta' },
-        { label: 'Panduan Keselamatan', href: '/panduan-keselamatan' },
-        { label: 'Transparansi', href: '/tentang-kami' },
-        ...(user ? [{ label: 'Laporan Saya', href: '/laporan-saya' }] : []),
+        { id: 'beranda', label: 'Beranda' },
+        { id: 'peta-sebaran', label: 'Peta Sebaran' },
+        { id: 'panduan-keselamatan', label: 'Panduan Keselamatan' },
+        { id: 'transparansi', label: 'Transparansi' },
     ];
 
-    const getActiveNavIndex = () => {
-        if (currentPath.startsWith('/peta')) return 1;
-        if (currentPath.startsWith('/panduan-keselamatan')) return 2;
-        if (currentPath.startsWith('/tentang-kami')) return 3;
-        if (currentPath.startsWith('/laporan-saya')) return 4;
-        return 0; // Beranda
+    const [activeSection, setActiveSection] = useState('beranda');
+
+    // ScrollSpy to highlight the active navigation pill when scrolling on homepage
+    useEffect(() => {
+        if (!isHomePage) return;
+
+        const sectionIds = ['beranda', 'peta-sebaran', 'panduan-keselamatan', 'transparansi'];
+
+        const handleScrollSpy = () => {
+            const scrollPosition = window.scrollY + 140;
+
+            for (let i = sectionIds.length - 1; i >= 0; i--) {
+                const section = document.getElementById(sectionIds[i]);
+                if (section) {
+                    const top = section.offsetTop;
+                    if (scrollPosition >= top) {
+                        setActiveSection(sectionIds[i]);
+                        return;
+                    }
+                }
+            }
+            setActiveSection('beranda');
+        };
+
+        handleScrollSpy();
+        window.addEventListener('scroll', handleScrollSpy, { passive: true });
+        return () => window.removeEventListener('scroll', handleScrollSpy);
+    }, [isHomePage]);
+
+    // Handle initial hash scrolling if page is loaded with e.g. /#peta-sebaran
+    useEffect(() => {
+        if (typeof window !== 'undefined' && window.location.hash) {
+            const hashId = window.location.hash.replace('#', '');
+            const target = document.getElementById(hashId);
+            if (target) {
+                const timer = setTimeout(() => {
+                    const navHeight = 72;
+                    const top = target.getBoundingClientRect().top + window.pageYOffset - navHeight;
+                    window.scrollTo({ top, behavior: 'smooth' });
+                    setActiveSection(hashId);
+                }, 150);
+                return () => clearTimeout(timer);
+            }
+        }
+    }, []);
+
+    const handleNavClick = (e: React.MouseEvent, sectionId: string) => {
+        if (isHomePage) {
+            e.preventDefault();
+            const target = document.getElementById(sectionId);
+            if (target) {
+                const navHeight = scrolled ? 60 : 72;
+                const top = sectionId === 'beranda' ? 0 : target.getBoundingClientRect().top + window.pageYOffset - navHeight;
+                window.scrollTo({
+                    top,
+                    behavior: 'smooth',
+                });
+                setActiveSection(sectionId);
+                window.history.pushState(null, '', sectionId === 'beranda' ? window.location.pathname : `#${sectionId}`);
+            } else if (sectionId === 'beranda') {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                setActiveSection('beranda');
+                window.history.pushState(null, '', window.location.pathname);
+            }
+        } else {
+            e.preventDefault();
+            router.visit(sectionId === 'beranda' ? '/' : `/#${sectionId}`);
+        }
     };
 
     return (
@@ -129,18 +184,19 @@ export default function Navbar() {
                     </Link>
                 </div>
 
-                {/* Center Column: Desktop Navigation */}
+                {/* Center Column: Desktop Navigation (Single-Page Anchor Scroll) */}
                 <nav
                     aria-label="Navigasi Utama"
                     className="hidden lg:flex items-center gap-1 xl:gap-1.5 font-sans border-0 outline-none flex-1 justify-center min-w-0 px-2"
                 >
-                    {navItems.map((item, idx) => {
-                        const active = getActiveNavIndex() === idx;
+                    {navItems.map((item) => {
+                        const active = isHomePage ? activeSection === item.id : false;
                         return (
-                            <Link
-                                key={item.href}
-                                href={item.href}
-                                className={`h-8.5 px-3 xl:px-3.5 text-xs xl:text-sm font-semibold rounded-xl inline-flex items-center justify-center transition-all duration-200 select-none whitespace-nowrap border-0 outline-none focus:outline-none focus:ring-0 ${
+                            <a
+                                key={item.id}
+                                href={isHomePage ? `#${item.id}` : `/#${item.id}`}
+                                onClick={(e) => handleNavClick(e, item.id)}
+                                className={`h-8.5 px-3 xl:px-3.5 text-xs xl:text-sm font-semibold rounded-xl inline-flex items-center justify-center transition-all duration-200 select-none whitespace-nowrap cursor-pointer border-0 outline-none focus:outline-none focus:ring-0 ${
                                     active
                                         ? scrolled || !isHomePage
                                             ? 'bg-neutral-950 text-white font-bold shadow-xs'
@@ -151,7 +207,7 @@ export default function Navbar() {
                                 }`}
                             >
                                 {item.label}
-                            </Link>
+                            </a>
                         );
                     })}
                 </nav>
@@ -249,61 +305,41 @@ export default function Navbar() {
                             </DropdownMenuContent>
                         </DropdownMenu>
                     ) : (
-                        <Link
-                            href="/login"
-                            className={`h-9 px-4 text-sm font-semibold rounded-xl inline-flex items-center justify-center transition-all duration-200 border-0 outline-none focus:outline-none focus:ring-0 ${
-                                scrolled
-                                    ? 'text-neutral-700 hover:text-black hover:bg-neutral-100'
-                                    : 'text-black/85 hover:text-black hover:bg-black/10'
-                            }`}
-                        >
-                            Masuk
-                        </Link>
+                        <div className="flex items-center gap-2">
+                            <Link
+                                href="/login"
+                                className={`h-9 px-4 text-xs xl:text-sm font-bold rounded-full inline-flex items-center justify-center transition-all duration-200 border ${
+                                    scrolled
+                                        ? 'text-neutral-800 hover:text-black hover:bg-neutral-100 border-neutral-200/90'
+                                        : 'text-black hover:bg-black/10 border-black/25'
+                                }`}
+                            >
+                                Login
+                            </Link>
+                            <Link
+                                href="/register"
+                                className="h-9 px-4.5 text-xs xl:text-sm font-bold rounded-full inline-flex items-center justify-center transition-all duration-200 bg-black text-white hover:bg-neutral-800 shadow-sm active:scale-95"
+                            >
+                                Registrasi
+                            </Link>
+                        </div>
                     )}
-
-                    {/* Specular Edge-Lit Button for Lapor Karhutla */}
-                    <SpecularButton
-                        size="sm"
-                        radius={12}
-                        tint="#10e57a"
-                        tintOpacity={1}
-                        textColor="#000000"
-                        lineColor="#ffffff"
-                        baseColor="#0ba856"
-                        intensity={1.2}
-                        idleIntensity={0.35}
-                        glow={1}
-                        followMouse
-                        onClick={() => router.visit('/lapor')}
-                        className="h-9 font-bold text-xs sm:text-sm pl-3.5 pr-1.5 inline-flex items-center shadow-[0_2px_12px_rgba(16,229,122,0.3)] active:scale-95 shrink-0 whitespace-nowrap"
-                    >
-                        <span className="flex items-center gap-2">
-                            <span>Lapor Karhutla</span>
-                            <span className="size-6 rounded-lg bg-black text-white flex items-center justify-center">
-                                <ArrowRight className="size-3.5" />
-                            </span>
-                        </span>
-                    </SpecularButton>
                 </div>
 
                 {/* Mobile Menu Action Area */}
                 <div className="flex md:hidden items-center gap-2">
-                    <SpecularButton
-                        size="sm"
-                        radius={10}
-                        tint="#10e57a"
-                        tintOpacity={1}
-                        textColor="#000000"
-                        lineColor="#ffffff"
-                        baseColor="#0ba856"
-                        intensity={1}
-                        idleIntensity={0.3}
-                        glow={0.8}
-                        onClick={() => router.visit('/lapor')}
-                        className="font-bold text-xs px-3 py-1.5 shadow-xs"
-                    >
-                        Lapor
-                    </SpecularButton>
+                    {!user && (
+                        <Link
+                            href="/login"
+                            className={`h-8 px-3 text-xs font-bold rounded-full inline-flex items-center justify-center transition-all border ${
+                                scrolled
+                                    ? 'bg-neutral-100 text-neutral-900 border-neutral-200'
+                                    : 'bg-black/10 text-black border-black/20'
+                            }`}
+                        >
+                            Login
+                        </Link>
+                    )}
                     <button
                         type="button"
                         onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -343,51 +379,32 @@ export default function Navbar() {
                         </div>
                     )}
 
-                    {/* Public Navigation Links */}
+                    {/* On-Page Navigation Links */}
                     <div className="space-y-1">
                         <div className="px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-neutral-400">
-                            Halaman Utama
+                            Navigasi Konten
                         </div>
-                        <Link
-                            href="/"
-                            onClick={() => setMobileMenuOpen(false)}
-                            className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-colors ${
-                                isActive('/') ? 'bg-[#10e57a] text-black font-bold' : 'text-neutral-700 hover:text-black hover:bg-neutral-100'
-                            }`}
-                        >
-                            <span>Beranda</span>
-                            <ArrowRight className="size-3.5 opacity-60" />
-                        </Link>
-                        <Link
-                            href="/peta"
-                            onClick={() => setMobileMenuOpen(false)}
-                            className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-colors ${
-                                isActive('/peta') ? 'bg-[#10e57a] text-black font-bold' : 'text-neutral-700 hover:text-black hover:bg-neutral-100'
-                            }`}
-                        >
-                            <span>Peta Sebaran Karhutla</span>
-                            <ArrowRight className="size-3.5 opacity-60" />
-                        </Link>
-                        <Link
-                            href="/panduan-keselamatan"
-                            onClick={() => setMobileMenuOpen(false)}
-                            className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-colors ${
-                                isActive('/panduan-keselamatan') ? 'bg-[#10e57a] text-black font-bold' : 'text-neutral-700 hover:text-black hover:bg-neutral-100'
-                            }`}
-                        >
-                            <span>Panduan Keselamatan</span>
-                            <ArrowRight className="size-3.5 opacity-60" />
-                        </Link>
-                        <Link
-                            href="/tentang-kami"
-                            onClick={() => setMobileMenuOpen(false)}
-                            className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-colors ${
-                                isActive('/tentang-kami') ? 'bg-[#10e57a] text-black font-bold' : 'text-neutral-700 hover:text-black hover:bg-neutral-100'
-                            }`}
-                        >
-                            <span>Transparansi & Provenance</span>
-                            <ArrowRight className="size-3.5 opacity-60" />
-                        </Link>
+                        {navItems.map((item) => {
+                            const active = isHomePage && activeSection === item.id;
+                            return (
+                                <a
+                                    key={item.id}
+                                    href={isHomePage ? `#${item.id}` : `/#${item.id}`}
+                                    onClick={(e) => {
+                                        setMobileMenuOpen(false);
+                                        handleNavClick(e, item.id);
+                                    }}
+                                    className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-colors ${
+                                        active
+                                            ? 'bg-[#10e57a] text-black font-bold'
+                                            : 'text-neutral-700 hover:text-black hover:bg-neutral-100'
+                                    }`}
+                                >
+                                    <span>{item.label}</span>
+                                    <ArrowRight className="size-3.5 opacity-60" />
+                                </a>
+                            );
+                        })}
                     </div>
 
                     {/* Role-Specific Navigation Links */}
@@ -505,7 +522,7 @@ export default function Navbar() {
                                 className="w-full py-2.5 px-4 text-xs font-bold text-center text-neutral-900 bg-neutral-100 hover:bg-neutral-200 rounded-xl flex items-center justify-center gap-2 transition-colors"
                             >
                                 <LogIn className="size-3.5" />
-                                <span>Masuk ke Akun</span>
+                                <span>Login</span>
                             </Link>
                             <Link
                                 href="/register"
@@ -513,7 +530,7 @@ export default function Navbar() {
                                 className="w-full py-2.5 px-4 text-xs font-bold text-center text-black bg-[#10e57a] hover:bg-[#0ba856] rounded-xl flex items-center justify-center gap-2 transition-colors shadow-xs"
                             >
                                 <PlusCircle className="size-3.5" />
-                                <span>Daftar Akun Baru</span>
+                                <span>Registrasi</span>
                             </Link>
                         </div>
                     )}

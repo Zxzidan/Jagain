@@ -25,6 +25,10 @@
 
         {{-- Inline style to set the HTML background color to clean white, prevent horizontal overflow & hide scrollbar --}}
         <style>
+            html {
+                scroll-behavior: smooth;
+            }
+
             html, body {
                 background-color: #ffffff;
                 overflow-x: hidden;

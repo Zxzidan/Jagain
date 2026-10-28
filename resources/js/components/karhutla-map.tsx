@@ -143,25 +143,22 @@ export default function KarhutlaMap({
         // Clear existing markers
         layer.clearLayers();
 
-        // Icon Generators
+        // Icon Generators (Clean, professional GIS markers - NO tacky AI droplet icons or neon glows)
         const createCitizenIcon = (status: string) => {
             const isVerified = ['VERIFIED', 'DISPATCHED', 'RESOLUTION_REVIEW', 'RESOLVED_VERIFIED'].includes(status);
-            const bgColor = isVerified ? '#10e57a' : '#262626';
-            const iconColor = isVerified ? '#0a0a0a' : '#ffffff';
-            const glow = isVerified ? 'box-shadow: 0 0 15px rgba(16,229,122,0.7);' : 'box-shadow: 0 2px 8px rgba(0,0,0,0.5);';
+            const pinColor = isVerified ? '#10e57a' : '#171717';
+            const innerColor = isVerified ? '#0a0a0a' : '#ffffff';
 
             return L.divIcon({
                 className: 'custom-map-pin',
                 html: `
-                    <div style="background-color: ${bgColor}; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid #ffffff; ${glow} color: ${iconColor}; transition: transform 0.2s;">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M12 2c0 4-4 7-4 11a4 4 0 0 0 8 0c0-4-4-7-4-11z"/>
-                        </svg>
+                    <div style="width: 20px; height: 20px; border-radius: 50%; background-color: ${pinColor}; border: 2.5px solid #ffffff; box-shadow: 0 2px 6px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center;">
+                        <div style="width: 6px; height: 6px; border-radius: 50%; background-color: ${innerColor};"></div>
                     </div>
                 `,
-                iconSize: [30, 30],
-                iconAnchor: [15, 15],
-                popupAnchor: [0, -15],
+                iconSize: [20, 20],
+                iconAnchor: [10, 10],
+                popupAnchor: [0, -10],
             });
         };
 
@@ -169,17 +166,13 @@ export default function KarhutlaMap({
             return L.divIcon({
                 className: 'custom-map-pin-sat',
                 html: `
-                    <div style="background-color: #171717; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid #ffffff; box-shadow: 0 0 10px rgba(0,0,0,0.5); color: #ffffff;">
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                            <circle cx="12" cy="12" r="2"/>
-                            <path d="M16.2 7.8c2.3 2.3 2.3 6.1 0 8.5"/>
-                            <path d="M7.8 16.2c-2.3-2.3-2.3-6.1 0-8.5"/>
-                        </svg>
+                    <div style="width: 16px; height: 16px; border-radius: 50%; background-color: #f97316; border: 2px solid #ffffff; box-shadow: 0 1px 4px rgba(0,0,0,0.25); display: flex; align-items: center; justify-content: center;">
+                        <div style="width: 4px; height: 4px; border-radius: 50%; background-color: #ffffff;"></div>
                     </div>
                 `,
-                iconSize: [28, 28],
-                iconAnchor: [14, 14],
-                popupAnchor: [0, -14],
+                iconSize: [16, 16],
+                iconAnchor: [8, 8],
+                popupAnchor: [0, -8],
             });
         };
 
@@ -187,16 +180,13 @@ export default function KarhutlaMap({
             return L.divIcon({
                 className: 'custom-selected-pin',
                 html: `
-                    <div style="background-color: #10e57a; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 3px solid #0a0a0a; box-shadow: 0 0 20px rgba(16,229,122,0.8); color: #0a0a0a;">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/>
-                            <circle cx="12" cy="10" r="3"/>
-                        </svg>
+                    <div style="width: 24px; height: 24px; border-radius: 50%; background-color: #10e57a; border: 3px solid #000000; box-shadow: 0 2px 8px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center;">
+                        <div style="width: 8px; height: 8px; border-radius: 50%; background-color: #000000;"></div>
                     </div>
                 `,
-                iconSize: [36, 36],
-                iconAnchor: [18, 36],
-                popupAnchor: [0, -36],
+                iconSize: [24, 24],
+                iconAnchor: [12, 12],
+                popupAnchor: [0, -12],
             });
         };
 

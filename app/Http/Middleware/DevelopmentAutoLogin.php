@@ -21,6 +21,7 @@ class DevelopmentAutoLogin
         // If requesting logout, remember that user intentionally logged out
         if ($request->is('logout')) {
             $request->session()->put('manual_logout', true);
+
             return $next($request);
         }
 
@@ -30,6 +31,7 @@ class DevelopmentAutoLogin
             if ($request->is('login') && $request->isMethod('post')) {
                 $request->session()->forget('manual_logout');
             }
+
             return $next($request);
         }
 
