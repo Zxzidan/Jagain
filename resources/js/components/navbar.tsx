@@ -314,13 +314,13 @@ export default function Navbar() {
                                         : 'text-black hover:bg-black/10 border-black/25'
                                 }`}
                             >
-                                Login
+                                Sign In
                             </Link>
                             <Link
                                 href="/register"
                                 className="h-9 px-4.5 text-xs xl:text-sm font-bold rounded-full inline-flex items-center justify-center transition-all duration-200 bg-black text-white hover:bg-neutral-800 shadow-sm active:scale-95"
                             >
-                                Registrasi
+                                Sign Up
                             </Link>
                         </div>
                     )}
@@ -337,7 +337,7 @@ export default function Navbar() {
                                     : 'bg-black/10 text-black border-black/20'
                             }`}
                         >
-                            Login
+                            Sign In
                         </Link>
                     )}
                     <button
@@ -522,7 +522,7 @@ export default function Navbar() {
                                 className="w-full py-2.5 px-4 text-xs font-bold text-center text-neutral-900 bg-neutral-100 hover:bg-neutral-200 rounded-xl flex items-center justify-center gap-2 transition-colors"
                             >
                                 <LogIn className="size-3.5" />
-                                <span>Login</span>
+                                <span>Sign In</span>
                             </Link>
                             <Link
                                 href="/register"
@@ -530,7 +530,7 @@ export default function Navbar() {
                                 className="w-full py-2.5 px-4 text-xs font-bold text-center text-black bg-[#10e57a] hover:bg-[#0ba856] rounded-xl flex items-center justify-center gap-2 transition-colors shadow-xs"
                             >
                                 <PlusCircle className="size-3.5" />
-                                <span>Registrasi</span>
+                                <span>Sign Up</span>
                             </Link>
                         </div>
                     )}
