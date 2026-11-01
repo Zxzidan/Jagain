@@ -1,14 +1,19 @@
-import { Link } from '@inertiajs/react';
+import { Link, usePage } from '@inertiajs/react';
 import { Breadcrumbs } from '@/components/breadcrumbs';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import { Globe, Map } from 'lucide-react';
-import type { BreadcrumbItem as BreadcrumbItemType } from '@/types';
+import type { BreadcrumbItem as BreadcrumbItemType, User } from '@/types';
 
 export function AppSidebarHeader({
     breadcrumbs = [],
 }: {
     breadcrumbs?: BreadcrumbItemType[];
 }) {
+    const { auth } = usePage().props as { auth?: { user?: User } };
+    const isAdmin = auth?.user?.role === 'ADMIN' || (auth?.user as any)?.is_admin;
+    const isAgency = auth?.user?.role === 'AGENCY' || (auth?.user as any)?.is_agency;
+    const mapHref = isAdmin ? '/admin/map' : (isAgency ? '/opd/map' : '/peta');
+
     return (
         <header className="flex h-16 shrink-0 items-center justify-between border-b border-border bg-background px-3 sm:px-6 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 dark:bg-[#101512] gap-2">
             <div className="flex items-center gap-2 sm:gap-3 min-w-0">
@@ -20,7 +25,7 @@ export function AppSidebarHeader({
 
             <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
                 <Link
-                    href="/peta"
+                    href={mapHref}
                     className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-border text-xs font-semibold text-foreground bg-card hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors shadow-2xs"
                 >
                     <Map className="size-3.5 text-[#216B49] dark:text-[#10e57a]" />

@@ -152,15 +152,15 @@ export default function AgenciesIndex({ agencies, filters }: AgenciesIndexProps)
                         </div>
                     ) : (
                         <div className="overflow-x-auto">
-                            <table className="w-full min-w-[850px] text-left text-sm">
+                            <table className="w-full min-w-[850px] text-sm">
                                 <thead className="border-b border-[#DDE3DE] bg-[#F3F7F4] text-xs font-semibold uppercase tracking-wider text-[#343B36] dark:border-neutral-800 dark:bg-neutral-800/60 dark:text-neutral-300">
                                     <tr>
-                                        <th scope="col" className="px-6 py-4">Nama Instansi</th>
-                                        <th scope="col" className="px-6 py-4">Tipe Organisasi</th>
-                                        <th scope="col" className="px-6 py-4">Wilayah Yurisdiksi</th>
-                                        <th scope="col" className="px-6 py-4">Tugas Diterima</th>
-                                        <th scope="col" className="px-6 py-4">Status</th>
-                                        <th scope="col" className="px-6 py-4 text-right">Aksi</th>
+                                        <th scope="col" className="px-6 py-4 text-center">Nama Instansi</th>
+                                        <th scope="col" className="px-6 py-4 text-center">Tipe Organisasi</th>
+                                        <th scope="col" className="px-6 py-4 text-center">Wilayah Yurisdiksi</th>
+                                        <th scope="col" className="px-6 py-4 text-center">Tugas Diterima</th>
+                                        <th scope="col" className="px-6 py-4 text-center">Status</th>
+                                        <th scope="col" className="px-6 py-4 text-center">Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-[#DDE3DE] dark:divide-neutral-800">
@@ -169,24 +169,24 @@ export default function AgenciesIndex({ agencies, filters }: AgenciesIndexProps)
                                             key={agency.id}
                                             className="transition-colors hover:bg-[#F3F7F4]/40 dark:hover:bg-neutral-800/40"
                                         >
-                                            <td className="px-6 py-5 align-middle font-semibold text-[#171C19] dark:text-white">
+                                            <td className="px-6 py-5 align-middle text-justify font-semibold text-[#171C19] dark:text-white">
                                                 {agency.name}
                                             </td>
-                                            <td className="px-6 py-5 align-middle">
+                                            <td className="px-6 py-5 align-middle text-center">
                                                 <span className="rounded bg-neutral-100 px-2.5 py-1 text-xs font-medium text-neutral-800 dark:bg-neutral-800 dark:text-neutral-200">
                                                     {agency.agency_type}
                                                 </span>
                                             </td>
-                                            <td className="px-6 py-5 align-middle text-xs font-medium text-[#343B36] dark:text-neutral-300">
+                                            <td className="px-6 py-5 align-middle text-center text-xs font-medium text-[#343B36] dark:text-neutral-300">
                                                 {agency.jurisdiction}
                                             </td>
-                                            <td className="px-6 py-5 align-middle text-xs text-[#68716B] dark:text-neutral-400">
+                                            <td className="px-6 py-5 align-middle text-center text-xs text-[#68716B] dark:text-neutral-400">
                                                 <span className="font-semibold text-[#171C19] dark:text-white">
                                                     {agency.assignments_count ?? 0}
                                                 </span>{' '}
                                                 penugasan
                                             </td>
-                                            <td className="px-6 py-5 align-middle whitespace-nowrap">
+                                            <td className="px-6 py-5 align-middle text-center whitespace-nowrap">
                                                 {agency.is_active ? (
                                                     <span className="inline-flex items-center gap-1.5 rounded-full bg-[#E8F1EB] px-3 py-1 text-xs font-medium text-[#216B49] dark:bg-emerald-950/70 dark:text-emerald-300">
                                                         <CheckCircle2 className="size-3.5" />
@@ -198,8 +198,8 @@ export default function AgenciesIndex({ agencies, filters }: AgenciesIndexProps)
                                                     </span>
                                                 )}
                                             </td>
-                                            <td className="px-6 py-5 align-middle text-right whitespace-nowrap">
-                                                <div className="flex items-center justify-end gap-2">
+                                            <td className="px-6 py-5 align-middle text-center whitespace-nowrap">
+                                                <div className="flex items-center justify-center gap-2">
                                                     <button
                                                         type="button"
                                                         onClick={() => openEditModal(agency)}

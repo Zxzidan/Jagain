@@ -29,16 +29,23 @@ type ReportsIndexProps = {
     statusCounts: Record<string, number>;
 };
 
-const statusTabs: { key: string; label: string }[] = [
+const statusTabs: { key: string; label: string; subStatuses?: string[] }[] = [
     { key: '', label: 'Semua Laporan' },
-    { key: 'SUBMITTED', label: 'Menunggu Telaah' },
-    { key: 'UNDER_REVIEW', label: 'Sedang Diperiksa' },
-    { key: 'NEEDS_INFORMATION', label: 'Butuh Info' },
-    { key: 'VERIFIED', label: 'Terverifikasi' },
-    { key: 'DISPATCHED', label: 'Ditugaskan ke OPD' },
-    { key: 'RESOLUTION_REVIEW', label: 'Review Hasil' },
-    { key: 'RESOLVED_VERIFIED', label: 'Selesai' },
-    { key: 'CLOSED_WITH_REASON', label: 'Ditutup' },
+    {
+        key: 'REVIEW',
+        label: 'Perlu Review',
+        subStatuses: ['SUBMITTED', 'UNDER_REVIEW', 'NEEDS_INFORMATION'],
+    },
+    {
+        key: 'OPD',
+        label: 'Penanganan OPD',
+        subStatuses: ['VERIFIED', 'DISPATCHED', 'RESOLUTION_REVIEW'],
+    },
+    {
+        key: 'RESOLVED',
+        label: 'Selesai Ditangani',
+        subStatuses: ['RESOLVED_VERIFIED', 'CLOSED_WITH_REASON'],
+    },
 ];
 
 export default function ReportsIndex({
@@ -136,18 +143,27 @@ export default function ReportsIndex({
                 </div>
 
                 {/* Status Tab Filter Bar */}
-                <div className="flex gap-1.5 overflow-x-auto border-b border-[#DDE3DE] pb-2 dark:border-neutral-800">
+                <div className="flex gap-2 overflow-x-auto border-b border-[#DDE3DE] pb-2 dark:border-neutral-800">
                     {statusTabs.map((tab) => {
-                        const countKey = tab.key || 'ALL';
-                        const count = statusCounts[countKey] ?? 0;
-                        const isActive = status === tab.key;
+                        const count =
+                            (!tab.key
+                                ? (statusCounts.all ?? statusCounts.ALL ?? 0)
+                                : (statusCounts[tab.key] !== undefined
+                                    ? statusCounts[tab.key]
+                                    : (tab.subStatuses
+                                        ? tab.subStatuses.reduce((acc, curr) => acc + (statusCounts[curr] ?? 0), 0)
+                                        : 0)));
+
+                        const isActive = !tab.key
+                            ? (!status || status === 'ALL')
+                            : (status === tab.key || (tab.subStatuses?.includes(status) ?? false));
 
                         return (
                             <button
-                                key={tab.key}
+                                key={tab.key || 'all'}
                                 type="button"
                                 onClick={() => handleStatusClick(tab.key)}
-                                className={`inline-flex shrink-0 items-center gap-2 rounded-lg px-3 py-1.5 text-xs font-medium transition ${
+                                className={`inline-flex shrink-0 items-center gap-2 rounded-xl px-3.5 py-2 text-xs font-semibold transition ${
                                     isActive
                                         ? 'bg-[#216B49] text-white shadow-xs'
                                         : 'text-[#68716B] hover:bg-[#E8F1EB] hover:text-[#174B35] dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-neutral-200'
@@ -155,7 +171,7 @@ export default function ReportsIndex({
                             >
                                 <span>{tab.label}</span>
                                 <span
-                                    className={`rounded-full px-1.5 py-0.2 text-[10px] font-bold ${
+                                    className={`rounded-full px-2 py-0.5 text-[11px] font-bold ${
                                         isActive
                                             ? 'bg-white/20 text-white'
                                             : 'bg-neutral-200 text-neutral-700 dark:bg-neutral-800 dark:text-neutral-400'
@@ -234,14 +250,14 @@ export default function ReportsIndex({
                         </div>
                     ) : (
                         <div className="overflow-x-auto">
-                            <table className="w-full min-w-[1020px] text-left text-sm">
+                            <table className="w-full min-w-[1060px] text-sm">
                                 <thead className="border-b border-[#DDE3DE] bg-[#F3F7F4] text-xs font-semibold uppercase tracking-wider text-[#343B36] dark:border-neutral-800 dark:bg-neutral-800/60 dark:text-neutral-300">
                                     <tr>
-                                        <th scope="col" className="w-[32%] min-w-[300px] px-6 py-4 text-center">ID & Judul Laporan</th>
-                                        <th scope="col" className="w-[15%] min-w-[140px] px-6 py-4 text-center">Kategori</th>
-                                        <th scope="col" className="w-[20%] min-w-[180px] px-6 py-4 text-center">Lokasi</th>
-                                        <th scope="col" className="w-[15%] min-w-[160px] px-6 py-4 text-center whitespace-nowrap">Status Laporan</th>
-                                        <th scope="col" className="w-[18%] min-w-[170px] px-6 py-4 text-center whitespace-nowrap">Penugasan OPD</th>
+                                        <th scope="col" className="w-[32%] min-w-[280px] px-6 py-4 text-center">ID & Judul Laporan</th>
+                                        <th scope="col" className="w-[14%] min-w-[150px] px-4 py-4 text-center">Kategori</th>
+                                        <th scope="col" className="w-[24%] min-w-[230px] px-5 py-4 text-center">Lokasi</th>
+                                        <th scope="col" className="w-[13%] min-w-[150px] px-4 py-4 text-center whitespace-nowrap">Status Laporan</th>
+                                        <th scope="col" className="w-[17%] min-w-[160px] px-4 py-4 text-center whitespace-nowrap">Penugasan OPD</th>
                                         <th scope="col" className="px-6 py-4 text-center whitespace-nowrap">Aksi</th>
                                     </tr>
                                 </thead>
@@ -251,13 +267,13 @@ export default function ReportsIndex({
                                             key={report.id}
                                             className="transition-colors hover:bg-[#F3F7F4]/40 dark:hover:bg-neutral-800/40"
                                         >
-                                            <td className="px-6 py-5 align-middle">
+                                            <td className="px-6 py-5 align-middle text-left">
                                                 <div className="flex items-start gap-3">
                                                     <span className="shrink-0 mt-0.5 inline-flex items-center rounded-md bg-[#E8F1EB] px-2.5 py-1 font-mono text-xs font-bold text-[#216B49] dark:bg-emerald-950/70 dark:text-emerald-300">
                                                         #{report.id}
                                                     </span>
-                                                    <div className="flex-1 min-w-0 text-justify">
-                                                        <div className="text-justify font-semibold text-sm leading-snug text-[#171C19] dark:text-white">
+                                                    <div className="flex-1 min-w-0">
+                                                        <div className="font-bold text-sm leading-snug text-[#171C19] dark:text-white">
                                                             {report.title}
                                                             {report.is_simulated && (
                                                                 <span className="ml-2 inline-flex items-center rounded bg-neutral-200 px-1.5 py-0.5 text-[10px] font-bold text-neutral-700 dark:bg-neutral-800 dark:text-neutral-400 align-middle">
@@ -265,7 +281,7 @@ export default function ReportsIndex({
                                                                 </span>
                                                             )}
                                                         </div>
-                                                        <div className="mt-1.5 text-xs text-[#68716B] dark:text-neutral-400 text-justify">
+                                                        <div className="mt-1 text-xs text-[#68716B] dark:text-neutral-400">
                                                             Pelapor: <span className="font-medium text-neutral-800 dark:text-neutral-300">{report.creator?.name ?? 'Anonim'}</span> &bull; Dibuat:{' '}
                                                             <span className="whitespace-nowrap">
                                                                 {new Date(report.created_at).toLocaleDateString('id-ID', {
@@ -281,33 +297,33 @@ export default function ReportsIndex({
                                                 </div>
                                             </td>
 
-                                            <td className="px-6 py-5 align-middle text-center">
-                                                <span className="inline-flex items-center rounded-md bg-neutral-100 px-2.5 py-1 text-xs font-medium text-neutral-800 dark:bg-neutral-800 dark:text-neutral-200 leading-normal">
+                                            <td className="px-4 py-5 align-middle text-center">
+                                                <span className="inline-block rounded-lg bg-neutral-100 dark:bg-neutral-800 px-3 py-1.5 text-xs font-semibold text-neutral-800 dark:text-neutral-200 leading-normal text-center whitespace-nowrap">
                                                     {report.category?.name ?? 'Umum'}
                                                 </span>
                                             </td>
 
-                                            <td className="px-6 py-5 align-middle text-center text-xs text-[#68716B] dark:text-neutral-400">
-                                                <div className="inline-flex flex-col items-center">
-                                                    <div className="flex items-center justify-center gap-1.5 text-[#171C19] dark:text-neutral-200">
-                                                        <MapPin className="size-3.5 shrink-0 text-[#216B49] dark:text-emerald-400" />
-                                                        <span className="font-medium max-w-[240px] leading-snug line-clamp-2">
+                                            <td className="px-5 py-5 align-middle text-center">
+                                                <div className="inline-flex items-start gap-2.5 text-left max-w-[240px]">
+                                                    <MapPin className="size-4 shrink-0 text-[#216B49] dark:text-emerald-400 mt-0.5" />
+                                                    <div className="space-y-1">
+                                                        <div className="text-xs font-medium text-[#171C19] dark:text-neutral-200 leading-snug break-words">
                                                             {report.location_description ?? `${report.latitude}, ${report.longitude}`}
-                                                        </span>
-                                                    </div>
-                                                    <div className="mt-1 font-mono text-[10px] text-neutral-400 dark:text-neutral-500">
-                                                        {report.latitude.toFixed(4)}, {report.longitude.toFixed(4)}
+                                                        </div>
+                                                        <div className="font-mono text-[11px] text-neutral-400 dark:text-neutral-500">
+                                                            {report.latitude.toFixed(4)}, {report.longitude.toFixed(4)}
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </td>
 
-                                            <td className="px-6 py-5 align-middle text-center whitespace-nowrap">
+                                            <td className="px-4 py-5 align-middle text-center whitespace-nowrap">
                                                 <StatusBadge status={report.report_status} />
                                             </td>
 
-                                            <td className="px-6 py-5 align-middle text-center text-xs">
+                                            <td className="px-4 py-5 align-middle text-center text-xs">
                                                 {report.latest_assignment ? (
-                                                    <div className="space-y-1">
+                                                    <div className="space-y-1 max-w-[170px] mx-auto">
                                                         <span className="font-semibold text-[#171C19] dark:text-white leading-snug block">
                                                             {report.latest_assignment.agency?.name ?? 'Instansi'}
                                                         </span>
@@ -325,10 +341,9 @@ export default function ReportsIndex({
                                             <td className="px-6 py-5 align-middle text-center whitespace-nowrap">
                                                 <Link
                                                     href={reportShow(report.id)}
-                                                    className="inline-flex items-center gap-1.5 rounded-lg bg-[#216B49] px-3.5 py-1.5 text-xs font-semibold text-white shadow-xs transition hover:bg-[#174B35] focus:outline-none focus:ring-2 focus:ring-[#216B49]/40"
+                                                    className="inline-flex items-center justify-center rounded-xl bg-[#216B49] px-4 py-2 text-xs font-bold text-white shadow-xs transition hover:bg-[#174B35] active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-[#216B49]/40"
                                                 >
                                                     <span>Review</span>
-                                                    <span aria-hidden="true">&rarr;</span>
                                                 </Link>
                                             </td>
                                         </tr>

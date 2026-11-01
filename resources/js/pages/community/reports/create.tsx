@@ -17,29 +17,24 @@ import { dashboard } from '@/routes';
 
 const CATEGORIES = [
     {
-        id: 'hutan',
-        label: 'Kebakaran Hutan',
-        desc: 'Area hutan lindung, hutan produksi, atau tutupan pohon lebat.',
-    },
-    {
         id: 'gambut',
         label: 'Lahan Gambut',
         desc: 'Tanah gambut dengan asap tebal dan kebakaran bawah tanah.',
     },
     {
+        id: 'hutan',
+        label: 'Hutan Lindung',
+        desc: 'Area tutupan pohon, hutan lindung, atau kawasan konservasi.',
+    },
+    {
         id: 'perkebunan',
-        label: 'Pertanian / Perkebunan',
-        desc: 'Lahan kelapa sawit, karet, ladang, atau semak belukar terbuka.',
+        label: 'Perkebunan',
+        desc: 'Area perkebunan kelapa sawit, karet, atau ladang pertanian.',
     },
     {
-        id: 'pemukiman',
-        label: 'Dekat Pemukiman',
-        desc: 'Titik kebakaran berdekatan dengan rumah warga atau fasilitas publik.',
-    },
-    {
-        id: 'lainnya',
-        label: 'Lainnya',
-        desc: 'Jenis lahan atau area lain yang belum tercakup di atas.',
+        id: 'semak',
+        label: 'Semak Belukar',
+        desc: 'Lahan semak belukar, padang ilalang, dan rumput kering terbuka.',
     },
 ];
 

@@ -172,11 +172,11 @@ export default function Register({ passwordRules }: Props) {
                         </div>
 
                         {/* 3 Alternative Quick Actions matching reference layout */}
-                        <div className="grid grid-cols-3 gap-2 sm:gap-2.5">
+                        <div className="grid grid-cols-3 gap-2.5 sm:gap-3">
                             {/* Google Option */}
                             <Link
                                 href={login()}
-                                className="h-9 px-2 rounded-lg border border-gray-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:bg-gray-50 dark:hover:bg-zinc-800 hover:border-gray-300 text-xs font-medium text-gray-700 dark:text-gray-300 flex items-center justify-center gap-1.5 transition-colors shadow-2xs whitespace-nowrap"
+                                className="h-10 px-3 rounded-xl border border-gray-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:bg-gray-50 dark:hover:bg-zinc-800 hover:border-gray-300 text-xs font-medium text-gray-700 dark:text-gray-300 flex items-center justify-center gap-1.5 transition-colors shadow-2xs whitespace-nowrap"
                                 title="Daftar melalui Google"
                             >
                                 <svg className="size-3.5 shrink-0" viewBox="0 0 24 24">
@@ -203,7 +203,7 @@ export default function Register({ passwordRules }: Props) {
                             {/* Passkey Link */}
                             <Link
                                 href={login()}
-                                className="h-9 px-2 rounded-lg border border-gray-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:bg-gray-50 dark:hover:bg-zinc-800 hover:border-gray-300 text-xs font-medium text-gray-700 dark:text-gray-300 flex items-center justify-center gap-1.5 transition-colors shadow-2xs whitespace-nowrap"
+                                className="h-10 px-3 rounded-xl border border-gray-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:bg-gray-50 dark:hover:bg-zinc-800 hover:border-gray-300 text-xs font-medium text-gray-700 dark:text-gray-300 flex items-center justify-center gap-1.5 transition-colors shadow-2xs whitespace-nowrap"
                                 title="Daftar dengan Kunci Sandi"
                             >
                                 <KeyRound className="size-3.5 text-gray-500 dark:text-gray-400 shrink-0" />
@@ -212,7 +212,7 @@ export default function Register({ passwordRules }: Props) {
 
                             {/* Proteksi Warga Badge */}
                             <div
-                                className="h-9 px-2 rounded-lg border border-emerald-200 dark:border-emerald-900/60 bg-emerald-50/60 dark:bg-emerald-950/20 text-xs font-medium text-emerald-800 dark:text-emerald-400 flex items-center justify-center gap-1.5 text-center shadow-2xs select-none whitespace-nowrap"
+                                className="h-10 px-3 rounded-xl border border-emerald-200 dark:border-emerald-900/60 bg-emerald-50/60 dark:bg-emerald-950/20 text-xs font-medium text-emerald-800 dark:text-emerald-400 flex items-center justify-center gap-1.5 text-center shadow-2xs select-none whitespace-nowrap"
                                 title="Data identitas warga dirahasiakan & dienkripsi"
                             >
                                 <ShieldAlert className="size-3.5 text-emerald-600 shrink-0" />

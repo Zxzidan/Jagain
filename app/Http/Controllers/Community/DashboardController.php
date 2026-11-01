@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Community;
 
+use App\Enums\FireCondition;
 use App\Enums\ReportStatus;
 use App\Http\Controllers\Controller;
 use App\Models\Report;
@@ -51,10 +52,10 @@ class DashboardController extends Controller
                     ? ($report->category->name ?? $report->category->slug ?? 'Umum')
                     : ($report->category ?? 'Umum'),
                 'location_description' => $report->location_description,
-                'report_status' => $report->report_status->value,
-                'status_label' => $report->report_status->label(),
-                'fire_condition' => $report->fire_condition->value,
-                'fire_condition_label' => $report->fire_condition->label(),
+                'report_status' => $report->report_status instanceof ReportStatus ? $report->report_status->value : ($report->report_status ?? ReportStatus::SUBMITTED->value),
+                'status_label' => $report->report_status instanceof ReportStatus ? $report->report_status->label() : (ReportStatus::tryFrom($report->report_status ?? '')?->label() ?? 'Baru Dikirim'),
+                'fire_condition' => $report->fire_condition instanceof FireCondition ? $report->fire_condition->value : ($report->fire_condition ?? FireCondition::UNKNOWN->value),
+                'fire_condition_label' => $report->fire_condition instanceof FireCondition ? $report->fire_condition->label() : (FireCondition::tryFrom($report->fire_condition ?? '')?->label() ?? 'Kondisi Belum Terverifikasi Lapangan'),
                 'created_at' => $report->created_at?->toISOString(),
                 'reported_occurrence_at' => $report->reported_occurrence_at?->toISOString(),
                 'has_evidence' => $report->evidence->isNotEmpty(),

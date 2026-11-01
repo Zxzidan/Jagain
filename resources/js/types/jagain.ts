@@ -44,6 +44,8 @@ export type Evidence = {
     size_bytes: number;
     captured_at: string | null;
     visibility: string;
+    file_path?: string;
+    url?: string;
     uploader?: User;
     created_at?: string;
 };

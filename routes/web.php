@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\AdminAuditLogController;
 use App\Http\Controllers\Admin\AdminCategoryController;
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminExportController;
+use App\Http\Controllers\Admin\AdminMapController;
 use App\Http\Controllers\Admin\AdminReportController;
 use App\Http\Controllers\Agency\AgencyAssignmentController;
 use App\Http\Controllers\Agency\AgencyDashboardController;
@@ -89,6 +90,10 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 
     // Exports
     Route::get('/exports/reports', [AdminExportController::class, 'reports'])->name('exports.reports');
+
+    // Geospatial Wildfire Map
+    Route::get('/map', [AdminMapController::class, 'index'])->name('map');
+    Route::get('/peta', [AdminMapController::class, 'index']);
 });
 
 // OPD / Agency Handling (Requires AGENCY role)
@@ -99,6 +104,10 @@ Route::middleware(['auth', 'role:AGENCY'])->prefix('opd')->name('agency.')->grou
     Route::post('/tugas/{assignment}/respon', [AgencyAssignmentController::class, 'respond'])->name('assignments.respond');
     Route::post('/tugas/{assignment}/progres', [AgencyAssignmentController::class, 'updateProgress'])->name('assignments.update-progress');
     Route::post('/tugas/{assignment}/ajukan-review', [AgencyAssignmentController::class, 'submitReview'])->name('assignments.submit-review');
+
+    // Geospatial Wildfire Map for OPD
+    Route::get('/map', [AdminMapController::class, 'index'])->name('map');
+    Route::get('/peta', [AdminMapController::class, 'index']);
 });
 
 require __DIR__.'/settings.php';

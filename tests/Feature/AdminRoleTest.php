@@ -341,3 +341,21 @@ test('admin can export reports to CSV with audit trail', function () {
         'action' => 'REPORTS_EXPORTED_CSV',
     ]);
 });
+
+test('admin can access dedicated admin geospatial map page', function () {
+    $response = $this->actingAs($this->admin)->get(route('admin.map'));
+    $response->assertOk();
+    $response->assertInertia(fn ($page) => $page
+        ->component('admin/map')
+        ->has('reports')
+        ->has('observations')
+        ->has('categories')
+        ->has('provinces')
+        ->has('stats')
+    );
+});
+
+test('guest cannot access admin geospatial map page', function () {
+    $response = $this->get(route('admin.map'));
+    $response->assertRedirect(route('login'));
+});

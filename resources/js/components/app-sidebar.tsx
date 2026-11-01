@@ -44,13 +44,13 @@ export function AppSidebar() {
             { title: 'Instansi & OPD', href: '/admin/agencies', icon: Building2 },
             { title: 'Kategori Karhutla', href: '/admin/categories', icon: Tags },
             { title: 'Audit Trail', href: '/admin/audit-logs', icon: History },
-            { title: 'Peta Karhutla', href: '/peta', icon: Map }
+            { title: 'Peta Karhutla', href: '/admin/map', icon: Map }
         );
     } else if (isAgency) {
         navItems.push(
             { title: 'Dashboard OPD', href: '/opd/dashboard', icon: LayoutGrid },
             { title: 'Tugas Lapangan', href: '/opd/tugas', icon: ClipboardList },
-            { title: 'Peta Karhutla', href: '/peta', icon: Map }
+            { title: 'Peta Karhutla', href: '/opd/map', icon: Map }
         );
     } else {
         navItems.push(

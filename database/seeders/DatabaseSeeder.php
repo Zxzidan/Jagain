@@ -99,11 +99,10 @@ class DatabaseSeeder extends Seeder
 
         // 2. Categories
         $categoriesData = [
-            ['name' => 'Kebakaran Lahan Gambut', 'slug' => 'lahan-gambut', 'description' => 'Kebakaran di area bertanah gambut dengan kepulan asap tebal.', 'is_active' => true],
-            ['name' => 'Kebakaran Hutan Lindung & Konservasi', 'slug' => 'hutan-lindung', 'description' => 'Kawasan hutan lindung, taman nasional, dan suaka alam.', 'is_active' => true],
-            ['name' => 'Kebakaran Perkebunan & Pertanian', 'slug' => 'perkebunan-pertanian', 'description' => 'Area perkebunan kelapa sawit, karet, atau ladang pertanian.', 'is_active' => true],
-            ['name' => 'Kebakaran Semak Belukar & Padang Ilalang', 'slug' => 'semak-belukar', 'description' => 'Lahan terbuka vegetasi kering mudah terbakar.', 'is_active' => true],
-            ['name' => 'Kebakaran Sekitar Pemukiman Warga', 'slug' => 'area-pemukiman', 'description' => 'Titik kebakaran yang mendekati batas pemukiman dan infrastruktur desa.', 'is_active' => true],
+            ['name' => 'Lahan Gambut', 'slug' => 'lahan-gambut', 'description' => 'Kebakaran di area bertanah gambut dengan kepulan asap tebal.', 'is_active' => true],
+            ['name' => 'Hutan Lindung', 'slug' => 'hutan-lindung', 'description' => 'Kawasan hutan lindung, taman nasional, dan suaka alam.', 'is_active' => true],
+            ['name' => 'Perkebunan', 'slug' => 'perkebunan', 'description' => 'Area perkebunan kelapa sawit, karet, atau ladang pertanian.', 'is_active' => true],
+            ['name' => 'Semak Belukar', 'slug' => 'semak-belukar', 'description' => 'Lahan terbuka vegetasi kering mudah terbakar.', 'is_active' => true],
         ];
 
         $categories = [];
@@ -259,8 +258,8 @@ class DatabaseSeeder extends Seeder
         // 5. Sample Reports
         $gambutCat = $categories['lahan-gambut'];
         $hutanCat = $categories['hutan-lindung'];
+        $perkebunanCat = $categories['perkebunan'];
         $semakCat = $categories['semak-belukar'];
-        $pemukimanCat = $categories['area-pemukiman'];
 
         if (Report::where('tracking_code', 'JGN-202610-KB01')->doesntExist()) {
             $report1 = Report::create([
@@ -394,8 +393,8 @@ class DatabaseSeeder extends Seeder
                 'tracking_code' => 'JGN-202610-KB03',
                 'report_number' => 'JGN-202610-KB03',
                 'created_by_user_id' => $citizen->id,
-                'category_id' => $pemukimanCat->id,
-                'category' => $pemukimanCat->slug,
+                'category_id' => $perkebunanCat->id,
+                'category' => $perkebunanCat->slug,
                 'title' => 'Penanganan Karhutla Selesai di Wajok Hilir',
                 'description' => 'Operasi pembasahan total selesai dengan bukti foto drone dan catatan pemadaman.',
                 'latitude' => 0.0345600,

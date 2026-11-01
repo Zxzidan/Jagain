@@ -51,6 +51,7 @@ interface KarhutlaMapProps {
     minHeight?: string;
     showLegend?: boolean;
     showSimulatedNotice?: boolean;
+    reportUrlPrefix?: string;
 }
 
 export default function KarhutlaMap({
@@ -64,6 +65,7 @@ export default function KarhutlaMap({
     minHeight,
     showLegend = true,
     showSimulatedNotice = true,
+    reportUrlPrefix,
 }: KarhutlaMapProps) {
     const mapContainerRef = useRef<HTMLDivElement>(null);
     const mapInstanceRef = useRef<LeafletType.Map | null>(null);
@@ -201,6 +203,13 @@ export default function KarhutlaMap({
                 icon: createCitizenIcon(rep.report_status),
             });
 
+            const reportUrl = reportUrlPrefix
+                ? `${reportUrlPrefix}/${rep.id}`
+                : `/laporan-publik/${rep.tracking_code}`;
+            const reportButtonLabel = reportUrlPrefix
+                ? 'Review Laporan Admin →'
+                : 'Lihat Register Publik →';
+
             const popupContent = `
                 <div style="min-width: 240px; font-family: Inter, sans-serif; font-size: 12px; color: #111827; background: #ffffff; padding: 14px; border-radius: 16px; border: 1px solid #e5e7eb; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
@@ -218,8 +227,8 @@ export default function KarhutlaMap({
                         <div style="font-weight: 600; color: #111827; font-size: 11px;">Status: ${rep.status_label}</div>
                         ${rep.fire_condition_label ? `<div style="font-size: 10px; color: #4b5563; margin-top: 2px; font-weight: 500;">Kondisi: ${rep.fire_condition_label}</div>` : ''}
                     </div>
-                    <a href="/laporan-publik/${rep.tracking_code}" style="display: block; text-align: center; background: #111827; color: #ffffff; padding: 7px 14px; border-radius: 9999px; text-decoration: none; font-weight: 700; font-size: 11px;">
-                        Lihat Register Publik →
+                    <a href="${reportUrl}" style="display: block; text-align: center; background: #111827; color: #ffffff; padding: 7px 14px; border-radius: 9999px; text-decoration: none; font-weight: 700; font-size: 11px;">
+                        ${reportButtonLabel}
                     </a>
                 </div>
             `;
@@ -298,7 +307,7 @@ export default function KarhutlaMap({
                 resizeObserver.disconnect();
             }
         };
-    }, [reports, observations, selectedCoordinates, interactiveSelectMode]);
+    }, [reports, observations, selectedCoordinates, interactiveSelectMode, reportUrlPrefix]);
 
     return (
         <div className={`relative flex flex-col overflow-hidden bg-neutral-100 ${className || 'border border-neutral-200 rounded-3xl'}`}>
@@ -318,7 +327,15 @@ export default function KarhutlaMap({
             )}
 
             {/* Map Container */}
-            <div ref={mapContainerRef} style={{ height, width: '100%', minHeight: minHeight ?? (height ? 'auto' : '350px') }} className="z-10 focus:outline-none" />
+            <div
+                ref={mapContainerRef}
+                style={{
+                    height: height === '100%' ? '100%' : height,
+                    width: '100%',
+                    minHeight: minHeight ?? (height ? 'auto' : '350px'),
+                }}
+                className={`z-10 focus:outline-none ${height === '100%' ? 'flex-1 h-full' : ''}`}
+            />
 
             {/* Interactive Mode Helper overlay */}
             {interactiveSelectMode && (

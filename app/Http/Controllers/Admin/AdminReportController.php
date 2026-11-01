@@ -34,7 +34,17 @@ class AdminReportController extends Controller
             ->with(['category', 'creator', 'createdByUser', 'latestAssignment.agency']);
 
         if ($status) {
-            $query->where('report_status', $status);
+            if ($status === 'REVIEW' || $status === 'perlu_review') {
+                $query->whereIn('report_status', ['SUBMITTED', 'UNDER_REVIEW', 'NEEDS_INFORMATION']);
+            } elseif ($status === 'OPD' || $status === 'penanganan_opd') {
+                $query->whereIn('report_status', ['VERIFIED', 'DISPATCHED', 'RESOLUTION_REVIEW']);
+            } elseif ($status === 'RESOLVED' || $status === 'selesai') {
+                $query->whereIn('report_status', ['RESOLVED_VERIFIED', 'CLOSED_WITH_REASON']);
+            } elseif (str_contains($status, ',')) {
+                $query->whereIn('report_status', explode(',', $status));
+            } else {
+                $query->where('report_status', $status);
+            }
         }
 
         if ($province) {
@@ -67,6 +77,10 @@ class AdminReportController extends Controller
 
         $statusCounts = [
             'all' => Report::count(),
+            'ALL' => Report::count(),
+            'REVIEW' => Report::whereIn('report_status', ['SUBMITTED', 'UNDER_REVIEW', 'NEEDS_INFORMATION'])->count(),
+            'OPD' => Report::whereIn('report_status', ['VERIFIED', 'DISPATCHED', 'RESOLUTION_REVIEW'])->count(),
+            'RESOLVED' => Report::whereIn('report_status', ['RESOLVED_VERIFIED', 'CLOSED_WITH_REASON'])->count(),
             'SUBMITTED' => Report::where('report_status', 'SUBMITTED')->orWhere('report_status', ReportStatus::SUBMITTED)->count(),
             'UNDER_REVIEW' => Report::where('report_status', 'UNDER_REVIEW')->orWhere('report_status', ReportStatus::UNDER_REVIEW)->count(),
             'NEEDS_INFORMATION' => Report::where('report_status', 'NEEDS_INFORMATION')->orWhere('report_status', ReportStatus::NEEDS_INFORMATION)->count(),

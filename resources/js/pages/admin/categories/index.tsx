@@ -149,15 +149,15 @@ export default function CategoriesIndex({ categories, filters }: CategoriesIndex
                         </div>
                     ) : (
                         <div className="overflow-x-auto">
-                            <table className="w-full min-w-[850px] text-left text-sm">
+                            <table className="w-full min-w-[850px] text-sm">
                                 <thead className="border-b border-[#DDE3DE] bg-[#F3F7F4] text-xs font-semibold uppercase tracking-wider text-[#343B36] dark:border-neutral-800 dark:bg-neutral-800/60 dark:text-neutral-300">
                                     <tr>
-                                        <th scope="col" className="px-6 py-4">Nama Kategori</th>
-                                        <th scope="col" className="px-6 py-4">Slug</th>
-                                        <th scope="col" className="px-6 py-4">Deskripsi</th>
-                                        <th scope="col" className="px-6 py-4">Jumlah Laporan</th>
-                                        <th scope="col" className="px-6 py-4">Status</th>
-                                        <th scope="col" className="px-6 py-4 text-right">Aksi</th>
+                                        <th scope="col" className="px-6 py-4 text-center">Nama Kategori</th>
+                                        <th scope="col" className="px-6 py-4 text-center">Slug</th>
+                                        <th scope="col" className="px-6 py-4 text-center">Deskripsi</th>
+                                        <th scope="col" className="px-6 py-4 text-center">Jumlah Laporan</th>
+                                        <th scope="col" className="px-6 py-4 text-center">Status</th>
+                                        <th scope="col" className="px-6 py-4 text-center">Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-[#DDE3DE] dark:divide-neutral-800">
@@ -166,25 +166,25 @@ export default function CategoriesIndex({ categories, filters }: CategoriesIndex
                                             key={cat.id}
                                             className="transition-colors hover:bg-[#F3F7F4]/40 dark:hover:bg-neutral-800/40"
                                         >
-                                            <td className="px-6 py-5 align-middle">
-                                                <div className="flex items-center gap-2.5 font-semibold text-[#171C19] dark:text-white">
+                                            <td className="px-6 py-5 align-middle text-center">
+                                                <div className="inline-flex items-center gap-2.5 font-semibold text-[#171C19] dark:text-white">
                                                     <Flame className="size-4 text-[#216B49] dark:text-emerald-400" />
                                                     <span>{cat.name}</span>
                                                 </div>
                                             </td>
-                                            <td className="px-6 py-5 align-middle font-mono text-xs text-[#68716B] dark:text-neutral-400">
+                                            <td className="px-6 py-5 align-middle text-center font-mono text-xs text-[#68716B] dark:text-neutral-400">
                                                 {cat.slug}
                                             </td>
-                                            <td className="px-6 py-5 align-middle text-xs text-[#68716B] max-w-sm leading-relaxed dark:text-neutral-400">
+                                            <td className="px-6 py-5 align-middle text-center text-xs text-[#68716B] max-w-sm leading-relaxed dark:text-neutral-400">
                                                 {cat.description ?? '-'}
                                             </td>
-                                            <td className="px-6 py-5 align-middle text-xs text-[#68716B] dark:text-neutral-400">
+                                            <td className="px-6 py-5 align-middle text-center text-xs text-[#68716B] dark:text-neutral-400">
                                                 <span className="font-semibold text-[#171C19] dark:text-white">
                                                     {cat.reports_count ?? 0}
                                                 </span>{' '}
                                                 laporan
                                             </td>
-                                            <td className="px-6 py-5 align-middle whitespace-nowrap">
+                                            <td className="px-6 py-5 align-middle text-center whitespace-nowrap">
                                                 {cat.is_active ? (
                                                     <span className="inline-flex items-center gap-1.5 rounded-full bg-[#E8F1EB] px-3 py-1 text-xs font-medium text-[#216B49] dark:bg-emerald-950/70 dark:text-emerald-300">
                                                         <CheckCircle2 className="size-3.5" />
@@ -196,8 +196,8 @@ export default function CategoriesIndex({ categories, filters }: CategoriesIndex
                                                     </span>
                                                 )}
                                             </td>
-                                            <td className="px-6 py-5 align-middle text-right whitespace-nowrap">
-                                                <div className="flex items-center justify-end gap-2">
+                                            <td className="px-6 py-5 align-middle text-center whitespace-nowrap">
+                                                <div className="flex items-center justify-center gap-2">
                                                     <button
                                                         type="button"
                                                         onClick={() => openEditModal(cat)}

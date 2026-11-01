@@ -11,7 +11,7 @@ import {
     ExternalLink,
     FileImage,
     FileQuestion,
-    Flame,
+    FileText,
     History,
     MapPin,
     Send,
@@ -19,17 +19,17 @@ import {
     User as UserIcon,
     X,
     XCircle,
+    ZoomIn,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { StatusBadge } from '@/components/reports/status-badge';
-import { dashboard as adminDashboard } from '@/routes/admin';
 import {
     assign as reportAssign,
     index as reportsIndex,
     show as reportShow,
     transition as reportTransition,
 } from '@/routes/admin/reports';
-import type { Agency, Report, ReportStatus } from '@/types';
+import type { Agency, Evidence, Report, ReportStatus } from '@/types';
 
 type ReportShowProps = {
     report: Report;
@@ -41,6 +41,15 @@ type ReportShowProps = {
     >[];
 };
 
+const assignmentStatusLabels: Record<string, string> = {
+    ASSIGNED: 'Menunggu Konfirmasi OPD',
+    RECEIVED_BY_AGENCY: 'Diterima OPD',
+    DECLINED_BY_AGENCY: 'Ditolak OPD',
+    IN_PROGRESS: 'Sedang Ditangani',
+    SUBMITTED_FOR_REVIEW: 'Menunggu Review Selesai',
+    COMPLETED: 'Penanganan Selesai',
+};
+
 export default function ReportShow({
     report,
     activeAgencies,
@@ -50,7 +59,10 @@ export default function ReportShow({
     const page = usePage();
     const flash = (page.props as any).flash;
 
-    const [selectedEvidence, setSelectedEvidence] = useState<string | null>(null);
+    const [selectedEvidence, setSelectedEvidence] = useState<{
+        url: string;
+        filename: string;
+    } | null>(null);
     const [isNeedsInfoModalOpen, setIsNeedsInfoModalOpen] = useState(false);
     const [isCloseModalOpen, setIsCloseModalOpen] = useState(false);
 
@@ -121,6 +133,19 @@ export default function ReportShow({
         }
     };
 
+    const getEvidenceUrl = (ev: Evidence) => {
+        if (ev.url) return ev.url;
+        if (ev.file_path) return `/storage/${ev.file_path}`;
+        if (ev.storage_key) return `/storage/${ev.storage_key}`;
+        return '';
+    };
+
+    const isImageFile = (ev: Evidence) => {
+        if (ev.media_type && ev.media_type.startsWith('image/')) return true;
+        const name = ev.original_filename || ev.file_path || ev.storage_key || '';
+        return /\.(jpe?g|png|webp|gif|svg)$/i.test(name);
+    };
+
     return (
         <>
             <Head title={`Review Laporan #${report.id} - JAGAIN Admin`} />
@@ -130,7 +155,7 @@ export default function ReportShow({
                 {flash?.success && (
                     <div
                         role="status"
-                        className="flex items-center gap-3 rounded-xl border border-leaf-green/30 bg-soft-green/70 p-4 text-sm text-forest-green shadow-xs transition-all duration-200"
+                        className="flex items-center gap-3 rounded-2xl border border-leaf-green/30 bg-soft-green/70 p-4 text-sm text-forest-green shadow-xs transition-all duration-200"
                     >
                         <CheckCircle2 className="size-5 shrink-0 text-primary-green" />
                         <span className="font-medium">{flash.success}</span>
@@ -139,7 +164,7 @@ export default function ReportShow({
                 {flash?.error && (
                     <div
                         role="alert"
-                        className="flex items-center gap-3 rounded-xl border border-border-neutral bg-white p-4 text-sm text-dark-neutral shadow-xs transition-all duration-200"
+                        className="flex items-center gap-3 rounded-2xl border border-border-neutral bg-white p-4 text-sm text-dark-neutral shadow-xs transition-all duration-200"
                     >
                         <AlertCircle className="size-5 shrink-0 text-primary-green" />
                         <span className="font-medium">{flash.error}</span>
@@ -147,23 +172,23 @@ export default function ReportShow({
                 )}
 
                 {/* Back button & Header Bar */}
-                <header className="flex flex-col justify-between gap-4 rounded-xl border border-border-neutral bg-white p-5 shadow-xs sm:flex-row sm:items-center sm:p-6">
+                <header className="flex flex-col justify-between gap-4 rounded-2xl border border-border-neutral bg-white p-5 shadow-xs sm:flex-row sm:items-center sm:p-6">
                     <div className="flex items-start gap-3.5">
                         <Link
                             href={reportsIndex().url}
-                            className="inline-flex size-9 shrink-0 items-center justify-center rounded-lg border border-border-neutral bg-white text-dark-neutral shadow-xs transition hover:bg-pale-green hover:border-gray-neutral/40"
-                            title="Kembali ke antrean"
+                            className="mt-0.5 inline-flex size-9 shrink-0 items-center justify-center rounded-xl border border-border-neutral bg-white text-dark-neutral shadow-xs transition hover:border-gray-neutral/40 hover:bg-pale-green"
+                            title="Kembali ke antrean laporan"
                         >
                             <ArrowLeft className="size-4" />
                         </Link>
-                        <div className="space-y-1">
+                        <div className="space-y-1.5">
                             <div className="flex flex-wrap items-center gap-2">
                                 <span className="badge badge-light font-mono font-bold">
                                     #{report.id}
                                 </span>
                                 <StatusBadge status={report.report_status} variant="neutral" />
                                 {report.is_simulated && (
-                                    <span className="badge badge-light text-amber-700 bg-amber-50 border border-amber-200">
+                                    <span className="badge badge-light border border-amber-200 bg-amber-50 text-amber-700">
                                         SIMULASI
                                     </span>
                                 )}
@@ -179,7 +204,7 @@ export default function ReportShow({
                             asChild
                             variant="outline"
                             size="sm"
-                            className="border-border-neutral bg-white text-xs font-semibold text-dark-neutral hover:bg-pale-green"
+                            className="rounded-xl border-border-neutral bg-white text-xs font-semibold text-dark-neutral hover:bg-pale-green"
                         >
                             <Link href={reportsIndex().url}>
                                 <span>Antrean Laporan</span>
@@ -194,41 +219,57 @@ export default function ReportShow({
                     <div className="flex flex-col gap-6 lg:col-span-2">
                         {/* Potential Duplicates Warning Alert */}
                         {potentialDuplicates.length > 0 && (
-                            <div className="rounded-xl border border-amber-200 bg-amber-50/80 p-4 text-xs shadow-xs">
-                                <div className="flex items-start gap-2.5">
-                                    <AlertTriangle className="size-5 shrink-0 text-amber-600 mt-0.5" />
-                                    <div>
-                                        <h3 className="text-sm font-semibold text-amber-900">
+                            <div className="rounded-2xl border border-amber-200 bg-amber-50/90 p-5 shadow-xs">
+                                <div className="flex items-start gap-3">
+                                    <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-amber-100 text-amber-700">
+                                        <AlertTriangle className="size-5" />
+                                    </div>
+                                    <div className="min-w-0 flex-1">
+                                        <h3 className="text-sm font-bold text-amber-950">
                                             Perhatian: Ditemukan {potentialDuplicates.length} Laporan di Area Berdekatan
                                         </h3>
-                                        <p className="mt-0.5 text-amber-800">
-                                            Laporan di bawah ini memiliki kategori dan koordinat berdekatan (&plusmn;10 km). Cek potensi duplikat sebelum validasi:
+                                        <p className="mt-0.5 text-xs text-amber-900/80">
+                                            Laporan di bawah ini memiliki kategori atau koordinat berdekatan (&plusmn;10 km). Cek potensi duplikat sebelum validasi:
                                         </p>
-                                        <ul className="mt-2 list-inside list-disc space-y-1 text-amber-900">
+                                        <div className="mt-3 divide-y divide-amber-200/60 overflow-hidden rounded-xl border border-amber-200/80 bg-white/80">
                                             {potentialDuplicates.map((dup) => (
-                                                <li key={dup.id}>
-                                                    <Link
-                                                        href={reportShow(dup.id).url}
-                                                        className="font-medium underline hover:text-amber-950"
-                                                    >
-                                                        #{dup.id} &mdash; {dup.title}
-                                                    </Link>{' '}
-                                                    ({dup.report_status})
-                                                </li>
+                                                <div
+                                                    key={dup.id}
+                                                    className="flex flex-col justify-between gap-2 p-3 transition hover:bg-amber-100/40 sm:flex-row sm:items-center"
+                                                >
+                                                    <div className="flex min-w-0 items-center gap-2">
+                                                        <span className="shrink-0 font-mono text-xs font-bold text-amber-900">
+                                                            #{dup.id}
+                                                        </span>
+                                                        <Link
+                                                            href={reportShow(dup.id).url}
+                                                            className="truncate text-xs font-semibold text-dark-neutral hover:text-forest-green hover:underline"
+                                                        >
+                                                            {dup.title}
+                                                        </Link>
+                                                    </div>
+                                                    <div className="flex shrink-0 items-center gap-2">
+                                                        <StatusBadge
+                                                            status={dup.report_status}
+                                                            variant="neutral"
+                                                            className="text-[11px]"
+                                                        />
+                                                    </div>
+                                                </div>
                                             ))}
-                                        </ul>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         )}
 
                         {/* Report Core Information Card */}
-                        <div className="rounded-xl border border-border-neutral bg-white p-5 shadow-xs sm:p-6">
+                        <div className="rounded-2xl border border-border-neutral bg-white p-5 shadow-xs sm:p-6">
                             <h2 className="text-base font-bold tracking-tight text-dark-neutral">
                                 Deskripsi Kejadian & Lokasi
                             </h2>
 
-                            <div className="mt-3 text-xs leading-relaxed text-dark-neutral whitespace-pre-wrap sm:text-sm">
+                            <div className="mt-3 whitespace-pre-wrap text-xs leading-relaxed text-dark-neutral sm:text-sm">
                                 {report.description}
                             </div>
 
@@ -237,7 +278,7 @@ export default function ReportShow({
                                     <span className="text-xs font-semibold text-gray-neutral">
                                         Kategori Laporan
                                     </span>
-                                    <div className="mt-1 font-medium text-dark-neutral text-xs sm:text-sm">
+                                    <div className="mt-1 text-xs font-medium text-dark-neutral sm:text-sm">
                                         {report.category?.name ?? 'Umum'}
                                     </div>
                                 </div>
@@ -246,7 +287,7 @@ export default function ReportShow({
                                     <span className="text-xs font-semibold text-gray-neutral">
                                         Identitas Pelapor
                                     </span>
-                                    <div className="mt-1 flex items-center gap-1.5 font-medium text-dark-neutral text-xs sm:text-sm">
+                                    <div className="mt-1 flex items-center gap-1.5 text-xs font-medium text-dark-neutral sm:text-sm">
                                         <UserIcon className="size-4 text-primary-green" />
                                         <span>{report.creator?.name ?? 'Anonim'}</span>
                                     </div>
@@ -256,7 +297,7 @@ export default function ReportShow({
                                     <span className="text-xs font-semibold text-gray-neutral">
                                         Waktu Kejadian Dilaporkan
                                     </span>
-                                    <div className="mt-1 flex items-center gap-1.5 font-medium text-dark-neutral text-xs sm:text-sm">
+                                    <div className="mt-1 flex items-center gap-1.5 text-xs font-medium text-dark-neutral sm:text-sm">
                                         <Calendar className="size-4 text-primary-green" />
                                         <span>
                                             {formatDate(report.reported_occurrence_at)}
@@ -268,7 +309,7 @@ export default function ReportShow({
                                     <span className="text-xs font-semibold text-gray-neutral">
                                         Waktu Masuk Sistem
                                     </span>
-                                    <div className="mt-1 flex items-center gap-1.5 font-medium text-dark-neutral text-xs sm:text-sm">
+                                    <div className="mt-1 flex items-center gap-1.5 text-xs font-medium text-dark-neutral sm:text-sm">
                                         <Clock className="size-4 text-primary-green" />
                                         <span>
                                             {formatDate(report.created_at)}
@@ -278,8 +319,8 @@ export default function ReportShow({
                             </div>
 
                             {/* Location Box */}
-                            <div className="mt-5 rounded-lg border border-border-neutral bg-pale-green/60 p-4">
-                                <div className="flex items-start justify-between gap-2">
+                            <div className="mt-5 rounded-xl border border-border-neutral bg-pale-green/60 p-4">
+                                <div className="flex items-start justify-between gap-3">
                                     <div className="space-y-1">
                                         <div className="flex items-center gap-1.5 text-xs font-semibold text-forest-green">
                                             <MapPin className="size-4 text-primary-green" />
@@ -297,7 +338,7 @@ export default function ReportShow({
                                         href={`https://www.google.com/maps/search/?api=1&query=${report.latitude},${report.longitude}`}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="inline-flex shrink-0 items-center gap-1.5 rounded-lg border border-border-neutral bg-white px-3 py-1.5 text-xs font-semibold text-primary-green shadow-xs hover:bg-pale-green"
+                                        className="inline-flex shrink-0 items-center gap-1.5 rounded-xl border border-border-neutral bg-white px-3.5 py-2 text-xs font-semibold text-forest-green shadow-xs transition hover:border-gray-neutral/40 hover:bg-pale-green"
                                     >
                                         <span>Buka Peta</span>
                                         <ExternalLink className="size-3.5" />
@@ -307,13 +348,13 @@ export default function ReportShow({
                         </div>
 
                         {/* Evidence Gallery Card */}
-                        <div className="rounded-xl border border-border-neutral bg-white p-5 shadow-xs sm:p-6">
+                        <div className="rounded-2xl border border-border-neutral bg-white p-5 shadow-xs sm:p-6">
                             <div className="flex items-center justify-between">
                                 <div>
                                     <h2 className="text-base font-bold tracking-tight text-dark-neutral">
                                         Berkas Bukti Lapangan ({report.evidence?.length ?? 0})
                                     </h2>
-                                    <p className="text-xs text-gray-neutral">
+                                    <p className="mt-0.5 text-xs text-gray-neutral">
                                         Foto atau dokumentasi lapangan yang diunggah pelapor
                                     </p>
                                 </div>
@@ -324,47 +365,109 @@ export default function ReportShow({
                                     Tidak ada berkas bukti yang disertakan pada laporan ini.
                                 </div>
                             ) : (
-                                <div className="mt-4 grid gap-3 sm:grid-cols-2 md:grid-cols-3">
-                                    {report.evidence.map((ev) => (
-                                        <div
-                                            key={ev.id}
-                                            className="group relative overflow-hidden rounded-lg border border-border-neutral bg-pale-green/40 p-3 transition hover:border-primary-green hover:bg-soft-green/30"
-                                        >
-                                            <div className="flex aspect-video items-center justify-center rounded-md bg-white border border-border-neutral/60 text-primary-green shadow-2xs">
-                                                <FileImage className="size-8 text-primary-green" />
-                                            </div>
+                                <div className="mt-4 grid gap-3.5 sm:grid-cols-2 md:grid-cols-3">
+                                    {report.evidence.map((ev) => {
+                                        const imageUrl = getEvidenceUrl(ev);
+                                        const isImg = isImageFile(ev);
+
+                                        return (
                                             <div
-                                                className="mt-2 truncate text-xs font-semibold text-dark-neutral"
-                                                title={ev.original_filename}
+                                                key={ev.id}
+                                                onClick={() => {
+                                                    if (isImg && imageUrl) {
+                                                        setSelectedEvidence({
+                                                            url: imageUrl,
+                                                            filename: ev.original_filename,
+                                                        });
+                                                    }
+                                                }}
+                                                className={`group relative flex flex-col justify-between overflow-hidden rounded-xl border border-border-neutral bg-white p-3 shadow-2xs transition-all duration-200 hover:border-primary-green hover:shadow-xs ${
+                                                    isImg ? 'cursor-pointer' : ''
+                                                }`}
                                             >
-                                                {ev.original_filename}
+                                                <div className="relative aspect-video w-full overflow-hidden rounded-lg border border-border-neutral/60 bg-zinc-100">
+                                                    {isImg && imageUrl ? (
+                                                        <>
+                                                            <img
+                                                                src={imageUrl}
+                                                                alt={ev.original_filename}
+                                                                className="size-full object-cover transition-transform duration-300 group-hover:scale-105"
+                                                                onError={(e) => {
+                                                                    const target = e.currentTarget;
+                                                                    target.style.display = 'none';
+                                                                    const fallback = target.nextElementSibling as HTMLElement;
+                                                                    if (fallback) {
+                                                                        fallback.classList.remove('hidden');
+                                                                        fallback.classList.add('flex');
+                                                                    }
+                                                                }}
+                                                            />
+                                                            <div className="fallback-icon hidden absolute inset-0 flex-col items-center justify-center bg-pale-green/40 p-2 text-center text-forest-green">
+                                                                <FileImage className="mb-1 size-7 text-primary-green" />
+                                                                <span className="max-w-full truncate text-[10px] text-gray-neutral">
+                                                                    {ev.original_filename}
+                                                                </span>
+                                                            </div>
+                                                            <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-opacity duration-200 group-hover:opacity-100">
+                                                                <span className="inline-flex items-center gap-1.5 rounded-full bg-white/95 px-3 py-1.5 text-xs font-semibold text-dark-neutral shadow-sm backdrop-blur-xs">
+                                                                    <ZoomIn className="size-3.5 text-primary-green" />
+                                                                    <span>Lihat Foto</span>
+                                                                </span>
+                                                            </div>
+                                                        </>
+                                                    ) : (
+                                                        <div className="flex size-full flex-col items-center justify-center bg-pale-green/40 p-3 text-center">
+                                                            <FileText className="mb-1 size-7 text-primary-green" />
+                                                            <span className="max-w-full truncate text-[11px] font-medium text-dark-neutral">
+                                                                {ev.original_filename}
+                                                            </span>
+                                                        </div>
+                                                    )}
+                                                </div>
+
+                                                <div className="mt-2.5">
+                                                    <div
+                                                        className="truncate text-xs font-semibold text-dark-neutral"
+                                                        title={ev.original_filename}
+                                                    >
+                                                        {ev.original_filename}
+                                                    </div>
+                                                    <div className="mt-1 flex items-center justify-between text-[11px] text-gray-neutral">
+                                                        <span>
+                                                            {(ev.size_bytes / 1024).toFixed(0)} KB &bull;{' '}
+                                                            {ev.media_type || 'image'}
+                                                        </span>
+                                                        {isImg && (
+                                                            <span className="font-medium text-forest-green group-hover:underline">
+                                                                Perbesar
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                </div>
                                             </div>
-                                            <div className="text-[11px] text-gray-neutral">
-                                                {(ev.size_bytes / 1024).toFixed(0)} KB &bull; {ev.media_type}
-                                            </div>
-                                        </div>
-                                    ))}
+                                        );
+                                    })}
                                 </div>
                             )}
                         </div>
 
                         {/* Chronology / Status History Timeline */}
-                        <div className="rounded-xl border border-border-neutral bg-white p-5 shadow-xs sm:p-6">
+                        <div className="rounded-2xl border border-border-neutral bg-white p-5 shadow-xs sm:p-6">
                             <div className="flex items-center gap-2">
                                 <History className="size-4 text-primary-green" />
                                 <h2 className="text-base font-bold tracking-tight text-dark-neutral">
                                     Kronologi & Riwayat Perubahan Status
                                 </h2>
                             </div>
-                            <p className="text-xs text-gray-neutral">
+                            <p className="mt-0.5 text-xs text-gray-neutral">
                                 Jejak audit transisi status yang tercatat permanen sesuai standar akuntabilitas JAGAIN
                             </p>
 
-                            <ol className="relative mt-5 ml-3 border-l border-border-neutral">
+                            <ol className="relative mt-6 ml-3.5 border-l-2 border-primary-green/20">
                                 {report.status_histories?.map((history) => (
-                                    <li key={history.id} className="mb-5 ml-6 last:mb-0">
-                                        <span className="absolute -left-3 flex size-6 items-center justify-center rounded-full bg-soft-green text-primary-green ring-4 ring-white">
-                                            <CheckCircle2 className="size-3.5" />
+                                    <li key={history.id} className="mb-6 ml-6 last:mb-0">
+                                        <span className="absolute -left-4 flex size-7 items-center justify-center rounded-full bg-soft-green text-primary-green ring-4 ring-white shadow-2xs">
+                                            <CheckCircle2 className="size-4" />
                                         </span>
                                         <div className="flex flex-wrap items-center gap-2">
                                             <StatusBadge status={history.to_status} variant="neutral" />
@@ -372,25 +475,30 @@ export default function ReportShow({
                                                 {formatDate(history.created_at)}
                                             </span>
                                         </div>
-                                        <div className="mt-1 text-xs text-dark-neutral">
+                                        <div className="mt-1.5 text-xs text-dark-neutral">
                                             Aktor:{' '}
                                             <span className="font-semibold text-forest-green">
                                                 {history.actor?.name ?? 'Sistem'}
                                             </span>
                                         </div>
                                         {history.reason && (
-                                            <div className="mt-1.5 rounded-lg border border-border-neutral bg-pale-green/60 p-2 text-xs text-dark-neutral">
-                                                <span className="font-semibold text-forest-green">Alasan:</span> {history.reason}
+                                            <div className="mt-2 rounded-xl border border-border-neutral bg-pale-green/60 p-2.5 text-xs text-dark-neutral">
+                                                <span className="font-semibold text-forest-green">
+                                                    Alasan:
+                                                </span>{' '}
+                                                {history.reason}
                                             </div>
                                         )}
                                         {history.note && (
-                                            <p className="mt-1 text-xs text-gray-neutral">
+                                            <p className="mt-1.5 text-xs leading-relaxed text-gray-neutral">
                                                 {history.note}
                                             </p>
                                         )}
                                         {history.public_note && (
-                                            <div className="mt-1.5 rounded-lg border border-leaf-green/40 bg-soft-green/80 p-2.5 text-xs text-forest-green">
-                                                <span className="font-semibold">Instruksi ke Pelapor:</span>{' '}
+                                            <div className="mt-2 rounded-xl border border-leaf-green/40 bg-soft-green/80 p-3 text-xs text-forest-green">
+                                                <span className="font-semibold">
+                                                    Instruksi ke Pelapor:
+                                                </span>{' '}
                                                 {history.public_note}
                                             </div>
                                         )}
@@ -403,19 +511,18 @@ export default function ReportShow({
                     {/* Right Column: Actions & OPD Dispatch */}
                     <div className="flex flex-col gap-6">
                         {/* Status Transition Action Card */}
-                        <div className="rounded-xl border border-border-neutral bg-white p-5 shadow-xs sm:p-6">
+                        <div className="rounded-2xl border border-border-neutral bg-white p-5 shadow-xs sm:p-6">
                             <div className="flex items-center gap-2">
                                 <Shield className="size-4 text-primary-green" />
                                 <h3 className="text-base font-bold tracking-tight text-dark-neutral">
                                     Keputusan & Transisi Status
                                 </h3>
                             </div>
-                            <p className="mt-1 text-xs text-gray-neutral">
-                                Status saat ini:{' '}
-                                <strong className="font-bold text-forest-green">
-                                    {report.report_status}
-                                </strong>
-                            </p>
+
+                            <div className="mt-3 flex items-center justify-between rounded-xl border border-border-neutral bg-pale-green/40 p-3">
+                                <span className="text-xs font-medium text-gray-neutral">Status saat ini:</span>
+                                <StatusBadge status={report.report_status} variant="neutral" />
+                            </div>
 
                             <div className="mt-4 flex flex-col gap-2.5">
                                 {report.report_status === 'SUBMITTED' && (
@@ -429,9 +536,10 @@ export default function ReportShow({
                                                 'Admin memulai pemeriksaan kelengkapan berkas.'
                                             )
                                         }
-                                        className="w-full bg-primary-green px-4 py-2.5 text-xs font-semibold text-white shadow-xs hover:bg-forest-green"
+                                        className="w-full rounded-xl bg-primary-green px-4 py-2.5 text-xs font-semibold text-white shadow-xs hover:bg-forest-green"
                                     >
-                                        Mulai Telaah Laporan (UNDER_REVIEW)
+                                        <Clock className="mr-1.5 size-4" />
+                                        <span>Mulai Telaah Laporan</span>
                                     </Button>
                                 )}
 
@@ -447,17 +555,19 @@ export default function ReportShow({
                                                     'Laporan telah diperiksa dan dinilai memenuhi kriteria verifikasi JAGAIN.'
                                                 )
                                             }
-                                            className="w-full bg-primary-green px-4 py-2.5 text-xs font-semibold text-white shadow-xs hover:bg-forest-green"
+                                            className="w-full rounded-xl bg-primary-green px-4 py-2.5 text-xs font-semibold text-white shadow-xs hover:bg-forest-green"
                                         >
-                                            Verifikasi Laporan Valid (VERIFIED)
+                                            <CheckCircle2 className="mr-1.5 size-4" />
+                                            <span>Verifikasi Laporan Valid</span>
                                         </Button>
 
                                         <button
                                             type="button"
                                             onClick={() => setIsNeedsInfoModalOpen(true)}
-                                            className="w-full rounded-lg border border-amber-300 bg-amber-50 px-4 py-2 text-center text-xs font-semibold text-amber-900 transition hover:bg-amber-100"
+                                            className="flex w-full items-center justify-center gap-1.5 rounded-xl border border-amber-300 bg-amber-50 px-4 py-2.5 text-center text-xs font-semibold text-amber-900 transition hover:bg-amber-100"
                                         >
-                                            Minta Informasi Tambahan (NEEDS_INFORMATION)
+                                            <FileQuestion className="size-4 text-amber-700" />
+                                            <span>Minta Informasi Tambahan</span>
                                         </button>
                                     </>
                                 )}
@@ -473,9 +583,10 @@ export default function ReportShow({
                                                 'Melanjutkan pemeriksaan laporan setelah informasi diperbarui.'
                                             )
                                         }
-                                        className="w-full bg-primary-green px-4 py-2.5 text-xs font-semibold text-white shadow-xs hover:bg-forest-green"
+                                        className="w-full rounded-xl bg-primary-green px-4 py-2.5 text-xs font-semibold text-white shadow-xs hover:bg-forest-green"
                                     >
-                                        Kembalikan ke Pemeriksaan (UNDER_REVIEW)
+                                        <Clock className="mr-1.5 size-4" />
+                                        <span>Kembalikan ke Pemeriksaan</span>
                                     </Button>
                                 )}
 
@@ -490,9 +601,10 @@ export default function ReportShow({
                                                 'Admin telah memeriksa bukti penanganan OPD dan menetapkan status administratif selesai.'
                                             )
                                         }
-                                        className="w-full bg-forest-green px-4 py-2.5 text-xs font-semibold text-white shadow-xs hover:bg-primary-green"
+                                        className="w-full rounded-xl bg-forest-green px-4 py-2.5 text-xs font-semibold text-white shadow-xs hover:bg-primary-green"
                                     >
-                                        Sahkan Selesai Terverifikasi (RESOLVED_VERIFIED)
+                                        <CheckCircle2 className="mr-1.5 size-4" />
+                                        <span>Sahkan Selesai Terverifikasi</span>
                                     </Button>
                                 )}
 
@@ -503,9 +615,10 @@ export default function ReportShow({
                                     <button
                                         type="button"
                                         onClick={() => setIsCloseModalOpen(true)}
-                                        className="mt-1 w-full rounded-lg border border-rose-200 bg-rose-50 px-4 py-2 text-center text-xs font-semibold text-rose-800 transition hover:bg-rose-100"
+                                        className="mt-1 flex w-full items-center justify-center gap-1.5 rounded-xl border border-rose-200 bg-rose-50 px-4 py-2 text-center text-xs font-semibold text-rose-800 transition hover:bg-rose-100"
                                     >
-                                        Tutup Laporan dengan Alasan (CLOSED_WITH_REASON)
+                                        <XCircle className="size-3.5 text-rose-600" />
+                                        <span>Tutup Laporan dengan Alasan</span>
                                     </button>
                                 )}
                             </div>
@@ -523,7 +636,7 @@ export default function ReportShow({
                         </div>
 
                         {/* Agency Dispatch Card */}
-                        <div className="rounded-xl border border-border-neutral bg-white p-5 shadow-xs sm:p-6">
+                        <div className="rounded-2xl border border-border-neutral bg-white p-5 shadow-xs sm:p-6">
                             <div className="flex items-center gap-2">
                                 <Building2 className="size-4 text-primary-green" />
                                 <h3 className="text-base font-bold tracking-tight text-dark-neutral">
@@ -547,7 +660,7 @@ export default function ReportShow({
                                             id="agency_id"
                                             value={assignmentForm.data.agency_id}
                                             onChange={(e) => assignmentForm.setData('agency_id', e.target.value)}
-                                            className="mt-1 w-full rounded-lg border border-border-neutral bg-pale-green/40 px-3 py-2 text-xs text-dark-neutral transition-colors focus:border-primary-green focus:bg-white focus:outline-hidden"
+                                            className="mt-1 w-full rounded-xl border border-border-neutral bg-pale-green/40 px-3 py-2 text-xs text-dark-neutral transition-colors focus:border-primary-green focus:bg-white focus:outline-hidden"
                                         >
                                             {activeAgencies.map((agency) => (
                                                 <option key={agency.id} value={agency.id}>
@@ -575,20 +688,20 @@ export default function ReportShow({
                                             value={assignmentForm.data.note}
                                             onChange={(e) => assignmentForm.setData('note', e.target.value)}
                                             placeholder="Contoh: Mohon koordinasi dengan pos damkar terdekat..."
-                                            className="mt-1 w-full rounded-lg border border-border-neutral bg-pale-green/40 p-2.5 text-xs text-dark-neutral transition-colors focus:border-primary-green focus:bg-white focus:outline-hidden"
+                                            className="mt-1 w-full rounded-xl border border-border-neutral bg-pale-green/40 p-2.5 text-xs text-dark-neutral transition-colors focus:border-primary-green focus:bg-white focus:outline-hidden"
                                         />
                                     </div>
 
                                     <Button
                                         type="submit"
                                         disabled={assignmentForm.processing}
-                                        className="bg-primary-green px-4 py-2.5 text-xs font-semibold text-white shadow-xs hover:bg-forest-green"
+                                        className="rounded-xl bg-primary-green px-4 py-2.5 text-xs font-semibold text-white shadow-xs hover:bg-forest-green"
                                     >
-                                        <Send className="size-3.5 mr-1.5" />
+                                        <Send className="mr-1.5 size-3.5" />
                                         <span>
                                             {report.report_status === 'DISPATCHED'
-                                                ? 'Tugaskan Ulang (Reassign)'
-                                                : 'Kirim Penugasan ke OPD'}
+                                                 ? 'Tugaskan Ulang (Reassign)'
+                                                 : 'Kirim Penugasan ke OPD'}
                                         </span>
                                     </Button>
 
@@ -599,8 +712,11 @@ export default function ReportShow({
                                     )}
                                 </form>
                             ) : (
-                                <div className="mt-4 rounded-lg border border-border-neutral bg-pale-green/40 p-3 text-xs text-gray-neutral">
-                                    Laporan harus diverifikasi valid (status VERIFIED) sebelum dapat ditugaskan ke instansi.
+                                <div className="mt-4 flex items-center gap-2.5 rounded-xl border border-border-neutral bg-pale-green/40 p-3.5 text-xs text-dark-neutral">
+                                    <AlertCircle className="size-4 shrink-0 text-forest-green/80" />
+                                    <span>
+                                        Laporan harus berstatus Terverifikasi Valid sebelum dapat didisposisikan ke instansi penanganan.
+                                    </span>
                                 </div>
                             )}
 
@@ -610,17 +726,18 @@ export default function ReportShow({
                                     <span className="text-xs font-semibold text-dark-neutral">
                                         Penugasan Aktif Saat Ini:
                                     </span>
-                                    <div className="mt-2 rounded-lg border border-border-neutral bg-pale-green/40 p-3 text-xs">
+                                    <div className="mt-2 rounded-xl border border-border-neutral bg-pale-green/40 p-3 text-xs">
                                         <div className="font-semibold text-dark-neutral">
                                             {report.latest_assignment.agency?.name}
                                         </div>
-                                        <div className="mt-1 flex items-center gap-1.5">
+                                        <div className="mt-1.5 flex items-center gap-1.5">
                                             <span className="badge badge-light">
-                                                {report.latest_assignment.assignment_status}
+                                                {assignmentStatusLabels[report.latest_assignment.assignment_status] ??
+                                                    report.latest_assignment.assignment_status}
                                             </span>
                                         </div>
                                         {report.latest_assignment.decline_reason && (
-                                            <div className="mt-2 rounded bg-rose-50 p-2 text-rose-900 border border-rose-200">
+                                            <div className="mt-2 rounded-lg border border-rose-200 bg-rose-50 p-2 text-rose-900">
                                                 <span className="font-semibold">Alasan Penolakan:</span>{' '}
                                                 {report.latest_assignment.decline_reason}
                                             </div>
@@ -633,6 +750,56 @@ export default function ReportShow({
                 </div>
             </div>
 
+            {/* Modal: Interactive Evidence Image Preview */}
+            {selectedEvidence && (
+                <div
+                    role="dialog"
+                    aria-modal="true"
+                    className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-xs"
+                    onClick={() => setSelectedEvidence(null)}
+                >
+                    <div
+                        className="relative flex max-h-[92vh] w-full max-w-4xl flex-col overflow-hidden rounded-2xl bg-white shadow-2xl"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <div className="flex items-center justify-between border-b border-border-neutral bg-white px-5 py-3.5">
+                            <div className="flex min-w-0 items-center gap-2">
+                                <FileImage className="size-4 shrink-0 text-primary-green" />
+                                <h3 className="truncate text-sm font-bold text-dark-neutral">
+                                    {selectedEvidence.filename}
+                                </h3>
+                            </div>
+                            <div className="flex shrink-0 items-center gap-2">
+                                <a
+                                    href={selectedEvidence.url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="inline-flex items-center gap-1.5 rounded-xl border border-border-neutral bg-white px-3 py-1.5 text-xs font-semibold text-dark-neutral shadow-2xs transition hover:bg-pale-green"
+                                >
+                                    <span>Buka Tab Baru</span>
+                                    <ExternalLink className="size-3.5" />
+                                </a>
+                                <button
+                                    type="button"
+                                    onClick={() => setSelectedEvidence(null)}
+                                    className="rounded-lg p-1.5 text-gray-neutral transition hover:bg-pale-green hover:text-dark-neutral"
+                                    title="Tutup pratinjau"
+                                >
+                                    <X className="size-4" />
+                                </button>
+                            </div>
+                        </div>
+                        <div className="flex flex-1 items-center justify-center overflow-auto bg-zinc-950 p-4">
+                            <img
+                                src={selectedEvidence.url}
+                                alt={selectedEvidence.filename}
+                                className="max-h-[75vh] w-auto max-w-full rounded-lg object-contain shadow-md"
+                            />
+                        </div>
+                    </div>
+                </div>
+            )}
+
             {/* Modal: Minta Informasi Tambahan */}
             {isNeedsInfoModalOpen && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-xs">
@@ -644,7 +811,7 @@ export default function ReportShow({
                             <button
                                 type="button"
                                 onClick={() => setIsNeedsInfoModalOpen(false)}
-                                className="rounded p-1 text-gray-neutral hover:bg-pale-green"
+                                className="rounded-lg p-1 text-gray-neutral hover:bg-pale-green"
                             >
                                 <X className="size-4" />
                             </button>
@@ -662,7 +829,7 @@ export default function ReportShow({
                                 value={transitionForm.data.public_note}
                                 onChange={(e) => transitionForm.setData('public_note', e.target.value)}
                                 placeholder="Contoh: Mohon sebutkan patok batas desa atau titik acuan terdekat..."
-                                className="mt-1 w-full rounded-lg border border-border-neutral bg-pale-green/40 p-2.5 text-xs text-dark-neutral focus:border-primary-green focus:bg-white focus:outline-hidden"
+                                className="mt-1 w-full rounded-xl border border-border-neutral bg-pale-green/40 p-2.5 text-xs text-dark-neutral focus:border-primary-green focus:bg-white focus:outline-hidden"
                             />
                             {transitionForm.errors.note && (
                                 <p className="mt-1 text-xs text-rose-600">{transitionForm.errors.note}</p>
@@ -673,7 +840,7 @@ export default function ReportShow({
                             <button
                                 type="button"
                                 onClick={() => setIsNeedsInfoModalOpen(false)}
-                                className="rounded-lg border border-border-neutral px-3.5 py-2 text-xs font-semibold text-dark-neutral hover:bg-pale-green"
+                                className="rounded-xl border border-border-neutral px-3.5 py-2 text-xs font-semibold text-dark-neutral hover:bg-pale-green"
                             >
                                 Batal
                             </button>
@@ -688,7 +855,7 @@ export default function ReportShow({
                                         transitionForm.data.public_note
                                     )
                                 }
-                                className="bg-primary-green px-4 py-2 text-xs font-semibold text-white shadow-xs hover:bg-forest-green"
+                                className="rounded-xl bg-primary-green px-4 py-2 text-xs font-semibold text-white shadow-xs hover:bg-forest-green"
                             >
                                 Kirim Permintaan
                             </Button>
@@ -702,7 +869,7 @@ export default function ReportShow({
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-xs">
                     <div className="w-full max-w-md rounded-2xl border border-border-neutral bg-white p-6 shadow-xl">
                         <div className="flex items-start gap-3">
-                            <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-rose-100 text-rose-600">
+                            <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-rose-100 text-rose-600">
                                 <XCircle className="size-5" />
                             </div>
                             <div>
@@ -722,7 +889,7 @@ export default function ReportShow({
                             <select
                                 value={transitionForm.data.reason}
                                 onChange={(e) => transitionForm.setData('reason', e.target.value)}
-                                className="mt-1 w-full rounded-lg border border-border-neutral bg-white p-2.5 text-xs text-dark-neutral focus:border-rose-500 focus:outline-hidden"
+                                className="mt-1 w-full rounded-xl border border-border-neutral bg-white p-2.5 text-xs text-dark-neutral focus:border-rose-500 focus:outline-hidden"
                             >
                                 <option value="">-- Pilih Alasan Penutupan --</option>
                                 <option value="Laporan Duplikat dari Titik yang Sama">Laporan Duplikat dari Titik yang Sama</option>
@@ -744,7 +911,7 @@ export default function ReportShow({
                                 value={transitionForm.data.note}
                                 onChange={(e) => transitionForm.setData('note', e.target.value)}
                                 placeholder="Jelaskan detail pertimbangan penutupan..."
-                                className="mt-1 w-full rounded-lg border border-border-neutral p-2 text-xs text-dark-neutral focus:border-rose-500 focus:outline-hidden"
+                                className="mt-1 w-full rounded-xl border border-border-neutral p-2 text-xs text-dark-neutral focus:border-rose-500 focus:outline-hidden"
                             />
                         </div>
 
@@ -752,7 +919,7 @@ export default function ReportShow({
                             <button
                                 type="button"
                                 onClick={() => setIsCloseModalOpen(false)}
-                                className="rounded-lg border border-border-neutral px-3.5 py-2 text-xs font-semibold text-dark-neutral hover:bg-pale-green"
+                                className="rounded-xl border border-border-neutral px-3.5 py-2 text-xs font-semibold text-dark-neutral hover:bg-pale-green"
                             >
                                 Batal
                             </button>
@@ -766,7 +933,7 @@ export default function ReportShow({
                                         transitionForm.data.note
                                     )
                                 }
-                                className="bg-rose-600 px-4 py-2 text-xs font-semibold text-white shadow-xs hover:bg-rose-700"
+                                className="rounded-xl bg-rose-600 px-4 py-2 text-xs font-semibold text-white shadow-xs hover:bg-rose-700"
                             >
                                 Ya, Tutup Laporan Ini
                             </Button>

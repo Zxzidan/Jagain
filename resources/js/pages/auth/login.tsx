@@ -53,7 +53,7 @@ export default function Login({ status, canResetPassword }: Props) {
                     Hey, Hello<span className="inline-block hover:rotate-12 transition-transform">👋</span>
                 </h1>
                 <p className="mt-1.5 text-sm text-gray-500 dark:text-gray-400 font-normal">
-                    Enter your email and password to login.
+                    Enter your email and password to sign in.
                 </p>
             </div>
 
@@ -92,8 +92,8 @@ export default function Login({ status, canResetPassword }: Props) {
                                     autoComplete="email"
                                     value={emailValue}
                                     onChange={(e) => setEmailValue(e.target.value)}
-                                    placeholder="robert.langster@gmail.com"
-                                    className="h-11 sm:h-12 w-full px-4 rounded-lg border border-gray-200 dark:border-zinc-800 bg-gray-50/60 dark:bg-zinc-900/60 hover:bg-white focus:bg-white dark:focus:bg-zinc-900 focus:border-[#10e57a] focus:ring-2 focus:ring-[#10e57a]/20 text-sm transition-all outline-hidden text-gray-900 dark:text-white placeholder:text-gray-400"
+                                    placeholder="nama@email.com"
+                                    className="h-11 sm:h-12 w-full px-4 rounded-xl border border-gray-200 dark:border-zinc-800 bg-gray-50/60 dark:bg-zinc-900/60 hover:bg-white focus:bg-white dark:focus:bg-zinc-900 focus:border-[#10e57a] focus:ring-2 focus:ring-[#10e57a]/20 text-sm transition-all outline-hidden text-gray-900 dark:text-white placeholder:text-gray-400"
                                 />
                                 <InputError message={errors.email} />
                             </div>
@@ -115,7 +115,7 @@ export default function Login({ status, canResetPassword }: Props) {
                                     value={passwordValue}
                                     onChange={(e) => setPasswordValue(e.target.value)}
                                     placeholder="••••••••"
-                                    className="h-11 sm:h-12 rounded-lg border-gray-200 dark:border-zinc-800 bg-gray-50/60 dark:bg-zinc-900/60 hover:bg-white focus:bg-white dark:focus:bg-zinc-900 focus:border-[#10e57a] focus:ring-2 focus:ring-[#10e57a]/20 text-sm transition-all text-gray-900 dark:text-white placeholder:text-gray-400"
+                                    className="h-11 sm:h-12 px-4 rounded-xl border-gray-200 dark:border-zinc-800 bg-gray-50/60 dark:bg-zinc-900/60 hover:bg-white focus:bg-white dark:focus:bg-zinc-900 focus:border-[#10e57a] focus:ring-2 focus:ring-[#10e57a]/20 text-sm transition-all text-gray-900 dark:text-white placeholder:text-gray-400"
                                 />
                                 <InputError message={errors.password} />
                             </div>
@@ -146,51 +146,51 @@ export default function Login({ status, canResetPassword }: Props) {
                                 )}
                             </div>
 
-                            {/* Action Buttons Row (Side by Side matching reference screenshot) */}
+                            {/* Action Buttons Row */}
                             <div className="grid grid-cols-2 gap-3.5 pt-2">
                                 <button
                                     type="submit"
                                     tabIndex={4}
                                     disabled={processing}
                                     data-test="login-button"
-                                    className="h-11 sm:h-12 rounded-lg bg-gradient-to-r from-[#10e57a] to-[#05d96c] hover:brightness-105 active:scale-[0.99] text-gray-950 font-bold text-sm tracking-normal transition-all flex items-center justify-center gap-2 disabled:opacity-60 cursor-pointer shadow-xs border-0"
+                                    className="h-11 sm:h-12 rounded-xl bg-gradient-to-r from-[#10e57a] to-[#05d96c] hover:brightness-105 active:scale-[0.99] text-gray-950 font-bold text-sm tracking-normal transition-all flex items-center justify-center gap-2 disabled:opacity-60 cursor-pointer shadow-xs border-0"
                                 >
                                     {processing ? (
                                         <Spinner className="size-4 text-gray-950" />
                                     ) : (
-                                        'Login'
+                                        'Sign In'
                                     )}
                                 </button>
 
                                 <Link
                                     href={register()}
                                     tabIndex={6}
-                                    className="h-11 sm:h-12 rounded-lg border border-gray-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 hover:bg-gray-50 dark:hover:bg-zinc-800 text-gray-800 dark:text-gray-200 font-semibold text-sm tracking-normal transition-all flex items-center justify-center text-center"
+                                    className="h-11 sm:h-12 rounded-xl border border-gray-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 hover:bg-gray-50 dark:hover:bg-zinc-800 text-gray-800 dark:text-gray-200 font-bold text-sm tracking-normal transition-all flex items-center justify-center text-center shadow-xs active:scale-[0.99]"
                                 >
                                     Sign Up
                                 </Link>
                             </div>
                         </div>
 
-                        {/* Divider: Or, login with */}
+                        {/* Divider: Or, sign in with */}
                         <div className="relative my-4">
                             <div className="absolute inset-0 flex items-center">
                                 <div className="w-full border-t border-gray-200 dark:border-zinc-800" />
                             </div>
                             <div className="relative flex justify-center text-xs">
-                                <span className="bg-white dark:bg-[#07130b] px-3 text-gray-400 dark:text-gray-500 font-normal">
-                                    Or, login with
+                                <span className="bg-white dark:bg-[#07130b] px-3 text-gray-400 dark:text-gray-500 font-medium">
+                                    Or, sign in with
                                 </span>
                             </div>
                         </div>
 
-                        {/* 3 Alternative Quick Actions matching reference layout */}
+                        {/* 3 Alternative Quick Actions */}
                         <div className="grid grid-cols-3 gap-2.5 sm:gap-3">
                             {/* Google Button */}
                             <button
                                 type="button"
                                 onClick={() => handleFillDemo('citizen')}
-                                className="h-10 px-3 rounded-lg border border-gray-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:bg-gray-50 dark:hover:bg-zinc-800 hover:border-gray-300 text-xs font-medium text-gray-700 dark:text-gray-300 flex items-center justify-center gap-1.5 transition-colors shadow-2xs cursor-pointer whitespace-nowrap"
+                                className="h-10 px-3 rounded-xl border border-gray-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:bg-gray-50 dark:hover:bg-zinc-800 hover:border-gray-300 text-xs font-medium text-gray-700 dark:text-gray-300 flex items-center justify-center gap-1.5 transition-colors shadow-2xs cursor-pointer whitespace-nowrap"
                                 title="Login Google"
                             >
                                 <svg className="size-3.5 shrink-0" viewBox="0 0 24 24">
@@ -218,7 +218,7 @@ export default function Login({ status, canResetPassword }: Props) {
                             <button
                                 type="button"
                                 onClick={() => handleFillDemo('citizen')}
-                                className="h-9 px-2 rounded-lg border border-gray-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:bg-gray-50 dark:hover:bg-zinc-800 hover:border-gray-300 text-xs font-medium text-gray-700 dark:text-gray-300 flex items-center justify-center gap-1.5 transition-colors shadow-2xs cursor-pointer whitespace-nowrap"
+                                className="h-10 px-3 rounded-xl border border-gray-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:bg-gray-50 dark:hover:bg-zinc-800 hover:border-gray-300 text-xs font-medium text-gray-700 dark:text-gray-300 flex items-center justify-center gap-1.5 transition-colors shadow-2xs cursor-pointer whitespace-nowrap"
                                 title="Masuk dengan Kunci Sandi"
                             >
                                 <KeyRound className="size-3.5 text-gray-500 dark:text-gray-400 shrink-0" />
@@ -229,7 +229,7 @@ export default function Login({ status, canResetPassword }: Props) {
                             <button
                                 type="button"
                                 onClick={() => handleFillDemo('citizen')}
-                                className="h-9 px-2 rounded-lg border border-gray-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:bg-emerald-50 dark:hover:bg-emerald-950/30 hover:border-emerald-300 hover:text-emerald-700 text-xs font-medium text-gray-700 dark:text-gray-300 flex items-center justify-center gap-1.5 transition-colors shadow-2xs cursor-pointer whitespace-nowrap"
+                                className="h-10 px-3 rounded-xl border border-gray-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:bg-emerald-50 dark:hover:bg-emerald-950/30 hover:border-emerald-300 hover:text-emerald-700 text-xs font-medium text-gray-700 dark:text-gray-300 flex items-center justify-center gap-1.5 transition-colors shadow-2xs cursor-pointer whitespace-nowrap"
                                 title="Isi otomatis dengan akun warga demo"
                             >
                                 <ShieldCheck className="size-3.5 text-emerald-600 shrink-0" />
