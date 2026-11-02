@@ -308,17 +308,17 @@ export default function Navbar() {
                         <div className="flex items-center gap-2">
                             <Link
                                 href="/login"
-                                className={`h-9 px-4 text-xs xl:text-sm font-bold rounded-full inline-flex items-center justify-center transition-all duration-200 border ${
+                                className={`h-9 px-4 text-xs xl:text-sm font-bold rounded-full inline-flex items-center justify-center transition-all duration-200 border hover:scale-105 active:scale-95 shadow-2xs ${
                                     scrolled
-                                        ? 'text-neutral-800 hover:text-black hover:bg-neutral-100 border-neutral-200/90'
-                                        : 'text-black hover:bg-black/10 border-black/25'
+                                        ? 'text-neutral-900 hover:text-black bg-white/80 hover:bg-neutral-100 border-neutral-200/90'
+                                        : 'text-neutral-950 hover:text-black bg-black/5 hover:bg-black/10 border-black/20 backdrop-blur-xs'
                                 }`}
                             >
                                 Sign In
                             </Link>
                             <Link
                                 href="/register"
-                                className="h-9 px-4.5 text-xs xl:text-sm font-bold rounded-full inline-flex items-center justify-center transition-all duration-200 bg-black text-white hover:bg-neutral-800 shadow-sm active:scale-95"
+                                className="h-9 px-4.5 text-xs xl:text-sm font-bold rounded-full inline-flex items-center justify-center transition-all duration-200 bg-black text-white hover:bg-neutral-800 hover:scale-105 active:scale-95 shadow-sm hover:shadow-md"
                             >
                                 Sign Up
                             </Link>
@@ -331,10 +331,10 @@ export default function Navbar() {
                     {!user && (
                         <Link
                             href="/login"
-                            className={`h-8 px-3 text-xs font-bold rounded-full inline-flex items-center justify-center transition-all border ${
+                            className={`h-8 px-3 text-xs font-bold rounded-full inline-flex items-center justify-center transition-all duration-200 hover:scale-105 active:scale-95 border ${
                                 scrolled
                                     ? 'bg-neutral-100 text-neutral-900 border-neutral-200'
-                                    : 'bg-black/10 text-black border-black/20'
+                                    : 'bg-black/10 text-neutral-950 border-black/20 backdrop-blur-xs'
                             }`}
                         >
                             Sign In
@@ -519,7 +519,7 @@ export default function Navbar() {
                             <Link
                                 href="/login"
                                 onClick={() => setMobileMenuOpen(false)}
-                                className="w-full py-2.5 px-4 text-xs font-bold text-center text-neutral-900 bg-neutral-100 hover:bg-neutral-200 rounded-xl flex items-center justify-center gap-2 transition-colors"
+                                className="w-full py-2.5 px-4 text-xs font-bold text-center text-neutral-900 bg-neutral-100 hover:bg-neutral-200/80 rounded-full flex items-center justify-center gap-2 transition-all duration-200 active:scale-95"
                             >
                                 <LogIn className="size-3.5" />
                                 <span>Sign In</span>
@@ -527,7 +527,7 @@ export default function Navbar() {
                             <Link
                                 href="/register"
                                 onClick={() => setMobileMenuOpen(false)}
-                                className="w-full py-2.5 px-4 text-xs font-bold text-center text-black bg-[#10e57a] hover:bg-[#0ba856] rounded-xl flex items-center justify-center gap-2 transition-colors shadow-xs"
+                                className="w-full py-2.5 px-4 text-xs font-bold text-center text-white bg-black hover:bg-neutral-900 rounded-full flex items-center justify-center gap-2 transition-all duration-200 active:scale-95 shadow-xs"
                             >
                                 <PlusCircle className="size-3.5" />
                                 <span>Sign Up</span>

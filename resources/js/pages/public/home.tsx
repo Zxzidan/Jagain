@@ -30,44 +30,6 @@ import {
     Database,
 } from 'lucide-react';
 
-const ispuLevels = [
-    {
-        range: '0 - 50',
-        category: 'Baik',
-        badgeBg: 'bg-emerald-100 text-emerald-800 border border-emerald-300 font-bold',
-        description: 'Tingkat mutu udara sangat baik, tidak memberikan efek negatif terhadap manusia maupun ekosistem hutan.',
-        action: 'Aman untuk seluruh aktivitas luar ruangan.',
-    },
-    {
-        range: '51 - 100',
-        category: 'Sedang',
-        badgeBg: 'bg-yellow-100 text-yellow-900 border border-yellow-300 font-bold',
-        description: 'Mutu udara masih dapat diterima pada kesehatan manusia dan vegetasi gambut.',
-        action: 'Kelompok sensitif perlu membatasi aktivitas fisik intensif luar ruang.',
-    },
-    {
-        range: '101 - 200',
-        category: 'Tidak Sehat',
-        badgeBg: 'bg-orange-100 text-orange-900 border border-orange-300 font-bold',
-        description: 'Mutu udara bersifat merugikan bagi manusia, hewan, dan vegetasi yang terpapar polutan kabut asap.',
-        action: 'Wajib kenakan respirator partikulat N95/KN95 di luar ruangan.',
-    },
-    {
-        range: '201 - 300',
-        category: 'Sangat Tidak Sehat',
-        badgeBg: 'bg-rose-100 text-rose-900 border border-rose-300 font-bold',
-        description: 'Risiko gangguan pernapasan akut secara luas pada seluruh populasi.',
-        action: 'Hindari aktivitas di luar ruangan. Tutup celah ventilasi dan nyalakan filter udara.',
-    },
-    {
-        range: '> 300',
-        category: 'Berbahaya',
-        badgeBg: 'bg-purple-100 text-purple-900 border border-purple-300 font-bold',
-        description: 'Tingkat mutu udara berbahaya dan dapat menimbulkan dampak kesehatan serius.',
-        action: 'Tetap berada di ruang kedap udara atau evakuasi ke shelter bersih terdekat.',
-    },
-];
-
 const provincialContacts = [
     {
         province: 'Kalimantan Barat',
@@ -533,7 +495,7 @@ export default function Home({
                                     glow={1.2}
                                     followMouse
                                     onClick={() => router.visit('/lapor')}
-                                    className="font-bold text-sm pl-5 pr-2 py-1.5 shadow-xl active:scale-95 transition-all"
+                                    className="font-bold text-sm pl-5 pr-2 py-1.5 shadow-xl active:scale-95 transition-all select-none cursor-pointer"
                                 >
                                     <span className="flex items-center gap-2.5">
                                         <span>Lapor Karhutla</span>
@@ -545,7 +507,7 @@ export default function Home({
 
                                 <a
                                     href="#peta-sebaran"
-                                    className="bg-black/50 hover:bg-black/70 text-white border-2 border-white/70 hover:border-white px-6 py-2.5 rounded-full font-bold text-sm transition-all shadow-md backdrop-blur-xs hover:scale-105 active:scale-95 inline-flex items-center gap-2"
+                                    className="bg-black/50 hover:bg-black/70 text-white border-2 border-white/70 hover:border-white px-6 py-2.5 rounded-full font-bold text-sm transition-all duration-200 shadow-md backdrop-blur-xs hover:scale-105 active:scale-95 inline-flex items-center gap-2"
                                 >
                                     <span>Buka Peta Sebaran</span>
                                     <ArrowRight className="size-3.5" />
@@ -748,7 +710,7 @@ export default function Home({
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                                     <div className="p-4 rounded-2xl bg-neutral-50/80 border border-neutral-200/70 space-y-1">
                                         <div className="flex items-center gap-2 text-xs font-bold text-neutral-900">
-                                            <span className="size-5 rounded-md bg-emerald-100 text-emerald-800 flex items-center justify-center text-[11px] font-black">1</span>
+                                            <span className="size-5 rounded-md bg-neutral-900 text-white flex items-center justify-center text-[11px] font-black">1</span>
                                             <span>Lawan Arah Angin</span>
                                         </div>
                                         <p className="text-xs text-neutral-600 leading-relaxed font-sans">
@@ -758,7 +720,7 @@ export default function Home({
 
                                     <div className="p-4 rounded-2xl bg-neutral-50/80 border border-neutral-200/70 space-y-1">
                                         <div className="flex items-center gap-2 text-xs font-bold text-neutral-900">
-                                            <span className="size-5 rounded-md bg-emerald-100 text-emerald-800 flex items-center justify-center text-[11px] font-black">2</span>
+                                            <span className="size-5 rounded-md bg-neutral-900 text-white flex items-center justify-center text-[11px] font-black">2</span>
                                             <span>Respirator N95</span>
                                         </div>
                                         <p className="text-xs text-neutral-600 leading-relaxed font-sans">
@@ -768,7 +730,7 @@ export default function Home({
 
                                     <div className="p-4 rounded-2xl bg-neutral-50/80 border border-neutral-200/70 space-y-1">
                                         <div className="flex items-center gap-2 text-xs font-bold text-neutral-900">
-                                            <span className="size-5 rounded-md bg-emerald-100 text-emerald-800 flex items-center justify-center text-[11px] font-black">3</span>
+                                            <span className="size-5 rounded-md bg-neutral-900 text-white flex items-center justify-center text-[11px] font-black">3</span>
                                             <span>Segel Ruang Bersih</span>
                                         </div>
                                         <p className="text-xs text-neutral-600 leading-relaxed font-sans">
@@ -778,7 +740,7 @@ export default function Home({
 
                                     <div className="p-4 rounded-2xl bg-neutral-50/80 border border-neutral-200/70 space-y-1">
                                         <div className="flex items-center gap-2 text-xs font-bold text-neutral-900">
-                                            <span className="size-5 rounded-md bg-amber-100 text-amber-800 flex items-center justify-center text-[11px] font-black">4</span>
+                                            <span className="size-5 rounded-md bg-neutral-900 text-white flex items-center justify-center text-[11px] font-black">4</span>
                                             <span>Evakuasi Cepat</span>
                                         </div>
                                         <p className="text-xs text-neutral-600 leading-relaxed font-sans">
@@ -787,14 +749,33 @@ export default function Home({
                                     </div>
                                 </div>
 
-                                {/* Compact ISPU Bar */}
-                                <div className="pt-3 border-t border-neutral-100 flex flex-wrap items-center justify-between gap-2 text-[11px]">
-                                    <span className="font-semibold text-neutral-700">Panduan Mutu Udara (ISPU):</span>
-                                    <div className="flex flex-wrap items-center gap-1.5 font-medium">
-                                        <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">Baik (0-50)</span>
-                                        <span className="px-2 py-0.5 rounded-full bg-blue-100 text-blue-800">Sedang (51-100)</span>
-                                        <span className="px-2 py-0.5 rounded-full bg-amber-100 text-amber-800">Tidak Sehat (101-200)</span>
-                                        <span className="px-2 py-0.5 rounded-full bg-rose-100 text-rose-800">Berbahaya (&gt;300)</span>
+                                {/* Modern Minimalist ISPU Bar */}
+                                <div className="pt-3.5 border-t border-neutral-100 flex flex-wrap items-center justify-between gap-2.5 text-[11px]">
+                                    <div className="flex items-center gap-1.5 font-semibold text-neutral-800">
+                                        <Wind className="size-3.5 text-neutral-400" />
+                                        <span>Panduan Mutu Udara (ISPU):</span>
+                                    </div>
+                                    <div className="flex flex-wrap items-center gap-1.5">
+                                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-neutral-50/80 border border-neutral-200/80 text-neutral-800 text-[11px] font-medium transition-colors hover:bg-neutral-100/70">
+                                            <span className="size-1.5 rounded-full bg-[#10e57a]" />
+                                            <span>Baik</span>
+                                            <span className="text-neutral-600 font-mono text-[10px] tabular-nums">(0–50)</span>
+                                        </span>
+                                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-neutral-50/80 border border-neutral-200/80 text-neutral-800 text-[11px] font-medium transition-colors hover:bg-neutral-100/70">
+                                            <span className="size-1.5 rounded-full bg-neutral-400" />
+                                            <span>Sedang</span>
+                                            <span className="text-neutral-600 font-mono text-[10px] tabular-nums">(51–100)</span>
+                                        </span>
+                                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-neutral-50/80 border border-neutral-200/80 text-neutral-800 text-[11px] font-medium transition-colors hover:bg-neutral-100/70">
+                                            <span className="size-1.5 rounded-full bg-neutral-600" />
+                                            <span>Tidak Sehat</span>
+                                            <span className="text-neutral-600 font-mono text-[10px] tabular-nums">(101–200)</span>
+                                        </span>
+                                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-neutral-50/80 border border-neutral-200/80 text-neutral-800 text-[11px] font-medium transition-colors hover:bg-neutral-100/70">
+                                            <span className="size-1.5 rounded-full bg-neutral-950" />
+                                            <span>Berbahaya</span>
+                                            <span className="text-neutral-600 font-mono text-[10px] tabular-nums">(&gt;300)</span>
+                                        </span>
                                     </div>
                                 </div>
                             </div>
