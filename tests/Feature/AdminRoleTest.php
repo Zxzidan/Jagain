@@ -1,10 +1,12 @@
 <?php
 
 use App\Models\Agency;
+use App\Models\AuditLog;
 use App\Models\Category;
 use App\Models\Report;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Str;
 
 uses(RefreshDatabase::class);
 
@@ -358,4 +360,29 @@ test('admin can access dedicated admin geospatial map page', function () {
 test('guest cannot access admin geospatial map page', function () {
     $response = $this->get(route('admin.map'));
     $response->assertRedirect(route('login'));
+});
+
+test('admin can access audit trail with enriched entity details and statistics', function () {
+    AuditLog::create([
+        'actor_user_id' => $this->admin->id,
+        'action' => 'REPORT_STATUS_TRANSITION',
+        'entity_type' => 'Report',
+        'entity_id' => 1,
+        'before_snapshot' => ['status' => 'SUBMITTED'],
+        'after_snapshot' => ['status' => 'VERIFIED'],
+        'reason' => 'Verifikasi bukti lapangan',
+        'request_id' => (string) Str::uuid(),
+        'ip_address' => '127.0.0.1',
+        'created_at' => now(),
+    ]);
+
+    $response = $this->actingAs($this->admin)->get(route('admin.audit-logs.index'));
+    $response->assertOk();
+    $response->assertInertia(fn ($page) => $page
+        ->component('admin/audit-logs/index')
+        ->has('auditLogs.data')
+        ->has('actionOptions')
+        ->has('entityTypeOptions')
+        ->has('stats')
+    );
 });

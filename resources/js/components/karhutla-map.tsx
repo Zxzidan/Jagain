@@ -211,7 +211,7 @@ export default function KarhutlaMap({
                 : 'Lihat Register Publik →';
 
             const popupContent = `
-                <div style="min-width: 240px; font-family: Inter, sans-serif; font-size: 12px; color: #111827; background: #ffffff; padding: 14px; border-radius: 16px; border: 1px solid #e5e7eb; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);">
+                <div style="min-width: 240px; font-family: Poppins, sans-serif; font-size: 12px; color: #111827; background: #ffffff; padding: 14px; border-radius: 16px; border: 1px solid #e5e7eb; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
                         <span style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: #111827; font-family: monospace; background: #e5e7eb; padding: 2px 8px; border-radius: 9999px;">
                             ${rep.tracking_code}
@@ -250,7 +250,7 @@ export default function KarhutlaMap({
                 : '';
 
             const popupContent = `
-                <div style="min-width: 230px; font-family: Inter, sans-serif; font-size: 12px; color: #111827; background: #ffffff; padding: 14px; border-radius: 16px; border: 1px solid #e5e7eb; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);">
+                <div style="min-width: 230px; font-family: Poppins, sans-serif; font-size: 12px; color: #111827; background: #ffffff; padding: 14px; border-radius: 16px; border: 1px solid #e5e7eb; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);">
                     ${simulationBadge}
                     <div style="font-size: 10px; font-weight: 700; text-transform: uppercase; color: #111827; margin-bottom: 4px; font-family: monospace;">
                         Titik Panas Satelit • ${obs.satellite_instrument}

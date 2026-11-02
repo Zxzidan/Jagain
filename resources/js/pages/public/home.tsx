@@ -594,8 +594,8 @@ export default function Home({
                     <AnimatedContent distance={24} duration={0.8} threshold={0.15}>
                         {/* Infinite Smooth Logo Loop */}
                         <div>
-                            <div className="text-xs sm:text-sm uppercase tracking-[0.22em] text-neutral-600 mb-8 font-bold">
-                                INTEGRASI SUMBER DATA & MITRA OBSERVASI
+                            <div className="text-xs sm:text-sm tracking-wide text-neutral-600 mb-8 font-semibold">
+                                Integrasi Sumber Data & Mitra Observasi
                             </div>
 
                             <div className="relative overflow-hidden py-8">
