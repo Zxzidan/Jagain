@@ -118,10 +118,10 @@ export function AppSidebar() {
                     <div className="mt-2.5 flex items-center gap-2">
                         <Link
                             href="/panduan-keselamatan"
-                            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl bg-[#0c4e33] text-white text-[11px] font-bold shadow-xs hover:bg-[#073623] transition-colors"
+                            className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-[#0c4e33] text-white text-[11px] font-bold shadow-xs hover:bg-[#073623] transition-colors"
                         >
-                            <Shield className="size-3" />
-                            <span>Buka SOP</span>
+                            <FileText className="size-3" />
+                            <span>Lihat SOP</span>
                         </Link>
                         <Link
                             href="/tentang-kami"

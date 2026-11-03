@@ -1,58 +1,54 @@
+import React, { useEffect } from 'react';
 import { Head, Link } from '@inertiajs/react';
-import Navbar from '@/components/navbar';
-import Footer from '@/components/footer';
-import AnimatedContent from '@/components/react-bits/AnimatedContent';
-import Stepper, { Step } from '@/components/react-bits/Stepper';
-import AnimatedList from '@/components/react-bits/AnimatedList';
-import BorderGlow from '@/components/react-bits/BorderGlow';
 import {
-    Flame,
-    ArrowRight,
-    Wind,
+    ArrowLeft,
+    FileText,
+    Printer,
     Shield,
-    Home,
-    AlertTriangle,
     PhoneCall,
-    Activity,
-    CheckCircle2,
     MapPin,
+    AlertTriangle,
+    CheckCircle2,
+    Flame,
+    Download,
+    ExternalLink,
 } from 'lucide-react';
 
 const ispuLevels = [
     {
         range: '0 - 50',
         category: 'Baik',
-        badgeBg: 'bg-emerald-100/90 text-emerald-800 border border-emerald-300 font-bold',
-        description: 'Tingkat mutu udara yang sangat baik, tidak memberikan efek negatif terhadap manusia maupun ekosistem hutan.',
-        action: 'Aman untuk seluruh aktivitas luar ruangan.',
+        badgeBg: 'bg-emerald-50 text-emerald-800 border-emerald-300',
+        description: 'Tingkat mutu udara sangat baik, tidak memberikan efek negatif terhadap manusia maupun ekosistem gambut.',
+        action: 'Aktivitas luar ruangan dapat dilakukan secara normal.',
     },
     {
         range: '51 - 100',
         category: 'Sedang',
-        badgeBg: 'bg-yellow-100/90 text-yellow-900 border border-yellow-300 font-bold',
-        description: 'Mutu udara masih dapat diterima pada kesehatan manusia dan vegetasi gambut.',
-        action: 'Kelompok sangat sensitif perlu membatasi aktivitas fisik intensif di luar ruangan.',
+        badgeBg: 'bg-yellow-50 text-yellow-900 border-yellow-300',
+        description: 'Mutu udara masih dapat diterima bagi kesehatan manusia dan vegetasi.',
+        action: 'Kelompok sangat sensitif disarankan membatasi aktivitas fisik intensif di luar ruangan.',
     },
     {
         range: '101 - 200',
         category: 'Tidak Sehat',
-        badgeBg: 'bg-orange-100/90 text-orange-900 border border-orange-300 font-bold',
-        description: 'Mutu udara bersifat merugikan pada manusia, hewan, dan tumbuhan yang terpapar polutan kabut asap.',
-        action: 'Wajib kenakan respirator partikulat N95/KN95 di luar ruangan. Batasi kegiatan luar ruang anak & lansia.',
+        badgeBg: 'bg-orange-50 text-orange-900 border-orange-300',
+        description: 'Mutu udara bersifat merugikan bagi manusia, hewan, dan tumbuhan yang terpapar kabut asap partikulat.',
+        action: 'Wajib mengenakan respirator partikulat N95/KN95 di luar ruangan. Batasi kegiatan luar ruang.',
     },
     {
         range: '201 - 300',
         category: 'Sangat Tidak Sehat',
-        badgeBg: 'bg-rose-100/90 text-rose-900 border border-rose-300 font-bold',
-        description: 'Mutu udara dapat meningkatkan risiko gangguan pernapasan akut secara luas pada seluruh segmen populasi.',
-        action: 'Hindari aktivitas di luar ruangan. Tutup celah ventilasi rumah dan nyalakan penjernih udara berefisiensi tinggi (HEPA).',
+        badgeBg: 'bg-rose-50 text-rose-900 border-rose-300',
+        description: 'Dapat meningkatkan risiko gangguan pernapasan akut secara luas pada seluruh segmen populasi masyarakat.',
+        action: 'Hindari aktivitas di luar ruangan. Tutup rapat celah ventilasi rumah dan aktifkan pembersih udara HEPA.',
     },
     {
         range: '> 300',
         category: 'Berbahaya',
-        badgeBg: 'bg-purple-100/90 text-purple-900 border border-purple-300 font-bold',
-        description: 'Tingkat mutu udara berbahaya secara umum dan dapat menimbulkan dampak kesehatan serius hingga keracunan gas karbon.',
-        action: 'Tetap berada di dalam ruang kedap udara atau segera evakuasi ke shelter udara bersih terdekat yang disediakan pemda.',
+        badgeBg: 'bg-purple-50 text-purple-900 border-purple-300',
+        description: 'Tingkat mutu udara berbahaya secara umum dan dapat menimbulkan dampak kesehatan serius dan keracunan gas karbon.',
+        action: 'Tetap berada di dalam ruang kedap udara atau segera lakukan evakuasi ke shelter udara bersih pemerintah daerah.',
     },
 ];
 
@@ -61,410 +57,414 @@ const provincialContacts = [
         province: 'Kalimantan Barat',
         posko: 'Pusdalops BPBD Provinsi Kalimantan Barat',
         phone: '(0561) 745300',
-        address: 'Jl. Sutoyo No. 1, Pontianak',
+        address: 'Jl. Sutoyo No. 1, Kota Pontianak',
     },
     {
         province: 'Kalimantan Tengah',
         posko: 'Pusdalops BPBD Provinsi Kalimantan Tengah',
         phone: '(0536) 3221139',
-        address: 'Jl. Tjilik Riwut Km. 3.5, Palangka Raya',
+        address: 'Jl. Tjilik Riwut Km. 3.5, Kota Palangka Raya',
     },
     {
         province: 'Kalimantan Selatan',
         posko: 'Pusdalops BPBD Provinsi Kalimantan Selatan',
         phone: '(0511) 4772030',
-        address: 'Kawasan Perkantoran Pemprov, Banjarbaru',
+        address: 'Kawasan Perkantoran Pemprov, Kota Banjarbaru',
     },
     {
         province: 'Kalimantan Timur',
         posko: 'Pusdalops BPBD Provinsi Kalimantan Timur',
         phone: '(0541) 741040',
-        address: 'Jl. DI Panjaitan No. 49, Samarinda',
+        address: 'Jl. DI Panjaitan No. 49, Kota Samarinda',
     },
     {
         province: 'Kalimantan Utara',
         posko: 'Pusdalops BPBD Provinsi Kalimantan Utara',
         phone: '(0552) 2024112',
-        address: 'Jl. Poros Tanjung Selor, Bulungan',
+        address: 'Jl. Poros Tanjung Selor, Kab. Bulungan',
     },
 ];
 
 export default function SafetyGuide() {
-    const contactListItems = provincialContacts.map((c, idx) => ({
-        id: idx,
-        icon: <PhoneCall className="size-4 text-emerald-600" />,
-        title: `${c.province} — ${c.posko}`,
-        description: (
-            <span className="flex items-center gap-1.5 text-xs text-neutral-500">
-                <MapPin className="size-3 text-neutral-400 shrink-0" />
-                <span className="truncate">{c.address}</span>
-            </span>
-        ),
-        meta: (
-            <a
-                href={`tel:${c.phone.replace(/[^0-9]/g, '')}`}
-                onClick={(e) => e.stopPropagation()}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-[#10e57a] hover:bg-[#0ba856] text-black shadow-xs transition-all active:scale-95"
-            >
-                <PhoneCall className="size-3" />
-                <span>{c.phone}</span>
-            </a>
-        ),
-        contact: c,
-    }));
+    useEffect(() => {
+        document.documentElement.classList.remove('dark');
+        document.documentElement.style.colorScheme = 'light';
+    }, []);
+
+    const handlePrint = () => {
+        window.print();
+    };
 
     return (
-        <div className="min-h-screen flex flex-col bg-white text-neutral-900 selection:bg-[#10e57a] selection:text-black font-sans antialiased overflow-x-hidden w-full max-w-full">
-            <Head title="Panduan Keselamatan & Mitigasi Karhutla Kalimantan — JAGAIN" />
-            <Navbar />
+        <div className="min-h-screen bg-[#eaeeeb] text-neutral-900 font-sans antialiased selection:bg-[#10e57a] selection:text-black">
+            <Head title="Dokumen SOP Tanggap Darurat & Penanggulangan Karhutla — JAGAIN" />
 
-            <main className="flex-1 pb-24 pt-20">
-                {/* 1. HEADER */}
-                <section className="pt-10 pb-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full border-b border-neutral-100">
-                    <AnimatedContent distance={25} duration={0.8} threshold={0.1}>
-                        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-                            <div className="space-y-3">
-                                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200/80 text-emerald-800 text-[10px] sm:text-xs font-bold uppercase tracking-wider">
-                                    <span className="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                                    <span>Protokol Keselamatan Lapangan</span>
+            {/* Print Styles */}
+            <style>{`
+                @media print {
+                    .no-print {
+                        display: none !important;
+                    }
+                    body, html {
+                        background: #ffffff !important;
+                        padding: 0 !important;
+                        margin: 0 !important;
+                    }
+                    .document-sheet {
+                        box-shadow: none !important;
+                        border: none !important;
+                        margin: 0 !important;
+                        max-width: 100% !important;
+                        padding: 24px 32px !important;
+                    }
+                }
+            `}</style>
+
+            {/* Top Toolbar / Document Navigation Bar (Hidden on Print) */}
+            <header className="no-print sticky top-0 z-30 flex h-14 w-full items-center justify-between border-b border-neutral-300 bg-white px-4 sm:px-8 shadow-xs">
+                <div className="flex items-center gap-3">
+                    <button
+                        type="button"
+                        onClick={() => window.history.back()}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-neutral-300 bg-white hover:bg-neutral-50 text-xs font-bold text-neutral-700 shadow-2xs transition-colors cursor-pointer"
+                        title="Kembali ke halaman sebelumnya"
+                    >
+                        <ArrowLeft className="size-3.5 text-neutral-600" />
+                        <span>Kembali</span>
+                    </button>
+
+                    <div className="h-4 w-px bg-neutral-300 mx-1 hidden sm:block" />
+
+                    <div className="flex items-center gap-2">
+                        <FileText className="size-4 text-emerald-700 shrink-0" />
+                        <span className="text-xs font-bold text-neutral-900 tracking-tight">
+                            SOP-JAGAIN-KARHUTLA-2026.pdf
+                        </span>
+                        <span className="hidden md:inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200">
+                            Resmi & Terkendali
+                        </span>
+                    </div>
+                </div>
+
+                <div className="flex items-center gap-2 sm:gap-3">
+                    <Link
+                        href="/lapor"
+                        className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-neutral-300 bg-white hover:bg-neutral-50 text-xs font-bold text-neutral-700 transition-colors"
+                    >
+                        <span>Buat Laporan</span>
+                        <ExternalLink className="size-3 text-neutral-500" />
+                    </Link>
+
+                    <button
+                        type="button"
+                        onClick={handlePrint}
+                        className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-[#0c4e33] hover:bg-[#073623] text-white text-xs font-bold shadow-xs transition-colors cursor-pointer"
+                    >
+                        <Printer className="size-3.5" />
+                        <span>Cetak / Simpan PDF</span>
+                    </button>
+                </div>
+            </header>
+
+            {/* Document Paper Sheet Container */}
+            <main className="py-6 sm:py-10 px-2 sm:px-6 flex justify-center">
+                <article className="document-sheet w-full max-w-[850px] bg-white border border-neutral-300/90 shadow-lg rounded-xs p-6 sm:p-12 lg:p-16 text-neutral-900 text-[13px] leading-relaxed">
+                    
+                    {/* =========================================================================
+                        KOP DOKUMEN RESMI (OFFICIAL DOCUMENT HEADER)
+                        ========================================================================= */}
+                    <div className="border-2 border-neutral-900 p-4 sm:p-6 mb-8">
+                        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 border-b-2 border-neutral-900 pb-4 text-center sm:text-left">
+                            <div className="flex items-center gap-3">
+                                <img
+                                    src="/images/logo.png"
+                                    alt="JAGAIN"
+                                    className="h-10 w-auto object-contain"
+                                />
+                                <div>
+                                    <div className="text-[11px] font-bold tracking-wider text-neutral-600 uppercase">
+                                        Pemerintah Republik Indonesia • Satuan Tugas Wilayah Kalimantan
+                                    </div>
+                                    <div className="text-sm font-extrabold text-neutral-950 uppercase tracking-tight">
+                                        Sistem Pengawasan Karhutla Terpadu (JAGAIN)
+                                    </div>
                                 </div>
-                                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-neutral-950 tracking-tight">
-                                    Panduan Keselamatan & Mitigasi Karhutla
-                                </h1>
-                                <p className="text-sm sm:text-base text-neutral-500 max-w-2xl font-medium leading-relaxed">
-                                    Pedoman perlindungan diri warga, standar Indeks Standar Pencemar Udara (ISPU) KLHK, serta direktori posko tanggap darurat se-Kalimantan.
-                                </p>
                             </div>
 
-                            <div className="flex flex-wrap items-center gap-3 shrink-0">
-                                <a
-                                    href="tel:112"
-                                    className="bg-amber-400 hover:bg-amber-300 text-black font-bold text-xs px-5 py-3 rounded-full inline-flex items-center gap-2 shadow-xs transition-all active:scale-95"
-                                >
-                                    <PhoneCall className="size-3.5" />
-                                    <span>Darurat: 112</span>
-                                </a>
-                                <Link
-                                    href="/lapor"
-                                    className="bg-[#10e57a] hover:bg-[#0ba856] text-black font-bold text-xs px-5 py-3 rounded-full inline-flex items-center gap-2 shadow-xs transition-all active:scale-95"
-                                >
-                                    <span>Kirim Laporan Lapangan</span>
-                                    <ArrowRight className="size-3.5" />
-                                </Link>
+                            <div className="text-center sm:text-right border-t sm:border-t-0 pt-2 sm:pt-0 border-neutral-300">
+                                <span className="inline-block px-2.5 py-1 text-[11px] font-mono font-bold uppercase bg-neutral-100 border border-neutral-400 text-neutral-900">
+                                    DOKUMEN RESMI TERKENDALI
+                                </span>
                             </div>
                         </div>
-                    </AnimatedContent>
-                </section>
 
-                <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 pt-12 space-y-16">
-                    {/* 2. CRITICAL PEATLAND DIRECTIVE with React Bits <BorderGlow /> */}
-                    <AnimatedContent distance={30} duration={0.9} threshold={0.1}>
-                        <BorderGlow
-                            edgeSensitivity={30}
-                            glowColor="38 90 60"
-                            backgroundColor="#fffdf5"
-                            borderRadius={28}
-                            glowRadius={40}
-                            glowIntensity={1.2}
-                            coneSpread={28}
-                            animated={true}
-                            colors={['#f59e0b', '#ef4444', '#f97316']}
-                            fillOpacity={0.15}
-                            className="w-full bg-gradient-to-br from-amber-500/10 via-amber-50/70 to-white border border-amber-300/80 shadow-sm"
-                        >
-                            <div className="p-8 sm:p-10 lg:p-12 space-y-4 relative z-10">
-                                <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-amber-950 bg-amber-100/90 px-3.5 py-1.5 rounded-full border border-amber-300/80">
-                                    <Flame className="size-4 shrink-0 text-amber-700" />
-                                    <span>Peringatan Bahaya Kebakaran Bawah Tanah Gambut</span>
-                                </div>
-                                <h2 className="text-2xl sm:text-3xl font-black text-neutral-950 leading-tight">
-                                    Dilarang Menginjak Lahan Gambut Berasap — Rongga Bara Api 1–3 Meter di Bawah Permukaan
-                                </h2>
-                                <p className="text-sm sm:text-base text-neutral-700 leading-relaxed font-sans max-w-4xl">
-                                    Lahan gambut Kalimantan membakar tanpa kobaran lidah api terbuka (<em>smoldering combustion</em>). Permukaan tanah yang tampak dingin atau hanya tertutup abu tipis sering kali menyembunyikan rongga bara api berpijar yang dapat runtuh seketika saat terinjak bobot tubuh manusia. <strong className="text-neutral-950 font-bold">Warga dilarang keras mendekat hanya untuk mengambil rekaman visual jika berada di bentang kubah gambut. Keselamatan jiwa selalu nomor satu.</strong>
+                        <div className="pt-4 text-center">
+                            <h1 className="text-base sm:text-lg font-black uppercase text-neutral-950 tracking-wide">
+                                Standar Operasional Prosedur (SOP)
+                            </h1>
+                            <h2 className="text-sm sm:text-base font-bold uppercase text-neutral-800 mt-0.5">
+                                Penanggulangan & Mitigasi Tanggap Darurat Kebakaran Hutan dan Lahan
+                            </h2>
+                        </div>
+
+                        {/* Document Metadata Table */}
+                        <div className="mt-5 border border-neutral-900 grid grid-cols-2 sm:grid-cols-4 text-[11px] divide-x divide-y sm:divide-y-0 divide-neutral-900 bg-neutral-50/70 font-mono">
+                            <div className="p-2">
+                                <span className="text-neutral-500 block text-[10px]">No. Dokumen:</span>
+                                <strong className="text-neutral-900">SOP/JGN-KLB/2026/01</strong>
+                            </div>
+                            <div className="p-2">
+                                <span className="text-neutral-500 block text-[10px]">Tanggal Berlaku:</span>
+                                <strong className="text-neutral-900">01 Juli 2026</strong>
+                            </div>
+                            <div className="p-2">
+                                <span className="text-neutral-500 block text-[10px]">No. Revisi:</span>
+                                <strong className="text-neutral-900">02 (Mutakhir)</strong>
+                            </div>
+                            <div className="p-2">
+                                <span className="text-neutral-500 block text-[10px]">Klasifikasi:</span>
+                                <strong className="text-neutral-900">Terbuka / Publik</strong>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* =========================================================================
+                        PASAL 1: MAKSUD DAN TUJUAN
+                        ========================================================================= */}
+                    <section className="mb-7">
+                        <h3 className="text-sm font-bold uppercase text-neutral-950 border-b border-neutral-300 pb-1 mb-2.5">
+                            Pasal 1 — Maksud dan Tujuan
+                        </h3>
+                        <p className="text-justify mb-2 text-neutral-800">
+                            1.1. Standar Operasional Prosedur (SOP) ini diterbitkan sebagai pedoman resmi tata laksana kesiapsiagaan, mitigasi bahaya kabut asap, evakuasi dini, serta mekanisme pelaporan masyarakat berbasis sistem terintegrasi JAGAIN di seluruh bentang alam Pulau Kalimantan.
+                        </p>
+                        <p className="text-justify text-neutral-800">
+                            1.2. Tujuan utama prosedur ini adalah melindungi keselamatan jiwa warga negara, meminimalkan paparan gas beracun partikulat PM2.5, serta mempercepat waktu respon (*response time*) satuan tugas penanggulangan (BPBD, Manggala Agni, dan Dinas Pemadam Kebakaran) dalam memadamkan titik api kebakaran hutan dan lahan.
+                        </p>
+                    </section>
+
+                    {/* =========================================================================
+                        PASAL 2: LANDASAN HUKUM
+                        ========================================================================= */}
+                    <section className="mb-7">
+                        <h3 className="text-sm font-bold uppercase text-neutral-950 border-b border-neutral-300 pb-1 mb-2.5">
+                            Pasal 2 — Landasan Hukum dan Regulasi Acuan
+                        </h3>
+                        <ol className="list-decimal list-inside space-y-1 text-neutral-800">
+                            <li>Undang-Undang Republik Indonesia Nomor 32 Tahun 2009 tentang Perlindungan dan Pengelolaan Lingkungan Hidup.</li>
+                            <li>Undang-Undang Republik Indonesia Nomor 24 Tahun 2007 tentang Penanggulangan Bencana.</li>
+                            <li>Instruksi Presiden Republik Indonesia Nomor 3 Tahun 2020 tentang Penanggulangan Kebakaran Hutan dan Lahan.</li>
+                            <li>Peraturan Menteri Lingkungan Hidup dan Kehutanan Nomor P.32/MenLHK/Setjen/Kum.1/3/2016 tentang Pengendalian Kebakaran Hutan dan Lahan.</li>
+                        </ol>
+                    </section>
+
+                    {/* =========================================================================
+                        PASAL 3: TINGKAT ISPU DAN TINDAKAN WAJIB
+                        ========================================================================= */}
+                    <section className="mb-7">
+                        <h3 className="text-sm font-bold uppercase text-neutral-950 border-b border-neutral-300 pb-1 mb-2.5">
+                            Pasal 3 — Parameter Indeks Standar Pencemar Udara (ISPU) & Tindakan Wajib
+                        </h3>
+                        <p className="mb-3 text-neutral-800">
+                            Tingkat bahaya pencemaran udara akibat kabut asap karhutla mengacu pada Keputusan Menteri LHK dan wajib dipatuhi dengan ketentuan sebagai berikut:
+                        </p>
+
+                        <div className="border border-neutral-400 overflow-x-auto">
+                            <table className="w-full text-left text-xs border-collapse">
+                                <thead>
+                                    <tr className="bg-neutral-100 border-b border-neutral-400 font-bold text-neutral-900">
+                                        <th className="p-2.5 border-r border-neutral-400 w-24">Rentang Nilai</th>
+                                        <th className="p-2.5 border-r border-neutral-400 w-32">Kategori Mutu</th>
+                                        <th className="p-2.5 border-r border-neutral-400">Dampak Kesehatan</th>
+                                        <th className="p-2.5">Tindakan Wajib Warga</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-neutral-300 text-neutral-800">
+                                    {ispuLevels.map((lvl) => (
+                                        <tr key={lvl.range} className="hover:bg-neutral-50/80">
+                                            <td className="p-2.5 border-r border-neutral-300 font-mono font-bold whitespace-nowrap">
+                                                {lvl.range}
+                                            </td>
+                                            <td className="p-2.5 border-r border-neutral-300 font-bold whitespace-nowrap">
+                                                <span className={`inline-block px-2 py-0.5 rounded text-[11px] border ${lvl.badgeBg}`}>
+                                                    {lvl.category}
+                                                </span>
+                                            </td>
+                                            <td className="p-2.5 border-r border-neutral-300 leading-snug">
+                                                {lvl.description}
+                                            </td>
+                                            <td className="p-2.5 leading-snug font-medium text-neutral-900">
+                                                {lvl.action}
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+
+                    {/* =========================================================================
+                        PASAL 4: PERINGATAN KRITIS LAHAN GAMBUT
+                        ========================================================================= */}
+                    <section className="mb-7">
+                        <h3 className="text-sm font-bold uppercase text-neutral-950 border-b border-neutral-300 pb-1 mb-2.5">
+                            Pasal 4 — Protokol Khusus Keselamatan Kawasan Gambut
+                        </h3>
+                        <div className="border-l-4 border-amber-600 bg-amber-50/60 p-4 rounded-r-sm text-neutral-900 space-y-2">
+                            <div className="flex items-center gap-2 font-bold text-amber-900 text-xs uppercase tracking-wide">
+                                <AlertTriangle className="size-4 text-amber-700 shrink-0" />
+                                <span>Peringatan Bahaya Kebakaran Bawah Tanah (Smoldering Peat Fire)</span>
+                            </div>
+                            <p className="text-justify text-neutral-800">
+                                Lahan gambut memiliki karakteristik pembakaran bawah permukaan tanpa nyala api terbuka (*smoldering*). Abu tipis di permukaan sering kali menyamarkan rongga pembakaran sedalam 1–3 meter yang bertemperatur lebih dari 400°C.
+                            </p>
+                            <p className="font-semibold text-neutral-950">
+                                Ketentuan Wajib: Warga dan relawan dilarang keras menginjak atau mendekati area gambut berasap. Pengambilan dokumentasi visual harus dilakukan dari tepi jalan beraspal atau zona tanah padat yang aman.
+                            </p>
+                        </div>
+                    </section>
+
+                    {/* =========================================================================
+                        PASAL 5: PROSEDUR PERLINDUNGAN DIRI & EVAKUASI
+                        ========================================================================= */}
+                    <section className="mb-7">
+                        <h3 className="text-sm font-bold uppercase text-neutral-950 border-b border-neutral-300 pb-1 mb-2.5">
+                            Pasal 5 — Prosedur Perlindungan Diri & Evakuasi Mandiri
+                        </h3>
+                        <div className="space-y-3 text-neutral-800">
+                            <div>
+                                <strong className="text-neutral-950 block">5.1. Protokol Melawan Arah Angin (Upwind Safety)</strong>
+                                <p className="text-justify">
+                                    Saat terdeteksi titik api atau kepulan asap, segera tentukan arah hembusan angin. Posisikan diri dan jalur penyelamatan selalu berlawanan arah dengan arah asap bergerak (*upwind*). Jangan pernah berlindung di daerah lembah atau parit gambut tertutup yang menjadi perangkap gas karbon monoksida.
                                 </p>
                             </div>
-                        </BorderGlow>
-                    </AnimatedContent>
+                            <div>
+                                <strong className="text-neutral-950 block">5.2. Standar Masker Pelindung Pernapasan</strong>
+                                <p className="text-justify">
+                                    Wajib mengenakan respirator partikulat bersertifikat N95, KN95, atau FFP2 yang terpasang rapat menutup hidung dan mulut. Masker bedah tipis dan kain biasa terbukti tidak mampu menyaring partikel beracun PM2.5 yang memicu penyakit pernapasan akut (ISPA).
+                                </p>
+                            </div>
+                            <div>
+                                <strong className="text-neutral-950 block">5.3. Pembuatan Ruang Udara Bersih (Clean Room Isolation)</strong>
+                                <p className="text-justify">
+                                    Bagi warga yang berada di zona terdampak kabut asap, pilih satu ruangan paling minim ventilasi di dalam rumah. Tutup rapat celah jendela dan pintu menggunakan kain atau handuk basah, serta fungsikan penjernih udara berefisiensi tinggi (HEPA Filter).
+                                </p>
+                            </div>
+                        </div>
+                    </section>
 
-                    {/* 3. 4 CORE SAFETY PILLARS WITH STEPPER */}
-                    <AnimatedContent distance={30} duration={0.9} threshold={0.1}>
-                        <section className="space-y-6">
-                            <div className="border-b border-neutral-100 pb-4">
-                                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200/80 text-emerald-800 text-[10px] sm:text-xs font-bold uppercase tracking-wider mb-2">
-                                    <span className="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                                    <span>Empat Langkah Utama</span>
-                                </div>
-                                <h2 className="text-2xl sm:text-3xl font-black text-neutral-950 tracking-tight">
-                                    Prosedur Perlindungan Diri & Keluarga
-                                </h2>
-                                <p className="text-xs sm:text-sm text-neutral-500 mt-1 font-medium">
-                                    Ikuti panduan mitigasi interaktif bertahap saat terjadi insiden kabut asap pekat.
+                    {/* =========================================================================
+                        PASAL 6: ALUR LAPORAN & KOORDINASI SATGAS
+                        ========================================================================= */}
+                    <section className="mb-7">
+                        <h3 className="text-sm font-bold uppercase text-neutral-950 border-b border-neutral-300 pb-1 mb-2.5">
+                            Pasal 6 — Alur Penanganan Laporan & Disposisi Satuan Tugas JAGAIN
+                        </h3>
+                        <div className="border border-neutral-300 bg-neutral-50/50 p-4 rounded-sm">
+                            <ol className="list-decimal list-inside space-y-2 text-neutral-800">
+                                <li>
+                                    <strong className="text-neutral-950">Pengiriman Bukti oleh Warga:</strong> Warga mengakses menu Buat Laporan di portal JAGAIN, menyertakan koordinat GPS otomatis dan dokumentasi foto lokasi kejadian.
+                                </li>
+                                <li>
+                                    <strong className="text-neutral-950">Validasi Satelit & Verifikasi Tim:</strong> Admin JAGAIN melakukan validasi silang dengan data anomali termal satelit (NASA FIRMS / LAPAN) dalam waktu maksimal 15 menit.
+                                </li>
+                                <li>
+                                    <strong className="text-neutral-950">Disposisi ke OPD Terdekat:</strong> Sistem secara otomatis memetakan dan menugaskan instansi terdekat (BPBD Kabupaten/Kota, Posko Manggala Agni, atau Damkar setempat).
+                                </li>
+                                <li>
+                                    <strong className="text-neutral-950">Pemberangkatan Regu Lapangan & Pemadaman:</strong> Regu patroli dan armada pemadam meluncur ke koordinat sasaran dengan audit trail perkembangan yang dapat dipantau langsung oleh pelapor.
+                                </li>
+                            </ol>
+                        </div>
+                    </section>
+
+                    {/* =========================================================================
+                        PASAL 7: DIREKTORI PUSDALOPS KALIMANTAN
+                        ========================================================================= */}
+                    <section className="mb-9">
+                        <h3 className="text-sm font-bold uppercase text-neutral-950 border-b border-neutral-300 pb-1 mb-2.5">
+                            Pasal 7 — Direktori Kontak Posko Siaga Pusdalops Se-Kalimantan
+                        </h3>
+                        <p className="mb-3 text-neutral-800">
+                            Berikut adalah kontak resmi pusat kendali operasi kebencanaan daerah untuk koordinasi tanggap darurat dan perbantuan evakuasi medis darurat:
+                        </p>
+
+                        <div className="border border-neutral-400 overflow-x-auto">
+                            <table className="w-full text-left text-xs border-collapse">
+                                <thead>
+                                    <tr className="bg-neutral-100 border-b border-neutral-400 font-bold text-neutral-900">
+                                        <th className="p-2.5 border-r border-neutral-400 w-36">Wilayah</th>
+                                        <th className="p-2.5 border-r border-neutral-400">Instansi / Posko</th>
+                                        <th className="p-2.5 border-r border-neutral-400 w-36">Hotline / Telepon</th>
+                                        <th className="p-2.5">Alamat Operasional</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-neutral-300 text-neutral-800 font-medium">
+                                    {provincialContacts.map((c) => (
+                                        <tr key={c.province} className="hover:bg-neutral-50/80">
+                                            <td className="p-2.5 border-r border-neutral-300 font-bold text-neutral-900 whitespace-nowrap">
+                                                {c.province}
+                                            </td>
+                                            <td className="p-2.5 border-r border-neutral-300">
+                                                {c.posko}
+                                            </td>
+                                            <td className="p-2.5 border-r border-neutral-300 font-mono font-bold text-emerald-800 whitespace-nowrap">
+                                                {c.phone}
+                                            </td>
+                                            <td className="p-2.5 text-neutral-600">
+                                                {c.address}
+                                            </td>
+                                        </tr>
+                                    ))}
+                                    <tr className="bg-emerald-50/60 font-bold text-emerald-950">
+                                        <td className="p-2.5 border-r border-neutral-300">
+                                            Nasional
+                                        </td>
+                                        <td className="p-2.5 border-r border-neutral-300">
+                                            Panggilan Darurat Terpadu Pemda (NTE)
+                                        </td>
+                                        <td className="p-2.5 border-r border-neutral-300 font-mono text-base font-black text-emerald-900">
+                                            112
+                                        </td>
+                                        <td className="p-2.5 text-xs text-neutral-700">
+                                            Layanan bebas pulsa 24 jam seluruh operator
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+
+                    {/* =========================================================================
+                        LEMBAR PENGESAHAN DAN TANDA TANGAN RESMI
+                        ========================================================================= */}
+                    <div className="border-t-2 border-neutral-900 pt-6 mt-8">
+                        <div className="flex flex-col sm:flex-row items-start justify-between gap-6 text-xs">
+                            <div>
+                                <p className="font-bold text-neutral-900">Catatan Dokumen:</p>
+                                <p className="text-neutral-600 max-w-sm mt-0.5 leading-relaxed text-[11px]">
+                                    Dokumen SOP ini sah dan mengikat bagi seluruh personel operasional di lingkungan sistem JAGAIN Kalimantan. Evaluasi dan revisi berkala dilakukan setiap menjelang puncak musim kemarau.
                                 </p>
                             </div>
 
-                            {/* Interactive Stepper Workflow */}
-                            <div className="bg-white border border-neutral-200/90 rounded-3xl p-6 sm:p-8 shadow-sm">
-                                <Stepper
-                                    initialStep={1}
-                                    indicator="numbers"
-                                    orientation="horizontal"
-                                    theme="light"
-                                    accentColor="#10e57a"
-                                    frame={false}
-                                    backButtonText="Sebelumnya"
-                                    nextButtonText="Langkah Berikutnya"
-                                    completeButtonText="Protokol Dipahami"
-                                    showFooter={true}
-                                    className="w-full"
-                                >
-                                    <Step key="1" title="Posisi Angin">
-                                        <div className="py-4 space-y-3">
-                                            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-800 text-[10px] font-bold uppercase">
-                                                <Wind className="size-3 text-emerald-600" />
-                                                <span>Upwind Protocol</span>
-                                            </div>
-                                            <h3 className="text-lg font-black text-neutral-950">
-                                                Jaga Jarak Minimal 500m & Lawan Arah Angin
-                                            </h3>
-                                            <p className="text-sm text-neutral-600 leading-relaxed font-sans">
-                                                Posisikan diri selalu di posisi berlawanan dengan arah embusan angin (<em>upwind</em>) menuju api. Jangan biarkan asap mengepung jalur keluar Anda. Jika api melompat melewati parit atau kanal, segera mundur ke zona aman terbuka yang telah bersih dari vegetasi kering.
-                                            </p>
-                                        </div>
-                                    </Step>
-                                    <Step key="2" title="Respirator N95">
-                                        <div className="py-4 space-y-3">
-                                            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-800 text-[10px] font-bold uppercase">
-                                                <Shield className="size-3 text-emerald-600" />
-                                                <span>Standar Partikulat N95 / KN95</span>
-                                            </div>
-                                            <h3 className="text-lg font-black text-neutral-950">
-                                                Gunakan Masker Partikulat N95 Kedap Udara
-                                            </h3>
-                                            <p className="text-sm text-neutral-600 leading-relaxed font-sans">
-                                                Masker kain atau masker bedah biasa tidak mampu menyaring partikel mikroskopis berbahaya PM2.5 dari kebakaran gambut. Gunakan respirator bersertifikasi N95 atau KN95 yang menempel rapat tanpa celah pada lekuk hidung dan pipi untuk meminimalkan risiko infeksi saluran pernapasan akut (ISPA).
-                                            </p>
-                                        </div>
-                                    </Step>
-                                    <Step key="3" title="Ruang Bersih">
-                                        <div className="py-4 space-y-3">
-                                            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-800 text-[10px] font-bold uppercase">
-                                                <Home className="size-3 text-emerald-600" />
-                                                <span>Isolasi Udara HEPA</span>
-                                            </div>
-                                            <h3 className="text-lg font-black text-neutral-950">
-                                                Segel Ruang Bersih di Rumah Tanpa Ventilasi Bebas
-                                            </h3>
-                                            <p className="text-sm text-neutral-600 leading-relaxed font-sans">
-                                                Tutup rapat pintu dan celah ventilasi jendela menggunakan selotip atau handuk lembap. Kelompok rentan seperti balita, lansia, dan ibu hamil wajib diisolasi di dalam ruangan yang dilengkapi penyaring udara mekanis berefisiensi HEPA tanpa sirkulasi udara luar.
-                                            </p>
-                                        </div>
-                                    </Step>
-                                    <Step key="4" title="Evakuasi Shelter">
-                                        <div className="py-4 space-y-3">
-                                            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-800 text-[10px] font-bold uppercase">
-                                                <AlertTriangle className="size-3 text-amber-600" />
-                                                <span>Protokol Shelter Pemda</span>
-                                            </div>
-                                            <h3 className="text-lg font-black text-neutral-950">
-                                                Kapan Warga Harus Segera Mengungsi ke Shelter
-                                            </h3>
-                                            <p className="text-sm text-neutral-600 leading-relaxed font-sans">
-                                                Bila langit berubah warna kemerahan atau kuning pekat disertai hujan abu lebat dan jarak pandang di bawah 50 meter, amankan dokumen kependudukan berharga dalam tas kedap air, lalu bergerak ke shelter udara bersih atau posko darurat pemda terdekat.
-                                            </p>
-                                        </div>
-                                    </Step>
-                                </Stepper>
-                            </div>
+                            <div className="text-center sm:text-right w-full sm:w-auto">
+                                <p className="text-neutral-700 text-[11px]">Ditetapkan di: Pontianak, Kalimantan Barat</p>
+                                <p className="text-neutral-700 text-[11px]">Pada tanggal: 01 Juli 2026</p>
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 pt-2">
-                                <div className="bg-white border border-neutral-200/90 rounded-3xl p-7 space-y-4 shadow-sm hover:border-neutral-300 transition-all flex flex-col justify-between group">
-                                    <div>
-                                        <div className="border-b border-neutral-100 pb-3 flex items-center justify-between mb-3">
-                                            <div className="size-8 rounded-full bg-neutral-950 text-[#10e57a] text-xs font-black flex items-center justify-center shrink-0 shadow-xs">
-                                                01
-                                            </div>
-                                            <span className="text-[11px] font-bold text-neutral-400 uppercase tracking-wider">Posisi Angin</span>
-                                        </div>
-                                        <h3 className="text-base font-bold text-neutral-900 group-hover:text-emerald-700 transition-colors">
-                                            Jaga Jarak & Lawan Arah Angin
-                                        </h3>
-                                        <p className="text-xs text-neutral-500 leading-relaxed font-sans mt-2">
-                                            Posisikan diri selalu di posisi berlawanan dengan arah embusan angin (<em>upwind</em>) menuju api. Jangan biarkan asap mengepung jalur keluar Anda. Jarak aman minimal 500 meter.
-                                        </p>
+                                <div className="mt-4 flex flex-col items-center sm:items-end">
+                                    <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-sm border border-emerald-700 bg-emerald-50 text-emerald-900 font-mono text-[10px] font-bold uppercase tracking-wider mb-2">
+                                        <CheckCircle2 className="size-3 text-emerald-700" />
+                                        <span>VERIFIED & DIGITALLY APPROVED</span>
                                     </div>
-                                    <div className="pt-2 text-[11px] font-semibold text-emerald-700 flex items-center gap-1">
-                                        <Wind className="size-3.5" />
-                                        <span>Upwind Protocol</span>
-                                    </div>
-                                </div>
-
-                                <div className="bg-white border border-neutral-200/90 rounded-3xl p-7 space-y-4 shadow-sm hover:border-neutral-300 transition-all flex flex-col justify-between group">
-                                    <div>
-                                        <div className="border-b border-neutral-100 pb-3 flex items-center justify-between mb-3">
-                                            <div className="size-8 rounded-full bg-neutral-950 text-[#10e57a] text-xs font-black flex items-center justify-center shrink-0 shadow-xs">
-                                                02
-                                            </div>
-                                            <span className="text-[11px] font-bold text-neutral-400 uppercase tracking-wider">Respirator</span>
-                                        </div>
-                                        <h3 className="text-base font-bold text-neutral-900 group-hover:text-emerald-700 transition-colors">
-                                            Gunakan Masker Partikulat N95
-                                        </h3>
-                                        <p className="text-xs text-neutral-500 leading-relaxed font-sans mt-2">
-                                            Masker kain atau bedah biasa tidak mampu menyaring partikel berbahaya PM2.5. Gunakan respirator yang terpasang rapat pada lekuk hidung dan pipi untuk mencegah iritasi paru.
-                                        </p>
-                                    </div>
-                                    <div className="pt-2 text-[11px] font-semibold text-emerald-700 flex items-center gap-1">
-                                        <Shield className="size-3.5" />
-                                        <span>Standar N95 / KN95</span>
-                                    </div>
-                                </div>
-
-                                <div className="bg-white border border-neutral-200/90 rounded-3xl p-7 space-y-4 shadow-sm hover:border-neutral-300 transition-all flex flex-col justify-between group">
-                                    <div>
-                                        <div className="border-b border-neutral-100 pb-3 flex items-center justify-between mb-3">
-                                            <div className="size-8 rounded-full bg-neutral-950 text-[#10e57a] text-xs font-black flex items-center justify-center shrink-0 shadow-xs">
-                                                03
-                                            </div>
-                                            <span className="text-[11px] font-bold text-neutral-400 uppercase tracking-wider">Ruang Bersih</span>
-                                        </div>
-                                        <h3 className="text-base font-bold text-neutral-900 group-hover:text-emerald-700 transition-colors">
-                                            Segel Ruang Bersih di Rumah
-                                        </h3>
-                                        <p className="text-xs text-neutral-500 leading-relaxed font-sans mt-2">
-                                            Tutup celah ventilasi jendela dengan kain lembap. Kelompok rentan (balita, lansia, ibu hamil) wajib berada di ruang berpenyaring udara berefisiensi HEPA.
-                                        </p>
-                                    </div>
-                                    <div className="pt-2 text-[11px] font-semibold text-emerald-700 flex items-center gap-1">
-                                        <Home className="size-3.5" />
-                                        <span>Isolasi Udara HEPA</span>
-                                    </div>
-                                </div>
-
-                                <div className="bg-white border border-neutral-200/90 rounded-3xl p-7 space-y-4 shadow-sm hover:border-neutral-300 transition-all flex flex-col justify-between group">
-                                    <div>
-                                        <div className="border-b border-neutral-100 pb-3 flex items-center justify-between mb-3">
-                                            <div className="size-8 rounded-full bg-neutral-950 text-[#10e57a] text-xs font-black flex items-center justify-center shrink-0 shadow-xs">
-                                                04
-                                            </div>
-                                            <span className="text-[11px] font-bold text-neutral-400 uppercase tracking-wider">Evakuasi</span>
-                                        </div>
-                                        <h3 className="text-base font-bold text-neutral-900 group-hover:text-emerald-700 transition-colors">
-                                            Kapan Harus Segera Mengungsi
-                                        </h3>
-                                        <p className="text-xs text-neutral-500 leading-relaxed font-sans mt-2">
-                                            Bila langit berubah kemerahan/kuning pekat dan terjadi hujan abu lebat, segera amankan dokumen kependudukan lalu bergerak ke posko darurat udara bersih terdekat.
-                                        </p>
-                                    </div>
-                                    <div className="pt-2 text-[11px] font-semibold text-amber-700 flex items-center gap-1">
-                                        <AlertTriangle className="size-3.5" />
-                                        <span>Protokol Shelter Pemda</span>
-                                    </div>
+                                    <p className="font-bold text-neutral-950 text-xs">Satgas Operasi Karhutla Terpadu</p>
+                                    <p className="text-neutral-500 text-[10px]">Sistem Informasi Pemantauan JAGAIN</p>
                                 </div>
                             </div>
-                        </section>
-                    </AnimatedContent>
+                        </div>
+                    </div>
 
-                    {/* 4. AIR QUALITY INDEX (ISPU) REFERENCE TABLE */}
-                    <AnimatedContent distance={30} duration={0.9} threshold={0.1}>
-                        <section className="space-y-6">
-                            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-2 border-b border-neutral-100 pb-4">
-                                <div>
-                                    <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200/80 text-emerald-800 text-[10px] sm:text-xs font-bold uppercase tracking-wider mb-2">
-                                        <span className="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                                        <span>Baku Mutu Lingkungan</span>
-                                    </div>
-                                    <h2 className="text-2xl sm:text-3xl font-black text-neutral-950 tracking-tight">
-                                        Matriks Indeks Standar Pencemar Udara (ISPU)
-                                    </h2>
-                                </div>
-                                <span className="text-xs font-semibold text-neutral-500 bg-neutral-100 px-3 py-1 rounded-full border border-neutral-200/70">
-                                    Parameter Partikulat: PM2.5
-                                </span>
-                            </div>
-
-                            <div className="bg-white border border-neutral-200/90 rounded-3xl overflow-hidden shadow-sm">
-                                <div className="overflow-x-auto">
-                                    <table className="w-full text-left text-xs font-sans">
-                                        <thead className="bg-neutral-50 border-b border-neutral-200/80 text-neutral-700 uppercase tracking-wider text-[11px] font-bold">
-                                            <tr>
-                                                <th className="py-4 px-6">Rentang Nilai</th>
-                                                <th className="py-4 px-6">Kategori Mutu</th>
-                                                <th className="py-4 px-6">Dampak Kesehatan</th>
-                                                <th className="py-4 px-6">Rekomendasi Tindakan Warga</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody className="divide-y divide-neutral-100">
-                                            {ispuLevels.map((lvl, idx) => (
-                                                <tr key={idx} className="hover:bg-neutral-50/70 transition-colors">
-                                                    <td className="py-4 px-6 font-bold text-neutral-900 whitespace-nowrap tabular-nums">
-                                                        {lvl.range}
-                                                    </td>
-                                                    <td className="py-4 px-6 whitespace-nowrap">
-                                                        <span className={`px-3 py-1 text-xs rounded-full inline-block ${lvl.badgeBg}`}>
-                                                            {lvl.category}
-                                                        </span>
-                                                    </td>
-                                                    <td className="py-4 px-6 text-neutral-700 max-w-sm text-xs leading-relaxed font-medium">
-                                                        {lvl.description}
-                                                    </td>
-                                                    <td className="py-4 px-6 text-neutral-500 text-xs leading-relaxed">
-                                                        {lvl.action}
-                                                    </td>
-                                                </tr>
-                                            ))}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </section>
-                    </AnimatedContent>
-
-                    {/* 5. EMERGENCY CONTACT DIRECTORY */}
-                    <AnimatedContent distance={30} duration={0.9} threshold={0.1}>
-                        <section className="space-y-6">
-                            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-neutral-100 pb-4">
-                                <div>
-                                    <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200/80 text-emerald-800 text-[10px] sm:text-xs font-bold uppercase tracking-wider mb-2">
-                                        <span className="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                                        <span>Kanal Tanggap Darurat Resmi</span>
-                                    </div>
-                                    <h2 className="text-2xl sm:text-3xl font-black text-neutral-950 tracking-tight">
-                                        Direktori Posko Pusdalops BPBD Se-Kalimantan
-                                    </h2>
-                                </div>
-                                <span className="font-bold text-xs text-black bg-[#10e57a] px-4 py-2 rounded-full shadow-xs flex items-center gap-2 shrink-0">
-                                    <PhoneCall className="size-3.5" />
-                                    <span>PANGGILAN DARURAT: 112</span>
-                                </span>
-                            </div>
-
-                            <div className="bg-white border border-neutral-200/90 rounded-3xl p-5 sm:p-6 shadow-sm">
-                                <AnimatedList
-                                    items={contactListItems}
-                                    onItemSelect={(item) => {
-                                        if (item?.contact?.phone) {
-                                            window.location.href = `tel:${item.contact.phone.replace(/[^0-9]/g, '')}`;
-                                        }
-                                    }}
-                                    animation="pop"
-                                    theme="light"
-                                    accentColor="#10e57a"
-                                    radius={14}
-                                    gap={10}
-                                    width="100%"
-                                    maxHeight={360}
-                                    frame={false}
-                                    showGradients={true}
-                                    displayScrollbar={true}
-                                />
-                            </div>
-                        </section>
-                    </AnimatedContent>
-                </div>
+                </article>
             </main>
-
-            <Footer />
         </div>
     );
 }
