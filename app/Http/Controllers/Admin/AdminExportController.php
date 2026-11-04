@@ -39,12 +39,21 @@ class AdminExportController extends Controller
             $query->where('category_id', $categoryId);
         }
 
+        $exportCount = (clone $query)->count();
+
         $this->auditLogService->log(
             actor: $request->user(),
             action: 'REPORTS_EXPORTED_CSV',
-            entityType: 'Report',
-            entityId: 0,
-            reason: "Ekspor laporan ke CSV dengan filter: status='{$status}', category_id='{$categoryId}'",
+            entityType: 'System',
+            entityId: 1,
+            after: [
+                'format' => 'CSV',
+                'filter_status' => $status ?: 'Semua Status',
+                'category_id' => $categoryId ?: 'Semua Kategori',
+                'total_exported' => $exportCount,
+                'exported_at' => now()->toIso8601String(),
+            ],
+            reason: "Ekspor {$exportCount} baris data laporan ke CSV (filter status='".($status ?: 'Semua')."', kategori='".($categoryId ?: 'Semua')."')",
         );
 
         $filename = 'jagain-laporan-'.now()->format('Ymd-His').'.csv';

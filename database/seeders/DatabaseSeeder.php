@@ -350,8 +350,17 @@ class DatabaseSeeder extends Seeder
                 'action' => 'REPORT_STATUS_TRANSITION',
                 'entity_type' => 'Report',
                 'entity_id' => $report1->id,
+                'before_snapshot' => [
+                    'report_status' => 'SUBMITTED',
+                    'fire_condition' => 'UNKNOWN',
+                ],
+                'after_snapshot' => [
+                    'report_status' => 'VERIFIED',
+                    'fire_condition' => 'OBSERVED_ACTIVE',
+                ],
                 'reason' => 'Verifikasi administratif dan validasi lapangan',
                 'request_id' => (string) Str::uuid(),
+                'ip_address' => '127.0.0.1',
                 'created_at' => now()->subHours(6),
             ]);
 

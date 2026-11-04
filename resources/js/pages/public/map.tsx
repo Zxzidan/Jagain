@@ -1,12 +1,20 @@
-import { useState } from 'react';
-import { Head, router, Link } from '@inertiajs/react';
-import Navbar from '@/components/navbar';
-import Footer from '@/components/footer';
+import React, { useState } from 'react';
+import { Head, Link, router } from '@inertiajs/react';
 import KarhutlaMap, { MapReport, MapObservation } from '@/components/karhutla-map';
 import StatusBadge from '@/components/status-badge';
-import AnimatedContent from '@/components/react-bits/AnimatedContent';
-import AnimatedList from '@/components/react-bits/AnimatedList';
-import { RotateCcw, Satellite, ArrowRight, ShieldAlert, Filter, ChevronDown, Flame } from 'lucide-react';
+import {
+    ArrowLeft,
+    Satellite,
+    Flame,
+    Filter,
+    RotateCcw,
+    ChevronDown,
+    ListFilter,
+    X,
+    MapPin,
+    ArrowRight,
+    Layers,
+} from 'lucide-react';
 
 interface MapPageProps {
     reports: MapReport[];
@@ -21,17 +29,19 @@ interface MapPageProps {
 }
 
 export default function MapPage({
-    reports,
-    observations,
-    categories,
-    provinces,
-    filters,
+    reports = [],
+    observations = [],
+    categories = [],
+    provinces = [],
+    filters = {},
 }: MapPageProps) {
     const [selectedProvince, setSelectedProvince] = useState(filters.province || '');
     const [selectedCategory, setSelectedCategory] = useState(filters.category || '');
     const [selectedStatus, setSelectedStatus] = useState(filters.status || '');
     const [showSatelliteHotspots, setShowSatelliteHotspots] = useState(true);
     const [selectedReportForFocus, setSelectedReportForFocus] = useState<MapReport | null>(null);
+    const [showReportsList, setShowReportsList] = useState(false);
+    const [searchFilter, setSearchFilter] = useState('');
 
     const handleApplyFilter = () => {
         router.get(
@@ -53,274 +63,315 @@ export default function MapPage({
     };
 
     const displayedObservations = showSatelliteHotspots ? observations : [];
+    const hasActiveFilters = Boolean(selectedProvince || selectedCategory || selectedStatus);
 
-    const mapReportItems = reports.map((rep) => ({
-        id: rep.id,
-        tracking_code: rep.tracking_code,
-        icon: <Flame className="size-4 text-emerald-600" />,
-        title: rep.title,
-        description: (
-            <span className="flex items-center gap-1.5 text-xs text-neutral-500">
-                <span className="font-mono font-bold text-neutral-700 text-[11px]">{rep.tracking_code}</span>
-                <span>•</span>
-                <span className="truncate">{rep.regency_city}, {rep.province}</span>
-            </span>
-        ),
-        meta: (
-            <div className="flex items-center gap-1.5">
-                <StatusBadge status={rep.report_status} label={rep.status_label} size="sm" />
-                <Link
-                    href={`/laporan-publik/${rep.tracking_code}`}
-                    onClick={(e) => e.stopPropagation()}
-                    className="size-6 rounded-full bg-neutral-100 hover:bg-neutral-200 text-neutral-700 hover:text-black flex items-center justify-center transition-colors shrink-0"
-                    title="Buka Detail Laporan"
-                >
-                    <ArrowRight className="size-3" />
-                </Link>
-            </div>
-        ),
-        report: rep,
-    }));
+    const filteredReports = reports.filter((rep) => {
+        if (!searchFilter.trim()) return true;
+        const q = searchFilter.toLowerCase();
+        return (
+            rep.title?.toLowerCase().includes(q) ||
+            rep.tracking_code?.toLowerCase().includes(q) ||
+            rep.regency_city?.toLowerCase().includes(q) ||
+            rep.province?.toLowerCase().includes(q)
+        );
+    });
 
     return (
-        <div className="min-h-screen flex flex-col bg-white text-neutral-900 selection:bg-[#10e57a] selection:text-black font-sans antialiased overflow-x-hidden w-full max-w-full">
-            <Head title="Peta Sebaran Karhutla Kalimantan — JAGAIN" />
-            <Navbar />
+        <div className="h-screen w-screen flex flex-col overflow-hidden bg-neutral-900 text-neutral-900 font-sans antialiased">
+            <Head title="Peta Sebaran Karhutla Publik — JAGAIN" />
 
-            <main className="flex-1 pb-24 pt-20">
-                {/* Header & Filter Strip */}
-                <section className="pt-10 pb-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full border-b border-neutral-100">
-                    <AnimatedContent distance={25} duration={0.8} threshold={0.1}>
-                        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
-                            <div>
-                                <p className="font-mono text-[11px] text-neutral-400 tracking-wide mb-1">
-                                    01 / Observasi Geospasial
-                                </p>
-                                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-neutral-950 tracking-tight">
-                                    Peta Sebaran Karhutla
-                                    <span className="text-neutral-400"> Kalimantan.</span>
-                                </h1>
-                                <p className="text-sm text-neutral-500 mt-2 font-medium max-w-2xl leading-relaxed">
-                                    Menampilkan <span className="font-bold text-neutral-900 tabular-nums">{reports.length}</span> laporan warga terverifikasi &{' '}
-                                    <span className="font-bold text-emerald-600 tabular-nums">{displayedObservations.length}</span> anomali termal satelit FIRMS.
-                                </p>
-                            </div>
+            {/* Top Navigation & Controls Header (No landing page navbar) */}
+            <header className="z-30 flex h-14 w-full shrink-0 items-center justify-between border-b border-neutral-200 bg-white px-3 sm:px-6 shadow-xs dark:border-neutral-800 dark:bg-neutral-900 dark:text-white">
+                {/* Left: Back button & Title */}
+                <div className="flex items-center gap-3">
+                    <button
+                        type="button"
+                        onClick={() => window.history.back()}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-neutral-300 bg-white hover:bg-neutral-50 text-xs font-bold text-neutral-800 shadow-2xs transition-colors cursor-pointer dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-200"
+                        title="Kembali ke halaman sebelumnya"
+                    >
+                        <ArrowLeft className="size-3.5 text-neutral-600 dark:text-neutral-300" />
+                        <span>Kembali</span>
+                    </button>
 
-                            {/* Satellite Hotspot Layer Switch (Matching Beranda) */}
-                            {observations.length > 0 && (
-                                <button
-                                    id="toggle-satellite-layer"
-                                    type="button"
-                                    role="switch"
-                                    aria-checked={showSatelliteHotspots}
-                                    onClick={() => setShowSatelliteHotspots((v) => !v)}
-                                    className="group inline-flex items-center gap-2.5 h-10 pl-3.5 pr-2 rounded-full border border-neutral-200 bg-white text-xs font-semibold text-neutral-800 hover:border-neutral-300 active:scale-[0.98] transition-[transform,border-color] duration-200 cursor-pointer shadow-xs shrink-0 self-start md:self-auto"
-                                >
-                                    <Satellite className="size-3.5 text-neutral-500" />
-                                    <span>Layer Satelit ({observations.length})</span>
-                                    <span
-                                        className={`relative h-6 w-10 rounded-full transition-colors duration-300 ${
-                                            showSatelliteHotspots ? 'bg-[#10e57a]' : 'bg-neutral-200'
-                                        }`}
-                                    >
-                                        <span
-                                            className={`absolute top-0.5 left-0.5 size-5 rounded-full bg-white shadow-[0_1px_3px_rgba(0,0,0,0.18)] transition-transform duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] ${
-                                                showSatelliteHotspots ? 'translate-x-4' : 'translate-x-0'
-                                            }`}
-                                        />
-                                    </span>
-                                </button>
-                            )}
+                    <div className="h-4 w-px bg-neutral-200 dark:bg-neutral-700 hidden sm:block" />
+
+                    <div className="flex items-center gap-2">
+                        <div className="size-7 rounded-lg bg-[#0c4e33] text-white flex items-center justify-center font-black text-sm tracking-tight shrink-0">
+                            J
                         </div>
-
-                        {/* Filter Bar with Sleek Responsive Pill Elements */}
-                        <div className="flex flex-col sm:flex-row sm:flex-wrap items-stretch sm:items-center gap-2.5 font-sans text-xs">
-                            <div className="relative w-full sm:w-auto">
-                                <select
-                                    value={selectedProvince}
-                                    onChange={(e) => setSelectedProvince(e.target.value)}
-                                    className="w-full sm:w-auto appearance-none bg-neutral-50 hover:bg-neutral-100/90 border border-neutral-200 rounded-full pl-4 pr-9 py-2.5 text-neutral-800 focus:outline-none focus:border-neutral-400 cursor-pointer font-medium text-xs transition-colors shadow-xs"
-                                >
-                                    <option value="">Seluruh Provinsi Kalimantan</option>
-                                    {provinces.map((prov) => (
-                                        <option key={prov} value={prov} className="bg-white text-neutral-900">
-                                            {prov}
-                                        </option>
-                                    ))}
-                                </select>
-                                <ChevronDown className="size-3.5 text-neutral-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                        <div>
+                            <div className="flex items-center gap-2">
+                                <h1 className="text-xs sm:text-sm font-bold text-neutral-900 dark:text-white leading-tight">
+                                    Peta Sebaran Karhutla Publik
+                                </h1>
+                                <span className="hidden md:inline-flex items-center rounded-md bg-emerald-50 px-2 py-0.5 text-[10px] font-bold text-emerald-800 border border-emerald-200 dark:bg-emerald-950/70 dark:text-emerald-300 dark:border-emerald-800">
+                                    5 Provinsi Kalimantan
+                                </span>
                             </div>
+                        </div>
+                    </div>
+                </div>
 
-                            <div className="relative w-full sm:w-auto">
-                                <select
-                                    value={selectedCategory}
-                                    onChange={(e) => setSelectedCategory(e.target.value)}
-                                    className="w-full sm:w-auto appearance-none bg-neutral-50 hover:bg-neutral-100/90 border border-neutral-200 rounded-full pl-4 pr-9 py-2.5 text-neutral-800 focus:outline-none focus:border-neutral-400 cursor-pointer font-medium text-xs transition-colors shadow-xs"
-                                >
-                                    <option value="">Seluruh Kategori Laporan</option>
-                                    {categories.map((cat) => (
-                                        <option key={cat.id} value={cat.slug} className="bg-white text-neutral-900">
-                                            {cat.name}
-                                        </option>
-                                    ))}
-                                </select>
-                                <ChevronDown className="size-3.5 text-neutral-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                {/* Center / Stats Counter */}
+                <div className="hidden lg:flex items-center gap-3 text-xs bg-neutral-100 dark:bg-neutral-800/80 px-3.5 py-1.5 rounded-full border border-neutral-200 dark:border-neutral-700">
+                    <span className="inline-flex items-center gap-1.5 font-bold text-neutral-800 dark:text-neutral-200">
+                        <span className="size-2 rounded-full bg-emerald-500 animate-pulse" />
+                        <span>{reports.length} Laporan Warga</span>
+                    </span>
+                    <span className="text-neutral-300 dark:text-neutral-600">&bull;</span>
+                    <span className="inline-flex items-center gap-1.5 font-bold text-orange-600 dark:text-orange-400">
+                        <span className="size-2 rounded-full bg-orange-500" />
+                        <span>{displayedObservations.length} Titik Panas FIRMS</span>
+                    </span>
+                </div>
+
+                {/* Right: Quick Tools */}
+                <div className="flex items-center gap-2">
+                    {/* Satellite layer switch button */}
+                    {observations.length > 0 && (
+                        <button
+                            type="button"
+                            onClick={() => setShowSatelliteHotspots(!showSatelliteHotspots)}
+                            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all border shadow-2xs cursor-pointer ${
+                                showSatelliteHotspots
+                                    ? 'bg-orange-50 text-orange-900 border-orange-200 hover:bg-orange-100 dark:bg-orange-950/60 dark:text-orange-300 dark:border-orange-800'
+                                    : 'bg-white text-neutral-600 border-neutral-200 hover:bg-neutral-50 dark:bg-neutral-800 dark:text-neutral-400 dark:border-neutral-700'
+                            }`}
+                            title="Nyalakan/matikan layer anomali termal satelit"
+                        >
+                            <Satellite className="size-3.5 text-orange-500" />
+                            <span className="hidden sm:inline">Layer Satelit</span>
+                            <span className="font-mono text-[11px] tabular-nums">({observations.length})</span>
+                        </button>
+                    )}
+
+                    {/* Toggle Report List Drawer */}
+                    <button
+                        type="button"
+                        onClick={() => setShowReportsList(!showReportsList)}
+                        className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all border shadow-2xs cursor-pointer ${
+                            showReportsList
+                                ? 'bg-[#0c4e33] text-white border-[#0c4e33]'
+                                : 'bg-white text-neutral-800 border-neutral-200 hover:bg-neutral-50 dark:bg-neutral-800 dark:text-neutral-200 dark:border-neutral-700'
+                        }`}
+                        title="Tampilkan daftar laporan"
+                    >
+                        <ListFilter className="size-3.5" />
+                        <span className="hidden sm:inline">Daftar Titik</span>
+                        <span className="font-mono text-[11px] tabular-nums">({reports.length})</span>
+                    </button>
+                </div>
+            </header>
+
+            {/* Filter Strip Sub-header */}
+            <div className="z-20 flex flex-wrap items-center justify-between gap-2 border-b border-neutral-200 bg-neutral-50/90 px-3 sm:px-6 py-2 backdrop-blur-xs text-xs dark:border-neutral-800 dark:bg-neutral-900/90">
+                <div className="flex flex-wrap items-center gap-2 flex-1">
+                    {/* Province dropdown */}
+                    <div className="relative">
+                        <select
+                            value={selectedProvince}
+                            onChange={(e) => setSelectedProvince(e.target.value)}
+                            aria-label="Filter Provinsi"
+                            className="appearance-none rounded-lg border border-neutral-300 bg-white pl-3 pr-7 py-1.5 text-xs text-neutral-800 font-medium focus:outline-none focus:border-[#0c4e33] cursor-pointer dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-200"
+                        >
+                            <option value="">Semua Provinsi</option>
+                            {provinces.map((prov) => (
+                                <option key={prov} value={prov}>
+                                    {prov}
+                                </option>
+                            ))}
+                        </select>
+                        <ChevronDown className="size-3 text-neutral-400 absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none" />
+                    </div>
+
+                    {/* Category dropdown */}
+                    <div className="relative">
+                        <select
+                            value={selectedCategory}
+                            onChange={(e) => setSelectedCategory(e.target.value)}
+                            aria-label="Filter Kategori"
+                            className="appearance-none rounded-lg border border-neutral-300 bg-white pl-3 pr-7 py-1.5 text-xs text-neutral-800 font-medium focus:outline-none focus:border-[#0c4e33] cursor-pointer dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-200"
+                        >
+                            <option value="">Semua Kategori</option>
+                            {categories.map((cat) => (
+                                <option key={cat.id} value={cat.slug}>
+                                    {cat.name}
+                                </option>
+                            ))}
+                        </select>
+                        <ChevronDown className="size-3 text-neutral-400 absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none" />
+                    </div>
+
+                    {/* Status dropdown */}
+                    <div className="relative">
+                        <select
+                            value={selectedStatus}
+                            onChange={(e) => setSelectedStatus(e.target.value)}
+                            aria-label="Filter Status"
+                            className="appearance-none rounded-lg border border-neutral-300 bg-white pl-3 pr-7 py-1.5 text-xs text-neutral-800 font-medium focus:outline-none focus:border-[#0c4e33] cursor-pointer dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-200"
+                        >
+                            <option value="">Semua Status</option>
+                            <option value="SUBMITTED">Baru Dikirim</option>
+                            <option value="UNDER_REVIEW">Sedang Ditinjau</option>
+                            <option value="VERIFIED">Terverifikasi</option>
+                            <option value="DISPATCHED">Ditugaskan ke OPD</option>
+                            <option value="RESOLVED_VERIFIED">Selesai Terverifikasi</option>
+                        </select>
+                        <ChevronDown className="size-3 text-neutral-400 absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none" />
+                    </div>
+
+                    {/* Apply Filter Button */}
+                    <button
+                        type="button"
+                        onClick={handleApplyFilter}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#0c4e33] hover:bg-[#083824] text-xs font-bold text-white shadow-2xs transition-colors cursor-pointer"
+                    >
+                        <Filter className="size-3" />
+                        <span>Filter</span>
+                    </button>
+
+                    {/* Reset Button */}
+                    {hasActiveFilters && (
+                        <button
+                            type="button"
+                            onClick={handleResetFilter}
+                            className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-neutral-300 bg-white hover:bg-neutral-100 text-xs font-semibold text-neutral-700 transition-colors cursor-pointer dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-300"
+                            title="Reset seluruh filter"
+                        >
+                            <RotateCcw className="size-3" />
+                            <span>Reset</span>
+                        </button>
+                    )}
+                </div>
+
+                {/* Focus Active Notice */}
+                {selectedReportForFocus && (
+                    <div className="flex items-center gap-2 bg-emerald-50 border border-emerald-200 text-emerald-900 px-3 py-1 rounded-lg text-xs font-semibold">
+                        <MapPin className="size-3 text-emerald-700" />
+                        <span>Fokus Kamera: <strong>{selectedReportForFocus.tracking_code}</strong></span>
+                        <button
+                            type="button"
+                            onClick={() => setSelectedReportForFocus(null)}
+                            className="size-4 rounded-full bg-emerald-200 text-emerald-800 hover:bg-emerald-300 flex items-center justify-center text-[10px] cursor-pointer ml-1"
+                            title="Lepas fokus"
+                        >
+                            ✕
+                        </button>
+                    </div>
+                )}
+            </div>
+
+            {/* Main Full-Height Interactive Map Container */}
+            <main className="relative flex-1 w-full h-[calc(100vh-6.5rem)] overflow-hidden bg-neutral-100">
+                <KarhutlaMap
+                    reports={reports}
+                    observations={displayedObservations}
+                    selectedCoordinates={
+                        selectedReportForFocus
+                            ? { lat: selectedReportForFocus.latitude, lng: selectedReportForFocus.longitude }
+                            : null
+                    }
+                    height="100%"
+                    minHeight="100%"
+                    showLegend={true}
+                    showSimulatedNotice={false}
+                    className="w-full h-full rounded-none border-0"
+                />
+
+                {/* Floating Collapsible Reports Panel */}
+                {showReportsList && (
+                    <div className="absolute top-3 right-3 bottom-3 z-[600] w-80 sm:w-96 rounded-2xl bg-white/95 backdrop-blur-md border border-neutral-200 shadow-2xl flex flex-col overflow-hidden dark:bg-neutral-900/95 dark:border-neutral-800 animate-in slide-in-from-right duration-200">
+                        {/* Drawer Header */}
+                        <div className="p-4 border-b border-neutral-200/80 dark:border-neutral-800 flex items-center justify-between">
+                            <div>
+                                <div className="flex items-center gap-2">
+                                    <Flame className="size-4 text-emerald-600" />
+                                    <h2 className="text-sm font-bold text-neutral-900 dark:text-white">
+                                        Daftar Titik Laporan
+                                    </h2>
+                                    <span className="font-mono text-xs font-bold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-full dark:bg-emerald-950 dark:text-emerald-300">
+                                        {filteredReports.length}
+                                    </span>
+                                </div>
+                                <p className="text-[11px] text-neutral-500 mt-0.5">
+                                    Klik baris untuk memusatkan posisi kamera peta.
+                                </p>
                             </div>
-
-                            <div className="relative w-full sm:w-auto">
-                                <select
-                                    value={selectedStatus}
-                                    onChange={(e) => setSelectedStatus(e.target.value)}
-                                    className="w-full sm:w-auto appearance-none bg-neutral-50 hover:bg-neutral-100/90 border border-neutral-200 rounded-full pl-4 pr-9 py-2.5 text-neutral-800 focus:outline-none focus:border-neutral-400 cursor-pointer font-medium text-xs transition-colors shadow-xs"
-                                >
-                                    <option value="">Seluruh Status Laporan</option>
-                                    <option value="SUBMITTED">Baru Dikirim</option>
-                                    <option value="UNDER_REVIEW">Sedang Ditinjau</option>
-                                    <option value="VERIFIED">Terverifikasi</option>
-                                    <option value="DISPATCHED">Ditugaskan ke OPD</option>
-                                    <option value="RESOLVED_VERIFIED">Selesai Terverifikasi</option>
-                                </select>
-                                <ChevronDown className="size-3.5 text-neutral-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
-                            </div>
-
                             <button
                                 type="button"
-                                onClick={handleApplyFilter}
-                                className="w-full sm:w-auto bg-[#10e57a] hover:bg-[#0ba856] text-black font-bold px-5 py-2.5 rounded-full text-xs flex items-center justify-center gap-2 shadow-xs transition-all active:scale-95 cursor-pointer sm:ml-auto"
+                                onClick={() => setShowReportsList(false)}
+                                className="size-7 rounded-xl flex items-center justify-center text-neutral-400 hover:text-black hover:bg-neutral-100 dark:hover:bg-neutral-800 dark:hover:text-white transition-colors"
                             >
-                                <Filter className="size-3.5" />
-                                <span>Terapkan Filter</span>
+                                <X className="size-4" />
                             </button>
+                        </div>
 
-                            {(selectedProvince || selectedCategory || selectedStatus) && (
-                                <button
-                                    type="button"
-                                    onClick={handleResetFilter}
-                                    className="w-full sm:w-auto px-4 py-2.5 text-xs font-semibold text-neutral-600 hover:text-black border border-neutral-200 bg-white rounded-full hover:bg-neutral-100 flex items-center justify-center gap-1.5 cursor-pointer transition-colors shadow-xs"
-                                    title="Reset Filter"
-                                >
-                                    <RotateCcw className="size-3.5" />
-                                    <span>Reset</span>
-                                </button>
+                        {/* Search in Drawer */}
+                        <div className="p-3 border-b border-neutral-100 dark:border-neutral-800">
+                            <input
+                                type="text"
+                                value={searchFilter}
+                                onChange={(e) => setSearchFilter(e.target.value)}
+                                placeholder="Cari nama lokasi atau kode..."
+                                className="w-full text-xs rounded-xl border border-neutral-200 bg-neutral-50 px-3 py-2 text-neutral-800 placeholder:text-neutral-400 focus:outline-none focus:border-[#0c4e33] dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-200"
+                            />
+                        </div>
+
+                        {/* Reports List */}
+                        <div className="flex-1 overflow-y-auto divide-y divide-neutral-100 dark:divide-neutral-800 p-2">
+                            {filteredReports.length === 0 ? (
+                                <div className="py-12 text-center text-xs text-neutral-400">
+                                    Tidak ada laporan yang sesuai pencarian.
+                                </div>
+                            ) : (
+                                filteredReports.map((rep) => {
+                                    const isFocused = selectedReportForFocus?.id === rep.id;
+                                    return (
+                                        <div
+                                            key={rep.id}
+                                            onClick={() => setSelectedReportForFocus(rep)}
+                                            className={`p-3 rounded-xl cursor-pointer transition-colors text-left ${
+                                                isFocused
+                                                    ? 'bg-emerald-50/80 border border-emerald-300 dark:bg-emerald-950/60 dark:border-emerald-700'
+                                                    : 'hover:bg-neutral-50 dark:hover:bg-neutral-800/60'
+                                            }`}
+                                        >
+                                            <div className="flex items-start justify-between gap-2">
+                                                <h3 className="text-xs font-bold text-neutral-900 dark:text-white line-clamp-1">
+                                                    {rep.title.replace(/^\[(BERAT|SEDANG|RINGAN)\]\s*/i, '')}
+                                                </h3>
+                                                <StatusBadge status={rep.report_status} label={rep.status_label} size="sm" />
+                                            </div>
+                                            <div className="mt-1 flex items-center justify-between text-[11px] text-neutral-500">
+                                                <span className="font-mono font-bold text-neutral-700 dark:text-neutral-300">
+                                                    {rep.tracking_code}
+                                                </span>
+                                                <span className="truncate max-w-[160px]">
+                                                    {rep.regency_city || rep.province}
+                                                </span>
+                                            </div>
+                                            <div className="mt-2 flex items-center justify-between pt-1 border-t border-neutral-100 dark:border-neutral-800/80 text-[10px]">
+                                                <span className="font-mono text-neutral-400">
+                                                    {rep.latitude.toFixed(4)}, {rep.longitude.toFixed(4)}
+                                                </span>
+                                                <Link
+                                                    href={`/laporan-publik/${rep.tracking_code}`}
+                                                    onClick={(e) => e.stopPropagation()}
+                                                    className="inline-flex items-center gap-1 font-bold text-[#0c4e33] hover:underline dark:text-emerald-400"
+                                                >
+                                                    <span>Detail</span>
+                                                    <ArrowRight className="size-2.5" />
+                                                </Link>
+                                            </div>
+                                        </div>
+                                    );
+                                })
                             )}
                         </div>
-                    </AnimatedContent>
-                </section>
-
-                {/* Main Geospatial Registry Area (Matching Beranda Map Structure) */}
-                <section className="pt-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
-                    <AnimatedContent distance={30} duration={0.9} threshold={0.1}>
-                        <div className="rounded-[28px] border border-neutral-200/80 bg-white p-3 sm:p-4 shadow-xs">
-                            <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_380px] gap-4 items-stretch">
-                                {/* Left: Frameless Precision Map Column */}
-                                <div className="flex flex-col min-w-0">
-                                    <div className="relative flex-1 rounded-[20px] overflow-hidden ring-1 ring-neutral-200/80 bg-neutral-100 min-h-[380px] sm:min-h-[460px] lg:min-h-[580px]">
-                                        <KarhutlaMap
-                                            reports={reports}
-                                            observations={displayedObservations}
-                                            selectedCoordinates={
-                                                selectedReportForFocus
-                                                    ? { lat: selectedReportForFocus.latitude, lng: selectedReportForFocus.longitude }
-                                                    : null
-                                            }
-                                            height="500px"
-                                            minHeight="380px"
-                                            showLegend={false}
-                                            showSimulatedNotice={true}
-                                            className="rounded-none border-0 w-full"
-                                        />
-                                    </div>
-
-                                    {/* Bottom Info Strip matching Beranda */}
-                                    <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-2 pt-3.5 px-1 text-[12px] text-neutral-500">
-                                        <div className="flex flex-wrap items-center gap-x-5 gap-y-1.5">
-                                            <span className="inline-flex items-center gap-2">
-                                                <span className="size-2 rounded-full bg-neutral-900" />
-                                                <span className="font-semibold text-neutral-900 tabular-nums">{reports.length}</span>
-                                                laporan warga
-                                            </span>
-                                            <span className="inline-flex items-center gap-2">
-                                                <span className="size-2 rounded-full bg-[#10e57a]" />
-                                                <span className="font-semibold text-neutral-900 tabular-nums">{displayedObservations.length}</span>
-                                                anomali termal FIRMS
-                                            </span>
-                                            {selectedReportForFocus && (
-                                                <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-neutral-800 bg-neutral-100 pl-2.5 pr-1.5 py-0.5 rounded-full">
-                                                    <span>Fokus: {selectedReportForFocus.tracking_code}</span>
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => setSelectedReportForFocus(null)}
-                                                        className="size-4 rounded-full bg-neutral-200 hover:bg-neutral-300 text-neutral-700 flex items-center justify-center text-[10px] cursor-pointer"
-                                                        title="Hapus fokus kamera"
-                                                    >
-                                                        ✕
-                                                    </button>
-                                                </span>
-                                            )}
-                                        </div>
-                                        <span className="text-neutral-400">Sumber: NASA FIRMS, BMKG, validasi publik</span>
-                                    </div>
-                                </div>
-
-                                {/* Right: Clean White Sidebar Registry (Matching Beranda Right Panel) */}
-                                <aside className="relative flex flex-col rounded-[20px] bg-white border border-neutral-200/80 text-neutral-950 p-5 sm:p-6 shadow-xs h-[640px]">
-                                    <div className="pb-4 border-b border-neutral-100">
-                                        <div className="flex items-center justify-between">
-                                            <p className="font-mono text-[11px] text-neutral-400 tracking-wide">02 / Arsip Laporan</p>
-                                            <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-emerald-50 text-neutral-800 border border-emerald-200/80 tabular-nums">
-                                                {reports.length} Titik
-                                            </span>
-                                        </div>
-                                        <h2 className="mt-2 text-2xl font-black tracking-[-0.03em] leading-tight text-neutral-950">
-                                            Daftar Titik Laporan
-                                        </h2>
-                                        <p className="mt-1 text-xs text-neutral-500 leading-relaxed">
-                                            Pilih baris laporan untuk memusatkan posisi kamera peta.
-                                        </p>
-                                    </div>
-
-                                    <div className="flex-1 min-h-0 pt-3">
-                                        {reports.length === 0 ? (
-                                            <div className="text-center py-24 text-xs text-neutral-400 px-4 space-y-3">
-                                                <ShieldAlert className="size-8 mx-auto text-neutral-400" />
-                                                <p className="font-medium">Tidak ada laporan yang sesuai dengan kriteria filter saat ini.</p>
-                                                <button
-                                                    type="button"
-                                                    onClick={handleResetFilter}
-                                                    className="text-xs font-bold text-neutral-900 hover:text-black underline cursor-pointer"
-                                                >
-                                                    Reset seluruh filter
-                                                </button>
-                                            </div>
-                                        ) : (
-                                            <AnimatedList
-                                                items={mapReportItems}
-                                                onItemSelect={(item) => {
-                                                    if (item?.report) {
-                                                        setSelectedReportForFocus(item.report);
-                                                    }
-                                                }}
-                                                animation="pop"
-                                                theme="light"
-                                                accentColor="#10e57a"
-                                                radius={12}
-                                                gap={8}
-                                                width="100%"
-                                                maxHeight={480}
-                                                frame={false}
-                                                showGradients={true}
-                                                displayScrollbar={true}
-                                            />
-                                        )}
-                                    </div>
-                                </aside>
-                            </div>
-                        </div>
-                    </AnimatedContent>
-                </section>
+                    </div>
+                )}
             </main>
-
-            <Footer />
         </div>
     );
 }

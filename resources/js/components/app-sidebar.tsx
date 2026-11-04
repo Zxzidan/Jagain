@@ -16,7 +16,6 @@ import {
 import AppLogo from '@/components/app-logo';
 import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
-import { NavUser } from '@/components/nav-user';
 import {
     Sidebar,
     SidebarContent,
@@ -63,6 +62,7 @@ export function AppSidebar() {
     }
 
     const footerNavItems: NavItem[] = [
+        { title: 'Lihat SOP', href: '/panduan-keselamatan', icon: FileText },
         { title: 'Peta Publik', href: '/peta', icon: Map },
         { title: 'Transparansi', href: '/tentang-kami', icon: ShieldCheck },
     ];
@@ -75,7 +75,7 @@ export function AppSidebar() {
 
     return (
         <Sidebar collapsible="icon" variant="inset" className="border-r border-sidebar-border bg-sidebar text-sidebar-foreground">
-            <SidebarHeader className="border-b border-sidebar-border pb-3 bg-sidebar">
+            <SidebarHeader className="border-b border-sidebar-border pb-3 bg-sidebar space-y-2">
                 <SidebarMenu>
                     <SidebarMenuItem>
                         <SidebarMenuButton size="lg" asChild className="hover:bg-sidebar-accent hover:text-sidebar-accent-foreground">
@@ -93,7 +93,6 @@ export function AppSidebar() {
 
             <SidebarFooter className="border-t border-sidebar-border pt-2 bg-sidebar">
                 <NavFooter items={footerNavItems} className="mt-auto" />
-                <NavUser />
             </SidebarFooter>
         </Sidebar>
     );

@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Agency;
 use App\Models\Assignment;
 use App\Models\AuditLog;
+use App\Models\ExternalObservation;
 use App\Models\Report;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -60,6 +61,39 @@ class AdminDashboardController extends Controller
                 'assignments as completed_count' => fn ($q) => $q->whereIn('assignment_status', ['COMPLETED', AssignmentStatus::COMPLETED->value]),
             ])->get();
 
+        $mapReports = Report::query()
+            ->with(['category', 'latestAssignment.agency'])
+            ->whereNotNull('latitude')
+            ->whereNotNull('longitude')
+            ->latest()
+            ->take(50)
+            ->get()
+            ->map(fn (Report $r) => $r->toPublicArray());
+
+        $mapObservations = ExternalObservation::with('dataSource')
+            ->latest('observed_at')
+            ->take(50)
+            ->get()
+            ->map(fn (ExternalObservation $obs) => [
+                'id' => $obs->id,
+                'external_record_id' => $obs->external_record_id,
+                'satellite_instrument' => $obs->satellite_instrument,
+                'confidence_level' => $obs->confidence_level,
+                'brightness_kelvin' => $obs->brightness_kelvin,
+                'frp_mw' => $obs->frp_mw,
+                'latitude' => $obs->latitude,
+                'longitude' => $obs->longitude,
+                'province' => $obs->province,
+                'regency_city' => $obs->regency_city,
+                'observed_at' => $obs->observed_at->toIso8601String(),
+                'is_simulated' => $obs->is_simulated,
+                'data_source' => [
+                    'name' => $obs->dataSource?->name ?? 'Satelit BMKG',
+                    'attribution' => $obs->dataSource?->attribution ?? 'BMKG / NASA FIRMS',
+                    'source_type' => $obs->dataSource?->source_type ?? 'SATELLITE',
+                ],
+            ]);
+
         return Inertia::render('admin/dashboard', [
             'statusCounts' => $statusCounts,
             'priorityQueue' => $priorityQueue,
@@ -67,6 +101,8 @@ class AdminDashboardController extends Controller
             'recentAuditLogs' => $recentAuditLogs,
             'activeAssignments' => $activeAssignments,
             'agencyStats' => $agencyStats,
+            'mapReports' => $mapReports,
+            'mapObservations' => $mapObservations,
         ]);
     }
 

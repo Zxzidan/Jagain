@@ -284,6 +284,35 @@ class Report extends Model
             ];
         }
 
+        // Severity level categorization: RINGAN, SEDANG, BERAT
+        $haystack = strtolower(($this->title ?? '').' '.($this->description ?? ''));
+        $severity = 'SEDANG';
+        $severityLabel = 'Sedang';
+
+        if (
+            str_contains($haystack, '[berat]') ||
+            str_contains($haystack, 'tingkat keparahan berat') ||
+            str_contains($haystack, 'kritis') ||
+            str_contains($haystack, 'gambut dalam') ||
+            $fireVal === 'OBSERVED_ACTIVE'
+        ) {
+            $severity = 'BERAT';
+            $severityLabel = 'Berat';
+        } elseif (
+            str_contains($haystack, '[ringan]') ||
+            str_contains($haystack, 'tingkat keparahan ringan') ||
+            str_contains($haystack, 'terkendali') ||
+            str_contains($haystack, 'asap sisa') ||
+            str_contains($haystack, 'asap tipis') ||
+            in_array($fireVal, ['OBSERVED_EXTINGUISHED', 'OBSERVED_CONTAINED'])
+        ) {
+            $severity = 'RINGAN';
+            $severityLabel = 'Ringan';
+        } else {
+            $severity = 'SEDANG';
+            $severityLabel = 'Sedang';
+        }
+
         return [
             'id' => $this->id,
             'tracking_code' => $this->tracking_code,
@@ -303,6 +332,8 @@ class Report extends Model
             'fire_condition_label' => $fireLabel,
             'fire_condition_source' => $this->fire_condition_source,
             'fire_condition_observed_at' => $this->fire_condition_observed_at?->toIso8601String(),
+            'severity' => $severity,
+            'severity_label' => $severityLabel,
             'is_simulated' => $this->is_simulated,
             'created_at' => $this->created_at?->toIso8601String(),
             'updated_at' => $this->updated_at?->toIso8601String(),

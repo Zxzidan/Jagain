@@ -26,19 +26,19 @@ export function NavMain({ items }: { items: NavItem[] }) {
                                 asChild
                                 isActive={active}
                                 tooltip={{ children: item.title }}
-                                className={`rounded-xl px-3 py-2 text-xs font-medium transition-colors ${
+                                className={`rounded-xl px-3.5 py-2.5 text-xs font-semibold transition-all duration-150 ${
                                     active
-                                        ? 'bg-[#E8F1EB] text-[#174B35] font-bold shadow-xs dark:bg-emerald-950/60 dark:text-[#10e57a]'
-                                        : 'text-[#343B36] hover:bg-neutral-100 hover:text-black dark:text-neutral-300 dark:hover:bg-neutral-800 dark:hover:text-white'
+                                        ? 'bg-[#18181b] text-white shadow-sm dark:bg-white dark:text-black'
+                                        : 'text-neutral-500 hover:bg-neutral-100 hover:text-neutral-900 dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-white'
                                 }`}
                             >
-                                <Link href={item.href} prefetch className="flex items-center gap-2.5">
+                                <Link href={item.href} prefetch className="flex items-center gap-3">
                                     {item.icon && (
                                         <item.icon
-                                            className={`size-4 shrink-0 ${
+                                            className={`size-4 shrink-0 transition-colors ${
                                                 active
-                                                    ? 'text-[#216B49] dark:text-[#10e57a]'
-                                                    : 'text-[#68716B] dark:text-neutral-400'
+                                                    ? 'text-white dark:text-black'
+                                                    : 'text-neutral-400 group-hover:text-neutral-700 dark:text-neutral-400'
                                             }`}
                                         />
                                     )}
