@@ -2,9 +2,7 @@ import { Head, Link, router } from '@inertiajs/react';
 import {
     Activity,
     Building2,
-    Check,
     Clock,
-    Copy,
     Download,
     Eye,
     FileText,
@@ -42,7 +40,8 @@ interface AuditLogItem {
     actor_role: string;
     actor_email?: string | null;
     reason: string | null;
-    request_id: string | null;
+    raw_reason?: string | null;
+    request_id?: string | null;
     ip_address: string | null;
     before_snapshot: Record<string, any> | null;
     after_snapshot: Record<string, any> | null;
@@ -90,7 +89,6 @@ export default function AuditLogsIndex({
     const [datePreset, setDatePreset] = useState(filters.date_preset ?? '');
     const [selectedLog, setSelectedLog] = useState<AuditLogItem | null>(null);
     const [showJsonMode, setShowJsonMode] = useState(false);
-    const [copiedRequestId, setCopiedRequestId] = useState(false);
 
     const breadcrumbs: BreadcrumbItem[] = [
         {
@@ -130,13 +128,6 @@ export default function AuditLogsIndex({
         setEntityType('');
         setDatePreset('');
         router.get(auditLogsIndex.url(), {}, { replace: true });
-    };
-
-    const handleCopyRequestId = (text: string) => {
-        if (!text) return;
-        navigator.clipboard.writeText(text);
-        setCopiedRequestId(true);
-        setTimeout(() => setCopiedRequestId(false), 2000);
     };
 
     const hasActiveFilters = Boolean(search || action || entityType || datePreset);
@@ -241,7 +232,7 @@ export default function AuditLogsIndex({
                                 type="text"
                                 value={search}
                                 onChange={(e) => setSearch(e.target.value)}
-                                placeholder="Cari catatan, alasan, nama aktor, request ID, atau ID entitas..."
+                                placeholder="Cari aktivitas, nama aktor, nomor laporan, atau catatan..."
                                 className="w-full rounded-xl border border-[#DDE3DE] bg-[#F3F7F4]/50 py-2.5 pr-10 pl-9 text-xs text-[#171C19] placeholder-[#68716B] focus:border-[#216B49] focus:bg-white focus:outline-none transition-colors dark:border-neutral-800 dark:bg-neutral-800/60 dark:text-white dark:placeholder-neutral-500"
                             />
                             {search && (
@@ -270,7 +261,7 @@ export default function AuditLogsIndex({
                                 aria-label="Filter jenis tindakan"
                                 className="rounded-xl border border-[#DDE3DE] bg-[#F3F7F4]/50 px-3 py-2.5 text-xs text-[#343B36] focus:border-[#216B49] focus:bg-white focus:outline-none cursor-pointer transition-colors dark:border-neutral-800 dark:bg-neutral-800 dark:text-neutral-200 font-medium"
                             >
-                                <option value="">Semua Tindakan (Action)</option>
+                                <option value="">Semua Aktivitas</option>
                                 {actionOptions.map((opt) => (
                                     <option key={opt.value} value={opt.value}>
                                         {opt.label}
@@ -288,7 +279,7 @@ export default function AuditLogsIndex({
                                 aria-label="Filter tipe objek"
                                 className="rounded-xl border border-[#DDE3DE] bg-[#F3F7F4]/50 px-3 py-2.5 text-xs text-[#343B36] focus:border-[#216B49] focus:bg-white focus:outline-none cursor-pointer transition-colors dark:border-neutral-800 dark:bg-neutral-800 dark:text-neutral-200 font-medium"
                             >
-                                <option value="">Semua Objek Entitas</option>
+                                <option value="">Semua Objek Data</option>
                                 {entityTypeOptions.map((opt) => (
                                     <option key={opt.value} value={opt.value}>
                                         {opt.label}
@@ -339,16 +330,16 @@ export default function AuditLogsIndex({
                             />
                         </div>
                     ) : (
-                        <div className="overflow-x-auto">
-                            <table className="w-full min-w-[960px] text-left text-sm">
-                                <thead className="border-b border-[#DDE3DE] bg-[#F3F7F4] text-xs font-bold uppercase tracking-wider text-[#343B36] dark:border-neutral-800 dark:bg-neutral-800/70 dark:text-neutral-300">
+                        <div className="w-full overflow-hidden">
+                            <table className="w-full table-fixed text-left text-xs">
+                                <thead className="border-b border-[#DDE3DE] bg-[#F3F7F4] text-[11px] font-bold uppercase tracking-wider text-[#343B36] dark:border-neutral-800 dark:bg-neutral-800/70 dark:text-neutral-300">
                                     <tr>
-                                        <th scope="col" className="px-5 py-3.5 text-center w-44">WAKTU PENCATATAN</th>
-                                        <th scope="col" className="px-5 py-3.5 text-center w-56">TINDAKAN (ACTION)</th>
-                                        <th scope="col" className="px-5 py-3.5 text-center w-48">AKTOR</th>
-                                        <th scope="col" className="px-5 py-3.5 text-center w-64">OBJEK ENTITAS</th>
-                                        <th scope="col" className="px-5 py-3.5 text-center">CATATAN / ALASAN</th>
-                                        <th scope="col" className="px-5 py-3.5 text-center w-36">SNAPSHOT DATA</th>
+                                        <th scope="col" className="w-[17%] px-3 py-3 text-center">WAKTU</th>
+                                        <th scope="col" className="w-[13%] px-2.5 py-3 text-center">AKTIVITAS</th>
+                                        <th scope="col" className="w-[15%] px-2.5 py-3 text-center">PELAKSANA</th>
+                                        <th scope="col" className="w-[22%] px-3 py-3 text-center">OBJEK TERKAIT</th>
+                                        <th scope="col" className="w-[24%] px-3 py-3 text-center">KETERANGAN</th>
+                                        <th scope="col" className="w-[9%] px-2 py-3 text-center">RINCIAN</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-[#DDE3DE] dark:divide-neutral-800">
@@ -358,86 +349,97 @@ export default function AuditLogsIndex({
                                             className="transition-colors hover:bg-neutral-50/70 dark:hover:bg-neutral-800/40"
                                         >
                                             {/* Waktu Pencatatan */}
-                                            <td className="px-5 py-4 align-top text-xs text-[#171C19] dark:text-neutral-200">
-                                                <div className="flex items-start gap-1.5">
-                                                    <Clock className="size-3.5 text-[#216B49] dark:text-emerald-400 shrink-0 mt-0.5" />
-                                                    <div>
-                                                        <div className="font-semibold whitespace-nowrap">
+                                            <td className="px-3 py-3 align-middle text-xs text-[#171C19] dark:text-neutral-200">
+                                                <div className="flex items-center gap-1.5">
+                                                    <Clock className="size-3.5 text-[#216B49] dark:text-emerald-400 shrink-0" />
+                                                    <div className="min-w-0">
+                                                        <div className="font-semibold truncate">
                                                             {log.created_at_formatted}
                                                         </div>
-                                                        <div className="text-[11px] text-neutral-400 dark:text-neutral-500">
+                                                        <div className="text-[11px] text-neutral-400 dark:text-neutral-500 truncate">
                                                             {log.created_at_human}
                                                         </div>
                                                     </div>
                                                 </div>
                                             </td>
 
-                                            {/* Tindakan (Action) */}
-                                            <td className="px-5 py-4 align-top">
-                                                <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-bold border shadow-2xs ${log.action_badge_class}`}>
+                                            {/* Aktivitas (Action Badge) */}
+                                            <td className="px-2.5 py-3 align-middle">
+                                                <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-semibold border shadow-2xs whitespace-nowrap ${log.action_badge_class}`}>
                                                     {log.action_label}
                                                 </span>
                                             </td>
 
-                                            {/* Aktor */}
-                                            <td className="px-5 py-4 align-top text-xs">
-                                                <div className="font-bold text-[#171C19] dark:text-white flex items-center gap-1.5">
-                                                    <UserIcon className="size-3 text-neutral-400" />
-                                                    <span>{log.actor_name}</span>
+                                            {/* Pelaksana / Aktor */}
+                                            <td className="px-2.5 py-3 align-middle text-xs">
+                                                <div className="flex items-center gap-1.5 min-w-0" title={log.actor_name}>
+                                                    <div className="flex size-5 shrink-0 items-center justify-center rounded-full bg-neutral-100 text-neutral-500 dark:bg-neutral-800 dark:text-neutral-400">
+                                                        <UserIcon className="size-2.5" />
+                                                    </div>
+                                                    <span className="font-semibold text-[#171C19] dark:text-white truncate">
+                                                        {log.actor_name}
+                                                    </span>
                                                 </div>
                                             </td>
 
-                                            {/* Objek Entitas */}
-                                            <td className="px-5 py-4 align-top text-xs">
+                                            {/* Objek Terkait */}
+                                            <td className="px-3 py-3 align-middle text-xs">
                                                 {log.entity_summary ? (
-                                                    <div className="space-y-1">
-                                                        <div>
+                                                    <div className="min-w-0">
+                                                        <div className="truncate font-semibold">
                                                             {log.entity_summary.url ? (
                                                                 <Link
                                                                     href={log.entity_summary.url}
-                                                                    className="font-bold text-[#216B49] hover:underline dark:text-emerald-400"
+                                                                    className="text-[#216B49] hover:underline dark:text-emerald-400"
+                                                                    title={log.entity_summary.name}
                                                                 >
                                                                     {log.entity_summary.name}
                                                                 </Link>
                                                             ) : (
-                                                                <span className="font-bold text-[#171C19] dark:text-white">
+                                                                <span className="text-[#171C19] dark:text-white" title={log.entity_summary.name}>
                                                                     {log.entity_summary.name}
                                                                 </span>
                                                             )}
                                                         </div>
                                                         {log.entity_summary.subtext && (
-                                                            <div className="text-[11px] text-neutral-500 line-clamp-2 leading-relaxed dark:text-neutral-400">
+                                                            <div
+                                                                className="text-[11px] text-neutral-500 truncate dark:text-neutral-400 mt-0.5"
+                                                                title={log.entity_summary.subtext}
+                                                            >
                                                                 {log.entity_summary.subtext}
                                                             </div>
                                                         )}
                                                     </div>
                                                 ) : (
-                                                    <span className="font-semibold text-[#171C19] dark:text-white">
+                                                    <span className="font-semibold text-[#171C19] dark:text-white truncate">
                                                         {log.entity_type_label}
                                                     </span>
                                                 )}
                                             </td>
 
-                                            {/* Catatan / Alasan */}
-                                            <td className="px-5 py-4 align-top text-xs text-neutral-600 dark:text-neutral-300">
-                                                <div className="leading-relaxed break-words max-w-sm">
+                                            {/* Catatan / Keterangan */}
+                                            <td className="px-3 py-3 align-middle text-xs text-neutral-600 dark:text-neutral-300">
+                                                <div
+                                                    className="leading-snug break-words line-clamp-2"
+                                                    title={log.reason ?? ''}
+                                                >
                                                     {log.reason || (
-                                                        <span className="text-neutral-300 dark:text-neutral-600">—</span>
+                                                        <span className="text-neutral-400 italic">Tidak ada catatan</span>
                                                     )}
                                                 </div>
                                             </td>
 
-                                            {/* Snapshot Data */}
-                                            <td className="px-5 py-4 align-top text-center">
+                                            {/* Rincian Data */}
+                                            <td className="px-2 py-3 align-middle text-center">
                                                 <button
                                                     type="button"
                                                     onClick={() => {
                                                         setSelectedLog(log);
                                                         setShowJsonMode(false);
                                                     }}
-                                                    className="inline-flex items-center gap-1.5 rounded-lg border border-[#DDE3DE] bg-white px-3 py-1.5 text-xs font-bold text-[#216B49] hover:bg-[#E8F1EB] hover:border-[#216B49] transition-all shadow-2xs cursor-pointer dark:border-neutral-700 dark:bg-neutral-800 dark:text-emerald-400 dark:hover:bg-neutral-700"
+                                                    className="inline-flex items-center gap-1 rounded-lg border border-[#DDE3DE] bg-white px-2.5 py-1 text-xs font-semibold text-[#216B49] hover:bg-[#E8F1EB] hover:border-[#216B49] transition-all shadow-2xs cursor-pointer dark:border-neutral-700 dark:bg-neutral-800 dark:text-emerald-400 dark:hover:bg-neutral-700 whitespace-nowrap"
                                                 >
-                                                    <Eye className="size-3.5" />
+                                                    <Eye className="size-3" />
                                                     <span>Rincian</span>
                                                 </button>
                                             </td>
@@ -483,7 +485,7 @@ export default function AuditLogsIndex({
             {/* Interactive Modal: Snapshot Detail & Audit Inspection */}
             {selectedLog && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-xs transition-opacity">
-                    <div className="w-full max-w-2xl rounded-2xl bg-white p-6 shadow-2xl dark:bg-neutral-900 max-h-[90vh] flex flex-col overflow-hidden border border-neutral-200 dark:border-neutral-800">
+                    <div className="w-full max-w-2xl sm:max-w-3xl rounded-2xl bg-white p-6 shadow-2xl dark:bg-neutral-900 max-h-[90vh] flex flex-col overflow-hidden border border-neutral-200 dark:border-neutral-800">
                         {/* Modal Header */}
                         <div className="flex items-start justify-between pb-4 border-b border-neutral-100 dark:border-neutral-800">
                             <div>
@@ -491,14 +493,12 @@ export default function AuditLogsIndex({
                                     <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold border ${selectedLog.action_badge_class}`}>
                                         {selectedLog.action_label}
                                     </span>
-                                    <span className="text-xs text-neutral-400">•</span>
-                                    <span className="text-xs font-mono text-neutral-500">Log #{selectedLog.id}</span>
                                 </div>
                                 <h3 className="mt-1.5 text-lg font-extrabold text-[#171C19] dark:text-white">
-                                    Rincian Jejak Audit & Snapshot Data
+                                    Rincian Aktivitas & Perubahan Data
                                 </h3>
                                 <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5">
-                                    {selectedLog.created_at_formatted} ({selectedLog.created_at_human})
+                                    Dicatat pada {selectedLog.created_at_formatted} ({selectedLog.created_at_human})
                                 </p>
                             </div>
                             <button
@@ -513,35 +513,45 @@ export default function AuditLogsIndex({
                         {/* Modal Body */}
                         <div className="flex-1 overflow-y-auto py-4 space-y-4 pr-1">
                             {/* Actor & Entity Info Card */}
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-neutral-50 p-3.5 rounded-xl border border-neutral-200/80 dark:bg-neutral-800/60 dark:border-neutral-700/80 text-xs">
-                                <div>
-                                    <span className="text-neutral-400 font-medium">Aktor Pelaksana:</span>
-                                    <div className="font-bold text-neutral-900 dark:text-white mt-0.5">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-neutral-50 p-4 rounded-xl border border-neutral-200/80 dark:bg-neutral-800/60 dark:border-neutral-700/80 text-xs">
+                                <div className="space-y-1">
+                                    <span className="text-neutral-400 font-medium block">Pelaksana Aktivitas:</span>
+                                    <div className="font-bold text-neutral-900 dark:text-white text-sm break-words">
                                         {selectedLog.actor_name}
                                     </div>
-                                    <div className="text-[11px] text-neutral-500">
-                                        Peran: <strong className="text-neutral-700 dark:text-neutral-300">{selectedLog.actor_role}</strong>
+                                    <div className="text-xs text-neutral-500 mt-1 break-words">
+                                        Peran: <strong className="text-neutral-700 dark:text-neutral-300">
+                                            {selectedLog.actor_role === 'ADMIN'
+                                                ? 'Administrator Sistem'
+                                                : selectedLog.actor_role === 'AGENCY'
+                                                ? 'Petugas Instansi OPD'
+                                                : selectedLog.actor_role === 'COMMUNITY'
+                                                ? 'Masyarakat Pelapor'
+                                                : selectedLog.actor_role}
+                                        </strong>
                                     </div>
                                 </div>
-                                <div>
-                                    <span className="text-neutral-400 font-medium">Objek Sasaran:</span>
-                                    <div className="font-bold text-neutral-900 dark:text-white mt-0.5">
-                                        {selectedLog.entity_summary?.name ?? `${selectedLog.entity_type} #${selectedLog.entity_id}`}
+                                <div className="space-y-1">
+                                    <span className="text-neutral-400 font-medium block">Objek Sasaran:</span>
+                                    <div className="font-bold text-neutral-900 dark:text-white text-sm break-words">
+                                        {selectedLog.entity_summary?.name ?? `${selectedLog.entity_type_label}`}
                                     </div>
-                                    <div className="text-[11px] text-neutral-500 truncate">
-                                        {selectedLog.entity_summary?.subtext ?? '-'}
-                                    </div>
+                                    {selectedLog.entity_summary?.subtext && (
+                                        <div className="text-xs text-neutral-600 dark:text-neutral-300 mt-1 break-words leading-relaxed">
+                                            {selectedLog.entity_summary.subtext}
+                                        </div>
+                                    )}
                                 </div>
                             </div>
 
                             {/* Alasan / Catatan Lengkap */}
                             {selectedLog.reason && (
-                                <div className="rounded-xl border border-neutral-200/80 bg-white p-3.5 dark:border-neutral-800 dark:bg-neutral-900">
-                                    <div className="text-xs font-bold text-neutral-800 dark:text-neutral-200 mb-1 flex items-center gap-1.5">
-                                        <FileText className="size-3.5 text-[#216B49] dark:text-emerald-400" />
-                                        <span>Catatan / Alasan Tindakan:</span>
+                                <div className="rounded-xl border border-neutral-200/80 bg-white p-4 dark:border-neutral-800 dark:bg-neutral-900">
+                                    <div className="text-xs font-bold text-neutral-800 dark:text-neutral-200 mb-1.5 flex items-center gap-1.5">
+                                        <FileText className="size-3.5 text-[#216B49] dark:text-emerald-400 shrink-0" />
+                                        <span>Keterangan / Catatan:</span>
                                     </div>
-                                    <p className="text-xs text-neutral-600 dark:text-neutral-300 leading-relaxed">
+                                    <p className="text-xs text-neutral-700 dark:text-neutral-300 leading-relaxed break-words whitespace-pre-wrap">
                                         {selectedLog.reason}
                                     </p>
                                 </div>
@@ -551,14 +561,14 @@ export default function AuditLogsIndex({
                             <div className="rounded-xl border border-neutral-200 bg-white p-4 dark:border-neutral-800 dark:bg-neutral-900">
                                 <div className="flex items-center justify-between pb-3 border-b border-neutral-100 dark:border-neutral-800">
                                     <span className="text-xs font-bold text-neutral-900 dark:text-white">
-                                        Data Snapshot Perubahan
+                                        Data Perubahan Nilai
                                     </span>
                                     <button
                                         type="button"
                                         onClick={() => setShowJsonMode(!showJsonMode)}
                                         className="text-[11px] font-semibold text-[#216B49] hover:underline dark:text-emerald-400 cursor-pointer"
                                     >
-                                        {showJsonMode ? 'Tampilkan Mode Visual' : 'Tampilkan Raw JSON'}
+                                        {showJsonMode ? 'Tampilkan Mode Visual' : 'Tampilkan Data Teknis'}
                                     </button>
                                 </div>
 
@@ -569,7 +579,7 @@ export default function AuditLogsIndex({
                                             <span className="text-xs font-bold text-neutral-500">
                                                 Sebelum (Before):
                                             </span>
-                                            <pre className="mt-1 max-h-56 overflow-auto rounded-lg bg-neutral-100 p-3 font-mono text-[11px] text-neutral-800 dark:bg-neutral-800 dark:text-neutral-200">
+                                            <pre className="mt-1 max-h-56 overflow-auto rounded-lg bg-neutral-100 p-3 font-mono text-[11px] text-neutral-800 dark:bg-neutral-800 dark:text-neutral-200 break-words whitespace-pre-wrap">
                                                 {selectedLog.before_snapshot
                                                     ? JSON.stringify(selectedLog.before_snapshot, null, 2)
                                                     : 'null (Tidak Ada Data Sebelumnya)'}
@@ -580,7 +590,7 @@ export default function AuditLogsIndex({
                                             <span className="text-xs font-bold text-[#216B49] dark:text-emerald-400">
                                                 Sesudah (After):
                                             </span>
-                                            <pre className="mt-1 max-h-56 overflow-auto rounded-lg bg-neutral-100 p-3 font-mono text-[11px] text-neutral-800 dark:bg-neutral-800 dark:text-neutral-200">
+                                            <pre className="mt-1 max-h-56 overflow-auto rounded-lg bg-neutral-100 p-3 font-mono text-[11px] text-neutral-800 dark:bg-neutral-800 dark:text-neutral-200 break-words whitespace-pre-wrap">
                                                 {selectedLog.after_snapshot
                                                     ? JSON.stringify(selectedLog.after_snapshot, null, 2)
                                                     : 'null'}
@@ -596,9 +606,9 @@ export default function AuditLogsIndex({
                                                 <table className="w-full text-xs text-left">
                                                     <thead>
                                                         <tr className="border-b border-neutral-100 text-neutral-400 uppercase text-[10px] font-bold dark:border-neutral-800">
-                                                            <th className="py-2 px-3 w-1/3">Properti Data</th>
-                                                            <th className="py-2 px-3 w-1/3 text-rose-600 dark:text-rose-400">Nilai Sebelum</th>
-                                                            <th className="py-2 px-3 w-1/3 text-emerald-600 dark:text-emerald-400">Nilai Sesudah</th>
+                                                            <th className="py-2.5 px-3 w-1/3">Data / Atribut</th>
+                                                            <th className="py-2.5 px-3 w-1/3 text-rose-600 dark:text-rose-400">Nilai Sebelum</th>
+                                                            <th className="py-2.5 px-3 w-1/3 text-emerald-600 dark:text-emerald-400">Nilai Sesudah</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody className="divide-y divide-neutral-100 dark:divide-neutral-800">
@@ -608,16 +618,16 @@ export default function AuditLogsIndex({
                                                             const isChanged = JSON.stringify(beforeVal) !== JSON.stringify(afterVal);
 
                                                             return (
-                                                                <tr key={key} className={isChanged ? 'bg-amber-50/40 dark:bg-amber-950/20' : ''}>
-                                                                    <td className="py-2 px-3 font-mono font-semibold text-neutral-700 dark:text-neutral-300">
+                                                                <tr key={key} className={isChanged ? 'bg-amber-50/50 dark:bg-amber-950/20' : ''}>
+                                                                    <td className="py-2.5 px-3 font-semibold text-neutral-700 dark:text-neutral-300 align-top break-words">
                                                                         {key}
                                                                     </td>
-                                                                    <td className="py-2 px-3 text-neutral-500 font-mono">
+                                                                    <td className="py-2.5 px-3 text-neutral-600 dark:text-neutral-300 font-medium align-top break-words leading-relaxed">
                                                                         {beforeVal !== undefined && beforeVal !== null
                                                                             ? String(beforeVal)
                                                                             : <span className="text-neutral-300 italic">kosong</span>}
                                                                     </td>
-                                                                    <td className="py-2 px-3 font-mono font-bold text-neutral-900 dark:text-white">
+                                                                    <td className="py-2.5 px-3 font-bold text-neutral-900 dark:text-white align-top break-words leading-relaxed">
                                                                         {afterVal !== undefined && afterVal !== null
                                                                             ? String(afterVal)
                                                                             : <span className="text-neutral-300 italic">kosong</span>}
@@ -634,12 +644,12 @@ export default function AuditLogsIndex({
                                                 {Object.entries(selectedLog.after_snapshot).map(([k, v]) => (
                                                     <div
                                                         key={k}
-                                                        className="flex items-center justify-between text-xs py-1.5 px-3 rounded-lg bg-neutral-50 dark:bg-neutral-800/60"
+                                                        className="flex items-start justify-between gap-4 text-xs py-2 px-3 rounded-lg bg-neutral-50 dark:bg-neutral-800/60"
                                                     >
-                                                        <span className="font-mono text-neutral-500 font-medium">
+                                                        <span className="text-neutral-600 dark:text-neutral-400 font-medium shrink-0">
                                                             {k}:
                                                         </span>
-                                                        <span className="font-mono font-bold text-neutral-900 dark:text-white">
+                                                        <span className="font-bold text-neutral-900 dark:text-white text-right break-words leading-relaxed">
                                                             {typeof v === 'object' ? JSON.stringify(v) : String(v)}
                                                         </span>
                                                     </div>
@@ -655,29 +665,12 @@ export default function AuditLogsIndex({
                             </div>
 
                             {/* Technical Metadata Footer */}
-                            <div className="flex flex-wrap items-center justify-between gap-2 text-[11px] text-neutral-400 pt-2 px-1 font-mono">
-                                <div className="flex items-center gap-1.5">
-                                    <span>Request ID:</span>
-                                    <span className="truncate max-w-[200px] text-neutral-600 dark:text-neutral-300">
-                                        {selectedLog.request_id || 'N/A'}
-                                    </span>
-                                    {selectedLog.request_id && (
-                                        <button
-                                            type="button"
-                                            onClick={() => handleCopyRequestId(selectedLog.request_id!)}
-                                            className="hover:text-black dark:hover:text-white cursor-pointer ml-1"
-                                            title="Salin Request ID"
-                                        >
-                                            {copiedRequestId ? (
-                                                <Check className="size-3 text-emerald-600" />
-                                            ) : (
-                                                <Copy className="size-3" />
-                                            )}
-                                        </button>
-                                    )}
+                            <div className="flex items-center justify-between text-[11px] text-neutral-400 pt-1 px-1">
+                                <div>
+                                    Alamat IP: <span className="font-mono text-neutral-600 dark:text-neutral-300">{selectedLog.ip_address || '127.0.0.1'}</span>
                                 </div>
                                 <div>
-                                    IP Address: {selectedLog.ip_address || '127.0.0.1'}
+                                    Waktu: <span className="font-medium text-neutral-600 dark:text-neutral-300">{selectedLog.created_at_formatted}</span>
                                 </div>
                             </div>
                         </div>

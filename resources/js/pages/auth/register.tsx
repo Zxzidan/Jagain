@@ -1,4 +1,5 @@
 import { Form, Head, Link } from '@inertiajs/react';
+import { ShieldCheck } from 'lucide-react';
 import InputError from '@/components/input-error';
 import PasswordInput from '@/components/password-input';
 import { Spinner } from '@/components/ui/spinner';
@@ -12,7 +13,7 @@ type Props = {
 export default function Register({ passwordRules }: Props) {
     return (
         <>
-            <Head title="Daftar Akun Jagain" />
+            <Head title="Daftar Akun Warga - Jagain" />
 
             {/* Top Brand Logo */}
             <div className="mb-6">
@@ -29,12 +30,28 @@ export default function Register({ passwordRules }: Props) {
             </div>
 
             {/* Title & Subtitle Header */}
-            <div className="mb-6">
+            <div className="mb-5">
+                <div className="mb-2">
+                    <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-semibold text-emerald-800 border border-emerald-200/80">
+                        Khusus Warga Pelapor
+                    </span>
+                </div>
                 <h1 className="text-2xl sm:text-[28px] font-bold text-gray-900 tracking-tight flex items-center gap-1.5">
-                    Mulai Kawal Hutan<span className="inline-block hover:rotate-12 transition-transform">👋</span>
+                    Daftar Akun Warga<span className="inline-block hover:rotate-12 transition-transform">👋</span>
                 </h1>
-                <p className="mt-1.5 text-sm text-gray-500 font-normal">
-                    Lengkapi data diri untuk mendaftarkan akun warga pelapor.
+                <p className="mt-1 text-sm text-gray-500 font-normal">
+                    Lengkapi data diri untuk mendaftar sebagai warga pemantau karhutla.
+                </p>
+            </div>
+
+            {/* Notice: Hanya Warga yang Mendaftar */}
+            <div className="mb-5 rounded-xl border border-emerald-200/90 bg-emerald-50/70 p-3.5 text-xs text-emerald-900 shadow-2xs">
+                <div className="flex items-center gap-2 font-semibold">
+                    <ShieldCheck className="size-4 shrink-0 text-emerald-700" />
+                    <span>Pendaftaran Khusus Warga (Masyarakat)</span>
+                </div>
+                <p className="mt-1 text-[11px] leading-relaxed text-emerald-800 pl-6">
+                    Pendaftaran mandiri diperuntukkan bagi warga pelapor. Akun petugas instansi (OPD) dibuat langsung oleh Administrator sistem.
                 </p>
             </div>
 
@@ -156,6 +173,17 @@ export default function Register({ passwordRules }: Props) {
                                     Sign In
                                 </Link>
                             </div>
+
+                            {/* OPD Officer Note */}
+                            <p className="pt-2 text-center text-xs text-gray-500">
+                                Petugas Instansi / OPD?{' '}
+                                <Link
+                                    href={login()}
+                                    className="font-semibold text-emerald-700 hover:text-emerald-800 hover:underline"
+                                >
+                                    Masuk dengan Akun OPD
+                                </Link>
+                            </p>
                         </div>
                     </>
                 )}

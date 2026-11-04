@@ -104,9 +104,9 @@ const statusConfig: Record<string, { label: string; bg: string; text: string; bo
     },
     COMPLETED: {
         label: 'Penugasan Selesai',
-        bg: 'bg-[#10e57a]',
-        text: 'text-black font-bold',
-        border: 'border-[#10e57a]',
+        bg: 'bg-emerald-100',
+        text: 'text-neutral-900 font-bold',
+        border: 'border-emerald-300',
         icon: CheckCheck,
     },
 };

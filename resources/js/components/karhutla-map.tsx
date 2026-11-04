@@ -1,6 +1,5 @@
 import { useEffect, useRef } from 'react';
 import type * as LeafletType from 'leaflet';
-import { Info, AlertTriangle } from 'lucide-react';
 
 export interface MapReport {
     id: number;
@@ -73,8 +72,6 @@ export default function KarhutlaMap({
     const mapInstanceRef = useRef<LeafletType.Map | null>(null);
     const markersLayerRef = useRef<LeafletType.LayerGroup | null>(null);
     const selectedMarkerRef = useRef<LeafletType.Marker | null>(null);
-
-    const hasSimulatedData = reports.some(r => r.is_simulated) || observations.some(o => o.is_simulated);
 
     useEffect(() => {
         if (!mapContainerRef.current || typeof window === 'undefined') return;
@@ -343,21 +340,6 @@ export default function KarhutlaMap({
 
     return (
         <div className={`relative flex flex-col overflow-hidden bg-neutral-100 ${className || 'border border-neutral-200 rounded-3xl'}`}>
-            {/* Simulation Warning Banner if simulated data is visible */}
-            {hasSimulatedData && showSimulatedNotice && (
-                <div className="bg-neutral-50 border-b border-neutral-200 px-4 py-2 flex items-center justify-between text-xs text-neutral-700 z-20 font-sans">
-                    <div className="flex items-center gap-2">
-                        <AlertTriangle className="size-3.5 text-neutral-800" />
-                        <span>
-                            <strong>Transparansi Data:</strong> Sebagian titik di peta merupakan <span className="font-semibold underline">DATA SIMULASI</span> berlabel untuk tujuan pengujian sistem.
-                        </span>
-                    </div>
-                    <span className="hidden sm:inline-block text-[11px] text-neutral-500 font-sans font-semibold">
-                        Validasi Mandiri
-                    </span>
-                </div>
-            )}
-
             {/* Map Container */}
             <div
                 ref={mapContainerRef}

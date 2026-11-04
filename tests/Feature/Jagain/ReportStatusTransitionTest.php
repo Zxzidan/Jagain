@@ -1,8 +1,12 @@
 <?php
 
+use App\Enums\AssignmentStatus;
 use App\Enums\FireCondition;
 use App\Enums\ReportStatus;
 use App\Enums\UserRole;
+use App\Models\Agency;
+use App\Models\Assignment;
+use App\Models\AssignmentHistory;
 use App\Models\AuditLog;
 use App\Models\Report;
 use App\Models\ReportCategory;
@@ -179,4 +183,68 @@ test('invalid status transition is rejected by server state machine', function (
     $response->assertSessionHasErrors(['target_status']);
     $report->refresh();
     expect($report->report_status)->toBe(ReportStatus::SUBMITTED);
+});
+
+test('admin transitioning report to RESOLVED_VERIFIED automatically marks assignment as COMPLETED', function () {
+    $admin = User::factory()->create([
+        'role' => UserRole::ADMIN,
+    ]);
+
+    $agency = Agency::create([
+        'name' => 'Dinas Damkar Pontianak Test',
+        'code' => 'DAMKAR_PTK_TEST',
+        'agency_type' => 'DAMKAR',
+        'jurisdiction' => 'Kota Pontianak',
+        'is_active' => true,
+    ]);
+
+    $category = ReportCategory::create([
+        'name' => 'Lahan Gambut Test',
+        'slug' => 'lahan-gambut-test-resolved',
+        'is_active' => true,
+    ]);
+
+    $report = Report::create([
+        'category_id' => $category->id,
+        'title' => 'Laporan Siap Diselesaikan',
+        'description' => 'Penanganan lapangan selesai dan telah diajukan review.',
+        'latitude' => -0.0500,
+        'longitude' => 109.3500,
+        'province' => 'Kalimantan Barat',
+        'regency_city' => 'Kota Pontianak',
+        'location_description' => 'Pontianak',
+        'report_status' => ReportStatus::RESOLUTION_REVIEW,
+        'fire_condition' => FireCondition::OBSERVED_EXTINGUISHED,
+        'visibility' => 'PUBLIC',
+        'is_simulated' => false,
+    ]);
+
+    $assignment = Assignment::create([
+        'report_id' => $report->id,
+        'agency_id' => $agency->id,
+        'assigned_by_user_id' => $admin->id,
+        'assignment_status' => AssignmentStatus::SUBMITTED_FOR_REVIEW,
+        'assigned_at' => now(),
+    ]);
+
+    $this->actingAs($admin);
+
+    $response = $this->post(route('admin.reports.transition', ['report' => $report->id]), [
+        'target_status' => ReportStatus::RESOLVED_VERIFIED->value,
+        'note' => 'Penanganan telah diverifikasi dan disetujui admin.',
+    ]);
+
+    $response->assertRedirect();
+    $report->refresh();
+    $assignment->refresh();
+
+    expect($report->report_status)->toBe(ReportStatus::RESOLVED_VERIFIED);
+    expect($assignment->assignment_status)->toBe(AssignmentStatus::COMPLETED);
+    expect($assignment->resolved_at)->not->toBeNull();
+
+    $history = AssignmentHistory::where('assignment_id', $assignment->id)
+        ->where('to_status', AssignmentStatus::COMPLETED->value)
+        ->first();
+    expect($history)->not->toBeNull();
+    expect($history->actor_user_id)->toBe($admin->id);
 });

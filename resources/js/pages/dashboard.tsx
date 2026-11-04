@@ -3,11 +3,11 @@ import { Head, Link, usePage } from '@inertiajs/react';
 import {
     AlertCircle,
     ArrowRight,
+    BookOpen,
     Camera,
     CheckCircle2,
     Clock,
     FileText,
-    HelpCircle,
     Info,
     Map,
     MapPin,
@@ -198,11 +198,10 @@ export default function Dashboard({
                             <h1 className="text-2xl font-bold tracking-tight text-white sm:text-3xl">
                                 Dasbor Pelaporan & Pengawasan Karhutla
                             </h1>
-                            <p className="text-sm leading-relaxed text-white/90 sm:text-base sm:leading-relaxed">
-                                Pantau perkembangan laporan kebakaran hutan dan
-                                lahan yang Anda sampaikan, lengkapi data jika
+                            <p className="text-sm leading-relaxed text-white/85">
+                                Pantau laporan karhutla Anda, lengkapi data jika
                                 diperlukan, dan kawal transparansi penanganan
-                                oleh instansi berwenang.
+                                instansi berwenang.
                             </p>
                         </div>
 
@@ -246,7 +245,7 @@ export default function Dashboard({
                                         variant="outline"
                                         className="h-auto border border-white/30 bg-white/10 px-3.5 py-2.5 text-xs font-medium text-white backdrop-blur-xs transition-colors duration-150 hover:bg-white/20 hover:text-white sm:text-sm"
                                     >
-                                        <HelpCircle className="size-4 shrink-0 text-emerald-200" />
+                                        <BookOpen className="size-4 shrink-0 text-emerald-200" />
                                         <span>Alur & Panduan</span>
                                     </Button>
                                 </DialogStackTrigger>
@@ -475,11 +474,11 @@ export default function Dashboard({
                                     <FileText className="size-3.5 text-gray-neutral" />
                                 </div>
                             </div>
-                            <div className="mt-3 flex items-baseline gap-2">
-                                <span className="text-xl font-bold tracking-tight text-forest-green tabular-nums sm:text-2xl lg:text-3xl">
+                            <div className="mt-3 flex items-baseline gap-1.5">
+                                <span className="text-2xl font-bold tracking-tight text-forest-green tabular-nums">
                                     {metrics.total}
                                 </span>
-                                <span className="text-lg font-bold tracking-tight text-dark-neutral sm:text-xl lg:text-2xl">
+                                <span className="text-sm font-semibold text-dark-neutral">
                                     laporan
                                 </span>
                             </div>
@@ -498,11 +497,11 @@ export default function Dashboard({
                                     <Clock className="size-3.5 text-gray-neutral" />
                                 </div>
                             </div>
-                            <div className="mt-3 flex items-baseline gap-2">
-                                <span className="text-xl font-bold tracking-tight text-forest-green tabular-nums sm:text-2xl lg:text-3xl">
+                            <div className="mt-3 flex items-baseline gap-1.5">
+                                <span className="text-2xl font-bold tracking-tight text-forest-green tabular-nums">
                                     {metrics.submitted + metrics.in_review}
                                 </span>
-                                <span className="text-lg font-bold tracking-tight text-dark-neutral sm:text-xl lg:text-2xl">
+                                <span className="text-sm font-semibold text-dark-neutral">
                                     berjalan
                                 </span>
                             </div>
@@ -534,11 +533,11 @@ export default function Dashboard({
                                     <CheckCircle2 className="size-3.5 text-primary-green" />
                                 </div>
                             </div>
-                            <div className="mt-3 flex items-baseline gap-2">
-                                <span className="text-xl font-bold tracking-tight text-forest-green tabular-nums sm:text-2xl lg:text-3xl">
+                            <div className="mt-3 flex items-baseline gap-1.5">
+                                <span className="text-2xl font-bold tracking-tight text-forest-green tabular-nums">
                                     {metrics.verified}
                                 </span>
-                                <span className="text-lg font-bold tracking-tight text-dark-neutral sm:text-xl lg:text-2xl">
+                                <span className="text-sm font-semibold text-dark-neutral">
                                     tervalidasi
                                 </span>
                             </div>
@@ -557,11 +556,11 @@ export default function Dashboard({
                                     <Shield className="size-3.5 text-gray-neutral" />
                                 </div>
                             </div>
-                            <div className="mt-3 flex items-baseline gap-2">
-                                <span className="text-xl font-bold tracking-tight text-forest-green tabular-nums sm:text-2xl lg:text-3xl">
+                            <div className="mt-3 flex items-baseline gap-1.5">
+                                <span className="text-2xl font-bold tracking-tight text-forest-green tabular-nums">
                                     {metrics.resolved}
                                 </span>
-                                <span className="text-lg font-bold tracking-tight text-dark-neutral sm:text-xl lg:text-2xl">
+                                <span className="text-sm font-semibold text-dark-neutral">
                                     tuntas
                                 </span>
                             </div>

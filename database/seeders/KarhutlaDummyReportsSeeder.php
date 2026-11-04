@@ -52,7 +52,7 @@ class KarhutlaDummyReportsSeeder extends Seeder
                 'regency_city' => 'Kabupaten Kubu Raya',
                 'location_description' => 'Parit H. Ali, Dusun Mekar Sari, Desa Rasau Jaya Tiga',
                 'reported_occurrence_at' => now()->subHours(2),
-                'report_status' => ReportStatus::DISPATCHED->value,
+                'report_status' => ReportStatus::SUBMITTED->value,
                 'fire_condition' => FireCondition::OBSERVED_ACTIVE->value,
             ],
             [
@@ -69,7 +69,7 @@ class KarhutlaDummyReportsSeeder extends Seeder
                 'regency_city' => 'Kota Palangka Raya',
                 'location_description' => 'Kanal Primer Sebangau Km 16, perbatasan Hutan Lindung',
                 'reported_occurrence_at' => now()->subHours(3),
-                'report_status' => ReportStatus::VERIFIED->value,
+                'report_status' => ReportStatus::SUBMITTED->value,
                 'fire_condition' => FireCondition::OBSERVED_ACTIVE->value,
             ],
             [
@@ -86,7 +86,7 @@ class KarhutlaDummyReportsSeeder extends Seeder
                 'regency_city' => 'Kabupaten Kubu Raya',
                 'location_description' => 'Jl. Trans Kalimantan Km 12, Sungai Ambawang',
                 'reported_occurrence_at' => now()->subHours(5),
-                'report_status' => ReportStatus::VERIFIED->value,
+                'report_status' => ReportStatus::SUBMITTED->value,
                 'fire_condition' => FireCondition::OBSERVED_ACTIVE->value,
             ],
 
@@ -107,7 +107,7 @@ class KarhutlaDummyReportsSeeder extends Seeder
                 'regency_city' => 'Kabupaten Kubu Raya',
                 'location_description' => 'Jl. Poros Rasau Jaya - Ambawang Km 8',
                 'reported_occurrence_at' => now()->subHours(6),
-                'report_status' => ReportStatus::UNDER_REVIEW->value,
+                'report_status' => ReportStatus::SUBMITTED->value,
                 'fire_condition' => FireCondition::REPORTED_ACTIVE->value,
             ],
             [
@@ -162,7 +162,7 @@ class KarhutlaDummyReportsSeeder extends Seeder
                 'regency_city' => 'Kota Pontianak',
                 'location_description' => 'Siantan Tengah, Pontianak Utara',
                 'reported_occurrence_at' => now()->subHours(10),
-                'report_status' => ReportStatus::RESOLVED_VERIFIED->value,
+                'report_status' => ReportStatus::SUBMITTED->value,
                 'fire_condition' => FireCondition::OBSERVED_EXTINGUISHED->value,
             ],
             [
@@ -179,7 +179,7 @@ class KarhutlaDummyReportsSeeder extends Seeder
                 'regency_city' => 'Kabupaten Kubu Raya',
                 'location_description' => 'Desa Sungai Kakap, parit pemisah lahan',
                 'reported_occurrence_at' => now()->subHours(12),
-                'report_status' => ReportStatus::VERIFIED->value,
+                'report_status' => ReportStatus::SUBMITTED->value,
                 'fire_condition' => FireCondition::OBSERVED_CONTAINED->value,
             ],
             [
@@ -196,7 +196,7 @@ class KarhutlaDummyReportsSeeder extends Seeder
                 'regency_city' => 'Kota Banjarbaru',
                 'location_description' => 'Kawasan Cempaka, Banjarbaru',
                 'reported_occurrence_at' => now()->subHours(14),
-                'report_status' => ReportStatus::RESOLVED_VERIFIED->value,
+                'report_status' => ReportStatus::SUBMITTED->value,
                 'fire_condition' => FireCondition::OBSERVED_EXTINGUISHED->value,
             ],
         ];

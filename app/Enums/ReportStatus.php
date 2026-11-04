@@ -16,8 +16,8 @@ enum ReportStatus: string
     public function label(): string
     {
         return match ($this) {
-            self::SUBMITTED => 'Baru Dikirim',
-            self::UNDER_REVIEW => 'Sedang Ditinjau',
+            self::SUBMITTED => 'Perlu Di Review',
+            self::UNDER_REVIEW => 'Perlu Di Review',
             self::NEEDS_INFORMATION => 'Perlu Informasi',
             self::VERIFIED => 'Terverifikasi',
             self::DISPATCHED => 'Ditugaskan ke OPD',

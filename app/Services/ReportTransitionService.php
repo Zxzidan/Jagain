@@ -2,8 +2,10 @@
 
 namespace App\Services;
 
+use App\Enums\AssignmentStatus;
 use App\Enums\FireCondition;
 use App\Enums\ReportStatus;
+use App\Models\AssignmentHistory;
 use App\Models\Report;
 use App\Models\ReportStatusHistory;
 use App\Models\User;
@@ -101,10 +103,100 @@ class ReportTransitionService
                 $report->lock_version += 1;
             }
 
-            if ($targetStatusStr === 'CLOSED_WITH_REASON') {
+            if ($targetStatusStr === 'RESOLVED_VERIFIED') {
+                $activeAssignments = $report->assignments()
+                    ->whereIn('assignment_status', [
+                        AssignmentStatus::SUBMITTED_FOR_REVIEW->value,
+                        AssignmentStatus::IN_PROGRESS->value,
+                        AssignmentStatus::RECEIVED_BY_AGENCY->value,
+                        AssignmentStatus::ASSIGNED->value,
+                    ])
+                    ->get();
+
+                foreach ($activeAssignments as $assignment) {
+                    $prevAssignmentStatus = $assignment->assignment_status instanceof \BackedEnum
+                        ? $assignment->assignment_status->value
+                        : (string) $assignment->assignment_status;
+
+                    $assignment->assignment_status = AssignmentStatus::COMPLETED->value;
+                    $assignment->resolved_at = now();
+                    $assignment->save();
+
+                    AssignmentHistory::create([
+                        'assignment_id' => $assignment->id,
+                        'from_status' => $prevAssignmentStatus,
+                        'to_status' => AssignmentStatus::COMPLETED->value,
+                        'actor_user_id' => $actor->id,
+                        'reason' => 'Admin menyelesaikan dan memverifikasi tindak lanjut penanganan',
+                        'note' => $reason ?? $note ?? 'Penugasan dinyatakan selesai oleh Administrator JAGAIN',
+                        'created_at' => now(),
+                    ]);
+
+                    $this->auditLogService->log(
+                        actor: $actor,
+                        action: 'ASSIGNMENT_COMPLETED',
+                        entityType: 'Assignment',
+                        entityId: $assignment->id,
+                        before: ['assignment_status' => $prevAssignmentStatus],
+                        after: [
+                            'assignment_status' => AssignmentStatus::COMPLETED->value,
+                            'resolved_at' => now(),
+                        ],
+                        reason: $reason ?? $note,
+                    );
+                }
+            } elseif ($targetStatusStr === 'CLOSED_WITH_REASON') {
                 $report->close_reason = $reason;
+
+                $activeAssignments = $report->assignments()
+                    ->whereIn('assignment_status', [
+                        AssignmentStatus::SUBMITTED_FOR_REVIEW->value,
+                        AssignmentStatus::IN_PROGRESS->value,
+                        AssignmentStatus::RECEIVED_BY_AGENCY->value,
+                        AssignmentStatus::ASSIGNED->value,
+                    ])
+                    ->get();
+
+                foreach ($activeAssignments as $assignment) {
+                    $prevAssignmentStatus = $assignment->assignment_status instanceof \BackedEnum
+                        ? $assignment->assignment_status->value
+                        : (string) $assignment->assignment_status;
+
+                    $assignment->assignment_status = AssignmentStatus::COMPLETED->value;
+                    $assignment->closed_at = now();
+                    $assignment->save();
+
+                    AssignmentHistory::create([
+                        'assignment_id' => $assignment->id,
+                        'from_status' => $prevAssignmentStatus,
+                        'to_status' => AssignmentStatus::COMPLETED->value,
+                        'actor_user_id' => $actor->id,
+                        'reason' => 'Laporan ditutup oleh Admin: '.($reason ?? '-'),
+                        'note' => $note,
+                        'created_at' => now(),
+                    ]);
+                }
             } elseif ($targetStatusStr === 'NEEDS_INFORMATION') {
                 $report->information_requested = $publicNote ?? $note;
+            } elseif ($targetStatusStr === 'DISPATCHED' && $currentStatusStr === 'RESOLUTION_REVIEW') {
+                $reviewAssignments = $report->assignments()
+                    ->where('assignment_status', AssignmentStatus::SUBMITTED_FOR_REVIEW->value)
+                    ->get();
+
+                foreach ($reviewAssignments as $assignment) {
+                    $assignment->assignment_status = AssignmentStatus::IN_PROGRESS->value;
+                    $assignment->save();
+
+                    AssignmentHistory::create([
+                        'assignment_id' => $assignment->id,
+                        'from_status' => AssignmentStatus::SUBMITTED_FOR_REVIEW->value,
+                        'to_status' => AssignmentStatus::IN_PROGRESS->value,
+                        'actor_user_id' => $actor->id,
+                        'reason' => 'Admin meminta tindak lanjut penanganan tambahan',
+                        'note' => $reason ?? $note,
+                        'created_at' => now(),
+                    ]);
+                }
             }
 
             if ($fireCondition !== null) {

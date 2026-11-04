@@ -33,8 +33,8 @@ class AdminReportController extends Controller
         $query = Report::query()
             ->with(['category', 'creator', 'createdByUser', 'latestAssignment.agency']);
 
-        if ($status) {
-            if ($status === 'REVIEW' || $status === 'perlu_review') {
+        if ($status && $status !== 'ALL') {
+            if ($status === 'MASUK' || $status === 'REVIEW' || $status === 'perlu_review') {
                 $query->whereIn('report_status', ['SUBMITTED', 'UNDER_REVIEW', 'NEEDS_INFORMATION']);
             } elseif ($status === 'OPD' || $status === 'penanganan_opd') {
                 $query->whereIn('report_status', ['VERIFIED', 'DISPATCHED', 'RESOLUTION_REVIEW']);
@@ -45,6 +45,9 @@ class AdminReportController extends Controller
             } else {
                 $query->where('report_status', $status);
             }
+        } elseif (! $status) {
+            // Default: hanya laporan masuk yang tampil di tabel
+            $query->whereIn('report_status', ['SUBMITTED', 'UNDER_REVIEW', 'NEEDS_INFORMATION']);
         }
 
         if ($province) {
@@ -76,8 +79,10 @@ class AdminReportController extends Controller
         }
 
         $statusCounts = [
-            'all' => Report::count(),
-            'ALL' => Report::count(),
+            'all' => Report::whereIn('report_status', ['SUBMITTED', 'UNDER_REVIEW', 'NEEDS_INFORMATION'])->count(),
+            'ALL' => Report::whereIn('report_status', ['SUBMITTED', 'UNDER_REVIEW', 'NEEDS_INFORMATION'])->count(),
+            'total' => Report::count(),
+            'MASUK' => Report::whereIn('report_status', ['SUBMITTED', 'UNDER_REVIEW', 'NEEDS_INFORMATION'])->count(),
             'REVIEW' => Report::whereIn('report_status', ['SUBMITTED', 'UNDER_REVIEW', 'NEEDS_INFORMATION'])->count(),
             'OPD' => Report::whereIn('report_status', ['VERIFIED', 'DISPATCHED', 'RESOLUTION_REVIEW'])->count(),
             'RESOLVED' => Report::whereIn('report_status', ['RESOLVED_VERIFIED', 'CLOSED_WITH_REASON'])->count(),

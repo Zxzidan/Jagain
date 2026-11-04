@@ -40,10 +40,49 @@ class AgencyAssignmentController extends Controller
             ->latest('assigned_at');
 
         if ($status) {
-            $query->where('assignment_status', $status);
+            if (in_array($status, ['BARU', 'ASSIGNED', 'RECEIVED_BY_AGENCY'], true)) {
+                $query->whereIn('assignment_status', [
+                    AssignmentStatus::ASSIGNED->value,
+                    AssignmentStatus::RECEIVED_BY_AGENCY->value,
+                ]);
+            } elseif (in_array($status, ['DITANGANI', 'IN_PROGRESS'], true)) {
+                $query->where('assignment_status', AssignmentStatus::IN_PROGRESS->value);
+            } elseif (in_array($status, ['DITINJAU', 'SUBMITTED_FOR_REVIEW'], true)) {
+                $query->where('assignment_status', AssignmentStatus::SUBMITTED_FOR_REVIEW->value);
+            } elseif (in_array($status, ['SELESAI', 'COMPLETED', 'DECLINED_BY_AGENCY'], true)) {
+                $query->whereIn('assignment_status', [
+                    AssignmentStatus::COMPLETED->value,
+                    AssignmentStatus::DECLINED_BY_AGENCY->value,
+                ]);
+            } else {
+                $query->where('assignment_status', $status);
+            }
         }
 
         $assignments = $query->paginate(12)->withQueryString();
+
+        $statusOptions = [
+            [
+                'value' => 'BARU',
+                'label' => 'Baru',
+                'subValues' => ['BARU', 'ASSIGNED', 'RECEIVED_BY_AGENCY'],
+            ],
+            [
+                'value' => 'DITANGANI',
+                'label' => 'Ditangani',
+                'subValues' => ['DITANGANI', 'IN_PROGRESS'],
+            ],
+            [
+                'value' => 'DITINJAU',
+                'label' => 'Ditinjau',
+                'subValues' => ['DITINJAU', 'SUBMITTED_FOR_REVIEW'],
+            ],
+            [
+                'value' => 'SELESAI',
+                'label' => 'Selesai',
+                'subValues' => ['SELESAI', 'COMPLETED', 'DECLINED_BY_AGENCY'],
+            ],
+        ];
 
         return Inertia::render('opd/assignments-index', [
             'agency' => $agency,
@@ -51,10 +90,7 @@ class AgencyAssignmentController extends Controller
             'filters' => [
                 'status' => $status,
             ],
-            'statusOptions' => array_map(fn (AssignmentStatus $s) => [
-                'value' => $s->value,
-                'label' => $s->label(),
-            ], AssignmentStatus::cases()),
+            'statusOptions' => $statusOptions,
         ]);
     }
 

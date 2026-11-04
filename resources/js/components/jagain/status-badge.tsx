@@ -21,14 +21,14 @@ const statusConfig: Record<
 > = {
     // Report statuses
     SUBMITTED: {
-        label: 'Menunggu Telaah',
-        bg: 'bg-[#F3F7F4] dark:bg-neutral-800/80',
-        text: 'text-[#343B36] dark:text-neutral-200',
-        border: 'border-[#DDE3DE] dark:border-neutral-700',
+        label: 'Perlu Di Review',
+        bg: 'bg-[#E8F1EB] dark:bg-emerald-950/40',
+        text: 'text-[#174B35] dark:text-emerald-300',
+        border: 'border-[#39845C]/30 dark:border-emerald-800/50',
         icon: Clock,
     },
     UNDER_REVIEW: {
-        label: 'Sedang Diperiksa',
+        label: 'Perlu Di Review',
         bg: 'bg-[#E8F1EB] dark:bg-emerald-950/40',
         text: 'text-[#174B35] dark:text-emerald-300',
         border: 'border-[#39845C]/30 dark:border-emerald-800/50',

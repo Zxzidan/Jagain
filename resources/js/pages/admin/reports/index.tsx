@@ -30,10 +30,9 @@ type ReportsIndexProps = {
 };
 
 const statusTabs: { key: string; label: string; subStatuses?: string[] }[] = [
-    { key: '', label: 'Semua Laporan' },
     {
-        key: 'REVIEW',
-        label: 'Perlu Review',
+        key: '',
+        label: 'Laporan Masuk',
         subStatuses: ['SUBMITTED', 'UNDER_REVIEW', 'NEEDS_INFORMATION'],
     },
     {
@@ -302,13 +301,14 @@ export default function ReportsIndex({
 
                                             <td className="px-4 py-5 align-middle text-center text-xs">
                                                 {report.latest_assignment ? (
-                                                    <div className="space-y-1 max-w-[170px] mx-auto">
+                                                    <div className="space-y-1.5 max-w-[190px] mx-auto flex flex-col items-center">
                                                         <span className="font-semibold text-[#171C19] dark:text-white leading-snug block">
                                                             {report.latest_assignment.agency?.name ?? 'Instansi'}
                                                         </span>
-                                                        <div className="text-[11px] text-[#68716B] dark:text-neutral-400">
-                                                            Status: {report.latest_assignment.assignment_status}
-                                                        </div>
+                                                        <StatusBadge
+                                                            status={report.latest_assignment.assignment_status}
+                                                            className="text-[10px] px-2 py-0.5"
+                                                        />
                                                     </div>
                                                 ) : (
                                                     <span className="text-neutral-400 dark:text-neutral-500 italic text-xs leading-normal inline-block">

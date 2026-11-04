@@ -23,6 +23,18 @@ enum AssignmentStatus: string
         };
     }
 
+    public function shortLabel(): string
+    {
+        return match ($this) {
+            self::ASSIGNED => 'Baru',
+            self::RECEIVED_BY_AGENCY => 'Diterima',
+            self::IN_PROGRESS => 'Ditangani',
+            self::SUBMITTED_FOR_REVIEW => 'Ditinjau',
+            self::COMPLETED => 'Selesai',
+            self::DECLINED_BY_AGENCY => 'Ditolak',
+        };
+    }
+
     public function canTransitionTo(self $target): bool
     {
         if ($this === $target) {

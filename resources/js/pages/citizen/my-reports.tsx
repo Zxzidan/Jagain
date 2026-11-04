@@ -40,8 +40,9 @@ interface MyReportsProps {
 }
 
 export default function MyReports({ reports, filters }: MyReportsProps) {
-    const handleStatusFilter = (status: string) => {
-        router.get('/laporan-saya', { status: status || undefined }, { preserveState: true });
+    const handleStatusFilter = (targetStatus: string) => {
+        const nextStatus = filters.status === targetStatus ? '' : targetStatus;
+        router.get('/laporan-saya', { status: nextStatus || undefined }, { preserveState: true });
     };
 
     return (
@@ -74,17 +75,6 @@ export default function MyReports({ reports, filters }: MyReportsProps) {
 
             {/* Status Filter Tabs */}
             <div className="flex flex-wrap items-center gap-2 text-xs font-semibold">
-                <button
-                    type="button"
-                    onClick={() => handleStatusFilter('')}
-                    className={`px-3.5 py-1.5 rounded-xl border transition-all cursor-pointer ${
-                        !filters.status
-                            ? 'bg-[#216B49] text-white border-[#216B49] shadow-xs'
-                            : 'bg-white dark:bg-neutral-900 text-[#343B36] dark:text-neutral-300 border-[#DDE3DE] dark:border-neutral-800 hover:bg-[#E8F1EB]'
-                    }`}
-                >
-                    Semua Status ({reports.total})
-                </button>
                 <button
                     type="button"
                     onClick={() => handleStatusFilter('SUBMITTED')}

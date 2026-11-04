@@ -38,6 +38,8 @@ class Assignment extends Model
         'assigned_at',
         'acknowledged_at',
         'declined_at',
+        'resolved_at',
+        'closed_at',
         'notes',
     ];
 
@@ -48,6 +50,8 @@ class Assignment extends Model
             'assigned_at' => 'datetime',
             'acknowledged_at' => 'datetime',
             'declined_at' => 'datetime',
+            'resolved_at' => 'datetime',
+            'closed_at' => 'datetime',
             'updated_at' => 'datetime',
         ];
     }

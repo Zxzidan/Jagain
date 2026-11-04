@@ -19,6 +19,12 @@ interface AssignmentItem {
     };
 }
 
+interface StatusOption {
+    value: string;
+    label: string;
+    subValues?: string[];
+}
+
 interface AssignmentsIndexProps {
     agency: {
         id: number;
@@ -35,8 +41,15 @@ interface AssignmentsIndexProps {
     filters: {
         status?: string;
     };
-    statusOptions: Array<{ value: string; label: string }>;
+    statusOptions: StatusOption[];
 }
+
+const defaultStatusOptions: StatusOption[] = [
+    { value: 'BARU', label: 'Baru', subValues: ['BARU', 'ASSIGNED', 'RECEIVED_BY_AGENCY'] },
+    { value: 'DITANGANI', label: 'Ditangani', subValues: ['DITANGANI', 'IN_PROGRESS'] },
+    { value: 'DITINJAU', label: 'Ditinjau', subValues: ['DITINJAU', 'SUBMITTED_FOR_REVIEW'] },
+    { value: 'SELESAI', label: 'Selesai', subValues: ['SELESAI', 'COMPLETED', 'DECLINED_BY_AGENCY'] },
+];
 
 export default function OpdAssignmentsIndex({
     agency,
@@ -46,11 +59,21 @@ export default function OpdAssignmentsIndex({
 }: AssignmentsIndexProps) {
     const [status, setStatus] = useState(filters.status || '');
 
+    const optionsToRender = statusOptions?.length === 4 ? statusOptions : defaultStatusOptions;
+
+    const isOptionActive = (opt: StatusOption) => {
+        if (status === opt.value) return true;
+        if (opt.subValues && opt.subValues.includes(status)) return true;
+        return false;
+    };
+
     const handleFilterChange = (newStatus: string) => {
-        setStatus(newStatus);
+        const isCurrentActive = status === newStatus || (optionsToRender.find(o => o.value === newStatus)?.subValues?.includes(status) ?? false);
+        const nextStatus = isCurrentActive ? '' : newStatus;
+        setStatus(nextStatus);
         router.get(
             '/opd/tugas',
-            { status: newStatus || undefined },
+            { status: nextStatus || undefined },
             { preserveState: true }
         );
     };
@@ -87,33 +110,25 @@ export default function OpdAssignmentsIndex({
             </div>
 
             <div className="space-y-4">
-                {/* Filter Tabs */}
+                {/* Filter Tabs (4 ringkas) */}
                 <div className="flex flex-wrap items-center gap-2 text-xs">
-                    <button
-                        type="button"
-                        onClick={() => handleFilterChange('')}
-                        className={`px-3.5 py-1.5 rounded-lg text-xs font-sans transition-all border ${
-                            !status
-                                ? 'bg-neutral-900 text-white border-neutral-900 font-semibold shadow-xs'
-                                : 'bg-white text-neutral-700 border-neutral-200 hover:bg-neutral-50 hover:text-neutral-900 hover:border-neutral-300 font-medium'
-                        }`}
-                    >
-                        Semua Status ({assignments.total})
-                    </button>
-                    {statusOptions.map((opt) => (
-                        <button
-                            key={opt.value}
-                            type="button"
-                            onClick={() => handleFilterChange(opt.value)}
-                            className={`px-3.5 py-1.5 rounded-lg text-xs font-sans transition-all border ${
-                                status === opt.value
-                                    ? 'bg-neutral-900 text-white border-neutral-900 font-semibold shadow-xs'
-                                    : 'bg-white text-neutral-700 border-neutral-200 hover:bg-neutral-50 hover:text-neutral-900 hover:border-neutral-300 font-medium'
-                            }`}
-                        >
-                            {opt.label}
-                        </button>
-                    ))}
+                    {optionsToRender.map((opt) => {
+                        const active = isOptionActive(opt);
+                        return (
+                            <button
+                                key={opt.value}
+                                type="button"
+                                onClick={() => handleFilterChange(opt.value)}
+                                className={`px-4 py-1.5 rounded-lg text-xs font-sans transition-all border ${
+                                    active
+                                        ? 'bg-neutral-900 text-white border-neutral-900 font-semibold shadow-xs'
+                                        : 'bg-white text-neutral-700 border-neutral-200 hover:bg-neutral-50 hover:text-neutral-900 hover:border-neutral-300 font-medium'
+                                }`}
+                            >
+                                {opt.label}
+                            </button>
+                        );
+                    })}
                 </div>
 
                 {/* Table */}
