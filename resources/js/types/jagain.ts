@@ -26,10 +26,24 @@ export type Category = {
 export type Agency = {
     id: number;
     name: string;
+    code?: string | null;
     agency_type: string;
     jurisdiction: string;
     is_active: boolean;
     assignments_count?: number;
+    agency_memberships_count?: number;
+    agency_memberships?: Array<{
+        id: number;
+        user_id: number;
+        role_in_agency: string;
+        user?: {
+            id: number;
+            name: string;
+            email: string;
+            phone?: string | null;
+            created_at?: string;
+        };
+    }>;
     created_at?: string;
     updated_at?: string;
 };

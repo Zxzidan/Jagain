@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Agency;
+use App\Models\AgencyMembership;
 use App\Models\AuditLog;
 use App\Models\Category;
 use App\Models\Report;
@@ -306,6 +307,78 @@ test('admin can manage agencies master data', function () {
 
     $this->actingAs($this->admin)->patch(route('admin.agencies.toggle-status', $agency));
     expect($agency->fresh()->is_active)->toBeFalse();
+});
+
+test('admin can view agencies index with agency memberships and user data', function () {
+    $agency = Agency::create([
+        'name' => 'BPBD Mempawah',
+        'agency_type' => 'BPBD',
+        'jurisdiction' => 'Kabupaten Mempawah',
+        'is_active' => true,
+    ]);
+
+    $user = User::factory()->create([
+        'role' => 'AGENCY',
+        'email_verified_at' => now(),
+    ]);
+
+    AgencyMembership::create([
+        'user_id' => $user->id,
+        'agency_id' => $agency->id,
+        'membership_status' => 'ACTIVE',
+        'role_in_agency' => 'OFFICER',
+    ]);
+
+    $response = $this->actingAs($this->admin)->get(route('admin.agencies.index'));
+    $response->assertOk();
+    $response->assertInertia(fn ($page) => $page
+        ->component('admin/agencies/index')
+        ->has('agencies.data')
+        ->has('allAgenciesList')
+    );
+});
+
+test('admin can create user account for an agency', function () {
+    $agency = Agency::create([
+        'name' => 'BPBD Kabupaten Sambas',
+        'agency_type' => 'BPBD',
+        'jurisdiction' => 'Kabupaten Sambas',
+        'is_active' => true,
+    ]);
+
+    $response = $this->actingAs($this->admin)->post(route('admin.agencies.users.store', $agency), [
+        'name' => 'Dedi Setiawan',
+        'email' => 'dedi.sambas@bpbd.go.id',
+        'phone' => '081234567890',
+        'role_in_agency' => 'OFFICER',
+        'password' => 'secret1234',
+        'password_confirmation' => 'secret1234',
+    ]);
+
+    $response->assertRedirect();
+    $response->assertSessionHas('success');
+
+    $this->assertDatabaseHas('users', [
+        'name' => 'Dedi Setiawan',
+        'email' => 'dedi.sambas@bpbd.go.id',
+        'role' => 'AGENCY',
+    ]);
+
+    $user = User::where('email', 'dedi.sambas@bpbd.go.id')->first();
+    expect($user->email_verified_at)->not->toBeNull();
+
+    $this->assertDatabaseHas('agency_memberships', [
+        'user_id' => $user->id,
+        'agency_id' => $agency->id,
+        'membership_status' => 'ACTIVE',
+        'role_in_agency' => 'OFFICER',
+    ]);
+
+    $this->assertDatabaseHas('audit_logs', [
+        'actor_user_id' => $this->admin->id,
+        'action' => 'AGENCY_USER_CREATED',
+        'entity_id' => $user->id,
+    ]);
 });
 
 test('admin can manage categories master data', function () {

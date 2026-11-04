@@ -52,6 +52,14 @@ class Agency extends Model
     }
 
     /**
+     * @return HasMany<AgencyMembership, $this>
+     */
+    public function agencyMemberships(): HasMany
+    {
+        return $this->hasMany(AgencyMembership::class);
+    }
+
+    /**
      * @return BelongsToMany<User, $this>
      */
     public function members(): BelongsToMany

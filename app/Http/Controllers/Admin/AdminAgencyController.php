@@ -2,11 +2,15 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Enums\UserRole;
 use App\Http\Controllers\Controller;
 use App\Models\Agency;
+use App\Models\AgencyMembership;
+use App\Models\User;
 use App\Services\AuditLogService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -21,13 +25,19 @@ class AdminAgencyController extends Controller
         $search = $request->string('search')->toString();
 
         $query = Agency::query()
-            ->withCount('assignments');
+            ->withCount(['assignments', 'agencyMemberships'])
+            ->with(['agencyMemberships.user:id,name,email,phone,created_at']);
 
         if (! empty($search)) {
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
                     ->orWhere('jurisdiction', 'like', "%{$search}%")
-                    ->orWhere('agency_type', 'like', "%{$search}%");
+                    ->orWhere('agency_type', 'like', "%{$search}%")
+                    ->orWhere('code', 'like', "%{$search}%")
+                    ->orWhereHas('agencyMemberships.user', function ($uq) use ($search) {
+                        $uq->where('name', 'like', "%{$search}%")
+                            ->orWhere('email', 'like', "%{$search}%");
+                    });
             });
         }
 
@@ -35,8 +45,13 @@ class AdminAgencyController extends Controller
             ->paginate(15)
             ->withQueryString();
 
+        $allAgenciesList = Agency::where('is_active', true)
+            ->orderBy('name')
+            ->get(['id', 'name', 'code', 'jurisdiction', 'agency_type']);
+
         return Inertia::render('admin/agencies/index', [
             'agencies' => $agencies,
+            'allAgenciesList' => $allAgenciesList,
             'filters' => [
                 'search' => $search,
             ],
@@ -140,5 +155,65 @@ class AdminAgencyController extends Controller
     public function toggleActive(Request $request, Agency $agency): RedirectResponse
     {
         return $this->toggleStatus($request, $agency);
+    }
+
+    /**
+     * Create an OPD user account tied to an agency.
+     */
+    public function storeUser(Request $request, ?Agency $agency = null): RedirectResponse
+    {
+        $targetAgency = $agency && $agency->exists
+            ? $agency
+            : Agency::findOrFail($request->input('agency_id'));
+
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
+            'phone' => ['nullable', 'string', 'max:50'],
+            'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'role_in_agency' => ['nullable', 'string', 'in:OFFICER,COORDINATOR,ADMIN'],
+        ], [
+            'name.required' => 'Nama lengkap petugas wajib diisi.',
+            'email.required' => 'Email login petugas wajib diisi.',
+            'email.email' => 'Format email tidak valid.',
+            'email.unique' => 'Email ini sudah terdaftar di sistem.',
+            'password.required' => 'Password login wajib diisi.',
+            'password.min' => 'Password minimal terdiri dari 8 karakter.',
+            'password.confirmed' => 'Konfirmasi password tidak sesuai.',
+        ]);
+
+        $user = User::create([
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'phone' => $validated['phone'] ?? null,
+            'password' => Hash::make($validated['password']),
+            'role' => UserRole::AGENCY,
+            'email_verified_at' => now(),
+        ]);
+
+        AgencyMembership::create([
+            'user_id' => $user->id,
+            'agency_id' => $targetAgency->id,
+            'membership_status' => 'ACTIVE',
+            'role_in_agency' => $validated['role_in_agency'] ?? 'OFFICER',
+        ]);
+
+        $this->auditLogService->log(
+            actor: $request->user(),
+            action: 'AGENCY_USER_CREATED',
+            entityType: 'User',
+            entityId: $user->id,
+            after: [
+                'user_id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'agency_id' => $targetAgency->id,
+                'agency_name' => $targetAgency->name,
+                'role' => 'AGENCY',
+                'role_in_agency' => $validated['role_in_agency'] ?? 'OFFICER',
+            ],
+        );
+
+        return back()->with('success', "Akun login petugas {$user->name} untuk instansi {$targetAgency->name} berhasil dibuat.");
     }
 }

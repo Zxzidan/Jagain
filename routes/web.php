@@ -73,10 +73,14 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     // Agencies Management
     Route::get('/agencies', [AdminAgencyController::class, 'index'])->name('agencies.index');
     Route::post('/agencies', [AdminAgencyController::class, 'store'])->name('agencies.store');
+    Route::post('/agencies/users', [AdminAgencyController::class, 'storeUser'])->name('agencies.users.store-general');
+    Route::post('/agencies/{agency}/users', [AdminAgencyController::class, 'storeUser'])->name('agencies.users.store');
     Route::put('/agencies/{agency}', [AdminAgencyController::class, 'update'])->name('agencies.update');
     Route::patch('/agencies/{agency}/toggle-status', [AdminAgencyController::class, 'toggleStatus'])->name('agencies.toggle-status');
     Route::get('/instansi', [AdminAgencyController::class, 'index']);
     Route::post('/instansi', [AdminAgencyController::class, 'store']);
+    Route::post('/instansi/users', [AdminAgencyController::class, 'storeUser']);
+    Route::post('/instansi/{agency}/users', [AdminAgencyController::class, 'storeUser']);
     Route::post('/instansi/{agency}/toggle', [AdminAgencyController::class, 'toggleActive']);
 
     // Categories Management

@@ -143,7 +143,7 @@ export default function OpdDashboard({
 
     return (
         <>
-            <Head title={`Posko Operasional ${agency.code} - JAGAIN`} />
+            <Head title={`Posko Operasional ${agency.name} - JAGAIN`} />
 
             <div className="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-6 p-4 sm:p-6 lg:p-8">
                 {/* Flash Success & Error Notification */}
@@ -230,7 +230,7 @@ export default function OpdDashboard({
                         <div className="max-w-2xl space-y-2">
                             <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1 text-xs font-medium text-emerald-100 backdrop-blur-xs">
                                 <Building2 className="size-3.5 shrink-0 text-emerald-200" />
-                                <span>Posko Operasional Lapangan &bull; {agency.code}</span>
+                                <span>Posko Operasional Lapangan {agency.code ? `• ${agency.code}` : ''}</span>
                             </div>
                             <h1 className="text-2xl font-bold tracking-tight text-white sm:text-3xl">
                                 {agency.name}
@@ -532,7 +532,7 @@ export default function OpdDashboard({
                                                 <div className="flex min-w-0 items-center gap-1.5">
                                                     <MapPin className="size-3.5 shrink-0 text-primary-green" />
                                                     <span className="max-w-[280px] truncate font-medium text-forest-green sm:max-w-md">
-                                                        {asg.report.location_description || `${asg.report.regency_city}, ${asg.report.province}`}
+                                                        {asg.report.location_description || [asg.report.regency_city, asg.report.province].filter(Boolean).join(', ') || 'Wilayah Terdata Lapangan'}
                                                     </span>
                                                 </div>
                                                 <div className="flex shrink-0 items-center gap-1.5">

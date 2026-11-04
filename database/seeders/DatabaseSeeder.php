@@ -119,7 +119,7 @@ class DatabaseSeeder extends Seeder
         }
 
         // 3. Agencies
-        $bpbdKalbar = Agency::firstOrCreate(
+        $bpbdKalbar = Agency::updateOrCreate(
             ['name' => 'BPBD Provinsi Kalimantan Barat'],
             [
                 'code' => 'BPBD-KALBAR',
@@ -131,7 +131,7 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        $manggalaKalteng = Agency::firstOrCreate(
+        $manggalaKalteng = Agency::updateOrCreate(
             ['name' => 'Manggala Agni Daops Palangka Raya'],
             [
                 'code' => 'MANGGALA-KALTENG',
@@ -143,7 +143,7 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        $bpbdKalsel = Agency::firstOrCreate(
+        $bpbdKalsel = Agency::updateOrCreate(
             ['name' => 'BPBD Provinsi Kalimantan Selatan'],
             [
                 'code' => 'BPBD-KALSEL',
@@ -155,7 +155,7 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        $disdamkarPontianak = Agency::firstOrCreate(
+        $disdamkarPontianak = Agency::updateOrCreate(
             ['name' => 'Dinas Kebakaran & Penyelamatan Kota Pontianak'],
             [
                 'code' => 'DISDAMKAR-PONTIANAK',
