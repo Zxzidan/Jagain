@@ -18,6 +18,8 @@ export interface MapReport {
     fire_condition_label?: string;
     reported_occurrence_at?: string | null;
     is_simulated?: boolean;
+    severity?: 'RINGAN' | 'SEDANG' | 'BERAT' | string;
+    severity_label?: string;
 }
 
 export interface MapObservation {
@@ -145,22 +147,38 @@ export default function KarhutlaMap({
         // Clear existing markers
         layer.clearLayers();
 
-        // Icon Generators (Clean, professional GIS markers - NO tacky AI droplet icons or neon glows)
-        const createCitizenIcon = (status: string) => {
-            const isVerified = ['VERIFIED', 'DISPATCHED', 'RESOLUTION_REVIEW', 'RESOLVED_VERIFIED'].includes(status);
-            const pinColor = isVerified ? '#10e57a' : '#171717';
-            const innerColor = isVerified ? '#0a0a0a' : '#ffffff';
+        // Icon Generators categorized by Severity (RINGAN, SEDANG, BERAT)
+        const createCitizenIcon = (rep: MapReport) => {
+            const rawSeverity = rep.severity?.toUpperCase() || (
+                rep.title.toLowerCase().includes('berat') ? 'BERAT' :
+                rep.title.toLowerCase().includes('ringan') ? 'RINGAN' : 'SEDANG'
+            );
+
+            let pinColor = '#f97316'; // Sedang: Orange
+            let pulseHtml = '';
+
+            if (rawSeverity === 'BERAT') {
+                pinColor = '#ef4444'; // Berat: Red
+                pulseHtml = `
+                    <div style="position: absolute; inset: -4px; border-radius: 50%; background-color: rgba(239, 68, 68, 0.4); animation: ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;"></div>
+                `;
+            } else if (rawSeverity === 'RINGAN') {
+                pinColor = '#eab308'; // Ringan: Yellow/Gold
+            }
 
             return L.divIcon({
                 className: 'custom-map-pin',
                 html: `
-                    <div style="width: 20px; height: 20px; border-radius: 50%; background-color: ${pinColor}; border: 2.5px solid #ffffff; box-shadow: 0 2px 6px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center;">
-                        <div style="width: 6px; height: 6px; border-radius: 50%; background-color: ${innerColor};"></div>
+                    <div style="position: relative; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center;">
+                        ${pulseHtml}
+                        <div style="width: 20px; height: 20px; border-radius: 50%; background-color: ${pinColor}; border: 2.5px solid #ffffff; box-shadow: 0 2px 8px rgba(0,0,0,0.35); display: flex; align-items: center; justify-content: center; position: relative; z-index: 2;">
+                            <div style="width: 6px; height: 6px; border-radius: 50%; background-color: #ffffff;"></div>
+                        </div>
                     </div>
                 `,
-                iconSize: [20, 20],
-                iconAnchor: [10, 10],
-                popupAnchor: [0, -10],
+                iconSize: [22, 22],
+                iconAnchor: [11, 11],
+                popupAnchor: [0, -11],
             });
         };
 
@@ -200,8 +218,21 @@ export default function KarhutlaMap({
         // Render Reports
         reports.forEach((rep) => {
             const marker = L.marker([rep.latitude, rep.longitude], {
-                icon: createCitizenIcon(rep.report_status),
+                icon: createCitizenIcon(rep),
             });
+
+            const rawSeverity = rep.severity?.toUpperCase() || (
+                rep.title.toLowerCase().includes('berat') ? 'BERAT' :
+                rep.title.toLowerCase().includes('ringan') ? 'RINGAN' : 'SEDANG'
+            );
+
+            const severityBadgeStyle = rawSeverity === 'BERAT'
+                ? 'background: #fef2f2; color: #991b1b; border: 1px solid #fecaca;'
+                : rawSeverity === 'RINGAN'
+                ? 'background: #fefce8; color: #854d0e; border: 1px solid #fef08a;'
+                : 'background: #fff7ed; color: #9a3412; border: 1px solid #fed7aa;';
+
+            const severityLabel = rawSeverity === 'BERAT' ? 'Berat (Kritis)' : rawSeverity === 'RINGAN' ? 'Ringan' : 'Sedang';
 
             const reportUrl = reportUrlPrefix
                 ? `${reportUrlPrefix}/${rep.id}`
@@ -212,12 +243,12 @@ export default function KarhutlaMap({
 
             const popupContent = `
                 <div style="min-width: 240px; font-family: Poppins, sans-serif; font-size: 12px; color: #111827; background: #ffffff; padding: 14px; border-radius: 16px; border: 1px solid #e5e7eb; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; gap: 6px;">
                         <span style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: #111827; font-family: monospace; background: #e5e7eb; padding: 2px 8px; border-radius: 9999px;">
                             ${rep.tracking_code}
                         </span>
-                        <span style="font-size: 11px; color: #6b7280; font-weight: 500;">
-                            ${rep.regency_city}
+                        <span style="font-size: 10px; font-weight: 800; padding: 2px 8px; border-radius: 9999px; ${severityBadgeStyle}">
+                            ${severityLabel}
                         </span>
                     </div>
                     <div style="font-size: 13px; font-weight: 800; color: #111827; margin-bottom: 8px; line-height: 1.3;">
@@ -226,6 +257,7 @@ export default function KarhutlaMap({
                     <div style="background: #f9fafb; padding: 8px 10px; border-radius: 12px; margin-bottom: 10px; border: 1px solid #f3f4f6;">
                         <div style="font-weight: 600; color: #111827; font-size: 11px;">Status: ${rep.status_label}</div>
                         ${rep.fire_condition_label ? `<div style="font-size: 10px; color: #4b5563; margin-top: 2px; font-weight: 500;">Kondisi: ${rep.fire_condition_label}</div>` : ''}
+                        <div style="font-size: 10px; color: #6b7280; margin-top: 2px;">Wilayah: ${rep.regency_city}</div>
                     </div>
                     <a href="${reportUrl}" style="display: block; text-align: center; background: #111827; color: #ffffff; padding: 7px 14px; border-radius: 9999px; text-decoration: none; font-weight: 700; font-size: 11px;">
                         ${reportButtonLabel}
@@ -344,22 +376,43 @@ export default function KarhutlaMap({
                 </div>
             )}
 
+            {/* Floating Severity Legend Overlay */}
+            <div className="absolute bottom-2.5 left-2.5 z-20 bg-white/95 backdrop-blur-md px-3 py-1.5 rounded-full border border-neutral-200/90 shadow-md flex items-center gap-3 text-[11px] font-semibold text-neutral-800 pointer-events-auto">
+                <span className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider">Tingkat:</span>
+                <div className="flex items-center gap-1.5">
+                    <span className="size-2 rounded-full bg-red-500 ring-2 ring-red-200 animate-pulse" />
+                    <span>Berat</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                    <span className="size-2 rounded-full bg-orange-500" />
+                    <span>Sedang</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                    <span className="size-2 rounded-full bg-yellow-400" />
+                    <span>Ringan</span>
+                </div>
+            </div>
+
             {/* Map Legend */}
             {showLegend && (
                 <div className="bg-white/95 backdrop-blur-md border-t border-neutral-200/80 px-4 sm:px-6 py-3 text-xs text-neutral-700 flex flex-wrap items-center justify-between gap-3 z-20 font-sans">
                     <div className="flex flex-wrap items-center gap-2.5 sm:gap-4">
-                        <span className="font-bold text-neutral-900 text-[11px] uppercase tracking-wider">Keterangan:</span>
+                        <span className="font-bold text-neutral-900 text-[11px] uppercase tracking-wider">Kategori Karhutla:</span>
                         <div className="flex items-center gap-1.5 bg-neutral-100/80 px-2.5 py-1 rounded-full border border-neutral-200/70">
-                            <span className="size-2 rounded-full bg-[#10e57a] ring-2 ring-emerald-500/30 animate-pulse" />
-                            <span className="font-semibold text-neutral-800 text-[11px]">Laporan Terverifikasi</span>
+                            <span className="size-2 rounded-full bg-red-500 ring-2 ring-red-200 animate-pulse" />
+                            <span className="font-semibold text-neutral-800 text-[11px]">Berat (Kritis)</span>
                         </div>
                         <div className="flex items-center gap-1.5 bg-neutral-100/80 px-2.5 py-1 rounded-full border border-neutral-200/70">
-                            <span className="size-2 rounded-full bg-neutral-500 ring-2 ring-neutral-400/20" />
-                            <span className="font-semibold text-neutral-800 text-[11px]">Laporan Baru</span>
+                            <span className="size-2 rounded-full bg-orange-500" />
+                            <span className="font-semibold text-neutral-800 text-[11px]">Sedang</span>
                         </div>
                         <div className="flex items-center gap-1.5 bg-neutral-100/80 px-2.5 py-1 rounded-full border border-neutral-200/70">
-                            <span className="size-2 rounded-full bg-neutral-900 ring-2 ring-neutral-700/20" />
-                            <span className="font-semibold text-neutral-800 text-[11px]">Titik Panas Satelit</span>
+                            <span className="size-2 rounded-full bg-yellow-400" />
+                            <span className="font-semibold text-neutral-800 text-[11px]">Ringan</span>
+                        </div>
+                        <div className="flex items-center gap-1.5 bg-neutral-100/80 px-2.5 py-1 rounded-full border border-neutral-200/70">
+                            <span className="size-2 rounded-full bg-[#f97316]" />
+                            <span className="font-semibold text-neutral-800 text-[11px]">Hotspot Satelit</span>
                         </div>
                     </div>
 

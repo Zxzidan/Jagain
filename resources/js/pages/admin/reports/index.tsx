@@ -253,7 +253,7 @@ export default function ReportsIndex({
                             <table className="w-full min-w-[1060px] text-sm">
                                 <thead className="border-b border-[#DDE3DE] bg-[#F3F7F4] text-xs font-semibold uppercase tracking-wider text-[#343B36] dark:border-neutral-800 dark:bg-neutral-800/60 dark:text-neutral-300">
                                     <tr>
-                                        <th scope="col" className="w-[32%] min-w-[280px] px-6 py-4 text-center">ID & Judul Laporan</th>
+                                        <th scope="col" className="w-[32%] min-w-[280px] px-6 py-4 text-center">Judul Laporan</th>
                                         <th scope="col" className="w-[14%] min-w-[150px] px-4 py-4 text-center">Kategori</th>
                                         <th scope="col" className="w-[24%] min-w-[230px] px-5 py-4 text-center">Lokasi</th>
                                         <th scope="col" className="w-[13%] min-w-[150px] px-4 py-4 text-center whitespace-nowrap">Status Laporan</th>
@@ -268,33 +268,12 @@ export default function ReportsIndex({
                                             className="transition-colors hover:bg-[#F3F7F4]/40 dark:hover:bg-neutral-800/40"
                                         >
                                             <td className="px-6 py-5 align-middle text-left">
-                                                <div className="flex items-start gap-3">
-                                                    <span className="shrink-0 mt-0.5 inline-flex items-center rounded-md bg-[#E8F1EB] px-2.5 py-1 font-mono text-xs font-bold text-[#216B49] dark:bg-emerald-950/70 dark:text-emerald-300">
-                                                        #{report.id}
-                                                    </span>
-                                                    <div className="flex-1 min-w-0">
-                                                        <div className="font-bold text-sm leading-snug text-[#171C19] dark:text-white">
-                                                            {report.title}
-                                                            {report.is_simulated && (
-                                                                <span className="ml-2 inline-flex items-center rounded bg-neutral-200 px-1.5 py-0.5 text-[10px] font-bold text-neutral-700 dark:bg-neutral-800 dark:text-neutral-400 align-middle">
-                                                                    SIMULASI
-                                                                </span>
-                                                            )}
-                                                        </div>
-                                                        <div className="mt-1 text-xs text-[#68716B] dark:text-neutral-400">
-                                                            Pelapor: <span className="font-medium text-neutral-800 dark:text-neutral-300">{report.creator?.name ?? 'Anonim'}</span> &bull; Dibuat:{' '}
-                                                            <span className="whitespace-nowrap">
-                                                                {new Date(report.created_at).toLocaleDateString('id-ID', {
-                                                                    day: 'numeric',
-                                                                    month: 'short',
-                                                                    year: 'numeric',
-                                                                    hour: '2-digit',
-                                                                    minute: '2-digit',
-                                                                })} WIB
-                                                            </span>
-                                                        </div>
-                                                    </div>
-                                                </div>
+                                                <Link
+                                                    href={reportShow(report.id)}
+                                                    className="text-xs font-bold text-neutral-900 dark:text-neutral-100 hover:text-[#216B49] dark:hover:text-emerald-400 transition-colors leading-snug block"
+                                                >
+                                                    {report.title.replace(/^\[(BERAT|SEDANG|RINGAN)\]\s*/i, '')}
+                                                </Link>
                                             </td>
 
                                             <td className="px-4 py-5 align-middle text-center">

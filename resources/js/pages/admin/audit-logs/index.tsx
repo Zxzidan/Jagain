@@ -1,26 +1,17 @@
 import { Head, Link, router } from '@inertiajs/react';
 import {
     Activity,
-    ArrowRight,
     Building2,
-    Calendar,
     Check,
-    CheckCircle2,
     Clock,
     Copy,
     Download,
     Eye,
-    FileCheck2,
     FileText,
-    Filter,
     Flame,
     History,
-    Info,
-    PlusCircle,
     RotateCcw,
     Search,
-    Shield,
-    Tags,
     User as UserIcon,
     X,
 } from 'lucide-react';
@@ -383,14 +374,9 @@ export default function AuditLogsIndex({
 
                                             {/* Tindakan (Action) */}
                                             <td className="px-5 py-4 align-top">
-                                                <div className="flex flex-col gap-1 items-start">
-                                                    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-bold border shadow-2xs ${log.action_badge_class}`}>
-                                                        {log.action_label}
-                                                    </span>
-                                                    <span className="font-mono text-[10px] text-neutral-400 dark:text-neutral-500 tracking-tight">
-                                                        {log.action}
-                                                    </span>
-                                                </div>
+                                                <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-bold border shadow-2xs ${log.action_badge_class}`}>
+                                                    {log.action_label}
+                                                </span>
                                             </td>
 
                                             {/* Aktor */}
@@ -399,53 +385,36 @@ export default function AuditLogsIndex({
                                                     <UserIcon className="size-3 text-neutral-400" />
                                                     <span>{log.actor_name}</span>
                                                 </div>
-                                                <div className="flex items-center gap-1.5 mt-0.5">
-                                                    <span className="inline-block rounded px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider bg-neutral-100 text-neutral-600 border border-neutral-200 dark:bg-neutral-800 dark:text-neutral-300 dark:border-neutral-700">
-                                                        {log.actor_role}
-                                                    </span>
-                                                    {log.ip_address && (
-                                                        <span className="text-[10px] text-neutral-400 font-mono">
-                                                            IP: {log.ip_address}
-                                                        </span>
-                                                    )}
-                                                </div>
                                             </td>
 
                                             {/* Objek Entitas */}
                                             <td className="px-5 py-4 align-top text-xs">
                                                 {log.entity_summary ? (
                                                     <div className="space-y-1">
-                                                        <div className="flex items-center gap-1.5">
+                                                        <div>
                                                             {log.entity_summary.url ? (
                                                                 <Link
                                                                     href={log.entity_summary.url}
-                                                                    className="font-bold text-[#216B49] hover:underline dark:text-emerald-400 inline-flex items-center gap-1"
+                                                                    className="font-bold text-[#216B49] hover:underline dark:text-emerald-400"
                                                                 >
-                                                                    <span>{log.entity_summary.name}</span>
-                                                                    <ArrowRight className="size-3" />
+                                                                    {log.entity_summary.name}
                                                                 </Link>
                                                             ) : (
                                                                 <span className="font-bold text-[#171C19] dark:text-white">
                                                                     {log.entity_summary.name}
                                                                 </span>
                                                             )}
-                                                            {log.entity_summary.badge && (
-                                                                <span className="rounded bg-neutral-100 px-1.5 py-0.2 text-[9px] font-bold text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300">
-                                                                    {log.entity_summary.badge}
-                                                                </span>
-                                                            )}
                                                         </div>
-                                                        <div className="text-[11px] text-neutral-500 line-clamp-2 leading-relaxed dark:text-neutral-400">
-                                                            {log.entity_summary.subtext}
-                                                        </div>
+                                                        {log.entity_summary.subtext && (
+                                                            <div className="text-[11px] text-neutral-500 line-clamp-2 leading-relaxed dark:text-neutral-400">
+                                                                {log.entity_summary.subtext}
+                                                            </div>
+                                                        )}
                                                     </div>
                                                 ) : (
-                                                    <div>
-                                                        <span className="font-semibold text-[#171C19] dark:text-white">
-                                                            {log.entity_type_label}
-                                                        </span>
-                                                        <span className="text-neutral-400 ml-1">#{log.entity_id}</span>
-                                                    </div>
+                                                    <span className="font-semibold text-[#171C19] dark:text-white">
+                                                        {log.entity_type_label}
+                                                    </span>
                                                 )}
                                             </td>
 
@@ -453,9 +422,7 @@ export default function AuditLogsIndex({
                                             <td className="px-5 py-4 align-top text-xs text-neutral-600 dark:text-neutral-300">
                                                 <div className="leading-relaxed break-words max-w-sm">
                                                     {log.reason || (
-                                                        <span className="text-neutral-400 italic">
-                                                            Tidak ada catatan tambahan
-                                                        </span>
+                                                        <span className="text-neutral-300 dark:text-neutral-600">—</span>
                                                     )}
                                                 </div>
                                             </td>

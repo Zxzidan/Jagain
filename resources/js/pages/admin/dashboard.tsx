@@ -27,6 +27,7 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { StatusBadge } from '@/components/reports/status-badge';
+import KarhutlaMap, { MapReport, MapObservation } from '@/components/karhutla-map';
 import {
     Banner,
     BannerIcon,
@@ -88,6 +89,8 @@ type DashboardProps = {
         in_progress_count?: number;
         completed_count?: number;
     }>;
+    mapReports?: MapReport[];
+    mapObservations?: MapObservation[];
 };
 
 export default function AdminDashboard({
@@ -96,6 +99,8 @@ export default function AdminDashboard({
     recentAuditLogs = [],
     activeAssignments = [],
     agencyStats = [],
+    mapReports = [],
+    mapObservations = [],
 }: DashboardProps) {
     const page = usePage();
     const flash = (page.props as any).flash;
@@ -152,41 +157,169 @@ export default function AdminDashboard({
         { month: 'Jul', count: 38, resolved: 32, height: '74%' },
     ];
 
-    // Agencies display data (using props or realistic defaults)
-    const displayAgencies = [
+    // Dummy reports categorized by severity: BERAT (Red), SEDANG (Orange), RINGAN (Yellow)
+    const defaultMapReports: MapReport[] = [
+        // --- BERAT (Kritis / Gambut Dalam / Ancaman Pemukiman) ---
         {
-            code: 'BPBD-KR',
-            name: 'BPBD Kab. Kubu Raya',
-            jurisdiction: 'Kabupaten Kubu Raya',
-            tasks: agencyStats[0]?.total_assignments_count || 5,
-            status: 'Aktif',
-            badgeColor: 'text-emerald-700 bg-emerald-50 border-emerald-200/80',
+            id: 101,
+            tracking_code: 'JGN-202611-BRT01',
+            title: 'Kebakaran Gambut Dalam Parit H. Ali - Asap Pekat Kritis',
+            category: { name: 'Lahan Gambut' },
+            latitude: -0.155823,
+            longitude: 109.387234,
+            province: 'Kalimantan Barat',
+            regency_city: 'Kabupaten Kubu Raya',
+            location_description: 'Parit H. Ali, Dusun Mekar Sari, Desa Rasau Jaya Tiga',
+            report_status: 'DISPATCHED',
+            status_label: 'Penanganan Lapangan',
+            fire_condition: 'OBSERVED_ACTIVE',
+            fire_condition_label: 'Api Aktif Gambut',
+            severity: 'BERAT',
+            severity_label: 'Berat',
         },
         {
-            code: 'BPBD-KB',
-            name: 'BPBD Prov. Kalbar',
-            jurisdiction: 'Provinsi Kalimantan Barat',
-            tasks: agencyStats[1]?.total_assignments_count || 3,
-            status: 'Aktif',
-            badgeColor: 'text-emerald-700 bg-emerald-50 border-emerald-200/80',
+            id: 102,
+            tracking_code: 'JGN-202611-BRT02',
+            title: 'Titik Api Merambat ke Zona Penyangga Hutan Lindung Sebangau',
+            category: { name: 'Hutan Lindung' },
+            latitude: -2.254100,
+            longitude: 113.882000,
+            province: 'Kalimantan Tengah',
+            regency_city: 'Kota Palangka Raya',
+            location_description: 'Kanal Primer Sebangau Km 16, Hutan Lindung',
+            report_status: 'VERIFIED',
+            status_label: 'Terverifikasi',
+            fire_condition: 'OBSERVED_ACTIVE',
+            fire_condition_label: 'Api Meluas Cepat',
+            severity: 'BERAT',
+            severity_label: 'Berat',
         },
         {
-            code: 'MANGGALA',
-            name: 'Manggala Agni Daops Pontianak',
-            jurisdiction: 'Lintas Wilayah Kalbar',
-            tasks: agencyStats[2]?.total_assignments_count || 4,
-            status: 'Siaga',
-            badgeColor: 'text-amber-700 bg-amber-50 border-amber-200/80',
+            id: 103,
+            tracking_code: 'JGN-202611-BRT03',
+            title: 'Kebakaran Lahan Gambut Dekat Pemukiman Ambawang',
+            category: { name: 'Lahan Gambut' },
+            latitude: -0.065200,
+            longitude: 109.412000,
+            province: 'Kalimantan Barat',
+            regency_city: 'Kabupaten Kubu Raya',
+            location_description: 'Jl. Trans Kalimantan Km 12, Sungai Ambawang',
+            report_status: 'VERIFIED',
+            status_label: 'Terverifikasi',
+            fire_condition: 'OBSERVED_ACTIVE',
+            fire_condition_label: 'Ancaman Pemukiman',
+            severity: 'BERAT',
+            severity_label: 'Berat',
+        },
+
+        // --- SEDANG (Semak Belukar / Perkebunan) ---
+        {
+            id: 201,
+            tracking_code: 'JGN-202611-SDG01',
+            title: 'Api Semak Belukar Merambat Sepanjang Parit Jalan Poros',
+            category: { name: 'Semak Belukar' },
+            latitude: -0.089400,
+            longitude: 109.432100,
+            province: 'Kalimantan Barat',
+            regency_city: 'Kabupaten Kubu Raya',
+            location_description: 'Jl. Poros Rasau Jaya - Ambawang Km 8',
+            report_status: 'UNDER_REVIEW',
+            status_label: 'Sedang Diperiksa',
+            fire_condition: 'REPORTED_ACTIVE',
+            fire_condition_label: 'Api Permukaan',
+            severity: 'SEDANG',
+            severity_label: 'Sedang',
         },
         {
-            code: 'DAMKAR',
-            name: 'Dinas Damkar Pontianak',
-            jurisdiction: 'Kota Pontianak',
-            tasks: agencyStats[3]?.total_assignments_count || 2,
-            status: 'Aktif',
-            badgeColor: 'text-emerald-700 bg-emerald-50 border-emerald-200/80',
+            id: 202,
+            tracking_code: 'JGN-202611-SDG02',
+            title: 'Kebakaran Semak Terbuka Dekat Lahan Sawit Sampit',
+            category: { name: 'Perkebunan' },
+            latitude: -2.535000,
+            longitude: 112.955000,
+            province: 'Kalimantan Tengah',
+            regency_city: 'Kabupaten Kotawaringin Timur',
+            location_description: 'Desa Bagendang Hilir, Sampit',
+            report_status: 'SUBMITTED',
+            status_label: 'Terkirim',
+            fire_condition: 'REPORTED_ACTIVE',
+            fire_condition_label: 'Asap Kelabu Tebal',
+            severity: 'SEDANG',
+            severity_label: 'Sedang',
+        },
+        {
+            id: 203,
+            tracking_code: 'JGN-202611-SDG03',
+            title: 'Titik Panas Merambat di Semak Perkebunan Karet',
+            category: { name: 'Perkebunan' },
+            latitude: -3.012500,
+            longitude: 114.765400,
+            province: 'Kalimantan Selatan',
+            regency_city: 'Kabupaten Barito Kuala',
+            location_description: 'Kecamatan Marabahan, Barito Kuala',
+            report_status: 'SUBMITTED',
+            status_label: 'Terkirim',
+            fire_condition: 'REPORTED_ACTIVE',
+            fire_condition_label: 'Vegetasi Kering',
+            severity: 'SEDANG',
+            severity_label: 'Sedang',
+        },
+
+        // --- RINGAN (Asap Tipis / Terkendali / Sisa Bara Padam) ---
+        {
+            id: 301,
+            tracking_code: 'JGN-202611-RGN01',
+            title: 'Asap Tipis Terkendali di Lahan Terbuka Siantan',
+            category: { name: 'Semak Belukar' },
+            latitude: -0.012000,
+            longitude: 109.345000,
+            province: 'Kalimantan Barat',
+            regency_city: 'Kota Pontianak',
+            location_description: 'Siantan Tengah, Pontianak Utara',
+            report_status: 'RESOLVED_VERIFIED',
+            status_label: 'Padam Terverifikasi',
+            fire_condition: 'OBSERVED_EXTINGUISHED',
+            fire_condition_label: 'Sisa Asap Terkendali',
+            severity: 'RINGAN',
+            severity_label: 'Ringan',
+        },
+        {
+            id: 302,
+            tracking_code: 'JGN-202611-RGN02',
+            title: 'Bara Terisolasi Sekat Parit di Sungai Kakap',
+            category: { name: 'Lahan Gambut' },
+            latitude: -0.055000,
+            longitude: 109.185000,
+            province: 'Kalimantan Barat',
+            regency_city: 'Kabupaten Kubu Raya',
+            location_description: 'Desa Sungai Kakap, parit keliling',
+            report_status: 'VERIFIED',
+            status_label: 'Terverifikasi',
+            fire_condition: 'OBSERVED_CONTAINED',
+            fire_condition_label: 'Tersekat Parit',
+            severity: 'RINGAN',
+            severity_label: 'Ringan',
+        },
+        {
+            id: 303,
+            tracking_code: 'JGN-202611-RGN03',
+            title: 'Titik Panas Rendah Vegetasi Kering Banjarbaru',
+            category: { name: 'Semak Belukar' },
+            latitude: -3.445000,
+            longitude: 114.835000,
+            province: 'Kalimantan Selatan',
+            regency_city: 'Kota Banjarbaru',
+            location_description: 'Kawasan Cempaka, Banjarbaru',
+            report_status: 'RESOLVED_VERIFIED',
+            status_label: 'Selesai Terkendali',
+            fire_condition: 'OBSERVED_EXTINGUISHED',
+            fire_condition_label: 'Suhu Panas Normal',
+            severity: 'RINGAN',
+            severity_label: 'Ringan',
         },
     ];
+
+    const effectiveMapReports = mapReports.length > 0 ? mapReports : defaultMapReports;
 
     return (
         <>
@@ -399,81 +532,66 @@ export default function AdminDashboard({
                     </section>
 
                     {/* =========================================================================
-                        3. MIDDLE SECTION (2 Columns: Disposisi OPD & Tren Penanganan Karhutla)
+                        3. MIDDLE SECTION (2 Columns: Peta Sebaran Karhutla & Tren Penanganan Karhutla)
                         ========================================================================= */}
-                    <section className="grid grid-cols-1 lg:grid-cols-12 gap-7">
-                        {/* LEFT COLUMN: Disposisi Instansi & OPD (5 Cols) */}
-                        <div className="lg:col-span-5 rounded-2xl border border-neutral-200/90 bg-white p-7 shadow-xs flex flex-col justify-between">
+                    <section className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-7">
+                        {/* LEFT COLUMN: Peta Wilayah Kebakaran Hutan (6 Cols) */}
+                        <div className="lg:col-span-6 rounded-2xl border border-neutral-200/90 bg-white p-5 sm:p-6 shadow-xs flex flex-col justify-between">
                             <div>
-                                <div className="flex items-center justify-between pb-3">
-                                    <h2 className="text-base font-bold text-neutral-900">
-                                        Disposisi Instansi & OPD
-                                    </h2>
+                                <div className="flex items-center justify-between pb-2">
+                                    <div className="flex items-center gap-2">
+                                        <span className="relative flex size-2.5">
+                                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                                            <span className="relative inline-flex rounded-full size-2.5 bg-emerald-500" />
+                                        </span>
+                                        <h2 className="text-base sm:text-lg font-bold text-neutral-900">
+                                            Peta Wilayah Kebakaran Hutan
+                                        </h2>
+                                    </div>
                                     <Button
                                         asChild
                                         size="sm"
                                         variant="outline"
-                                        className="h-8 rounded-xl border border-neutral-200 text-xs font-semibold text-neutral-800 hover:bg-neutral-50"
+                                        className="h-8 rounded-xl border border-neutral-200 text-xs font-semibold text-neutral-800 hover:bg-neutral-50 shadow-2xs"
                                     >
-                                        <Link href={agenciesIndex().url} className="flex items-center gap-1">
-                                            <Plus className="size-3.5" />
-                                            <span>Kelola OPD</span>
+                                        <Link href="/admin/map" className="flex items-center gap-1.5">
+                                            <MapPin className="size-3.5 text-emerald-600" />
+                                            <span>Layar Penuh</span>
                                         </Link>
                                     </Button>
                                 </div>
 
-                                {/* 2x2 Mini Cards Grid */}
-                                <div className="grid grid-cols-2 gap-4 mt-4">
-                                    {displayAgencies.map((agency) => (
-                                        <div
-                                            key={agency.code}
-                                            className="rounded-xl border border-neutral-200/70 p-4 bg-[#fafbfa] hover:bg-white hover:border-neutral-300 transition-all flex flex-col justify-between group shadow-2xs"
-                                        >
-                                            <div className="flex items-center justify-between">
-                                                <div className="flex items-center gap-2">
-                                                    <span className="size-2 rounded-full bg-emerald-500" />
-                                                    <span className="text-[11px] font-mono font-bold text-neutral-800">
-                                                        {agency.code}
-                                                    </span>
-                                                </div>
-                                            </div>
-
-                                            <div className="my-3">
-                                                <div className="text-base font-extrabold text-neutral-900 tabular-nums">
-                                                    {agency.tasks}{' '}
-                                                    <span className="text-xs font-semibold text-neutral-500">
-                                                        Tugas
-                                                    </span>
-                                                </div>
-                                                <p className="text-[11px] text-neutral-500 truncate mt-0.5">
-                                                    {agency.jurisdiction}
-                                                </p>
-                                            </div>
-
-                                            <div className="flex items-center justify-between pt-1 text-[11px]">
-                                                <span className={`inline-block font-bold ${agency.badgeColor} px-2 py-0.5 rounded-md text-[10px]`}>
-                                                    {agency.status}
-                                                </span>
-                                            </div>
-                                        </div>
-                                    ))}
+                                {/* Leaflet Interactive Map View */}
+                                <div className="mt-3 sm:mt-4 rounded-xl overflow-hidden border border-neutral-200/80 shadow-2xs relative">
+                                    <KarhutlaMap
+                                        reports={effectiveMapReports}
+                                        observations={mapObservations}
+                                        reportUrlPrefix="/admin/reports"
+                                        height="275px"
+                                        showLegend={false}
+                                        showSimulatedNotice={false}
+                                        className="w-full"
+                                    />
                                 </div>
                             </div>
 
                             {/* Clean Bottom Link */}
-                            <div className="mt-5 pt-4 border-t border-neutral-100 flex items-center justify-between text-xs text-neutral-500">
-                                <span>Unit siaga karhutla aktif</span>
+                            <div className="mt-4 pt-3.5 border-t border-neutral-100 flex items-center justify-between text-xs text-neutral-500">
+                                <span className="flex items-center gap-1.5">
+                                    <span className="size-1.5 rounded-full bg-emerald-500" />
+                                    <span>Cakupan Kalimantan • Titik Sebaran Aktif</span>
+                                </span>
                                 <Link
-                                    href={agenciesIndex().url}
+                                    href="/admin/map"
                                     className="font-bold text-[#0c4e33] hover:underline"
                                 >
-                                    Lihat Seluruh OPD
+                                    Buka Peta Lengkap
                                 </Link>
                             </div>
                         </div>
 
-                        {/* RIGHT COLUMN: Tren Penanganan Karhutla (7 Cols) */}
-                        <div className="lg:col-span-7 rounded-2xl border border-neutral-200/90 bg-white p-7 shadow-xs flex flex-col justify-between">
+                        {/* RIGHT COLUMN: Tren Penanganan Karhutla (6 Cols) */}
+                        <div className="lg:col-span-6 rounded-2xl border border-neutral-200/90 bg-white p-5 sm:p-6 shadow-xs flex flex-col justify-between">
                             <div>
                                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3">
                                     <div>
@@ -694,7 +812,7 @@ export default function AdminDashboard({
                                                                     href={reportShow(report.id).url}
                                                                     className="font-bold text-neutral-900 hover:text-[#0c4e33] transition-colors leading-snug block"
                                                                 >
-                                                                    {report.title}
+                                                                    {report.title.replace(/^\[(BERAT|SEDANG|RINGAN)\]\s*/i, '')}
                                                                 </Link>
                                                                 <span className="text-[11px] text-neutral-400 font-medium mt-0.5 block">
                                                                     {report.category?.name || 'Kebakaran Lahan'}
