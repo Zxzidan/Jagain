@@ -2,7 +2,16 @@
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" @class(['dark' => ($appearance ?? 'light') == 'dark'])>
     <head>
         <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+
+        {{-- Mobile Web App & PWA Capabilities for iOS & Android --}}
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="default">
+        <meta name="apple-mobile-web-app-title" content="JAGAIN">
+        <meta name="theme-color" content="#216B49" media="(prefers-color-scheme: light)">
+        <meta name="theme-color" content="#101512" media="(prefers-color-scheme: dark)">
+        <meta name="format-detection" content="telephone=no">
 
         {{-- Script to apply light/dark theme preference --}}
         <script>
@@ -24,8 +33,17 @@
 
         {{-- Inline style to set the HTML background color to clean white, prevent horizontal overflow & hide scrollbar --}}
         <style>
+            :root {
+                --sat: env(safe-area-inset-top, 0px);
+                --sab: env(safe-area-inset-bottom, 0px);
+                --sal: env(safe-area-inset-left, 0px);
+                --sar: env(safe-area-inset-right, 0px);
+            }
+
             html {
                 scroll-behavior: smooth;
+                -webkit-tap-highlight-color: transparent;
+                touch-action: manipulation;
             }
 
             html, body {
@@ -35,6 +53,7 @@
                 width: 100%;
                 scrollbar-width: none; /* Firefox */
                 -ms-overflow-style: none; /* IE and Edge */
+                -webkit-overflow-scrolling: touch;
             }
 
             html::-webkit-scrollbar,

@@ -5,12 +5,14 @@ import {
     SidebarMenu,
     SidebarMenuButton,
     SidebarMenuItem,
+    useSidebar,
 } from '@/components/ui/sidebar';
 import { useCurrentUrl } from '@/hooks/use-current-url';
 import type { NavItem } from '@/types';
 
 export function NavMain({ items }: { items: NavItem[] }) {
     const { isCurrentUrl } = useCurrentUrl();
+    const { isMobile, setOpenMobile } = useSidebar();
 
     return (
         <SidebarGroup className="px-2 py-0">
@@ -32,7 +34,16 @@ export function NavMain({ items }: { items: NavItem[] }) {
                                         : 'text-neutral-500 hover:bg-neutral-100 hover:text-neutral-900 dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-white'
                                 }`}
                             >
-                                <Link href={item.href} prefetch className="flex items-center gap-3">
+                                <Link
+                                    href={item.href}
+                                    prefetch
+                                    onClick={() => {
+                                        if (isMobile) {
+                                            setOpenMobile(false);
+                                        }
+                                    }}
+                                    className="flex items-center gap-3"
+                                >
                                     {item.icon && (
                                         <item.icon
                                             className={`size-4 shrink-0 transition-colors ${

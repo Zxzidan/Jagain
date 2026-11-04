@@ -22,13 +22,24 @@ export function AppSidebarHeader({
     const isAdmin = auth?.user?.role === 'ADMIN' || (auth?.user as any)?.is_admin;
 
     return (
-        <header className="flex h-16 shrink-0 items-center justify-between border-b border-border bg-white px-3 sm:px-6 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 dark:bg-[#101512] gap-3">
+        <header className="flex h-16 shrink-0 items-center justify-between border-b border-border bg-white px-3 sm:px-6 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 dark:bg-[#101512] gap-2 sm:gap-3 pt-[env(safe-area-inset-top,0px)]">
             <div className="flex items-center gap-2 sm:gap-3 min-w-0">
                 <SidebarTrigger className="-ml-1 text-foreground hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-lg p-1.5 transition-colors shrink-0" />
 
-                <div className="min-w-0 max-w-[130px] xs:max-w-[220px] sm:max-w-none overflow-hidden truncate">
-                    <Breadcrumbs breadcrumbs={breadcrumbs} />
-                </div>
+                {breadcrumbs && breadcrumbs.length > 0 ? (
+                    <div className="min-w-0 max-w-[140px] sm:max-w-none overflow-hidden truncate">
+                        <Breadcrumbs breadcrumbs={breadcrumbs} />
+                    </div>
+                ) : (
+                    <div className="flex items-center gap-1.5">
+                        <span className="font-extrabold text-sm tracking-tight text-[#171C19] dark:text-white">
+                            JAGAIN
+                        </span>
+                        <span className="hidden sm:inline-block text-[10px] font-bold text-[#216B49] bg-[#E8F1EB] dark:bg-emerald-950/60 dark:text-emerald-400 px-2 py-0.5 rounded-full">
+                            Kalimantan
+                        </span>
+                    </div>
+                )}
             </div>
 
             {/* Top Right: Profil dan Notifikasi Saja */}
@@ -45,7 +56,7 @@ export function AppSidebarHeader({
                             <span className="absolute top-2 right-2 size-2 rounded-full bg-emerald-500 animate-pulse" />
                         </button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent className="w-80 rounded-2xl p-0 overflow-hidden shadow-xl" align="end">
+                    <DropdownMenuContent className="w-80 max-w-[calc(100vw-2rem)] rounded-2xl p-0 overflow-hidden shadow-xl" align="end">
                         <div className="p-3.5 bg-neutral-50 dark:bg-neutral-800/80 border-b border-neutral-100 dark:border-neutral-700/80 flex items-center justify-between">
                             <span className="text-xs font-bold text-neutral-900 dark:text-white">Pemberitahuan Sistem</span>
                             <span className="text-[10px] font-bold text-emerald-800 bg-emerald-100 dark:bg-emerald-950 dark:text-emerald-300 px-2 py-0.5 rounded-full">Aktif</span>

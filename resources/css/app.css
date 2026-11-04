@@ -934,3 +934,28 @@ body::-webkit-scrollbar,
 .leaflet-popup-tip {
     background: var(--color-ivory-light);
 }
+
+/* iOS & Android Mobile Enhancements */
+@supports (-webkit-touch-callout: none) {
+    @media screen and (max-width: 767px) {
+        input:not([type="checkbox"]):not([type="radio"]),
+        select,
+        textarea {
+            font-size: 16px !important;
+        }
+    }
+}
+
+/* Momentum scrolling for scrollable containers on mobile */
+.overflow-x-auto,
+.overflow-y-auto,
+.no-scrollbar {
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Touch-friendly manipulation */
+@media (pointer: coarse) {
+    button, a, input, select, textarea {
+        touch-action: manipulation;
+    }
+}

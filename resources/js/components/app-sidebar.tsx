@@ -24,6 +24,7 @@ import {
     SidebarMenu,
     SidebarMenuButton,
     SidebarMenuItem,
+    useSidebar,
 } from '@/components/ui/sidebar';
 import type { NavItem } from '@/types';
 import type { User } from '@/types/auth';
@@ -73,13 +74,23 @@ export function AppSidebar() {
         ? '/opd/dashboard'
         : '/dashboard';
 
+    const { isMobile, setOpenMobile } = useSidebar();
+
     return (
         <Sidebar collapsible="icon" variant="inset" className="border-r border-sidebar-border bg-sidebar text-sidebar-foreground">
             <SidebarHeader className="border-b border-sidebar-border pb-3 bg-sidebar space-y-2">
                 <SidebarMenu>
                     <SidebarMenuItem>
                         <SidebarMenuButton size="lg" asChild className="hover:bg-sidebar-accent hover:text-sidebar-accent-foreground">
-                            <Link href={homeUrl} prefetch>
+                            <Link
+                                href={homeUrl}
+                                prefetch
+                                onClick={() => {
+                                    if (isMobile) {
+                                        setOpenMobile(false);
+                                    }
+                                }}
+                            >
                                 <AppLogo showTagline={false} />
                             </Link>
                         </SidebarMenuButton>

@@ -6,6 +6,7 @@ import {
     SidebarMenu,
     SidebarMenuButton,
     SidebarMenuItem,
+    useSidebar,
 } from '@/components/ui/sidebar';
 import type { NavItem } from '@/types';
 
@@ -16,6 +17,8 @@ export function NavFooter({
 }: ComponentPropsWithoutRef<typeof SidebarGroup> & {
     items: NavItem[];
 }) {
+    const { isMobile, setOpenMobile } = useSidebar();
+
     return (
         <SidebarGroup
             {...props}
@@ -29,7 +32,15 @@ export function NavFooter({
                                 asChild
                                 className="rounded-xl px-3 py-2 text-xs font-medium text-[#68716B] hover:bg-neutral-100 hover:text-black dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-white transition-colors"
                             >
-                                <Link href={item.href} className="flex items-center gap-2.5">
+                                <Link
+                                    href={item.href}
+                                    onClick={() => {
+                                        if (isMobile) {
+                                            setOpenMobile(false);
+                                        }
+                                    }}
+                                    className="flex items-center gap-2.5"
+                                >
                                     {item.icon && (
                                         <item.icon className="size-4 shrink-0 text-[#68716B] dark:text-neutral-400" />
                                     )}

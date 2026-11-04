@@ -248,88 +248,138 @@ export default function ReportsIndex({
                             />
                         </div>
                     ) : (
-                        <div className="overflow-x-auto">
-                            <table className="w-full min-w-[1060px] text-sm">
-                                <thead className="border-b border-[#DDE3DE] bg-[#F3F7F4] text-xs font-semibold uppercase tracking-wider text-[#343B36] dark:border-neutral-800 dark:bg-neutral-800/60 dark:text-neutral-300">
-                                    <tr>
-                                        <th scope="col" className="w-[32%] min-w-[280px] px-6 py-4 text-center">Judul Laporan</th>
-                                        <th scope="col" className="w-[14%] min-w-[150px] px-4 py-4 text-center">Kategori</th>
-                                        <th scope="col" className="w-[24%] min-w-[230px] px-5 py-4 text-center">Lokasi</th>
-                                        <th scope="col" className="w-[13%] min-w-[150px] px-4 py-4 text-center whitespace-nowrap">Status Laporan</th>
-                                        <th scope="col" className="w-[17%] min-w-[160px] px-4 py-4 text-center whitespace-nowrap">Penugasan OPD</th>
-                                        <th scope="col" className="px-6 py-4 text-center whitespace-nowrap">Aksi</th>
-                                    </tr>
-                                </thead>
-                                <tbody className="divide-y divide-[#DDE3DE] dark:divide-neutral-800">
-                                    {reports.data.map((report) => (
-                                        <tr
-                                            key={report.id}
-                                            className="transition-colors hover:bg-[#F3F7F4]/40 dark:hover:bg-neutral-800/40"
-                                        >
-                                            <td className="px-6 py-5 align-middle text-left">
-                                                <Link
-                                                    href={reportShow(report.id)}
-                                                    className="text-xs font-bold text-neutral-900 dark:text-neutral-100 hover:text-[#216B49] dark:hover:text-emerald-400 transition-colors leading-snug block"
-                                                >
-                                                    {report.title.replace(/^\[(BERAT|SEDANG|RINGAN)\]\s*/i, '')}
-                                                </Link>
-                                            </td>
-
-                                            <td className="px-4 py-5 align-middle text-center">
-                                                <span className="inline-block rounded-lg bg-neutral-100 dark:bg-neutral-800 px-3 py-1.5 text-xs font-semibold text-neutral-800 dark:text-neutral-200 leading-normal text-center whitespace-nowrap">
-                                                    {report.category?.name ?? 'Umum'}
-                                                </span>
-                                            </td>
-
-                                            <td className="px-5 py-5 align-middle text-center">
-                                                <div className="inline-flex items-start gap-2.5 text-left max-w-[240px]">
-                                                    <MapPin className="size-4 shrink-0 text-[#216B49] dark:text-emerald-400 mt-0.5" />
-                                                    <div className="space-y-1">
-                                                        <div className="text-xs font-medium text-[#171C19] dark:text-neutral-200 leading-snug break-words">
-                                                            {report.location_description ?? `${report.latitude}, ${report.longitude}`}
-                                                        </div>
-                                                        <div className="font-mono text-[11px] text-neutral-400 dark:text-neutral-500">
-                                                            {report.latitude.toFixed(4)}, {report.longitude.toFixed(4)}
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </td>
-
-                                            <td className="px-4 py-5 align-middle text-center whitespace-nowrap">
-                                                <StatusBadge status={report.report_status} />
-                                            </td>
-
-                                            <td className="px-4 py-5 align-middle text-center text-xs">
-                                                {report.latest_assignment ? (
-                                                    <div className="space-y-1.5 max-w-[190px] mx-auto flex flex-col items-center">
-                                                        <span className="font-semibold text-[#171C19] dark:text-white leading-snug block">
-                                                            {report.latest_assignment.agency?.name ?? 'Instansi'}
-                                                        </span>
-                                                        <StatusBadge
-                                                            status={report.latest_assignment.assignment_status}
-                                                            className="text-[10px] px-2 py-0.5"
-                                                        />
-                                                    </div>
-                                                ) : (
-                                                    <span className="text-neutral-400 dark:text-neutral-500 italic text-xs leading-normal inline-block">
-                                                        Belum ditugaskan
-                                                    </span>
-                                                )}
-                                            </td>
-
-                                            <td className="px-6 py-5 align-middle text-center whitespace-nowrap">
-                                                <Link
-                                                    href={reportShow(report.id)}
-                                                    className="inline-flex items-center justify-center rounded-xl bg-[#216B49] px-4 py-2 text-xs font-bold text-white shadow-xs transition hover:bg-[#174B35] active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-[#216B49]/40"
-                                                >
-                                                    <span>Review</span>
-                                                </Link>
-                                            </td>
+                        <>
+                            {/* Desktop Table View (>= md) */}
+                            <div className="hidden md:block overflow-x-auto">
+                                <table className="w-full min-w-[1060px] text-sm">
+                                    <thead className="border-b border-[#DDE3DE] bg-[#F3F7F4] text-xs font-semibold uppercase tracking-wider text-[#343B36] dark:border-neutral-800 dark:bg-neutral-800/60 dark:text-neutral-300">
+                                        <tr>
+                                            <th scope="col" className="w-[32%] min-w-[280px] px-6 py-4 text-center">Judul Laporan</th>
+                                            <th scope="col" className="w-[14%] min-w-[150px] px-4 py-4 text-center">Kategori</th>
+                                            <th scope="col" className="w-[24%] min-w-[230px] px-5 py-4 text-center">Lokasi</th>
+                                            <th scope="col" className="w-[13%] min-w-[150px] px-4 py-4 text-center whitespace-nowrap">Status Laporan</th>
+                                            <th scope="col" className="w-[17%] min-w-[160px] px-4 py-4 text-center whitespace-nowrap">Penugasan OPD</th>
+                                            <th scope="col" className="px-6 py-4 text-center whitespace-nowrap">Aksi</th>
                                         </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
+                                    </thead>
+                                    <tbody className="divide-y divide-[#DDE3DE] dark:divide-neutral-800">
+                                        {reports.data.map((report) => (
+                                            <tr
+                                                key={report.id}
+                                                className="transition-colors hover:bg-[#F3F7F4]/40 dark:hover:bg-neutral-800/40"
+                                            >
+                                                <td className="px-6 py-5 align-middle text-left">
+                                                    <Link
+                                                        href={reportShow(report.id)}
+                                                        className="text-xs font-bold text-neutral-900 dark:text-neutral-100 hover:text-[#216B49] dark:hover:text-emerald-400 transition-colors leading-snug block"
+                                                    >
+                                                        {report.title.replace(/^\[(BERAT|SEDANG|RINGAN)\]\s*/i, '')}
+                                                    </Link>
+                                                </td>
+
+                                                <td className="px-4 py-5 align-middle text-center">
+                                                    <span className="inline-block rounded-lg bg-neutral-100 dark:bg-neutral-800 px-3 py-1.5 text-xs font-semibold text-neutral-800 dark:text-neutral-200 leading-normal text-center whitespace-nowrap">
+                                                        {report.category?.name ?? 'Umum'}
+                                                    </span>
+                                                </td>
+
+                                                <td className="px-5 py-5 align-middle text-center">
+                                                    <div className="inline-flex items-start gap-2.5 text-left max-w-[240px]">
+                                                        <MapPin className="size-4 shrink-0 text-[#216B49] dark:text-emerald-400 mt-0.5" />
+                                                        <div className="space-y-1">
+                                                            <div className="text-xs font-medium text-[#171C19] dark:text-neutral-200 leading-snug break-words">
+                                                                {report.location_description ?? `${report.latitude}, ${report.longitude}`}
+                                                            </div>
+                                                            <div className="font-mono text-[11px] text-neutral-400 dark:text-neutral-500">
+                                                                {report.latitude.toFixed(4)}, {report.longitude.toFixed(4)}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+
+                                                <td className="px-4 py-5 align-middle text-center whitespace-nowrap">
+                                                    <StatusBadge status={report.report_status} />
+                                                </td>
+
+                                                <td className="px-4 py-5 align-middle text-center text-xs">
+                                                    {report.latest_assignment ? (
+                                                        <div className="space-y-1.5 max-w-[190px] mx-auto flex flex-col items-center">
+                                                            <span className="font-semibold text-[#171C19] dark:text-white leading-snug block">
+                                                                {report.latest_assignment.agency?.name ?? 'Instansi'}
+                                                            </span>
+                                                            <StatusBadge
+                                                                status={report.latest_assignment.assignment_status}
+                                                                className="text-[10px] px-2 py-0.5"
+                                                            />
+                                                        </div>
+                                                    ) : (
+                                                        <span className="text-neutral-400 dark:text-neutral-500 italic text-xs leading-normal inline-block">
+                                                            Belum ditugaskan
+                                                        </span>
+                                                    )}
+                                                </td>
+
+                                                <td className="px-6 py-5 align-middle text-center whitespace-nowrap">
+                                                    <Link
+                                                        href={reportShow(report.id)}
+                                                        className="inline-flex items-center justify-center rounded-xl bg-[#216B49] px-4 py-2 text-xs font-bold text-white shadow-xs transition hover:bg-[#174B35] active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-[#216B49]/40"
+                                                    >
+                                                        <span>Review</span>
+                                                    </Link>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            {/* Mobile Card List View (< md) */}
+                            <div className="block md:hidden divide-y divide-[#DDE3DE] dark:divide-neutral-800">
+                                {reports.data.map((report) => (
+                                    <div key={report.id} className="p-4 space-y-3">
+                                        <div className="flex items-center justify-between gap-2">
+                                            <span className="inline-block rounded-lg bg-neutral-100 dark:bg-neutral-800 px-2.5 py-1 text-[11px] font-semibold text-neutral-800 dark:text-neutral-200">
+                                                {report.category?.name ?? 'Umum'}
+                                            </span>
+                                            <StatusBadge status={report.report_status} />
+                                        </div>
+
+                                        <div>
+                                            <Link
+                                                href={reportShow(report.id)}
+                                                className="text-sm font-bold text-neutral-900 dark:text-white hover:text-[#216B49] transition-colors leading-snug block"
+                                            >
+                                                {report.title.replace(/^\[(BERAT|SEDANG|RINGAN)\]\s*/i, '')}
+                                            </Link>
+                                        </div>
+
+                                        <div className="flex items-start gap-2 text-xs text-neutral-600 dark:text-neutral-400">
+                                            <MapPin className="size-3.5 text-[#216B49] shrink-0 mt-0.5" />
+                                            <span className="leading-snug break-words">
+                                                {report.location_description ?? `${report.latitude.toFixed(4)}, ${report.longitude.toFixed(4)}`}
+                                            </span>
+                                        </div>
+
+                                        <div className="pt-2 border-t border-neutral-100 dark:border-neutral-800 flex items-center justify-between gap-2">
+                                            <div className="text-[11px] text-neutral-500">
+                                                {report.latest_assignment?.agency?.name ? (
+                                                    <span>OPD: <strong className="text-neutral-700 dark:text-neutral-300 font-semibold">{report.latest_assignment.agency.name}</strong></span>
+                                                ) : (
+                                                    <span className="italic text-neutral-400">Belum ada OPD</span>
+                                                )}
+                                            </div>
+
+                                            <Link
+                                                href={reportShow(report.id)}
+                                                className="inline-flex items-center justify-center rounded-xl bg-[#216B49] px-3.5 py-1.5 text-xs font-bold text-white shadow-xs hover:bg-[#174B35] transition"
+                                            >
+                                                <span>Review</span>
+                                            </Link>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </>
                     )}
 
                     {/* Pagination Links */}
