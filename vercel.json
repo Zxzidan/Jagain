@@ -34,9 +34,13 @@
         "VIEW_COMPILED_PATH": "/tmp/views",
         "CACHE_STORE": "array",
         "SESSION_DRIVER": "cookie",
-        "DB_CONNECTION": "sqlite",
-        "DB_DATABASE": "/tmp/database.sqlite",
+        "DB_CONNECTION": "pgsql",
+        "DB_HOST": "aws-0-ap-northeast-2.pooler.supabase.com",
+        "DB_PORT": "5432",
+        "DB_DATABASE": "postgres",
+        "DB_USERNAME": "postgres.zlukvcaeukjgvncmcppx",
+        "DB_PASSWORD": "JANCOK12345678@!",
+        "DB_SSLMODE": "require",
         "INERTIA_SSR_ENABLED": "false"
     }
 }
-
