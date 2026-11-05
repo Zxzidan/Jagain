@@ -7,9 +7,10 @@
 /public/storage
 /storage/*.key
 /storage/pail
-/resources/js/actions
-/resources/js/routes
-/resources/js/wayfinder
+# Wayfinder generated files included for CI/Vercel builds
+# /resources/js/actions
+# /resources/js/routes
+# /resources/js/wayfinder
 /vendor
 .DS_Store
 .env
