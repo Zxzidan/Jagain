@@ -1,12 +1,35 @@
 <?php
 
-// 1. Prepare writable directories in /tmp for Vercel Serverless read-only filesystem
+ini_set('display_errors', '1');
+ini_set('display_startup_errors', '1');
+error_reporting(E_ALL);
+
+// 1. Redirect all writable storage paths to /tmp (Vercel has read-only filesystem)
+$_ENV['LARAVEL_STORAGE_PATH'] = '/tmp/storage';
+$_SERVER['LARAVEL_STORAGE_PATH'] = '/tmp/storage';
+$_ENV['APP_PACKAGES_CACHE'] = '/tmp/packages.php';
+$_SERVER['APP_PACKAGES_CACHE'] = '/tmp/packages.php';
+$_ENV['APP_SERVICES_CACHE'] = '/tmp/services.php';
+$_SERVER['APP_SERVICES_CACHE'] = '/tmp/services.php';
+$_ENV['APP_CONFIG_CACHE'] = '/tmp/config.php';
+$_SERVER['APP_CONFIG_CACHE'] = '/tmp/config.php';
+$_ENV['APP_ROUTES_CACHE'] = '/tmp/routes.php';
+$_SERVER['APP_ROUTES_CACHE'] = '/tmp/routes.php';
+$_ENV['APP_EVENTS_CACHE'] = '/tmp/events.php';
+$_SERVER['APP_EVENTS_CACHE'] = '/tmp/events.php';
+$_ENV['VIEW_COMPILED_PATH'] = '/tmp/storage/framework/views';
+$_SERVER['VIEW_COMPILED_PATH'] = '/tmp/storage/framework/views';
+
+// 2. Prepare writable directories in /tmp
 $tmpDirs = [
-    '/tmp/views',
+    '/tmp/storage',
+    '/tmp/storage/app',
+    '/tmp/storage/app/public',
+    '/tmp/storage/framework',
     '/tmp/storage/framework/views',
     '/tmp/storage/framework/sessions',
     '/tmp/storage/framework/cache',
-    '/tmp/storage/app/public',
+    '/tmp/storage/framework/cache/data',
     '/tmp/storage/logs',
 ];
 
@@ -16,17 +39,14 @@ foreach ($tmpDirs as $dir) {
     }
 }
 
-// 2. Initialize sqlite database in /tmp if not present
-$tmpDb = '/tmp/database.sqlite';
-$demoDb = __DIR__.'/../database/demo.sqlite';
-
-if (! file_exists($tmpDb)) {
-    if (file_exists($demoDb)) {
-        copy($demoDb, $tmpDb);
-    } else {
-        touch($tmpDb);
-    }
+// 3. Delegate to public/index.php with exception catching
+try {
+    require __DIR__.'/../public/index.php';
+} catch (Throwable $e) {
+    http_response_code(500);
+    header('Content-Type: text/html');
+    echo '<h1>Laravel Serverless Error</h1>';
+    echo '<p><strong>Message:</strong> '.htmlspecialchars($e->getMessage()).'</p>';
+    echo '<p><strong>File:</strong> '.htmlspecialchars($e->getFile()).':'.$e->getLine().'</p>';
+    echo '<pre>'.htmlspecialchars($e->getTraceAsString()).'</pre>';
 }
-
-// 3. Delegate to public/index.php
-require __DIR__.'/../public/index.php';
