@@ -4,6 +4,22 @@ ini_set('display_errors', '1');
 ini_set('display_startup_errors', '1');
 error_reporting(E_ALL);
 
+// Trust HTTPS proxy headers from Vercel edge network
+if ((isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https')
+    || (isset($_SERVER['HTTP_X_FORWARDED_SSL']) && $_SERVER['HTTP_X_FORWARDED_SSL'] === 'on')
+    || (isset($_SERVER['SERVER_PORT']) && (int) $_SERVER['SERVER_PORT'] === 443)) {
+    $_SERVER['HTTPS'] = 'on';
+    $_SERVER['SERVER_PORT'] = 443;
+}
+
+if (isset($_SERVER['HTTP_HOST'])) {
+    $scheme = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ? 'https' : 'http';
+    $appUrl = "{$scheme}://{$_SERVER['HTTP_HOST']}";
+    putenv("APP_URL={$appUrl}");
+    $_ENV['APP_URL'] = $appUrl;
+    $_SERVER['APP_URL'] = $appUrl;
+}
+
 // 1. Redirect all writable storage paths to /tmp (Vercel has read-only filesystem)
 $_ENV['LARAVEL_STORAGE_PATH'] = '/tmp/storage';
 $_SERVER['LARAVEL_STORAGE_PATH'] = '/tmp/storage';
