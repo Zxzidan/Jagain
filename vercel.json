@@ -11,15 +11,15 @@
     "routes": [
         {
             "src": "/build/(.*)",
-            "dest": "/public/build/$1"
+            "dest": "/build/$1"
         },
         {
             "src": "/(favicon\\.(ico|svg)|apple-touch-icon\\.png|robots\\.txt)",
-            "dest": "/public/$1"
+            "dest": "/$1"
         },
         {
             "src": "/(images|img|storage)/(.*)",
-            "dest": "/public/$1/$2"
+            "dest": "/$1/$2"
         },
         {
             "src": "/(.*)",
@@ -27,6 +27,7 @@
         }
     ],
     "env": {
+        "APP_NAME": "JAGAIN",
         "APP_ENV": "production",
         "APP_DEBUG": "true",
         "APP_KEY": "base64:celOyOoQNWNHunYcIiUXHhABxL7opx9/rA5Mvl22Bv0=",
