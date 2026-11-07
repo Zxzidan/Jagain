@@ -127,10 +127,12 @@ class Report extends Model
 
         static::saved(function () {
             Cache::forget('public_homepage_data');
+            Cache::forget('public_map_default_payload');
         });
 
         static::deleted(function () {
             Cache::forget('public_homepage_data');
+            Cache::forget('public_map_default_payload');
         });
     }
 

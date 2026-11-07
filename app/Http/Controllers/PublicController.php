@@ -115,6 +115,40 @@ class PublicController extends Controller
         $province = $request->query('province');
         $status = $request->query('status');
 
+        $isDefault = ! $categorySlug && ! $province && ! $status;
+
+        $mapData = $isDefault
+            ? Cache::remember('public_map_default_payload', 30, fn () => $this->resolveMapPayload(null, null, null))
+            : $this->resolveMapPayload($categorySlug, $province, $status);
+
+        $provinces = [
+            'Kalimantan Barat',
+            'Kalimantan Tengah',
+            'Kalimantan Selatan',
+            'Kalimantan Timur',
+            'Kalimantan Utara',
+        ];
+
+        return Inertia::render('public/map', [
+            'reports' => $mapData['reports'],
+            'observations' => $mapData['observations'],
+            'categories' => $mapData['categories'],
+            'provinces' => $provinces,
+            'filters' => [
+                'category' => $categorySlug,
+                'province' => $province,
+                'status' => $status,
+            ],
+        ]);
+    }
+
+    /**
+     * Resolve payload for interactive karhutla map.
+     *
+     * @return array<string, mixed>
+     */
+    protected function resolveMapPayload(?string $categorySlug, ?string $province, ?string $status): array
+    {
         $reportsQuery = Report::publiclyVisible()
             ->with(['category', 'evidence', 'latestAssignment.agency', 'statusHistories']);
 
@@ -159,25 +193,11 @@ class PublicController extends Controller
 
         $categories = ReportCategory::where('is_active', true)->get(['id', 'name', 'slug']);
 
-        $provinces = [
-            'Kalimantan Barat',
-            'Kalimantan Tengah',
-            'Kalimantan Selatan',
-            'Kalimantan Timur',
-            'Kalimantan Utara',
-        ];
-
-        return Inertia::render('public/map', [
+        return [
             'reports' => $reports,
             'observations' => $observations,
             'categories' => $categories,
-            'provinces' => $provinces,
-            'filters' => [
-                'category' => $categorySlug,
-                'province' => $province,
-                'status' => $status,
-            ],
-        ]);
+        ];
     }
 
     /**
