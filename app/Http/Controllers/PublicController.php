@@ -7,6 +7,7 @@ use App\Models\ExternalObservation;
 use App\Models\Report;
 use App\Models\ReportCategory;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -17,54 +18,75 @@ class PublicController extends Controller
      */
     public function index(): Response
     {
-        $stats = [
-            'total_reports' => Report::count(),
-            'verified_reports' => Report::whereIn('report_status', [
-                ReportStatus::VERIFIED,
-                ReportStatus::DISPATCHED,
-                ReportStatus::RESOLUTION_REVIEW,
-                ReportStatus::RESOLVED_VERIFIED,
-            ])->count(),
-            'active_dispatched' => Report::where('report_status', ReportStatus::DISPATCHED)->count(),
-            'resolved_reports' => Report::where('report_status', ReportStatus::RESOLVED_VERIFIED)->count(),
-            'simulated_hotspots' => ExternalObservation::where('is_simulated', true)->count(),
-        ];
+        $payload = Cache::remember('public_homepage_data', 30, function () {
+            $reportCounts = Report::toBase()
+                ->selectRaw('
+                    COUNT(*) as total,
+                    COUNT(CASE WHEN report_status IN (?, ?, ?, ?) THEN 1 END) as verified,
+                    COUNT(CASE WHEN report_status = ? THEN 1 END) as dispatched,
+                    COUNT(CASE WHEN report_status = ? THEN 1 END) as resolved
+                ', [
+                    ReportStatus::VERIFIED->value,
+                    ReportStatus::DISPATCHED->value,
+                    ReportStatus::RESOLUTION_REVIEW->value,
+                    ReportStatus::RESOLVED_VERIFIED->value,
+                    ReportStatus::DISPATCHED->value,
+                    ReportStatus::RESOLVED_VERIFIED->value,
+                ])
+                ->first();
 
-        $reports = Report::publiclyVisible()
-            ->with(['category', 'evidence', 'latestAssignment.agency'])
-            ->latest()
-            ->take(50)
-            ->get()
-            ->map(fn (Report $r) => $r->toPublicArray());
+            $stats = [
+                'total_reports' => (int) ($reportCounts->total ?? 0),
+                'verified_reports' => (int) ($reportCounts->verified ?? 0),
+                'active_dispatched' => (int) ($reportCounts->dispatched ?? 0),
+                'resolved_reports' => (int) ($reportCounts->resolved ?? 0),
+                'simulated_hotspots' => ExternalObservation::where('is_simulated', true)->count(),
+            ];
 
-        $recentReports = $reports->take(6)->values();
+            $reports = Report::publiclyVisible()
+                ->with(['category', 'evidence', 'latestAssignment.agency', 'statusHistories'])
+                ->latest()
+                ->take(50)
+                ->get()
+                ->map(fn (Report $r) => $r->toPublicArray());
 
-        // External observations (hotspots from NASA FIRMS & BMKG)
-        $observations = ExternalObservation::with('dataSource')
-            ->latest('observed_at')
-            ->take(50)
-            ->get()
-            ->map(fn (ExternalObservation $obs) => [
-                'id' => $obs->id,
-                'external_record_id' => $obs->external_record_id,
-                'satellite_instrument' => $obs->satellite_instrument,
-                'confidence_level' => $obs->confidence_level,
-                'brightness_kelvin' => $obs->brightness_kelvin,
-                'frp_mw' => $obs->frp_mw,
-                'latitude' => $obs->latitude,
-                'longitude' => $obs->longitude,
-                'province' => $obs->province,
-                'regency_city' => $obs->regency_city,
-                'observed_at' => $obs->observed_at->toIso8601String(),
-                'is_simulated' => $obs->is_simulated,
-                'data_source' => [
-                    'name' => $obs->dataSource->name,
-                    'attribution' => $obs->dataSource->attribution_text,
-                    'source_type' => $obs->dataSource->source_type,
-                ],
-            ]);
+            $recentReports = $reports->take(6)->values();
 
-        $categories = ReportCategory::where('is_active', true)->get(['id', 'name', 'slug']);
+            // External observations (hotspots from NASA FIRMS & BMKG)
+            $observations = ExternalObservation::with('dataSource')
+                ->latest('observed_at')
+                ->take(50)
+                ->get()
+                ->map(fn (ExternalObservation $obs) => [
+                    'id' => $obs->id,
+                    'external_record_id' => $obs->external_record_id,
+                    'satellite_instrument' => $obs->satellite_instrument,
+                    'confidence_level' => $obs->confidence_level,
+                    'brightness_kelvin' => $obs->brightness_kelvin,
+                    'frp_mw' => $obs->frp_mw,
+                    'latitude' => $obs->latitude,
+                    'longitude' => $obs->longitude,
+                    'province' => $obs->province,
+                    'regency_city' => $obs->regency_city,
+                    'observed_at' => $obs->observed_at->toIso8601String(),
+                    'is_simulated' => $obs->is_simulated,
+                    'data_source' => [
+                        'name' => $obs->dataSource->name,
+                        'attribution' => $obs->dataSource->attribution_text,
+                        'source_type' => $obs->dataSource->source_type,
+                    ],
+                ]);
+
+            $categories = ReportCategory::where('is_active', true)->get(['id', 'name', 'slug']);
+
+            return [
+                'stats' => $stats,
+                'recentReports' => $recentReports,
+                'reports' => $reports,
+                'observations' => $observations,
+                'categories' => $categories,
+            ];
+        });
 
         $provinces = [
             'Kalimantan Barat',
@@ -75,11 +97,11 @@ class PublicController extends Controller
         ];
 
         return Inertia::render('public/home', [
-            'stats' => $stats,
-            'recentReports' => $recentReports,
-            'reports' => $reports,
-            'observations' => $observations,
-            'categories' => $categories,
+            'stats' => $payload['stats'],
+            'recentReports' => $payload['recentReports'],
+            'reports' => $payload['reports'],
+            'observations' => $payload['observations'],
+            'categories' => $payload['categories'],
             'provinces' => $provinces,
         ]);
     }

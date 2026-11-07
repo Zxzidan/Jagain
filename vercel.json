@@ -3,6 +3,7 @@
     "framework": null,
     "buildCommand": "npm run build",
     "outputDirectory": "public",
+    "regions": ["sin1"],
     "functions": {
         "api/index.php": {
             "runtime": "vercel-php@0.8.0"
@@ -34,12 +35,12 @@
         "LOG_CHANNEL": "stderr",
         "LARAVEL_STORAGE_PATH": "/tmp/storage",
         "VIEW_COMPILED_PATH": "/tmp/storage/framework/views",
-        "CACHE_STORE": "array",
+        "CACHE_STORE": "file",
         "SESSION_DRIVER": "cookie",
         "SESSION_SECURE_COOKIE": "true",
         "DB_CONNECTION": "pgsql",
         "DB_HOST": "aws-0-ap-northeast-2.pooler.supabase.com",
-        "DB_PORT": "5432",
+        "DB_PORT": "6543",
         "DB_DATABASE": "postgres",
         "DB_USERNAME": "postgres.zlukvcaeukjgvncmcppx",
         "DB_PASSWORD": "JANCOK12345678@!",

@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 
 /**
@@ -122,6 +123,14 @@ class Report extends Model
             } elseif (empty($report->category)) {
                 $report->category = 'umum';
             }
+        });
+
+        static::saved(function () {
+            Cache::forget('public_homepage_data');
+        });
+
+        static::deleted(function () {
+            Cache::forget('public_homepage_data');
         });
     }
 
