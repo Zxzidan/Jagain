@@ -90,7 +90,7 @@ class AdminDashboardController extends Controller
                 'is_simulated' => $obs->is_simulated,
                 'data_source' => [
                     'name' => $obs->dataSource?->name ?? 'Satelit BMKG',
-                    'attribution' => $obs->dataSource?->attribution_text ?? 'BMKG / NASA FIRMS',
+                    'attribution' => $obs->dataSource?->attribution_text ?? 'Sensor BMKG',
                     'source_type' => $obs->dataSource?->source_type ?? 'SATELLITE',
                 ],
             ]);
@@ -112,7 +112,7 @@ class AdminDashboardController extends Controller
                     'observed_at' => now()->subHours(2)->toIso8601String(),
                     'is_simulated' => true,
                     'data_source' => [
-                        'name' => 'NASA FIRMS / BMKG Satelit',
+                        'name' => 'Sensor BMKG',
                         'attribution' => 'Sensor Suomi NPP VIIRS',
                         'source_type' => 'SATELLITE',
                     ],
@@ -131,7 +131,7 @@ class AdminDashboardController extends Controller
                     'observed_at' => now()->subHours(4)->toIso8601String(),
                     'is_simulated' => true,
                     'data_source' => [
-                        'name' => 'NASA FIRMS / BMKG Satelit',
+                        'name' => 'Sensor BMKG',
                         'attribution' => 'Sensor MODIS Aqua',
                         'source_type' => 'SATELLITE',
                     ],
@@ -150,7 +150,7 @@ class AdminDashboardController extends Controller
                     'observed_at' => now()->subHours(1)->toIso8601String(),
                     'is_simulated' => true,
                     'data_source' => [
-                        'name' => 'NASA FIRMS / BMKG Satelit',
+                        'name' => 'Sensor BMKG',
                         'attribution' => 'Sensor NOAA-20 VIIRS',
                         'source_type' => 'SATELLITE',
                     ],
@@ -169,7 +169,7 @@ class AdminDashboardController extends Controller
                     'observed_at' => now()->subHours(3)->toIso8601String(),
                     'is_simulated' => true,
                     'data_source' => [
-                        'name' => 'NASA FIRMS / BMKG Satelit',
+                        'name' => 'Sensor BMKG',
                         'attribution' => 'Sensor MODIS Terra',
                         'source_type' => 'SATELLITE',
                     ],
@@ -188,7 +188,7 @@ class AdminDashboardController extends Controller
                     'observed_at' => now()->subHours(2)->toIso8601String(),
                     'is_simulated' => true,
                     'data_source' => [
-                        'name' => 'NASA FIRMS / BMKG Satelit',
+                        'name' => 'Sensor BMKG',
                         'attribution' => 'Sensor VIIRS NOAA-20',
                         'source_type' => 'SATELLITE',
                     ],

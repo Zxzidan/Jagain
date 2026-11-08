@@ -494,7 +494,7 @@ export default function AdminDashboard({
     const defaultMapObservations: MapObservation[] = [
         {
             id: 801,
-            external_record_id: 'NASA-VIIRS-KB01',
+            external_record_id: 'BMKG-HOTSPOT-KB01',
             satellite_instrument: 'VIIRS NOAA-20',
             confidence_level: 'High (Tinggi)',
             brightness_kelvin: 374.5,
@@ -506,14 +506,14 @@ export default function AdminDashboard({
             observed_at: new Date(Date.now() - 3600000 * 2).toISOString(),
             is_simulated: true,
             data_source: {
-                name: 'NASA FIRMS / BMKG Satelit',
+                name: 'Sensor BMKG',
                 attribution: 'Sensor VIIRS NOAA-20 (Thermal Radiative Power)',
                 source_type: 'SATELLITE',
             },
         },
         {
             id: 802,
-            external_record_id: 'NASA-MODIS-KB02',
+            external_record_id: 'BMKG-HOTSPOT-KB02',
             satellite_instrument: 'MODIS Aqua',
             confidence_level: 'Nominal',
             brightness_kelvin: 342.1,
@@ -525,14 +525,14 @@ export default function AdminDashboard({
             observed_at: new Date(Date.now() - 3600000 * 4).toISOString(),
             is_simulated: true,
             data_source: {
-                name: 'NASA FIRMS / BMKG Satelit',
+                name: 'Sensor BMKG',
                 attribution: 'Sensor MODIS Aqua',
                 source_type: 'SATELLITE',
             },
         },
         {
             id: 803,
-            external_record_id: 'NASA-VIIRS-KT01',
+            external_record_id: 'BMKG-HOTSPOT-KT01',
             satellite_instrument: 'VIIRS SNPP',
             confidence_level: 'High (Tinggi)',
             brightness_kelvin: 382.4,
@@ -544,14 +544,14 @@ export default function AdminDashboard({
             observed_at: new Date(Date.now() - 3600000 * 1).toISOString(),
             is_simulated: true,
             data_source: {
-                name: 'NASA FIRMS / BMKG Satelit',
+                name: 'Sensor BMKG',
                 attribution: 'Sensor Suomi NPP VIIRS',
                 source_type: 'SATELLITE',
             },
         },
         {
             id: 804,
-            external_record_id: 'NASA-VIIRS-KT02',
+            external_record_id: 'BMKG-HOTSPOT-KT02',
             satellite_instrument: 'NOAA-21 VIIRS',
             confidence_level: 'High (Tinggi)',
             brightness_kelvin: 366.8,
@@ -563,14 +563,14 @@ export default function AdminDashboard({
             observed_at: new Date(Date.now() - 3600000 * 3).toISOString(),
             is_simulated: true,
             data_source: {
-                name: 'NASA FIRMS / BMKG Satelit',
+                name: 'Sensor BMKG',
                 attribution: 'Sensor NOAA-21 VIIRS',
                 source_type: 'SATELLITE',
             },
         },
         {
             id: 805,
-            external_record_id: 'NASA-MODIS-KS01',
+            external_record_id: 'BMKG-HOTSPOT-KS01',
             satellite_instrument: 'MODIS Terra',
             confidence_level: 'Nominal',
             brightness_kelvin: 348.2,
@@ -582,14 +582,14 @@ export default function AdminDashboard({
             observed_at: new Date(Date.now() - 3600000 * 5).toISOString(),
             is_simulated: true,
             data_source: {
-                name: 'NASA FIRMS / BMKG Satelit',
+                name: 'Sensor BMKG',
                 attribution: 'Sensor MODIS Terra',
                 source_type: 'SATELLITE',
             },
         },
         {
             id: 806,
-            external_record_id: 'NASA-VIIRS-KI01',
+            external_record_id: 'BMKG-HOTSPOT-KI01',
             satellite_instrument: 'VIIRS NOAA-20',
             confidence_level: 'High (Tinggi)',
             brightness_kelvin: 371.0,
@@ -601,7 +601,7 @@ export default function AdminDashboard({
             observed_at: new Date(Date.now() - 3600000 * 2).toISOString(),
             is_simulated: true,
             data_source: {
-                name: 'NASA FIRMS / BMKG Satelit',
+                name: 'Sensor BMKG',
                 attribution: 'Sensor VIIRS NOAA-20',
                 source_type: 'SATELLITE',
             },
@@ -997,7 +997,7 @@ export default function AdminDashboard({
                                                 </h3>
                                             </div>
                                             <p className="text-xs text-neutral-500 mt-0.5">
-                                                Koordinat kejadian lapangan dan pantauan satelit NASA / BMKG
+                                                Koordinat kejadian lapangan dan pantauan BMKG
                                             </p>
                                         </div>
 
