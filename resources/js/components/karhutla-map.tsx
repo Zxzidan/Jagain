@@ -51,6 +51,7 @@ interface KarhutlaMapProps {
     height?: string;
     minHeight?: string;
     showLegend?: boolean;
+    showFloatingLegend?: boolean;
     showSimulatedNotice?: boolean;
     reportUrlPrefix?: string;
 }
@@ -65,6 +66,7 @@ export default function KarhutlaMap({
     height = '500px',
     minHeight,
     showLegend = true,
+    showFloatingLegend = true,
     showSimulatedNotice = true,
     reportUrlPrefix,
 }: KarhutlaMapProps) {
@@ -98,14 +100,11 @@ export default function KarhutlaMap({
                     attributionControl: true,
                 });
 
-                // ESRI World Light Gray Canvas & Reference for modern, keyless, watermark-free map
-                L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
-                    attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ | JAGAIN',
-                    maxZoom: 16,
-                }).addTo(map);
-
-                L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Reference/MapServer/tile/{z}/{y}/{x}', {
-                    maxZoom: 16,
+                // CartoDB Positron: clean, keyless, unified single-layer tiles with crisp collision-free typography
+                L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+                    subdomains: 'abcd',
+                    maxZoom: 19,
                 }).addTo(map);
 
                 const markersLayer = L.layerGroup().addTo(map);
@@ -359,21 +358,23 @@ export default function KarhutlaMap({
             )}
 
             {/* Floating Severity Legend Overlay */}
-            <div className="absolute bottom-2.5 left-2.5 z-20 bg-white/95 backdrop-blur-md px-3 py-1.5 rounded-full border border-neutral-200/90 shadow-md flex items-center gap-3 text-[11px] font-semibold text-neutral-800 pointer-events-auto">
-                <span className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider">Tingkat:</span>
-                <div className="flex items-center gap-1.5">
-                    <span className="size-2 rounded-full bg-red-500 ring-2 ring-red-200 animate-pulse" />
-                    <span>Berat</span>
+            {showFloatingLegend && (
+                <div className="absolute bottom-2.5 left-2.5 z-20 bg-white/95 backdrop-blur-md px-3 py-1.5 rounded-full border border-neutral-200/90 shadow-md flex items-center gap-3 text-[11px] font-semibold text-neutral-800 pointer-events-auto">
+                    <span className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider">Tingkat:</span>
+                    <div className="flex items-center gap-1.5">
+                        <span className="size-2 rounded-full bg-red-500 ring-2 ring-red-200 animate-pulse" />
+                        <span>Berat</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                        <span className="size-2 rounded-full bg-orange-500" />
+                        <span>Sedang</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                        <span className="size-2 rounded-full bg-yellow-400" />
+                        <span>Ringan</span>
+                    </div>
                 </div>
-                <div className="flex items-center gap-1.5">
-                    <span className="size-2 rounded-full bg-orange-500" />
-                    <span>Sedang</span>
-                </div>
-                <div className="flex items-center gap-1.5">
-                    <span className="size-2 rounded-full bg-yellow-400" />
-                    <span>Ringan</span>
-                </div>
-            </div>
+            )}
 
             {/* Map Legend */}
             {showLegend && (

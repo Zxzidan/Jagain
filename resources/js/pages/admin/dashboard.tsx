@@ -911,11 +911,11 @@ export default function AdminDashboard({
                                     </div>
 
                                     {/* Quick Layer Filter Buttons - Matching Brand Forest Green */}
-                                    <div className="flex flex-wrap items-center gap-1.5 py-2 border-t border-neutral-100">
+                                    <div className="flex flex-wrap items-center gap-2 py-2.5 border-t border-neutral-100">
                                         <button
                                             type="button"
                                             onClick={() => setSelectedLayer('all')}
-                                            className={`px-3 py-1 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                                            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
                                                 selectedLayer === 'all'
                                                     ? 'bg-[#0c4e33] text-white shadow-xs'
                                                     : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200/70'
@@ -926,7 +926,7 @@ export default function AdminDashboard({
                                         <button
                                             type="button"
                                             onClick={() => setSelectedLayer('gambut')}
-                                            className={`px-3 py-1 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                                            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
                                                 selectedLayer === 'gambut'
                                                     ? 'bg-[#0c4e33] text-white shadow-xs'
                                                     : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200/70'
@@ -937,7 +937,7 @@ export default function AdminDashboard({
                                         <button
                                             type="button"
                                             onClick={() => setSelectedLayer('lindung')}
-                                            className={`px-3 py-1 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                                            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
                                                 selectedLayer === 'lindung'
                                                     ? 'bg-[#0c4e33] text-white shadow-xs'
                                                     : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200/70'
@@ -948,7 +948,7 @@ export default function AdminDashboard({
                                         <button
                                             type="button"
                                             onClick={() => setSelectedLayer('satelit')}
-                                            className={`px-3 py-1 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                                            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
                                                 selectedLayer === 'satelit'
                                                     ? 'bg-[#0c4e33] text-white shadow-xs'
                                                     : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200/70'
@@ -959,7 +959,7 @@ export default function AdminDashboard({
                                         <button
                                             type="button"
                                             onClick={() => setSelectedLayer('padam')}
-                                            className={`px-3 py-1 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                                            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
                                                 selectedLayer === 'padam'
                                                     ? 'bg-[#0c4e33] text-white shadow-xs'
                                                     : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200/70'
@@ -969,8 +969,8 @@ export default function AdminDashboard({
                                         </button>
                                     </div>
 
-                                    {/* Leaflet Interactive Map View */}
-                                    <div className="mt-2 rounded-xl overflow-hidden border border-neutral-200/80 shadow-2xs relative">
+                                    {/* Leaflet Interactive Map View with Clean Spacing */}
+                                    <div className="mt-3.5 rounded-xl overflow-hidden border border-neutral-200/80 shadow-2xs relative">
                                         <KarhutlaMap
                                             reports={effectiveMapReports.filter((r) => {
                                                 if (selectedForestProvince && r.province !== selectedForestProvince) return false;
@@ -992,8 +992,9 @@ export default function AdminDashboard({
                                                 return true;
                                             })}
                                             reportUrlPrefix="/admin/reports"
-                                            height="360px"
+                                            height="350px"
                                             showLegend={false}
+                                            showFloatingLegend={false}
                                             showSimulatedNotice={false}
                                             className="w-full"
                                         />
@@ -1002,28 +1003,28 @@ export default function AdminDashboard({
 
                                 {/* GIS Map Footer & Color Legend */}
                                 <div className="mt-4 pt-3.5 border-t border-neutral-100 flex flex-wrap items-center justify-between gap-3 text-xs text-neutral-500 font-sans">
-                                    <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5">
-                                        <span className="inline-flex items-center gap-1.5 font-medium text-neutral-700">
-                                            <span className="size-2 rounded-full bg-red-600 inline-block" />
+                                    <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
+                                        <span className="inline-flex items-center gap-1.5 font-medium text-neutral-700 whitespace-nowrap">
+                                            <span className="size-2 rounded-full bg-red-600 inline-block shrink-0" />
                                             <span>Api Aktif</span>
                                         </span>
-                                        <span className="inline-flex items-center gap-1.5 font-medium text-neutral-700">
-                                            <span className="size-2 rounded-full bg-amber-500 inline-block" />
+                                        <span className="inline-flex items-center gap-1.5 font-medium text-neutral-700 whitespace-nowrap">
+                                            <span className="size-2 rounded-full bg-amber-500 inline-block shrink-0" />
                                             <span>Sekat Parit</span>
                                         </span>
-                                        <span className="inline-flex items-center gap-1.5 font-medium text-neutral-700">
-                                            <span className="size-2 rounded-full bg-[#0c4e33] inline-block" />
+                                        <span className="inline-flex items-center gap-1.5 font-medium text-neutral-700 whitespace-nowrap">
+                                            <span className="size-2 rounded-full bg-[#0c4e33] inline-block shrink-0" />
                                             <span>Padam</span>
                                         </span>
-                                        <span className="inline-flex items-center gap-1.5 font-medium text-neutral-700">
-                                            <span className="size-2 rounded-full bg-neutral-400 inline-block" />
+                                        <span className="inline-flex items-center gap-1.5 font-medium text-neutral-700 whitespace-nowrap">
+                                            <span className="size-2 rounded-full bg-neutral-400 inline-block shrink-0" />
                                             <span>Satelit Hotspot</span>
                                         </span>
                                     </div>
 
                                     <Link
                                         href="/admin/map"
-                                        className="font-bold text-[#0c4e33] hover:underline flex items-center gap-1"
+                                        className="font-bold text-[#0c4e33] hover:underline flex items-center gap-1 shrink-0 whitespace-nowrap"
                                     >
                                         <span>Buka Peta Lengkap</span>
                                         <ArrowUpRight className="size-3.5" />
@@ -1037,20 +1038,20 @@ export default function AdminDashboard({
                                     {/* Tab View 1: Tren Kerusakan vs Pemulihan Bulanan */}
                                     {forestryTab === 'trend' && (
                                         <div className="space-y-4">
-                                            <div className="flex items-center justify-between border-b border-neutral-100 pb-3">
-                                                <div>
+                                            <div className="flex items-center justify-between border-b border-neutral-100 pb-3 gap-2">
+                                                <div className="min-w-0">
                                                     <h3 className="text-base font-bold text-neutral-900 tracking-tight">
                                                         Tren Kerusakan vs Pemulihan
                                                     </h3>
-                                                    <p className="text-xs text-neutral-500 mt-0.5">Perbandingan luas per bulan (Ha)</p>
+                                                    <p className="text-xs text-neutral-500 mt-0.5 truncate">Perbandingan luas per bulan (Ha)</p>
                                                 </div>
-                                                <div className="flex items-center gap-3 text-xs font-semibold">
-                                                    <span className="inline-flex items-center gap-1.5 text-neutral-700">
-                                                        <span className="size-2.5 rounded-xs bg-neutral-800" />
+                                                <div className="flex items-center gap-3 text-xs font-semibold shrink-0">
+                                                    <span className="inline-flex items-center gap-1.5 text-neutral-700 whitespace-nowrap">
+                                                        <span className="size-2.5 rounded-xs bg-neutral-800 shrink-0" />
                                                         <span>Terbakar</span>
                                                     </span>
-                                                    <span className="inline-flex items-center gap-1.5 text-[#0c4e33]">
-                                                        <span className="size-2.5 rounded-xs bg-[#0c4e33]" />
+                                                    <span className="inline-flex items-center gap-1.5 text-[#0c4e33] whitespace-nowrap">
+                                                        <span className="size-2.5 rounded-xs bg-[#0c4e33] shrink-0" />
                                                         <span>Pulih</span>
                                                     </span>
                                                 </div>
@@ -1058,28 +1059,28 @@ export default function AdminDashboard({
 
                                             {/* Selected Month Spotlight Card */}
                                             {metrics.monthly_trend[selectedMonthIndex] && (
-                                                <div className="p-3.5 rounded-xl bg-neutral-50 border border-neutral-200/80 flex items-center justify-between">
-                                                    <div>
-                                                        <div className="text-xs font-bold text-neutral-800">
+                                                <div className="p-3.5 rounded-xl bg-neutral-50 border border-neutral-200/80 flex items-center justify-between gap-3">
+                                                    <div className="min-w-0">
+                                                        <div className="text-xs font-bold text-neutral-800 truncate">
                                                             {metrics.monthly_trend[selectedMonthIndex].month} 2026
                                                         </div>
-                                                        <div className="text-[11px] text-neutral-500 mt-0.5">
+                                                        <div className="text-[11px] text-neutral-500 mt-0.5 truncate">
                                                             {metrics.monthly_trend[selectedMonthIndex].incidents} kejadian terdata
                                                         </div>
                                                     </div>
-                                                    <div className="flex items-center gap-3 text-right">
+                                                    <div className="flex items-center gap-4 text-right shrink-0">
                                                         <div>
-                                                            <div className="text-xs font-bold text-neutral-900">
+                                                            <div className="text-xs font-bold text-neutral-900 tabular-nums whitespace-nowrap">
                                                                 {metrics.monthly_trend[selectedMonthIndex].damaged_ha} Ha
                                                             </div>
-                                                            <div className="text-[10px] text-neutral-400">Terbakar</div>
+                                                            <div className="text-[10px] text-neutral-400 whitespace-nowrap">Terbakar</div>
                                                         </div>
-                                                        <div className="h-6 w-px bg-neutral-200" />
+                                                        <div className="h-6 w-px bg-neutral-200 shrink-0" />
                                                         <div>
-                                                            <div className="text-xs font-black text-[#0c4e33]">
+                                                            <div className="text-xs font-black text-[#0c4e33] tabular-nums whitespace-nowrap">
                                                                 {metrics.monthly_trend[selectedMonthIndex].recovered_ha} Ha
                                                             </div>
-                                                            <div className="text-[10px] text-[#0c4e33] font-bold">
+                                                            <div className="text-[10px] text-[#0c4e33] font-bold whitespace-nowrap">
                                                                 {metrics.monthly_trend[selectedMonthIndex].recovery_rate}% Pulih
                                                             </div>
                                                         </div>
@@ -1087,68 +1088,90 @@ export default function AdminDashboard({
                                                 </div>
                                             )}
 
-                                            {/* Dual Comparative Bar Chart */}
-                                            <div className="relative pt-6 pb-2 h-56 flex flex-col justify-end">
-                                                {/* Background Grid Lines */}
-                                                <div className="absolute inset-0 flex flex-col justify-between pointer-events-none text-[10px] text-neutral-400 pb-6">
-                                                    <div className="flex items-center gap-2">
-                                                        <span className="w-7 text-right">60 Ha</span>
-                                                        <div className="flex-1 border-b border-dashed border-neutral-200" />
+                                            {/* Dual Comparative Bar Chart with Dedicated Baseline and Non-wrapping Y-axis */}
+                                            <div className="pt-2 pb-1">
+                                                {/* Chart Plot Area (176px tall with perfect 60 Ha ceiling) */}
+                                                <div className="relative h-44 w-full">
+                                                    {/* Background Grid Lines & Non-Wrapping Y-Axis Labels */}
+                                                    <div className="absolute inset-0 flex flex-col justify-between pointer-events-none text-[10px] text-neutral-400">
+                                                        <div className="flex items-center gap-2">
+                                                            <span className="w-12 text-right shrink-0 whitespace-nowrap tabular-nums font-mono">60 Ha</span>
+                                                            <div className="flex-1 border-b border-dashed border-neutral-200" />
+                                                        </div>
+                                                        <div className="flex items-center gap-2">
+                                                            <span className="w-12 text-right shrink-0 whitespace-nowrap tabular-nums font-mono">40 Ha</span>
+                                                            <div className="flex-1 border-b border-dashed border-neutral-200" />
+                                                        </div>
+                                                        <div className="flex items-center gap-2">
+                                                            <span className="w-12 text-right shrink-0 whitespace-nowrap tabular-nums font-mono">20 Ha</span>
+                                                            <div className="flex-1 border-b border-dashed border-neutral-200" />
+                                                        </div>
+                                                        <div className="flex items-center gap-2">
+                                                            <span className="w-12 text-right shrink-0 whitespace-nowrap tabular-nums font-mono">0 Ha</span>
+                                                            <div className="flex-1 border-b border-neutral-300" />
+                                                        </div>
                                                     </div>
-                                                    <div className="flex items-center gap-2">
-                                                        <span className="w-7 text-right">40 Ha</span>
-                                                        <div className="flex-1 border-b border-dashed border-neutral-200" />
-                                                    </div>
-                                                    <div className="flex items-center gap-2">
-                                                        <span className="w-7 text-right">20 Ha</span>
-                                                        <div className="flex-1 border-b border-dashed border-neutral-200" />
-                                                    </div>
-                                                    <div className="flex items-center gap-2">
-                                                        <span className="w-7 text-right">0 Ha</span>
-                                                        <div className="flex-1 border-b border-neutral-200" />
+
+                                                    {/* Comparative Bars Aligned 1:1 with Grid Lines */}
+                                                    <div className="relative h-full flex items-end justify-between pl-14 pr-1">
+                                                        {metrics.monthly_trend.map((m, idx) => {
+                                                            const isSelected = selectedMonthIndex === idx;
+                                                            const damagedPct = Math.min(Math.round((m.damaged_ha / 60) * 100), 100);
+                                                            const recoveredPct = Math.min(Math.round((m.recovered_ha / 60) * 100), 100);
+
+                                                            return (
+                                                                <div
+                                                                    key={m.month}
+                                                                    onClick={() => setSelectedMonthIndex(idx)}
+                                                                    className={`flex flex-col items-center flex-1 h-full justify-end cursor-pointer group px-0.5 rounded-lg transition-colors ${
+                                                                        isSelected ? 'bg-neutral-100/90 ring-1 ring-[#0c4e33]/25' : 'hover:bg-neutral-50'
+                                                                    }`}
+                                                                >
+                                                                    <div className="flex items-end justify-center gap-1 sm:gap-1.5 w-full h-full pb-0.5">
+                                                                        {/* Damaged Area Bar */}
+                                                                        <div
+                                                                            style={{ height: `${damagedPct}%` }}
+                                                                            className={`w-2.5 sm:w-3.5 rounded-t-xs transition-all duration-300 ${
+                                                                                isSelected
+                                                                                    ? 'bg-neutral-900 shadow-xs'
+                                                                                    : 'bg-neutral-300 group-hover:bg-neutral-400'
+                                                                            }`}
+                                                                            title={`Terbakar: ${m.damaged_ha} Ha`}
+                                                                        />
+                                                                        {/* Recovered Area Bar */}
+                                                                        <div
+                                                                            style={{ height: `${recoveredPct}%` }}
+                                                                            className={`w-2.5 sm:w-3.5 rounded-t-xs transition-all duration-300 ${
+                                                                                isSelected
+                                                                                    ? 'bg-[#0c4e33] shadow-xs ring-1 ring-[#10e57a]'
+                                                                                    : 'bg-emerald-400 group-hover:bg-emerald-500'
+                                                                            }`}
+                                                                            title={`Terpulihkan: ${m.recovered_ha} Ha`}
+                                                                        />
+                                                                    </div>
+                                                                </div>
+                                                            );
+                                                        })}
                                                     </div>
                                                 </div>
 
-                                                {/* Comparative Bars (Styled with Website Forest Green #0c4e33 & Dark Onyx) */}
-                                                <div className="relative h-full flex items-end justify-between pl-9 pr-2 pb-6">
+                                                {/* X-Axis Month Labels Row Sitting Cleanly Below 0 Ha Grid Line */}
+                                                <div className="flex items-center justify-between pl-14 pr-1 pt-2">
                                                     {metrics.monthly_trend.map((m, idx) => {
                                                         const isSelected = selectedMonthIndex === idx;
-                                                        const damagedPct = Math.min(Math.round((m.damaged_ha / 60) * 100), 100);
-                                                        const recoveredPct = Math.min(Math.round((m.recovered_ha / 60) * 100), 100);
-
                                                         return (
                                                             <div
-                                                                key={m.month}
+                                                                key={`month-label-${m.month}`}
                                                                 onClick={() => setSelectedMonthIndex(idx)}
-                                                                className={`flex flex-col items-center flex-1 h-full justify-end cursor-pointer group px-0.5 sm:px-1 rounded-lg transition-colors ${
-                                                                    isSelected ? 'bg-neutral-100/80 ring-1 ring-[#0c4e33]/20' : 'hover:bg-neutral-50'
-                                                                }`}
+                                                                className="flex-1 text-center cursor-pointer"
                                                             >
-                                                                <div className="flex items-end justify-center gap-1 w-full h-full pb-1">
-                                                                    {/* Damaged Area Bar (Dark Onyx/Neutral) */}
-                                                                    <div
-                                                                        style={{ height: `${damagedPct}%` }}
-                                                                        className={`w-2.5 sm:w-3.5 rounded-t-xs transition-all duration-300 ${
-                                                                            isSelected
-                                                                                ? 'bg-neutral-900 shadow-xs'
-                                                                                : 'bg-neutral-300 group-hover:bg-neutral-400'
-                                                                        }`}
-                                                                        title={`Terbakar: ${m.damaged_ha} Ha`}
-                                                                    />
-                                                                    {/* Recovered Area Bar (Forest Green #0c4e33) */}
-                                                                    <div
-                                                                        style={{ height: `${recoveredPct}%` }}
-                                                                        className={`w-2.5 sm:w-3.5 rounded-t-xs transition-all duration-300 ${
-                                                                            isSelected
-                                                                                ? 'bg-[#0c4e33] shadow-xs ring-1 ring-[#10e57a]'
-                                                                                : 'bg-emerald-300 group-hover:bg-emerald-400'
-                                                                        }`}
-                                                                        title={`Terpulihkan: ${m.recovered_ha} Ha`}
-                                                                    />
-                                                                </div>
-                                                                <span className={`text-[11px] font-medium mt-1 ${
-                                                                    isSelected ? 'font-bold text-[#0c4e33]' : 'text-neutral-400'
-                                                                }`}>
+                                                                <span
+                                                                    className={`text-[11px] block transition-colors ${
+                                                                        isSelected
+                                                                            ? 'font-bold text-[#0c4e33]'
+                                                                            : 'font-medium text-neutral-400 hover:text-neutral-700'
+                                                                    }`}
+                                                                >
                                                                     {m.month}
                                                                 </span>
                                                             </div>
@@ -1179,16 +1202,16 @@ export default function AdminDashboard({
                                                             <span className="font-bold text-xs text-neutral-900">
                                                                 {eco.name}
                                                             </span>
-                                                            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-neutral-100 text-neutral-700 border border-neutral-200">
+                                                            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-neutral-100 text-neutral-700 border border-neutral-200 whitespace-nowrap">
                                                                 {eco.carbon_risk}
                                                             </span>
                                                         </div>
 
                                                         <div className="flex items-center justify-between text-xs text-neutral-600">
-                                                            <span className="text-[11px]">
+                                                            <span className="text-[11px] whitespace-nowrap">
                                                                 {eco.damaged_ha} Ha Terbakar • {eco.recovered_ha} Ha Pulih
                                                             </span>
-                                                            <span className="font-bold text-[#0c4e33] tabular-nums">
+                                                            <span className="font-bold text-[#0c4e33] tabular-nums whitespace-nowrap">
                                                                 {eco.recovery_rate}%
                                                             </span>
                                                         </div>
@@ -1226,7 +1249,7 @@ export default function AdminDashboard({
                                                             <span className="font-bold text-xs text-neutral-900">
                                                                 {prov.province}
                                                             </span>
-                                                            <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full ${
+                                                            <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full whitespace-nowrap ${
                                                                 prov.risk_status === 'PRIORITAS TINGGI'
                                                                     ? 'bg-red-50 text-red-700 border border-red-200'
                                                                     : prov.risk_status === 'WASPADA'
@@ -1240,10 +1263,10 @@ export default function AdminDashboard({
                                                             {prov.key_zones}
                                                         </div>
                                                         <div className="flex items-center justify-between text-xs pt-1">
-                                                            <span className="text-neutral-500 text-[11px]">
+                                                            <span className="text-neutral-500 text-[11px] whitespace-nowrap">
                                                                 {prov.damaged_ha} Ha (Pulih {prov.recovered_ha} Ha)
                                                             </span>
-                                                            <span className="font-bold text-[#0c4e33] tabular-nums">
+                                                            <span className="font-bold text-[#0c4e33] tabular-nums whitespace-nowrap">
                                                                 {prov.recovery_rate}% Selesai
                                                             </span>
                                                         </div>
@@ -1256,12 +1279,12 @@ export default function AdminDashboard({
 
                                 {/* Right Column Footer */}
                                 <div className="mt-4 pt-3.5 border-t border-neutral-100 flex items-center justify-between text-xs text-neutral-500">
-                                    <span className="text-neutral-400 text-[11px]">
+                                    <span className="text-neutral-400 text-[11px] whitespace-nowrap">
                                         Data terintegrasi BPBD & Satelit
                                     </span>
                                     <Link
                                         href={reportsIndex().url}
-                                        className="font-bold text-[#0c4e33] hover:underline"
+                                        className="font-bold text-[#0c4e33] hover:underline whitespace-nowrap"
                                     >
                                         Buka Register Terbuka
                                     </Link>
