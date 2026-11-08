@@ -185,9 +185,8 @@ class DatabaseSeeder extends Seeder
 
         // 4. Data Sources
         $dsCommunity = DataSource::firstOrCreate(
-            ['code' => 'COMMUNITY_JAGAIN'],
+            ['name' => 'Laporan Masyarakat JAGAIN'],
             [
-                'name' => 'Laporan Masyarakat JAGAIN',
                 'source_type' => 'COMMUNITY',
                 'attribution_text' => 'Pelaporan langsung oleh warga terverifikasi melalui aplikasi JAGAIN',
                 'integration_status' => 'ACTIVE',
@@ -195,9 +194,8 @@ class DatabaseSeeder extends Seeder
         );
 
         $dsNasa = DataSource::firstOrCreate(
-            ['code' => 'NASA_FIRMS_SIM'],
+            ['name' => 'NASA FIRMS Hotspots Ingest (Simulasi)'],
             [
-                'name' => 'NASA FIRMS Hotspots Ingest (Simulasi)',
                 'source_type' => 'SATELLITE',
                 'attribution_text' => 'Dataset Hotspot Satelit MODIS & VIIRS (Simulasi Kalbar/Kalteng)',
                 'integration_status' => 'ACTIVE',

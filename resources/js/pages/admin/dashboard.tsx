@@ -491,7 +491,127 @@ export default function AdminDashboard({
         },
     ];
 
+    const defaultMapObservations: MapObservation[] = [
+        {
+            id: 801,
+            external_record_id: 'NASA-VIIRS-KB01',
+            satellite_instrument: 'VIIRS NOAA-20',
+            confidence_level: 'High (Tinggi)',
+            brightness_kelvin: 374.5,
+            frp_mw: 54.2,
+            latitude: -0.162,
+            longitude: 109.395,
+            province: 'Kalimantan Barat',
+            regency_city: 'Kabupaten Kubu Raya',
+            observed_at: new Date(Date.now() - 3600000 * 2).toISOString(),
+            is_simulated: true,
+            data_source: {
+                name: 'NASA FIRMS / BMKG Satelit',
+                attribution: 'Sensor VIIRS NOAA-20 (Thermal Radiative Power)',
+                source_type: 'SATELLITE',
+            },
+        },
+        {
+            id: 802,
+            external_record_id: 'NASA-MODIS-KB02',
+            satellite_instrument: 'MODIS Aqua',
+            confidence_level: 'Nominal',
+            brightness_kelvin: 342.1,
+            frp_mw: 28.6,
+            latitude: -0.091,
+            longitude: 109.445,
+            province: 'Kalimantan Barat',
+            regency_city: 'Kabupaten Kubu Raya',
+            observed_at: new Date(Date.now() - 3600000 * 4).toISOString(),
+            is_simulated: true,
+            data_source: {
+                name: 'NASA FIRMS / BMKG Satelit',
+                attribution: 'Sensor MODIS Aqua',
+                source_type: 'SATELLITE',
+            },
+        },
+        {
+            id: 803,
+            external_record_id: 'NASA-VIIRS-KT01',
+            satellite_instrument: 'VIIRS SNPP',
+            confidence_level: 'High (Tinggi)',
+            brightness_kelvin: 382.4,
+            frp_mw: 68.4,
+            latitude: -2.235,
+            longitude: 113.89,
+            province: 'Kalimantan Tengah',
+            regency_city: 'Kota Palangka Raya',
+            observed_at: new Date(Date.now() - 3600000 * 1).toISOString(),
+            is_simulated: true,
+            data_source: {
+                name: 'NASA FIRMS / BMKG Satelit',
+                attribution: 'Sensor Suomi NPP VIIRS',
+                source_type: 'SATELLITE',
+            },
+        },
+        {
+            id: 804,
+            external_record_id: 'NASA-VIIRS-KT02',
+            satellite_instrument: 'NOAA-21 VIIRS',
+            confidence_level: 'High (Tinggi)',
+            brightness_kelvin: 366.8,
+            frp_mw: 42.1,
+            latitude: -2.535,
+            longitude: 112.95,
+            province: 'Kalimantan Tengah',
+            regency_city: 'Kabupaten Kotawaringin Timur',
+            observed_at: new Date(Date.now() - 3600000 * 3).toISOString(),
+            is_simulated: true,
+            data_source: {
+                name: 'NASA FIRMS / BMKG Satelit',
+                attribution: 'Sensor NOAA-21 VIIRS',
+                source_type: 'SATELLITE',
+            },
+        },
+        {
+            id: 805,
+            external_record_id: 'NASA-MODIS-KS01',
+            satellite_instrument: 'MODIS Terra',
+            confidence_level: 'Nominal',
+            brightness_kelvin: 348.2,
+            frp_mw: 33.7,
+            latitude: -3.425,
+            longitude: 114.82,
+            province: 'Kalimantan Selatan',
+            regency_city: 'Kota Banjarbaru',
+            observed_at: new Date(Date.now() - 3600000 * 5).toISOString(),
+            is_simulated: true,
+            data_source: {
+                name: 'NASA FIRMS / BMKG Satelit',
+                attribution: 'Sensor MODIS Terra',
+                source_type: 'SATELLITE',
+            },
+        },
+        {
+            id: 806,
+            external_record_id: 'NASA-VIIRS-KI01',
+            satellite_instrument: 'VIIRS NOAA-20',
+            confidence_level: 'High (Tinggi)',
+            brightness_kelvin: 371.0,
+            frp_mw: 49.3,
+            latitude: -0.42,
+            longitude: 116.98,
+            province: 'Kalimantan Timur',
+            regency_city: 'Kabupaten Kutai Kartanegara',
+            observed_at: new Date(Date.now() - 3600000 * 2).toISOString(),
+            is_simulated: true,
+            data_source: {
+                name: 'NASA FIRMS / BMKG Satelit',
+                attribution: 'Sensor VIIRS NOAA-20',
+                source_type: 'SATELLITE',
+            },
+        },
+    ];
+
     const effectiveMapReports = mapReports.length > 0 ? mapReports : defaultMapReports;
+    const effectiveMapObservations = (mapObservations && mapObservations.length > 0)
+        ? mapObservations
+        : defaultMapObservations;
 
     return (
         <>
@@ -976,7 +1096,10 @@ export default function AdminDashboard({
                                                 if (selectedForestProvince && r.province !== selectedForestProvince) return false;
                                                 if (selectedLayer === 'gambut') return r.category?.name?.toLowerCase().includes('gambut');
                                                 if (selectedLayer === 'lindung') return r.category?.name?.toLowerCase().includes('lindung');
-                                                if (selectedLayer === 'satelit') return false;
+                                                if (selectedLayer === 'satelit') {
+                                                    const src = (r.fire_condition_source || '').toLowerCase();
+                                                    return src.includes('satelit') || src.includes('bmkg') || src.includes('nasa') || r.is_simulated;
+                                                }
                                                 if (selectedLayer === 'padam') {
                                                     return (
                                                         r.report_status === 'RESOLVED_VERIFIED' ||
@@ -986,9 +1109,8 @@ export default function AdminDashboard({
                                                 }
                                                 return true;
                                             })}
-                                            observations={(selectedLayer === 'padam' ? [] : mapObservations).filter((o) => {
+                                            observations={(selectedLayer === 'padam' || selectedLayer === 'gambut' || selectedLayer === 'lindung' ? [] : effectiveMapObservations).filter((o) => {
                                                 if (selectedForestProvince && o.province !== selectedForestProvince) return false;
-                                                if (selectedLayer === 'gambut' || selectedLayer === 'lindung') return false;
                                                 return true;
                                             })}
                                             reportUrlPrefix="/admin/reports"
@@ -1017,7 +1139,7 @@ export default function AdminDashboard({
                                             <span>Padam</span>
                                         </span>
                                         <span className="inline-flex items-center gap-1.5 font-medium text-neutral-700 whitespace-nowrap">
-                                            <span className="size-2 rounded-full bg-neutral-400 inline-block shrink-0" />
+                                            <span className="size-2 rounded-full bg-[#f97316] inline-block shrink-0" />
                                             <span>Satelit Hotspot</span>
                                         </span>
                                     </div>

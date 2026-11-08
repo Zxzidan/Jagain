@@ -127,11 +127,17 @@ export default function KarhutlaMap({
 
         if (!map || !layer) return;
 
-        // Auto-fit to Kalimantan and active reports
+        // Auto-fit to Kalimantan, active reports, or satellite observations
         if (reports.length > 0 && !selectedCoordinates) {
             const latLngs = reports.map(r => [r.latitude, r.longitude] as [number, number]);
             const bounds = L.latLngBounds(latLngs);
             // Ensure island bounds remain comfortably visible
+            bounds.extend([-3.8, 109.2]);
+            bounds.extend([1.5, 117.8]);
+            map.fitBounds(bounds, { padding: [25, 25], maxZoom: 7 });
+        } else if (observations.length > 0 && !selectedCoordinates) {
+            const latLngs = observations.map(o => [o.latitude, o.longitude] as [number, number]);
+            const bounds = L.latLngBounds(latLngs);
             bounds.extend([-3.8, 109.2]);
             bounds.extend([1.5, 117.8]);
             map.fitBounds(bounds, { padding: [25, 25], maxZoom: 7 });
@@ -181,13 +187,16 @@ export default function KarhutlaMap({
             return L.divIcon({
                 className: 'custom-map-pin-sat',
                 html: `
-                    <div style="width: 16px; height: 16px; border-radius: 50%; background-color: #f97316; border: 2px solid #ffffff; box-shadow: 0 1px 4px rgba(0,0,0,0.25); display: flex; align-items: center; justify-content: center;">
-                        <div style="width: 4px; height: 4px; border-radius: 50%; background-color: #ffffff;"></div>
+                    <div style="position: relative; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center;">
+                        <div style="position: absolute; inset: -4px; border-radius: 50%; background-color: rgba(249, 115, 22, 0.45); animation: ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;"></div>
+                        <div style="width: 18px; height: 18px; border-radius: 50%; background-color: #f97316; border: 2.5px solid #ffffff; box-shadow: 0 2px 8px rgba(0,0,0,0.35); display: flex; align-items: center; justify-content: center; position: relative; z-index: 2;">
+                            <div style="width: 6px; height: 6px; border-radius: 50%; background-color: #ffffff;"></div>
+                        </div>
                     </div>
                 `,
-                iconSize: [16, 16],
-                iconAnchor: [8, 8],
-                popupAnchor: [0, -8],
+                iconSize: [22, 22],
+                iconAnchor: [11, 11],
+                popupAnchor: [0, -11],
             });
         };
 

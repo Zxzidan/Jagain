@@ -90,10 +90,111 @@ class AdminDashboardController extends Controller
                 'is_simulated' => $obs->is_simulated,
                 'data_source' => [
                     'name' => $obs->dataSource?->name ?? 'Satelit BMKG',
-                    'attribution' => $obs->dataSource?->attribution ?? 'BMKG / NASA FIRMS',
+                    'attribution' => $obs->dataSource?->attribution_text ?? 'BMKG / NASA FIRMS',
                     'source_type' => $obs->dataSource?->source_type ?? 'SATELLITE',
                 ],
             ]);
+
+        // Fallback default satellite observations if database has none
+        if ($mapObservations->isEmpty()) {
+            $mapObservations = collect([
+                [
+                    'id' => 901,
+                    'external_record_id' => 'HOTSPOT-SIM-KB01',
+                    'satellite_instrument' => 'VIIRS SNPP',
+                    'confidence_level' => 'high',
+                    'brightness_kelvin' => 365.2,
+                    'frp_mw' => 48.5,
+                    'latitude' => -0.162,
+                    'longitude' => 109.395,
+                    'province' => 'Kalimantan Barat',
+                    'regency_city' => 'Kabupaten Kubu Raya',
+                    'observed_at' => now()->subHours(2)->toIso8601String(),
+                    'is_simulated' => true,
+                    'data_source' => [
+                        'name' => 'NASA FIRMS / BMKG Satelit',
+                        'attribution' => 'Sensor Suomi NPP VIIRS',
+                        'source_type' => 'SATELLITE',
+                    ],
+                ],
+                [
+                    'id' => 902,
+                    'external_record_id' => 'HOTSPOT-SIM-KB02',
+                    'satellite_instrument' => 'MODIS Aqua',
+                    'confidence_level' => 'nominal',
+                    'brightness_kelvin' => 342.1,
+                    'frp_mw' => 22.3,
+                    'latitude' => -0.091,
+                    'longitude' => 109.445,
+                    'province' => 'Kalimantan Barat',
+                    'regency_city' => 'Kabupaten Kubu Raya',
+                    'observed_at' => now()->subHours(4)->toIso8601String(),
+                    'is_simulated' => true,
+                    'data_source' => [
+                        'name' => 'NASA FIRMS / BMKG Satelit',
+                        'attribution' => 'Sensor MODIS Aqua',
+                        'source_type' => 'SATELLITE',
+                    ],
+                ],
+                [
+                    'id' => 903,
+                    'external_record_id' => 'HOTSPOT-SIM-KT01',
+                    'satellite_instrument' => 'VIIRS NOAA-20',
+                    'confidence_level' => 'high',
+                    'brightness_kelvin' => 378.0,
+                    'frp_mw' => 65.1,
+                    'latitude' => -2.235,
+                    'longitude' => 113.89,
+                    'province' => 'Kalimantan Tengah',
+                    'regency_city' => 'Kota Palangka Raya',
+                    'observed_at' => now()->subHours(1)->toIso8601String(),
+                    'is_simulated' => true,
+                    'data_source' => [
+                        'name' => 'NASA FIRMS / BMKG Satelit',
+                        'attribution' => 'Sensor NOAA-20 VIIRS',
+                        'source_type' => 'SATELLITE',
+                    ],
+                ],
+                [
+                    'id' => 904,
+                    'external_record_id' => 'HOTSPOT-SIM-KS01',
+                    'satellite_instrument' => 'MODIS Terra',
+                    'confidence_level' => 'nominal',
+                    'brightness_kelvin' => 348.0,
+                    'frp_mw' => 32.0,
+                    'latitude' => -3.425,
+                    'longitude' => 114.82,
+                    'province' => 'Kalimantan Selatan',
+                    'regency_city' => 'Kota Banjarbaru',
+                    'observed_at' => now()->subHours(3)->toIso8601String(),
+                    'is_simulated' => true,
+                    'data_source' => [
+                        'name' => 'NASA FIRMS / BMKG Satelit',
+                        'attribution' => 'Sensor MODIS Terra',
+                        'source_type' => 'SATELLITE',
+                    ],
+                ],
+                [
+                    'id' => 905,
+                    'external_record_id' => 'HOTSPOT-SIM-KI01',
+                    'satellite_instrument' => 'VIIRS NOAA-20',
+                    'confidence_level' => 'high',
+                    'brightness_kelvin' => 370.0,
+                    'frp_mw' => 45.0,
+                    'latitude' => -0.42,
+                    'longitude' => 116.98,
+                    'province' => 'Kalimantan Timur',
+                    'regency_city' => 'Kabupaten Kutai Kartanegara',
+                    'observed_at' => now()->subHours(2)->toIso8601String(),
+                    'is_simulated' => true,
+                    'data_source' => [
+                        'name' => 'NASA FIRMS / BMKG Satelit',
+                        'attribution' => 'Sensor VIIRS NOAA-20',
+                        'source_type' => 'SATELLITE',
+                    ],
+                ],
+            ]);
+        }
 
         $forestryMetrics = $this->calculateForestryMetrics();
 
