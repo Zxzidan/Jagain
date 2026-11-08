@@ -100,11 +100,10 @@ export default function KarhutlaMap({
                     attributionControl: true,
                 });
 
-                // CartoDB Positron: clean, keyless, unified single-layer tiles with crisp collision-free typography
-                L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-                    subdomains: 'abcd',
-                    maxZoom: 19,
+                // ESRI World Light Gray Canvas (Single Base Layer - Keyless, high performance, no watermark or double-label collision)
+                L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
+                    attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ | JAGAIN',
+                    maxZoom: 16,
                 }).addTo(map);
 
                 const markersLayer = L.layerGroup().addTo(map);
