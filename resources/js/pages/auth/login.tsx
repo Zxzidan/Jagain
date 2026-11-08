@@ -1,4 +1,5 @@
-import { Form, Head, Link } from '@inertiajs/react';
+import { Form, Head, Link, router } from '@inertiajs/react';
+import { ArrowRight, Building2, ShieldCheck, Sparkles, User } from 'lucide-react';
 import { useState } from 'react';
 import InputError from '@/components/input-error';
 import PasskeyVerify from '@/components/passkey-verify';
@@ -14,9 +15,73 @@ type Props = {
     canResetPassword: boolean;
 };
 
+const demoAccounts = [
+    {
+        key: 'admin',
+        title: 'Admin',
+        badge: 'Pusat',
+        email: 'admin@jagain.id',
+        password: 'password',
+        desc: 'Komando & GIS',
+        themeClass: 'bg-emerald-50/70 border-emerald-200 hover:border-[#0c4e33] hover:bg-emerald-50 focus:ring-[#0c4e33]',
+        iconBg: 'bg-[#0c4e33] text-white',
+        badgeClass: 'bg-emerald-100 text-[#0c4e33]',
+        icon: ShieldCheck,
+    },
+    {
+        key: 'opd',
+        title: 'OPD / BPBD',
+        badge: 'Satgas',
+        email: 'opd.kalbar@jagain.id',
+        password: 'password',
+        desc: 'Petugas Lapangan',
+        themeClass: 'bg-amber-50/70 border-amber-200 hover:border-amber-500 hover:bg-amber-50 focus:ring-amber-500',
+        iconBg: 'bg-amber-500 text-white',
+        badgeClass: 'bg-amber-100 text-amber-800',
+        icon: Building2,
+    },
+    {
+        key: 'warga',
+        title: 'Warga',
+        badge: 'Publik',
+        email: 'warga@jagain.id',
+        password: 'password',
+        desc: 'Pelapor Karhutla',
+        themeClass: 'bg-sky-50/70 border-sky-200 hover:border-sky-500 hover:bg-sky-50 focus:ring-sky-500',
+        iconBg: 'bg-sky-600 text-white',
+        badgeClass: 'bg-sky-100 text-sky-800',
+        icon: User,
+    },
+];
+
 export default function Login({ status, canResetPassword }: Props) {
     const [emailValue, setEmailValue] = useState('');
     const [passwordValue, setPasswordValue] = useState('');
+    const [loadingRole, setLoadingRole] = useState<string | null>(null);
+
+    const handleDemoLogin = (account: (typeof demoAccounts)[number]) => {
+        setEmailValue(account.email);
+        setPasswordValue(account.password);
+        setLoadingRole(account.key);
+
+        router.post(
+            store.url(),
+            {
+                email: account.email,
+                password: account.password,
+                remember: true,
+            },
+            {
+                preserveScroll: true,
+                onError: () => {
+                    setLoadingRole(null);
+                },
+                onFinish: () => {
+                    setLoadingRole(null);
+                },
+            }
+        );
+    };
 
     return (
         <>
@@ -37,13 +102,84 @@ export default function Login({ status, canResetPassword }: Props) {
             </div>
 
             {/* Title & Subtitle Header */}
-            <div className="mb-7">
+            <div className="mb-6">
                 <h1 className="text-2xl sm:text-[28px] font-bold text-gray-900 tracking-tight flex items-center gap-1.5">
                     Hey, Hello<span className="inline-block hover:rotate-12 transition-transform">👋</span>
                 </h1>
                 <p className="mt-1.5 text-sm text-gray-500 font-normal">
                     Enter your email and password to sign in.
                 </p>
+            </div>
+
+            {/* Quick Demo Accounts Selection */}
+            <div className="mb-6 rounded-2xl border border-neutral-200/90 bg-neutral-50/70 p-3 sm:p-3.5 shadow-2xs">
+                <div className="flex items-center justify-between gap-2 mb-2">
+                    <div className="flex items-center gap-1.5">
+                        <Sparkles className="size-3.5 text-[#0c4e33]" />
+                        <span className="text-xs font-bold text-neutral-900 tracking-tight">
+                            Akun Demo Cepat (1-Klik Masuk)
+                        </span>
+                    </div>
+                    <span className="text-[10px] font-semibold text-neutral-500 bg-white border border-neutral-200 px-2 py-0.5 rounded-full">
+                        Pass: <code className="font-mono text-neutral-800">password</code>
+                    </span>
+                </div>
+
+                <div className="grid grid-cols-3 gap-2">
+                    {demoAccounts.map((account) => {
+                        const Icon = account.icon;
+                        const isLoading = loadingRole === account.key;
+
+                        return (
+                            <button
+                                key={account.key}
+                                type="button"
+                                disabled={loadingRole !== null}
+                                onClick={() => handleDemoLogin(account)}
+                                className={`group relative flex flex-col justify-between p-2.5 rounded-xl border text-left transition-all cursor-pointer ${
+                                    account.themeClass
+                                } hover:shadow-xs active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed`}
+                            >
+                                <div className="flex items-center justify-between w-full mb-1.5">
+                                    <div className={`p-1.5 rounded-lg ${account.iconBg} shrink-0`}>
+                                        <Icon className="size-3.5" />
+                                    </div>
+                                    <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-md ${account.badgeClass}`}>
+                                        {account.badge}
+                                    </span>
+                                </div>
+
+                                <div className="w-full">
+                                    <div className="text-xs font-bold text-neutral-900 leading-tight">
+                                        {account.title}
+                                    </div>
+                                    <div className="text-[10px] text-neutral-500 font-mono truncate mt-0.5" title={account.email}>
+                                        {account.email}
+                                    </div>
+                                </div>
+
+                                <div className="mt-2 pt-1.5 border-t border-black/5 flex items-center justify-between w-full text-[10px] font-bold text-neutral-600 group-hover:text-neutral-900">
+                                    <span>{isLoading ? 'Masuk...' : 'Masuk'}</span>
+                                    {isLoading ? (
+                                        <Spinner className="size-2.5 text-[#0c4e33]" />
+                                    ) : (
+                                        <ArrowRight className="size-2.5 opacity-60 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all" />
+                                    )}
+                                </div>
+                            </button>
+                        );
+                    })}
+                </div>
+            </div>
+
+            {/* Divider: atau masuk manual */}
+            <div className="relative mb-5 flex items-center justify-center">
+                <div className="absolute inset-0 flex items-center">
+                    <div className="w-full border-t border-gray-200" />
+                </div>
+                <span className="relative bg-white px-3 text-[11px] font-semibold uppercase tracking-wider text-gray-400">
+                    atau masuk manual
+                </span>
             </div>
 
             {status && (
