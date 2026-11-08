@@ -230,3 +230,57 @@ test('community and agency users cannot access executive dashboard', function ()
     $this->actingAs($community)->get(route('executive.dashboard'))->assertForbidden();
     $this->actingAs($agency)->get(route('executive.dashboard'))->assertForbidden();
 });
+
+test('public home, map, and executive dashboard do not trigger lazy loading violations when assignments and operational updates exist', function () {
+    \Illuminate\Database\Eloquent\Model::preventLazyLoading(true);
+
+    $category = Category::factory()->create(['name' => 'Gambut', 'slug' => 'gambut-lazy']);
+    $reporter = User::factory()->create(['role' => UserRole::COMMUNITY]);
+    $executive = User::factory()->create(['role' => UserRole::EXECUTIVE]);
+    $agency = Agency::create([
+        'name' => 'BPBD Kalbar',
+        'code' => 'BPBD-KB-LAZY',
+        'agency_type' => 'BPBD',
+        'jurisdiction' => 'Kalimantan Barat',
+        'is_active' => true,
+    ]);
+
+    $report = Report::create([
+        'tracking_code' => 'JGN-2026-LAZY01',
+        'report_number' => 'JGN-2026-LAZY01',
+        'created_by_user_id' => $reporter->id,
+        'category_id' => $category->id,
+        'title' => 'Laporan Uji Lazy Loading',
+        'description' => 'Deskripsi uji',
+        'latitude' => -0.05,
+        'longitude' => 109.34,
+        'province' => 'Kalimantan Barat',
+        'regency_city' => 'Kota Pontianak',
+        'report_status' => ReportStatus::DISPATCHED,
+        'fire_condition' => FireCondition::OBSERVED_ACTIVE,
+        'visibility' => 'PUBLIC',
+    ]);
+
+    $assignment = Assignment::create([
+        'report_id' => $report->id,
+        'agency_id' => $agency->id,
+        'assigned_by_user_id' => $reporter->id,
+        'assignment_status' => AssignmentStatus::IN_PROGRESS,
+        'assigned_at' => now(),
+    ]);
+
+    OperationalUpdate::create([
+        'assignment_id' => $assignment->id,
+        'created_by_user_id' => $reporter->id,
+        'update_type' => 'FIELD_PROGRESS',
+        'fire_condition_observed' => FireCondition::OBSERVED_ACTIVE->value,
+        'note' => 'Pemadaman sedang berlangsung.',
+        'created_at' => now(),
+    ]);
+
+    $this->get(route('home'))->assertOk();
+    $this->get(route('public.map'))->assertOk();
+    $this->get(route('public.reports.show', $report->tracking_code))->assertOk();
+    $this->actingAs($executive)->get(route('executive.dashboard'))->assertOk();
+});
+

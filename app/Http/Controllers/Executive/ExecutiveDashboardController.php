@@ -173,6 +173,7 @@ class ExecutiveDashboardController extends Controller
 
         // Map Data (PII stripped via toPublicArray)
         $mapReports = $reportsQuery
+            ->with(['category', 'evidence', 'latestAssignment.agency', 'latestAssignment.operationalUpdates', 'statusHistories'])
             ->whereNotNull('latitude')
             ->whereNotNull('longitude')
             ->latest()

@@ -18,7 +18,7 @@ class PublicController extends Controller
      */
     public function index(): Response
     {
-        $payload = Cache::remember('public_homepage_data_v3', 30, function () {
+        $payload = Cache::remember('public_homepage_data_v4', 30, function () {
             $reportCounts = Report::toBase()
                 ->selectRaw('
                     COUNT(*) as total,
@@ -44,7 +44,7 @@ class PublicController extends Controller
             ];
 
             $reports = Report::publiclyVisible()
-                ->with(['category', 'evidence', 'latestAssignment.agency', 'statusHistories'])
+                ->with(['category', 'evidence', 'latestAssignment.agency', 'latestAssignment.operationalUpdates', 'statusHistories'])
                 ->latest()
                 ->take(50)
                 ->get()
@@ -128,7 +128,7 @@ class PublicController extends Controller
         $isDefault = ! $categorySlug && ! $province && ! $status;
 
         $mapData = $isDefault
-            ? Cache::remember('public_map_default_payload_v3', 30, fn () => $this->resolveMapPayload(null, null, null))
+            ? Cache::remember('public_map_default_payload_v4', 30, fn () => $this->resolveMapPayload(null, null, null))
             : $this->resolveMapPayload($categorySlug, $province, $status);
 
         $provinces = [
@@ -160,7 +160,7 @@ class PublicController extends Controller
     protected function resolveMapPayload(?string $categorySlug, ?string $province, ?string $status): array
     {
         $reportsQuery = Report::publiclyVisible()
-            ->with(['category', 'evidence', 'latestAssignment.agency', 'statusHistories']);
+            ->with(['category', 'evidence', 'latestAssignment.agency', 'latestAssignment.operationalUpdates', 'statusHistories']);
 
         if ($categorySlug) {
             $reportsQuery->whereHas('category', fn ($q) => $q->where('slug', $categorySlug));

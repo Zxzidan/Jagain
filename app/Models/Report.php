@@ -349,28 +349,31 @@ class Report extends Model
             'is_simulated' => $this->is_simulated,
             'created_at' => $this->created_at?->toIso8601String(),
             'updated_at' => $this->updated_at?->toIso8601String(),
-            'evidence' => $this->evidence->where('visibility', 'PUBLIC')->map(fn ($ev) => [
-                'id' => $ev->id,
-                'file_path' => $ev->file_path,
-                'caption' => $ev->caption,
-                'media_type' => $ev->media_type,
-            ])->values()->all(),
-            'status_history' => $this->statusHistories->map(function ($h) {
-                $fromVal = $h->from_status instanceof ReportStatus ? $h->from_status->value : $h->from_status;
-                $toVal = $h->to_status instanceof ReportStatus ? $h->to_status->value : $h->to_status;
+            'evidence' => ($this->relationLoaded('evidence') ? $this->evidence : collect())
+                ->where('visibility', 'PUBLIC')
+                ->map(fn ($ev) => [
+                    'id' => $ev->id,
+                    'file_path' => $ev->file_path,
+                    'caption' => $ev->caption,
+                    'media_type' => $ev->media_type,
+                ])->values()->all(),
+            'status_history' => ($this->relationLoaded('statusHistories') ? $this->statusHistories : collect())
+                ->map(function ($h) {
+                    $fromVal = $h->from_status instanceof ReportStatus ? $h->from_status->value : $h->from_status;
+                    $toVal = $h->to_status instanceof ReportStatus ? $h->to_status->value : $h->to_status;
 
-                return [
-                    'id' => $h->id,
-                    'from_status' => $fromVal,
-                    'from_status_label' => $fromVal ? (ReportStatus::tryFrom((string) $fromVal)?->label() ?? $fromVal) : null,
-                    'to_status' => $toVal,
-                    'to_status_label' => ReportStatus::tryFrom((string) $toVal)?->label() ?? $toVal,
-                    'reason' => $h->reason,
-                    'note' => $h->note,
-                    'created_at' => $h->created_at?->toIso8601String(),
-                ];
-            })->values()->all(),
-            'active_agency' => $this->latestAssignment?->agency ? [
+                    return [
+                        'id' => $h->id,
+                        'from_status' => $fromVal,
+                        'from_status_label' => $fromVal ? (ReportStatus::tryFrom((string) $fromVal)?->label() ?? $fromVal) : null,
+                        'to_status' => $toVal,
+                        'to_status_label' => ReportStatus::tryFrom((string) $toVal)?->label() ?? $toVal,
+                        'reason' => $h->reason,
+                        'note' => $h->note,
+                        'created_at' => $h->created_at?->toIso8601String(),
+                    ];
+                })->values()->all(),
+            'active_agency' => ($this->relationLoaded('latestAssignment') && $this->latestAssignment && $this->latestAssignment->relationLoaded('agency') && $this->latestAssignment->agency) ? [
                 'id' => $this->latestAssignment->agency->id,
                 'name' => $this->latestAssignment->agency->name,
                 'jurisdiction' => $this->latestAssignment->agency->jurisdiction,
@@ -381,13 +384,14 @@ class Report extends Model
                     ? $this->latestAssignment->assignment_status->label()
                     : (AssignmentStatus::tryFrom((string) $this->latestAssignment->assignment_status)?->label() ?? (string) $this->latestAssignment->assignment_status),
                 'assigned_at' => $this->latestAssignment->assigned_at?->toIso8601String(),
-                'operational_updates' => $this->latestAssignment->operationalUpdates->map(fn ($u) => [
-                    'id' => $u->id,
-                    'update_type' => $u->update_type,
-                    'note' => $u->note,
-                    'fire_condition_observed' => $u->fire_condition_observed,
-                    'created_at' => $u->created_at?->toIso8601String(),
-                ])->values()->all(),
+                'operational_updates' => ($this->latestAssignment->relationLoaded('operationalUpdates') ? $this->latestAssignment->operationalUpdates : collect())
+                    ->map(fn ($u) => [
+                        'id' => $u->id,
+                        'update_type' => $u->update_type,
+                        'note' => $u->note,
+                        'fire_condition_observed' => $u->fire_condition_observed,
+                        'created_at' => $u->created_at?->toIso8601String(),
+                    ])->values()->all(),
             ] : null,
         ];
     }
