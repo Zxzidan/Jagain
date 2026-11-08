@@ -2,6 +2,7 @@
 
 ini_set('display_errors', '1');
 ini_set('display_startup_errors', '1');
+ini_set('unserialize_callback_func', 'spl_autoload_call');
 error_reporting(E_ALL);
 
 // Trust HTTPS proxy headers from Vercel edge network

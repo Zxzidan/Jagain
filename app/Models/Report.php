@@ -126,13 +126,13 @@ class Report extends Model
         });
 
         static::saved(function () {
-            Cache::forget('public_homepage_data');
-            Cache::forget('public_map_default_payload');
+            Cache::forget('public_homepage_data_v3');
+            Cache::forget('public_map_default_payload_v3');
         });
 
         static::deleted(function () {
-            Cache::forget('public_homepage_data');
-            Cache::forget('public_map_default_payload');
+            Cache::forget('public_homepage_data_v3');
+            Cache::forget('public_map_default_payload_v3');
         });
     }
 

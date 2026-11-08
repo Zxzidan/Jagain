@@ -18,7 +18,7 @@ class PublicController extends Controller
      */
     public function index(): Response
     {
-        $payload = Cache::remember('public_homepage_data', 30, function () {
+        $payload = Cache::remember('public_homepage_data_v3', 30, function () {
             $reportCounts = Report::toBase()
                 ->selectRaw('
                     COUNT(*) as total,
@@ -50,7 +50,7 @@ class PublicController extends Controller
                 ->get()
                 ->map(fn (Report $r) => $r->toPublicArray());
 
-            $recentReports = $reports->take(6)->values();
+            $recentReports = $reports->take(6)->values()->all();
 
             // External observations (hotspots from NASA FIRMS & BMKG)
             $observations = ExternalObservation::with('dataSource')
@@ -75,14 +75,24 @@ class PublicController extends Controller
                         'attribution' => $obs->dataSource->attribution_text,
                         'source_type' => $obs->dataSource->source_type,
                     ],
-                ]);
+                ])
+                ->values()
+                ->all();
 
-            $categories = ReportCategory::where('is_active', true)->get(['id', 'name', 'slug']);
+            $categories = ReportCategory::where('is_active', true)
+                ->get(['id', 'name', 'slug'])
+                ->map(fn (ReportCategory $c) => [
+                    'id' => $c->id,
+                    'name' => $c->name,
+                    'slug' => $c->slug,
+                ])
+                ->values()
+                ->all();
 
             return [
                 'stats' => $stats,
                 'recentReports' => $recentReports,
-                'reports' => $reports,
+                'reports' => $reports->values()->all(),
                 'observations' => $observations,
                 'categories' => $categories,
             ];
@@ -118,7 +128,7 @@ class PublicController extends Controller
         $isDefault = ! $categorySlug && ! $province && ! $status;
 
         $mapData = $isDefault
-            ? Cache::remember('public_map_default_payload', 30, fn () => $this->resolveMapPayload(null, null, null))
+            ? Cache::remember('public_map_default_payload_v3', 30, fn () => $this->resolveMapPayload(null, null, null))
             : $this->resolveMapPayload($categorySlug, $province, $status);
 
         $provinces = [
@@ -191,11 +201,19 @@ class PublicController extends Controller
                 ],
             ]);
 
-        $categories = ReportCategory::where('is_active', true)->get(['id', 'name', 'slug']);
+        $categories = ReportCategory::where('is_active', true)
+            ->get(['id', 'name', 'slug'])
+            ->map(fn (ReportCategory $c) => [
+                'id' => $c->id,
+                'name' => $c->name,
+                'slug' => $c->slug,
+            ])
+            ->values()
+            ->all();
 
         return [
-            'reports' => $reports,
-            'observations' => $observations,
+            'reports' => $reports->values()->all(),
+            'observations' => $observations->values()->all(),
             'categories' => $categories,
         ];
     }
