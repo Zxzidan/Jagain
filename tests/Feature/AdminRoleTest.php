@@ -4,8 +4,10 @@ use App\Models\Agency;
 use App\Models\AgencyMembership;
 use App\Models\AuditLog;
 use App\Models\Category;
+use App\Models\Evidence;
 use App\Models\Report;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Str;
 
@@ -47,8 +49,10 @@ test('non-admin users receive 403 forbidden on admin routes', function () {
     $response->assertForbidden();
 });
 
-test('admin can access admin dashboard with metrics', function () {
-    Report::create([
+test('admin can access admin dashboard with metrics and strict lazy loading enabled', function () {
+    Model::preventLazyLoading(true);
+
+    $report = Report::create([
         'created_by_user_id' => $this->communityUser->id,
         'category_id' => $this->category->id,
         'title' => 'Asap Tebal di Kubu Raya',
@@ -59,6 +63,11 @@ test('admin can access admin dashboard with metrics', function () {
         'lock_version' => 1,
     ]);
 
+    Evidence::factory()->create([
+        'report_id' => $report->id,
+        'visibility' => 'PUBLIC',
+    ]);
+
     $response = $this->actingAs($this->admin)->get(route('admin.dashboard'));
     $response->assertOk();
     $response->assertInertia(fn ($page) => $page
@@ -66,6 +75,8 @@ test('admin can access admin dashboard with metrics', function () {
         ->has('statusCounts')
         ->where('statusCounts.submitted', 1)
         ->has('priorityQueue', 1)
+        ->has('mapReports')
+        ->has('forestryMetrics')
     );
 });
 

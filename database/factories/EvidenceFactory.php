@@ -18,7 +18,12 @@ class EvidenceFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'file_path' => 'evidence/sample.jpg',
+            'original_filename' => 'sample.jpg',
+            'media_type' => 'image/jpeg',
+            'size_bytes' => 102400,
+            'caption' => 'Bukti foto lapangan',
+            'visibility' => 'PUBLIC',
         ];
     }
 }

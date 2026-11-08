@@ -63,7 +63,7 @@ class AdminDashboardController extends Controller
             ])->get();
 
         $mapReports = Report::query()
-            ->with(['category', 'latestAssignment.agency'])
+            ->with(['category', 'evidence', 'statusHistories', 'latestAssignment.agency'])
             ->whereNotNull('latitude')
             ->whereNotNull('longitude')
             ->latest()

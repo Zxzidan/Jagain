@@ -348,21 +348,25 @@ class Report extends Model
             'is_simulated' => $this->is_simulated,
             'created_at' => $this->created_at?->toIso8601String(),
             'updated_at' => $this->updated_at?->toIso8601String(),
-            'evidence' => $this->evidence->where('visibility', 'PUBLIC')->map(fn ($ev) => [
-                'id' => $ev->id,
-                'file_path' => $ev->file_path,
-                'caption' => $ev->caption,
-                'media_type' => $ev->media_type,
-            ])->values()->all(),
-            'status_history' => $this->statusHistories->map(fn ($h) => [
-                'id' => $h->id,
-                'from_status' => $h->from_status instanceof ReportStatus ? $h->from_status->value : $h->from_status,
-                'to_status' => $h->to_status instanceof ReportStatus ? $h->to_status->value : $h->to_status,
-                'reason' => $h->reason,
-                'note' => $h->note,
-                'created_at' => $h->created_at?->toIso8601String(),
-            ])->values()->all(),
-            'active_agency' => $this->latestAssignment?->agency ? [
+            'evidence' => $this->relationLoaded('evidence')
+                ? $this->evidence->where('visibility', 'PUBLIC')->map(fn ($ev) => [
+                    'id' => $ev->id,
+                    'file_path' => $ev->file_path,
+                    'caption' => $ev->caption,
+                    'media_type' => $ev->media_type,
+                ])->values()->all()
+                : [],
+            'status_history' => $this->relationLoaded('statusHistories')
+                ? $this->statusHistories->map(fn ($h) => [
+                    'id' => $h->id,
+                    'from_status' => $h->from_status instanceof ReportStatus ? $h->from_status->value : $h->from_status,
+                    'to_status' => $h->to_status instanceof ReportStatus ? $h->to_status->value : $h->to_status,
+                    'reason' => $h->reason,
+                    'note' => $h->note,
+                    'created_at' => $h->created_at?->toIso8601String(),
+                ])->values()->all()
+                : [],
+            'active_agency' => ($this->relationLoaded('latestAssignment') && $this->latestAssignment?->relationLoaded('agency') && $this->latestAssignment?->agency) || ($this->relationLoaded('latestAssignment') && $this->latestAssignment?->agency) ? [
                 'id' => $this->latestAssignment->agency->id,
                 'name' => $this->latestAssignment->agency->name,
                 'jurisdiction' => $this->latestAssignment->agency->jurisdiction,
