@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\AssignmentStatus;
 use App\Enums\FireCondition;
 use App\Enums\ReportStatus;
 use Carbon\CarbonImmutable;
@@ -354,18 +355,39 @@ class Report extends Model
                 'caption' => $ev->caption,
                 'media_type' => $ev->media_type,
             ])->values()->all(),
-            'status_history' => $this->statusHistories->map(fn ($h) => [
-                'id' => $h->id,
-                'from_status' => $h->from_status instanceof ReportStatus ? $h->from_status->value : $h->from_status,
-                'to_status' => $h->to_status instanceof ReportStatus ? $h->to_status->value : $h->to_status,
-                'reason' => $h->reason,
-                'note' => $h->note,
-                'created_at' => $h->created_at?->toIso8601String(),
-            ])->values()->all(),
+            'status_history' => $this->statusHistories->map(function ($h) {
+                $fromVal = $h->from_status instanceof ReportStatus ? $h->from_status->value : $h->from_status;
+                $toVal = $h->to_status instanceof ReportStatus ? $h->to_status->value : $h->to_status;
+
+                return [
+                    'id' => $h->id,
+                    'from_status' => $fromVal,
+                    'from_status_label' => $fromVal ? (ReportStatus::tryFrom((string) $fromVal)?->label() ?? $fromVal) : null,
+                    'to_status' => $toVal,
+                    'to_status_label' => ReportStatus::tryFrom((string) $toVal)?->label() ?? $toVal,
+                    'reason' => $h->reason,
+                    'note' => $h->note,
+                    'created_at' => $h->created_at?->toIso8601String(),
+                ];
+            })->values()->all(),
             'active_agency' => $this->latestAssignment?->agency ? [
                 'id' => $this->latestAssignment->agency->id,
                 'name' => $this->latestAssignment->agency->name,
                 'jurisdiction' => $this->latestAssignment->agency->jurisdiction,
+                'assignment_status' => $this->latestAssignment->assignment_status instanceof AssignmentStatus
+                    ? $this->latestAssignment->assignment_status->value
+                    : (string) $this->latestAssignment->assignment_status,
+                'assignment_status_label' => $this->latestAssignment->assignment_status instanceof AssignmentStatus
+                    ? $this->latestAssignment->assignment_status->label()
+                    : (AssignmentStatus::tryFrom((string) $this->latestAssignment->assignment_status)?->label() ?? (string) $this->latestAssignment->assignment_status),
+                'assigned_at' => $this->latestAssignment->assigned_at?->toIso8601String(),
+                'operational_updates' => $this->latestAssignment->operationalUpdates->map(fn ($u) => [
+                    'id' => $u->id,
+                    'update_type' => $u->update_type,
+                    'note' => $u->note,
+                    'fire_condition_observed' => $u->fire_condition_observed,
+                    'created_at' => $u->created_at?->toIso8601String(),
+                ])->values()->all(),
             ] : null,
         ];
     }

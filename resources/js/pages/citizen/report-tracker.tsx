@@ -3,6 +3,7 @@ import { Head, Link, useForm } from '@inertiajs/react';
 import StatusBadge from '@/components/status-badge';
 import FireConditionBadge from '@/components/fire-condition-badge';
 import KarhutlaMap from '@/components/karhutla-map';
+import ReportStageStepper from '@/components/report-stage-stepper';
 import {
     ArrowLeft,
     Clock,
@@ -145,6 +146,18 @@ export default function ReportTracker({ report }: ReportTrackerProps) {
                         </div>
                     </div>
                 </div>
+
+                {/* Stage Progression Stepper */}
+                <ReportStageStepper
+                    reportStatus={report.report_status}
+                    reportStatusLabel={report.status_label}
+                    assignmentStatus={report.assignments[0]?.status}
+                    assignmentStatusLabel={report.assignments[0]?.status_label}
+                    agencyName={report.assignments[0]?.agency_name}
+                    fireCondition={report.fire_condition}
+                    fireConditionLabel={report.fire_condition_label}
+                    updatedAt={report.status_history[0]?.created_at || report.created_at}
+                />
 
                 {/* ACTION REQUIRED: If NEEDS_INFORMATION (Manilla Featured Card #f5e3c7) */}
                 {report.report_status === 'NEEDS_INFORMATION' && (

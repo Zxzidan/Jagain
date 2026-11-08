@@ -183,13 +183,13 @@ export default function KarhutlaMap({
             return L.divIcon({
                 className: 'custom-map-pin-sat',
                 html: `
-                    <div style="width: 16px; height: 16px; border-radius: 50%; background-color: #f97316; border: 2px solid #ffffff; box-shadow: 0 1px 4px rgba(0,0,0,0.25); display: flex; align-items: center; justify-content: center;">
-                        <div style="width: 4px; height: 4px; border-radius: 50%; background-color: #ffffff;"></div>
+                    <div style="width: 18px; height: 18px; transform: rotate(45deg); border-radius: 4px; background-color: #7c3aed; border: 2px solid #ffffff; box-shadow: 0 2px 6px rgba(124,58,237,0.45); display: flex; align-items: center; justify-content: center;">
+                        <div style="width: 5px; height: 5px; border-radius: 50%; background-color: #fde047;"></div>
                     </div>
                 `,
-                iconSize: [16, 16],
-                iconAnchor: [8, 8],
-                popupAnchor: [0, -8],
+                iconSize: [18, 18],
+                iconAnchor: [9, 9],
+                popupAnchor: [0, -10],
             });
         };
 
@@ -279,10 +279,15 @@ export default function KarhutlaMap({
                 : '';
 
             const popupContent = `
-                <div style="min-width: 230px; font-family: Poppins, sans-serif; font-size: 12px; color: #111827; background: #ffffff; padding: 14px; border-radius: 16px; border: 1px solid #e5e7eb; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);">
-                    ${simulationBadge}
-                    <div style="font-size: 10px; font-weight: 700; text-transform: uppercase; color: #111827; margin-bottom: 4px; font-family: monospace;">
-                        Titik Panas Satelit • ${obs.satellite_instrument}
+                <div style="min-width: 245px; font-family: Poppins, sans-serif; font-size: 12px; color: #111827; background: #ffffff; padding: 14px; border-radius: 16px; border: 1px solid #e5e7eb; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);">
+                    <div style="display: flex; align-items: center; justify-content: space-between; gap: 6px; margin-bottom: 6px;">
+                        <span style="display: inline-block; background: #f5f3ff; border: 1px solid #ddd6fe; color: #6d28d9; font-weight: 800; font-size: 9px; padding: 2px 7px; border-radius: 9999px;">
+                            ANOMALI TERMAL SATELIT
+                        </span>
+                        ${simulationBadge}
+                    </div>
+                    <div style="font-size: 10px; font-weight: 700; text-transform: uppercase; color: #4b5563; margin-bottom: 3px; font-family: monospace;">
+                        Sensor: ${obs.satellite_instrument}
                     </div>
                     <div style="font-size: 13px; font-weight: 800; color: #111827; margin-bottom: 8px;">
                         Deteksi Suhu Termal Radiatif
@@ -291,7 +296,11 @@ export default function KarhutlaMap({
                         <div>Tingkat Kepercayaan: <strong style="color: #111827;">${obs.confidence_level}</strong></div>
                         ${obs.frp_mw ? `<div>Daya Radiasi (FRP): <strong>${obs.frp_mw} MW</strong></div>` : ''}
                         ${obs.brightness_kelvin ? `<div>Suhu Kecerahan: <strong>${obs.brightness_kelvin} K</strong></div>` : ''}
-                        <div style="font-size: 10px; color: #6b7280; margin-top: 2px;">Waktu: ${new Date(obs.observed_at).toLocaleString('id-ID')}</div>
+                        ${obs.province ? `<div>Wilayah: <strong>${obs.regency_city ? `${obs.regency_city}, ` : ''}${obs.province}</strong></div>` : ''}
+                        <div style="font-size: 10px; color: #6b7280; margin-top: 2px;">Waktu Observasi: ${new Date(obs.observed_at).toLocaleString('id-ID')}</div>
+                    </div>
+                    <div style="background: #fffbeb; border: 1px solid #fde68a; color: #92400e; padding: 6px 8px; border-radius: 8px; font-size: 10px; line-height: 1.35; margin-bottom: 6px;">
+                        <strong>Catatan Metodologi:</strong> Titik panas satelit adalah indikasi anomali suhu permukaan dan <em>bukan konfirmasi langsung</em> kebakaran sebelum diverifikasi lapangan.
                     </div>
                     <div style="font-size: 10px; color: #6b7280; line-height: 1.3;">
                         Sumber: ${obs.data_source.name}
@@ -359,8 +368,8 @@ export default function KarhutlaMap({
             )}
 
             {/* Floating Severity Legend Overlay */}
-            <div className="absolute bottom-2.5 left-2.5 z-20 bg-white/95 backdrop-blur-md px-3 py-1.5 rounded-full border border-neutral-200/90 shadow-md flex items-center gap-3 text-[11px] font-semibold text-neutral-800 pointer-events-auto">
-                <span className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider">Tingkat:</span>
+            <div className="absolute bottom-2.5 left-2.5 z-20 bg-white/95 backdrop-blur-md px-3 py-1.5 rounded-full border border-neutral-200/90 shadow-md flex flex-wrap items-center gap-3 text-[11px] font-semibold text-neutral-800 pointer-events-auto">
+                <span className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider">Laporan Warga:</span>
                 <div className="flex items-center gap-1.5">
                     <span className="size-2 rounded-full bg-red-500 ring-2 ring-red-200 animate-pulse" />
                     <span>Berat</span>
@@ -373,28 +382,37 @@ export default function KarhutlaMap({
                     <span className="size-2 rounded-full bg-yellow-400" />
                     <span>Ringan</span>
                 </div>
+                {observations.length > 0 && (
+                    <>
+                        <span className="text-neutral-300">|</span>
+                        <div className="flex items-center gap-1.5">
+                            <span className="size-2.5 rotate-45 rounded-[2px] bg-[#7c3aed] border border-white shadow-2xs inline-block" />
+                            <span className="text-violet-800 font-bold">Hotspot Satelit</span>
+                        </div>
+                    </>
+                )}
             </div>
 
             {/* Map Legend */}
             {showLegend && (
                 <div className="bg-white/95 backdrop-blur-md border-t border-neutral-200/80 px-4 sm:px-6 py-3 text-xs text-neutral-700 flex flex-wrap items-center justify-between gap-3 z-20 font-sans">
                     <div className="flex flex-wrap items-center gap-2.5 sm:gap-4">
-                        <span className="font-bold text-neutral-900 text-[11px] uppercase tracking-wider">Kategori Karhutla:</span>
+                        <span className="font-bold text-neutral-900 text-[11px] uppercase tracking-wider">Legenda Titik Peta:</span>
                         <div className="flex items-center gap-1.5 bg-neutral-100/80 px-2.5 py-1 rounded-full border border-neutral-200/70">
                             <span className="size-2 rounded-full bg-red-500 ring-2 ring-red-200 animate-pulse" />
-                            <span className="font-semibold text-neutral-800 text-[11px]">Berat (Kritis)</span>
+                            <span className="font-semibold text-neutral-800 text-[11px]">Laporan Warga: Berat</span>
                         </div>
                         <div className="flex items-center gap-1.5 bg-neutral-100/80 px-2.5 py-1 rounded-full border border-neutral-200/70">
                             <span className="size-2 rounded-full bg-orange-500" />
-                            <span className="font-semibold text-neutral-800 text-[11px]">Sedang</span>
+                            <span className="font-semibold text-neutral-800 text-[11px]">Laporan Warga: Sedang</span>
                         </div>
                         <div className="flex items-center gap-1.5 bg-neutral-100/80 px-2.5 py-1 rounded-full border border-neutral-200/70">
                             <span className="size-2 rounded-full bg-yellow-400" />
-                            <span className="font-semibold text-neutral-800 text-[11px]">Ringan</span>
+                            <span className="font-semibold text-neutral-800 text-[11px]">Laporan Warga: Ringan</span>
                         </div>
-                        <div className="flex items-center gap-1.5 bg-neutral-100/80 px-2.5 py-1 rounded-full border border-neutral-200/70">
-                            <span className="size-2 rounded-full bg-[#f97316]" />
-                            <span className="font-semibold text-neutral-800 text-[11px]">Hotspot Satelit</span>
+                        <div className="flex items-center gap-1.5 bg-violet-50 px-2.5 py-1 rounded-full border border-violet-200">
+                            <span className="size-2.5 rotate-45 rounded-[2px] bg-[#7c3aed] inline-block" />
+                            <span className="font-bold text-violet-900 text-[11px]">Hotspot Satelit (Anomali Termal)</span>
                         </div>
                     </div>
 

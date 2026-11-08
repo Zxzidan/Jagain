@@ -50,6 +50,7 @@ class HandleInertiaRequests extends Middleware
                     'phone' => $user->phone,
                     'is_admin' => $user->isAdmin(),
                     'is_agency' => $user->isAgency(),
+                    'is_executive' => $user->isExecutive(),
                     'is_community' => $user->isCommunity(),
                     'agency' => $user->currentAgency() ? [
                         'id' => $user->currentAgency()->id,
@@ -63,14 +64,6 @@ class HandleInertiaRequests extends Middleware
                 'success' => $request->session()->get('success'),
                 'error' => $request->session()->get('error'),
                 'info' => $request->session()->get('info'),
-            ],
-            'flash' => [
-                'success' => $request->session()->get('success'),
-                'error' => $request->session()->get('error'),
-            ],
-            'flash' => [
-                'success' => $request->session()->get('success'),
-                'error' => $request->session()->get('error'),
             ],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
         ];

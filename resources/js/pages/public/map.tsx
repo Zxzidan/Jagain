@@ -120,9 +120,9 @@ export default function MapPage({
                         <span>{reports.length} Laporan Warga</span>
                     </span>
                     <span className="text-neutral-300 dark:text-neutral-600">&bull;</span>
-                    <span className="inline-flex items-center gap-1.5 font-bold text-orange-600 dark:text-orange-400">
-                        <span className="size-2 rounded-full bg-orange-500" />
-                        <span>{displayedObservations.length} Titik Panas FIRMS</span>
+                    <span className="inline-flex items-center gap-1.5 font-bold text-violet-700 dark:text-violet-300">
+                        <span className="size-2.5 rotate-45 rounded-[2px] bg-[#7c3aed] inline-block" />
+                        <span>{displayedObservations.length} Hotspot Satelit (FIRMS)</span>
                     </span>
                 </div>
 
@@ -211,12 +211,15 @@ export default function MapPage({
                             aria-label="Filter Status"
                             className="appearance-none rounded-lg border border-neutral-300 bg-white pl-3 pr-7 py-1.5 text-xs text-neutral-800 font-medium focus:outline-none focus:border-[#0c4e33] cursor-pointer dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-200"
                         >
-                            <option value="">Semua Status</option>
-                            <option value="SUBMITTED">Baru Dikirim</option>
-                            <option value="UNDER_REVIEW">Sedang Ditinjau</option>
+                            <option value="">Semua Status Laporan</option>
+                            <option value="SUBMITTED">Menunggu Verifikasi</option>
+                            <option value="UNDER_REVIEW">Dalam Peninjauan</option>
+                            <option value="NEEDS_INFORMATION">Membutuhkan Informasi Tambahan</option>
                             <option value="VERIFIED">Terverifikasi</option>
-                            <option value="DISPATCHED">Ditugaskan ke OPD</option>
+                            <option value="DISPATCHED">Diteruskan ke Instansi / Penanganan</option>
+                            <option value="RESOLUTION_REVIEW">Menunggu Validasi Penyelesaian</option>
                             <option value="RESOLVED_VERIFIED">Selesai Terverifikasi</option>
+                            <option value="CLOSED_WITH_REASON">Ditutup dengan Alasan</option>
                         </select>
                         <ChevronDown className="size-3 text-neutral-400 absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none" />
                     </div>

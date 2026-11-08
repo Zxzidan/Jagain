@@ -157,7 +157,7 @@ map.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     map.form = mapForm
 /**
 * @see \App\Http\Controllers\PublicController::showReport
- * @see app/Http/Controllers/PublicController.php:224
+ * @see app/Http/Controllers/PublicController.php:228
  * @route '/laporan-publik/{tracking_code}'
  */
 export const showReport = (args: { tracking_code: string | number } | [tracking_code: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -172,7 +172,7 @@ showReport.definition = {
 
 /**
 * @see \App\Http\Controllers\PublicController::showReport
- * @see app/Http/Controllers/PublicController.php:224
+ * @see app/Http/Controllers/PublicController.php:228
  * @route '/laporan-publik/{tracking_code}'
  */
 showReport.url = (args: { tracking_code: string | number } | [tracking_code: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -200,7 +200,7 @@ showReport.url = (args: { tracking_code: string | number } | [tracking_code: str
 
 /**
 * @see \App\Http\Controllers\PublicController::showReport
- * @see app/Http/Controllers/PublicController.php:224
+ * @see app/Http/Controllers/PublicController.php:228
  * @route '/laporan-publik/{tracking_code}'
  */
 showReport.get = (args: { tracking_code: string | number } | [tracking_code: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -209,7 +209,7 @@ showReport.get = (args: { tracking_code: string | number } | [tracking_code: str
 })
 /**
 * @see \App\Http\Controllers\PublicController::showReport
- * @see app/Http/Controllers/PublicController.php:224
+ * @see app/Http/Controllers/PublicController.php:228
  * @route '/laporan-publik/{tracking_code}'
  */
 showReport.head = (args: { tracking_code: string | number } | [tracking_code: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -219,7 +219,7 @@ showReport.head = (args: { tracking_code: string | number } | [tracking_code: st
 
     /**
 * @see \App\Http\Controllers\PublicController::showReport
- * @see app/Http/Controllers/PublicController.php:224
+ * @see app/Http/Controllers/PublicController.php:228
  * @route '/laporan-publik/{tracking_code}'
  */
     const showReportForm = (args: { tracking_code: string | number } | [tracking_code: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -229,7 +229,7 @@ showReport.head = (args: { tracking_code: string | number } | [tracking_code: st
 
             /**
 * @see \App\Http\Controllers\PublicController::showReport
- * @see app/Http/Controllers/PublicController.php:224
+ * @see app/Http/Controllers/PublicController.php:228
  * @route '/laporan-publik/{tracking_code}'
  */
         showReportForm.get = (args: { tracking_code: string | number } | [tracking_code: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -238,7 +238,7 @@ showReport.head = (args: { tracking_code: string | number } | [tracking_code: st
         })
             /**
 * @see \App\Http\Controllers\PublicController::showReport
- * @see app/Http/Controllers/PublicController.php:224
+ * @see app/Http/Controllers/PublicController.php:228
  * @route '/laporan-publik/{tracking_code}'
  */
         showReportForm.head = (args: { tracking_code: string | number } | [tracking_code: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -254,7 +254,7 @@ showReport.head = (args: { tracking_code: string | number } | [tracking_code: st
     showReport.form = showReportForm
 /**
 * @see \App\Http\Controllers\PublicController::safetyGuide
- * @see app/Http/Controllers/PublicController.php:239
+ * @see app/Http/Controllers/PublicController.php:243
  * @route '/panduan-keselamatan'
  */
 export const safetyGuide = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -269,7 +269,7 @@ safetyGuide.definition = {
 
 /**
 * @see \App\Http\Controllers\PublicController::safetyGuide
- * @see app/Http/Controllers/PublicController.php:239
+ * @see app/Http/Controllers/PublicController.php:243
  * @route '/panduan-keselamatan'
  */
 safetyGuide.url = (options?: RouteQueryOptions) => {
@@ -278,7 +278,7 @@ safetyGuide.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\PublicController::safetyGuide
- * @see app/Http/Controllers/PublicController.php:239
+ * @see app/Http/Controllers/PublicController.php:243
  * @route '/panduan-keselamatan'
  */
 safetyGuide.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -287,7 +287,7 @@ safetyGuide.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\PublicController::safetyGuide
- * @see app/Http/Controllers/PublicController.php:239
+ * @see app/Http/Controllers/PublicController.php:243
  * @route '/panduan-keselamatan'
  */
 safetyGuide.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -297,7 +297,7 @@ safetyGuide.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\PublicController::safetyGuide
- * @see app/Http/Controllers/PublicController.php:239
+ * @see app/Http/Controllers/PublicController.php:243
  * @route '/panduan-keselamatan'
  */
     const safetyGuideForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -307,7 +307,7 @@ safetyGuide.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\PublicController::safetyGuide
- * @see app/Http/Controllers/PublicController.php:239
+ * @see app/Http/Controllers/PublicController.php:243
  * @route '/panduan-keselamatan'
  */
         safetyGuideForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -316,7 +316,7 @@ safetyGuide.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\PublicController::safetyGuide
- * @see app/Http/Controllers/PublicController.php:239
+ * @see app/Http/Controllers/PublicController.php:243
  * @route '/panduan-keselamatan'
  */
         safetyGuideForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -332,7 +332,7 @@ safetyGuide.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     safetyGuide.form = safetyGuideForm
 /**
 * @see \App\Http\Controllers\PublicController::about
- * @see app/Http/Controllers/PublicController.php:247
+ * @see app/Http/Controllers/PublicController.php:251
  * @route '/tentang-kami'
  */
 export const about = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -347,7 +347,7 @@ about.definition = {
 
 /**
 * @see \App\Http\Controllers\PublicController::about
- * @see app/Http/Controllers/PublicController.php:247
+ * @see app/Http/Controllers/PublicController.php:251
  * @route '/tentang-kami'
  */
 about.url = (options?: RouteQueryOptions) => {
@@ -356,7 +356,7 @@ about.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\PublicController::about
- * @see app/Http/Controllers/PublicController.php:247
+ * @see app/Http/Controllers/PublicController.php:251
  * @route '/tentang-kami'
  */
 about.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -365,7 +365,7 @@ about.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\PublicController::about
- * @see app/Http/Controllers/PublicController.php:247
+ * @see app/Http/Controllers/PublicController.php:251
  * @route '/tentang-kami'
  */
 about.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -375,7 +375,7 @@ about.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\PublicController::about
- * @see app/Http/Controllers/PublicController.php:247
+ * @see app/Http/Controllers/PublicController.php:251
  * @route '/tentang-kami'
  */
     const aboutForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -385,7 +385,7 @@ about.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\PublicController::about
- * @see app/Http/Controllers/PublicController.php:247
+ * @see app/Http/Controllers/PublicController.php:251
  * @route '/tentang-kami'
  */
         aboutForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -394,7 +394,7 @@ about.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\PublicController::about
- * @see app/Http/Controllers/PublicController.php:247
+ * @see app/Http/Controllers/PublicController.php:251
  * @route '/tentang-kami'
  */
         aboutForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

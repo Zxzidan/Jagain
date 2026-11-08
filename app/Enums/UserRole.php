@@ -8,6 +8,7 @@ enum UserRole: string
     case COMMUNITY = 'COMMUNITY';
     case ADMIN = 'ADMIN';
     case AGENCY = 'AGENCY';
+    case EXECUTIVE = 'EXECUTIVE';
 
     public function label(): string
     {
@@ -16,6 +17,7 @@ enum UserRole: string
             self::COMMUNITY => 'Masyarakat',
             self::ADMIN => 'Administrator',
             self::AGENCY => 'Instansi / OPD',
+            self::EXECUTIVE => 'Eksekutif / Pimpinan',
         };
     }
 }

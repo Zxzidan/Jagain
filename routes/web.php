@@ -12,6 +12,7 @@ use App\Http\Controllers\Agency\AgencyDashboardController;
 use App\Http\Controllers\CitizenReportController;
 use App\Http\Controllers\Community\DashboardController;
 use App\Http\Controllers\Community\ReportController;
+use App\Http\Controllers\Executive\ExecutiveDashboardController;
 use App\Http\Controllers\PublicController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -33,6 +34,9 @@ Route::middleware(['auth'])->group(function () {
         }
         if ($user->isAgency()) {
             return redirect()->route('agency.dashboard');
+        }
+        if ($user->isExecutive()) {
+            return redirect()->route('executive.dashboard');
         }
 
         return app(DashboardController::class)->index($request);
@@ -112,6 +116,12 @@ Route::middleware(['auth', 'role:AGENCY'])->prefix('opd')->name('agency.')->grou
     // Geospatial Wildfire Map for OPD
     Route::get('/map', [AdminMapController::class, 'index'])->name('map');
     Route::get('/peta', [AdminMapController::class, 'index']);
+});
+
+// Executive Read-Only Analytics View (Requires EXECUTIVE or ADMIN role)
+Route::middleware(['auth', 'role:EXECUTIVE,ADMIN'])->prefix('executive')->name('executive.')->group(function () {
+    Route::get('/', [ExecutiveDashboardController::class, 'index'])->name('dashboard');
+    Route::get('/dashboard', [ExecutiveDashboardController::class, 'index']);
 });
 
 require __DIR__.'/settings.php';

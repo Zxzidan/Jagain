@@ -89,10 +89,48 @@ class AdminDashboardController extends Controller
                 'is_simulated' => $obs->is_simulated,
                 'data_source' => [
                     'name' => $obs->dataSource?->name ?? 'Satelit BMKG',
-                    'attribution' => $obs->dataSource?->attribution ?? 'BMKG / NASA FIRMS',
+                    'attribution' => $obs->dataSource?->attribution_text ?? $obs->dataSource?->attribution ?? 'BMKG / NASA FIRMS',
                     'source_type' => $obs->dataSource?->source_type ?? 'SATELLITE',
                 ],
             ]);
+
+        $provincesList = [
+            'Kalimantan Barat',
+            'Kalimantan Tengah',
+            'Kalimantan Selatan',
+            'Kalimantan Timur',
+            'Kalimantan Utara',
+        ];
+
+        $allReportsForStats = Report::select(['id', 'province', 'report_status', 'fire_condition', 'is_simulated', 'created_at', 'updated_at'])->get();
+        $allObsForStats = ExternalObservation::select(['id', 'province', 'is_simulated', 'observed_at'])->get();
+
+        $provincialStats = collect($provincesList)->map(function (string $prov) use ($allReportsForStats, $allObsForStats) {
+            $provReports = $allReportsForStats->where('province', $prov);
+            $total = $provReports->count();
+            $resolved = $provReports->filter(fn ($r) => ($r->report_status->value ?? $r->report_status) === 'RESOLVED_VERIFIED')->count();
+            $inProgress = $provReports->filter(fn ($r) => in_array($r->report_status->value ?? $r->report_status, ['VERIFIED', 'DISPATCHED', 'RESOLUTION_REVIEW'], true))->count();
+            $pending = $provReports->filter(fn ($r) => in_array($r->report_status->value ?? $r->report_status, ['SUBMITTED', 'UNDER_REVIEW', 'NEEDS_INFORMATION'], true))->count();
+            $hotspots = $allObsForStats->where('province', $prov)->count();
+
+            return [
+                'province' => $prov,
+                'total' => $total,
+                'resolved' => $resolved,
+                'in_progress' => $inProgress,
+                'pending' => $pending,
+                'hotspots' => $hotspots,
+            ];
+        })->values()->all();
+
+        $dataIntegrity = [
+            'actual_reports' => $allReportsForStats->where('is_simulated', false)->count(),
+            'simulated_reports' => $allReportsForStats->where('is_simulated', true)->count(),
+            'total_hotspots' => $allObsForStats->count(),
+            'simulated_hotspots' => $allObsForStats->where('is_simulated', true)->count(),
+            'last_report_at' => $allReportsForStats->max('updated_at')?->toIso8601String(),
+            'last_hotspot_at' => $allObsForStats->max('observed_at')?->toIso8601String(),
+        ];
 
         return Inertia::render('admin/dashboard', [
             'statusCounts' => $statusCounts,
@@ -103,6 +141,8 @@ class AdminDashboardController extends Controller
             'agencyStats' => $agencyStats,
             'mapReports' => $mapReports,
             'mapObservations' => $mapObservations,
+            'provincialStats' => $provincialStats,
+            'dataIntegrity' => $dataIntegrity,
         ]);
     }
 

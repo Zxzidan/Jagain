@@ -97,6 +97,18 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
+        User::firstOrCreate(
+            ['email' => 'eksekutif@jagain.id'],
+            [
+                'name' => 'Pimpinan Eksekutif Karhutla Kalimantan',
+                'password' => Hash::make('password'),
+                'role' => UserRole::EXECUTIVE,
+                'phone' => '08110000009',
+                'account_status' => 'active',
+                'email_verified_at' => now(),
+            ]
+        );
+
         // 2. Categories
         $categoriesData = [
             ['name' => 'Lahan Gambut', 'slug' => 'lahan-gambut', 'description' => 'Kebakaran di area bertanah gambut dengan kepulan asap tebal.', 'is_active' => true],

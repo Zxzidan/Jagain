@@ -84,6 +84,8 @@ class ReportController extends Controller
      */
     public function create(): Response
     {
+        Gate::authorize('create', Report::class);
+
         return Inertia::render('community/reports/create');
     }
 

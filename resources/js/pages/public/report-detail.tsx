@@ -5,6 +5,7 @@ import Footer from '@/components/footer';
 import KarhutlaMap from '@/components/karhutla-map';
 import StatusBadge from '@/components/status-badge';
 import FireConditionBadge from '@/components/fire-condition-badge';
+import ReportStageStepper from '@/components/report-stage-stepper';
 import BorderGlow from '@/components/react-bits/BorderGlow';
 import {
     ArrowLeft,
@@ -49,7 +50,9 @@ interface ReportDetailProps {
         status_history: Array<{
             id: number;
             from_status?: string | null;
+            from_status_label?: string | null;
             to_status: string;
+            to_status_label?: string | null;
             reason?: string | null;
             note?: string | null;
             created_at?: string | null;
@@ -58,6 +61,16 @@ interface ReportDetailProps {
             id: number;
             name: string;
             jurisdiction: string;
+            assignment_status?: string;
+            assignment_status_label?: string;
+            assigned_at?: string | null;
+            operational_updates?: Array<{
+                id: number;
+                update_type: string;
+                note: string;
+                fire_condition_observed?: string | null;
+                created_at?: string | null;
+            }>;
         } | null;
     };
 }
@@ -104,7 +117,19 @@ export default function ReportDetailPage({ report }: ReportDetailProps) {
                 </div>
             </div>
 
-            <main className="flex-1 max-w-[1280px] mx-auto w-full px-4 sm:px-6 lg:px-8 py-10">
+            <main className="flex-1 max-w-[1280px] mx-auto w-full px-4 sm:px-6 lg:px-8 py-10 space-y-8">
+                {/* Real-time Crowdsourcing Stage Progression Stepper */}
+                <ReportStageStepper
+                    reportStatus={report.report_status}
+                    reportStatusLabel={report.status_label}
+                    assignmentStatus={report.active_agency?.assignment_status}
+                    assignmentStatusLabel={report.active_agency?.assignment_status_label}
+                    agencyName={report.active_agency?.name}
+                    fireCondition={report.fire_condition}
+                    fireConditionLabel={report.fire_condition_label}
+                    updatedAt={report.updated_at || report.created_at}
+                />
+
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
                     {/* Left 8 Cols: Dossier Information */}
                     <div className="lg:col-span-8 space-y-8">
@@ -276,6 +301,52 @@ export default function ReportDetailPage({ report }: ReportDetailProps) {
                                     ))}
                                 </div>
                             )}
+
+                            {/* Operational Updates from Field Officers (OPD) */}
+                            {report.active_agency?.operational_updates && report.active_agency.operational_updates.length > 0 && (
+                                <div className="pt-6 space-y-4">
+                                    <div className="flex items-center justify-between pb-2 border-b border-neutral-200">
+                                        <h3 className="font-sans text-xs font-bold uppercase tracking-wider text-neutral-900 flex items-center gap-2">
+                                            <Building className="size-4 text-emerald-600" />
+                                            <span>Pembaruan Penanganan Lapangan ({report.active_agency.name})</span>
+                                        </h3>
+                                        <span className="font-mono text-xs text-emerald-700 font-semibold">
+                                            Laporan Regu OPD
+                                        </span>
+                                    </div>
+                                    <div className="space-y-3">
+                                        {report.active_agency.operational_updates.map((upd) => (
+                                            <div
+                                                key={upd.id}
+                                                className="bg-emerald-50/50 border border-emerald-200/80 rounded-2xl p-5 space-y-2 text-xs font-sans"
+                                            >
+                                                <div className="flex items-center justify-between flex-wrap gap-2">
+                                                    <span className="font-bold text-emerald-950 uppercase tracking-wide text-[11px] bg-white px-2.5 py-1 rounded-full border border-emerald-200">
+                                                        Tindakan: {upd.update_type}
+                                                    </span>
+                                                    <span className="font-mono text-neutral-500">
+                                                        {upd.created_at
+                                                            ? new Date(upd.created_at).toLocaleString('id-ID', {
+                                                                  day: '2-digit',
+                                                                  month: 'short',
+                                                                  year: 'numeric',
+                                                                  hour: '2-digit',
+                                                                  minute: '2-digit',
+                                                              })
+                                                            : ''}
+                                                    </span>
+                                                </div>
+                                                <p className="text-neutral-800 leading-relaxed">{upd.note}</p>
+                                                {upd.fire_condition_observed && (
+                                                    <div className="text-[11px] font-mono text-emerald-800 pt-1">
+                                                        Kondisi Api Teramati: <strong>{upd.fire_condition_observed}</strong>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
                         </div>
                     </div>
 
@@ -289,13 +360,20 @@ export default function ReportDetailPage({ report }: ReportDetailProps) {
                             </h3>
 
                             {report.active_agency ? (
-                                <div className="bg-neutral-50 p-5 rounded-2xl space-y-2 border border-neutral-200">
+                                <div className="bg-neutral-50 p-5 rounded-2xl space-y-2.5 border border-neutral-200">
                                     <div className="font-bold text-sm text-neutral-900">
                                         {report.active_agency.name}
                                     </div>
                                     <div className="text-xs text-neutral-500">
                                         Wilayah Kewenangan: {report.active_agency.jurisdiction}
                                     </div>
+                                    {report.active_agency.assignment_status_label && (
+                                        <div className="pt-1">
+                                            <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-900 border border-emerald-300">
+                                                Status Penugasan: {report.active_agency.assignment_status_label}
+                                            </span>
+                                        </div>
+                                    )}
                                     <div className="font-mono text-[11px] text-emerald-700 font-semibold pt-2 border-t border-neutral-200">
                                         Penugasan resmi terbit dari administrator JAGAIN.
                                     </div>

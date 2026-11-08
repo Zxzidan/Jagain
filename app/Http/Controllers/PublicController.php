@@ -177,8 +177,12 @@ class PublicController extends Controller
         $reports = $reportsQuery->latest()->get()->map(fn (Report $r) => $r->toPublicArray());
 
         // External observations (hotspots)
-        $observations = ExternalObservation::with('dataSource')
-            ->latest('observed_at')
+        $observationsQuery = ExternalObservation::with('dataSource')->latest('observed_at');
+        if ($province) {
+            $observationsQuery->where('province', $province);
+        }
+
+        $observations = $observationsQuery
             ->take(50)
             ->get()
             ->map(fn (ExternalObservation $obs) => [
@@ -225,7 +229,7 @@ class PublicController extends Controller
     {
         $report = Report::where('tracking_code', $tracking_code)
             ->publiclyVisible()
-            ->with(['category', 'evidence', 'latestAssignment.agency', 'statusHistories'])
+            ->with(['category', 'evidence', 'latestAssignment.agency', 'latestAssignment.operationalUpdates', 'statusHistories'])
             ->firstOrFail();
 
         return Inertia::render('public/report-detail', [

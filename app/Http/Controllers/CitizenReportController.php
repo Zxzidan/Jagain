@@ -28,6 +28,8 @@ class CitizenReportController extends Controller
      */
     public function create(): Response
     {
+        Gate::authorize('create', Report::class);
+
         $categories = ReportCategory::where('is_active', true)->get(['id', 'name', 'slug', 'description']);
 
         $provinces = [
@@ -49,6 +51,8 @@ class CitizenReportController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
+        Gate::authorize('create', Report::class);
+
         $validated = $request->validate([
             'title' => ['required', 'string', 'min:5', 'max:200'],
             'description' => ['required', 'string', 'min:15', 'max:3000'],

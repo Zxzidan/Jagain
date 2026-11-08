@@ -12,6 +12,7 @@ import {
     ShieldCheck,
     Tags,
     LayoutDashboard,
+    BarChart3,
 } from 'lucide-react';
 import AppLogo from '@/components/app-logo';
 import { NavFooter } from '@/components/nav-footer';
@@ -34,6 +35,7 @@ export function AppSidebar() {
     const user = auth?.user;
     const isAdmin = user?.role === 'ADMIN' || user?.is_admin;
     const isAgency = user?.role === 'AGENCY' || user?.is_agency;
+    const isExecutive = user?.role === 'EXECUTIVE' || user?.is_executive;
 
     const navItems: NavItem[] = [];
 
@@ -44,7 +46,14 @@ export function AppSidebar() {
             { title: 'Instansi & OPD', href: '/admin/agencies', icon: Building2 },
             { title: 'Kategori Karhutla', href: '/admin/categories', icon: Tags },
             { title: 'Audit Trail', href: '/admin/audit-logs', icon: History },
-            { title: 'Peta Karhutla', href: '/admin/map', icon: Map }
+            { title: 'Peta Karhutla', href: '/admin/map', icon: Map },
+            { title: 'Executive View', href: '/executive/dashboard', icon: BarChart3 }
+        );
+    } else if (isExecutive) {
+        navItems.push(
+            { title: 'Dashboard Eksekutif', href: '/executive/dashboard', icon: BarChart3 },
+            { title: 'Peta Sebaran Publik', href: '/peta', icon: Map },
+            { title: 'Panduan & Standar ISPU', href: '/panduan-keselamatan', icon: Shield }
         );
     } else if (isAgency) {
         navItems.push(
@@ -70,6 +79,8 @@ export function AppSidebar() {
 
     const homeUrl = isAdmin
         ? '/admin/dashboard'
+        : isExecutive
+        ? '/executive/dashboard'
         : isAgency
         ? '/opd/dashboard'
         : '/dashboard';

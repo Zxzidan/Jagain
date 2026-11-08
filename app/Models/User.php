@@ -73,6 +73,11 @@ class User extends Authenticatable implements MustVerifyEmail, PasskeyUser
         return $this->role === UserRole::AGENCY || $this->role === 'AGENCY' || $this->role?->value === 'AGENCY';
     }
 
+    public function isExecutive(): bool
+    {
+        return $this->role === UserRole::EXECUTIVE || $this->role === 'EXECUTIVE' || $this->role?->value === 'EXECUTIVE';
+    }
+
     public function isCommunity(): bool
     {
         return $this->role === UserRole::COMMUNITY || $this->role === 'COMMUNITY' || $this->role?->value === 'COMMUNITY' || empty($this->role);

@@ -24,6 +24,7 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { StatusBadge, FireConditionBadge } from '@/components/reports/status-badge';
 import { ReportMapViewer } from '@/components/reports/report-map-viewer';
+import ReportStageStepper from '@/components/report-stage-stepper';
 import type { ReportItem } from '@/types';
 import { dashboard } from '@/routes';
 
@@ -183,6 +184,18 @@ export default function ReportShow({ report }: Props) {
                         </div>
                     </div>
                 </div>
+
+                {/* Stage Progression Stepper */}
+                <ReportStageStepper
+                    reportStatus={report.report_status}
+                    reportStatusLabel={report.status_label}
+                    assignmentStatus={report.assignments?.[0]?.assignment_status}
+                    assignmentStatusLabel={report.assignments?.[0]?.assignment_status_label}
+                    agencyName={report.assignments?.[0]?.agency?.name}
+                    fireCondition={report.fire_condition}
+                    fireConditionLabel={report.fire_condition_label}
+                    updatedAt={report.updated_at || report.created_at}
+                />
 
                 {/* Needs Information Action Section */}
                 {report.can_provide_additional_info && (

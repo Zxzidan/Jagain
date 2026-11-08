@@ -91,6 +91,22 @@ type DashboardProps = {
     }>;
     mapReports?: MapReport[];
     mapObservations?: MapObservation[];
+    provincialStats?: Array<{
+        province: string;
+        total: number;
+        resolved: number;
+        in_progress: number;
+        pending: number;
+        hotspots: number;
+    }>;
+    dataIntegrity?: {
+        actual_reports: number;
+        simulated_reports: number;
+        total_hotspots: number;
+        simulated_hotspots: number;
+        last_report_at?: string | null;
+        last_hotspot_at?: string | null;
+    };
 };
 
 export default function AdminDashboard({
@@ -101,6 +117,8 @@ export default function AdminDashboard({
     agencyStats = [],
     mapReports = [],
     mapObservations = [],
+    provincialStats = [],
+    dataIntegrity,
 }: DashboardProps) {
     const page = usePage();
     const flash = (page.props as any).flash;
@@ -397,8 +415,15 @@ export default function AdminDashboard({
                             </h1>
                         </div>
 
-                        {/* Top Controls: Period Selector */}
-                        <div className="flex items-center gap-2.5 self-start sm:self-auto">
+                        {/* Top Controls: Period Selector & Executive View Link */}
+                        <div className="flex flex-wrap items-center gap-2.5 self-start sm:self-auto">
+                            <Link
+                                href="/executive/dashboard"
+                                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-emerald-200 bg-emerald-50/80 text-xs font-bold text-[#0c4e33] shadow-2xs hover:bg-emerald-100 transition-colors"
+                            >
+                                <Eye className="size-3.5 text-[#0c4e33]" />
+                                <span>Perspektif Eksekutif (Read-Only)</span>
+                            </Link>
                             <div className="relative">
                                 <button
                                     type="button"
@@ -729,6 +754,114 @@ export default function AdminDashboard({
                             </div>
                         </div>
                     </section>
+
+                    {/* =========================================================================
+                        3B. GEOSPATIAL & STATISTICAL DISTRIBUTION BY PROVINCE + DATA INTEGRITY
+                        ========================================================================= */}
+                    {provincialStats.length > 0 && (
+                        <section className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-7">
+                            {/* Provincial Distribution (8 Cols) */}
+                            <div className="lg:col-span-8 rounded-2xl border border-neutral-200/90 bg-white p-6 shadow-xs">
+                                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-neutral-100">
+                                    <div>
+                                        <h2 className="text-base font-bold text-neutral-900">
+                                            Distribusi Laporan & Progres Penanganan per Provinsi
+                                        </h2>
+                                        <p className="text-xs text-neutral-500 mt-0.5">
+                                            Agregasi aktual basis data pada 5 provinsi cakupan Pulau Kalimantan
+                                        </p>
+                                    </div>
+                                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 border border-emerald-200/70 text-[11px] font-bold text-[#0c4e33]">
+                                        5 Provinsi Kalimantan
+                                    </span>
+                                </div>
+
+                                <div className="mt-4 space-y-3.5">
+                                    {provincialStats.map((prov) => {
+                                        const maxProvTotal = Math.max(...provincialStats.map((p) => p.total), 1);
+                                        const barPct = Math.round((prov.total / maxProvTotal) * 100);
+                                        return (
+                                            <div key={prov.province} className="rounded-xl border border-neutral-100 bg-neutral-50/70 p-3.5">
+                                                <div className="flex flex-wrap items-center justify-between gap-2 text-xs mb-2">
+                                                    <span className="font-bold text-neutral-900">{prov.province}</span>
+                                                    <div className="flex flex-wrap items-center gap-2 text-[11px]">
+                                                        <span className="px-2 py-0.5 rounded-md bg-white border border-neutral-200 font-bold text-neutral-800">
+                                                            Total: {prov.total}
+                                                        </span>
+                                                        <span className="px-2 py-0.5 rounded-md bg-amber-50 border border-amber-200/80 font-semibold text-amber-800">
+                                                            Verifikasi: {prov.pending}
+                                                        </span>
+                                                        <span className="px-2 py-0.5 rounded-md bg-blue-50 border border-blue-200/80 font-semibold text-blue-800">
+                                                            Ditangani OPD: {prov.in_progress}
+                                                        </span>
+                                                        <span className="px-2 py-0.5 rounded-md bg-emerald-50 border border-emerald-200/80 font-bold text-emerald-800">
+                                                            Selesai: {prov.resolved}
+                                                        </span>
+                                                        <span className="px-2 py-0.5 rounded-md bg-violet-50 border border-violet-200/80 font-semibold text-violet-800">
+                                                            Hotspot Satelit: {prov.hotspots}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <div className="h-2 w-full rounded-full bg-neutral-200/80 overflow-hidden">
+                                                    <div
+                                                        className="h-full rounded-full bg-[#0c4e33] transition-all duration-300"
+                                                        style={{ width: `${Math.max(barPct, prov.total > 0 ? 8 : 0)}%` }}
+                                                    />
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+
+                            {/* Data Integrity & Status Separation Summary (4 Cols) */}
+                            <div className="lg:col-span-4 rounded-2xl border border-neutral-200/90 bg-white p-6 shadow-xs flex flex-col justify-between gap-4">
+                                <div>
+                                    <div className="flex items-center gap-2 pb-3 border-b border-neutral-100">
+                                        <Shield className="size-4 text-[#0c4e33]" />
+                                        <h2 className="text-sm font-bold text-neutral-900">
+                                            Integritas & Klasifikasi Sumber Data
+                                        </h2>
+                                    </div>
+                                    <p className="text-xs text-neutral-500 mt-2.5 leading-relaxed">
+                                        Sistem memisahkan laporan lapangan masyarakat dari anomali suhu satelit serta membedakan data operasional aktual dan data simulasi pengujian.
+                                    </p>
+
+                                    <div className="mt-4 space-y-2.5 text-xs">
+                                        <div className="flex items-center justify-between p-2.5 rounded-xl bg-neutral-50 border border-neutral-200/70">
+                                            <span className="text-neutral-600 font-medium">Laporan Operasional Aktual</span>
+                                            <strong className="font-mono text-neutral-900">{dataIntegrity?.actual_reports ?? statusCounts.total}</strong>
+                                        </div>
+                                        <div className="flex items-center justify-between p-2.5 rounded-xl bg-neutral-50 border border-neutral-200/70">
+                                            <span className="text-neutral-600 font-medium">Laporan Simulasi / Demo</span>
+                                            <strong className="font-mono text-neutral-700">{dataIntegrity?.simulated_reports ?? 0}</strong>
+                                        </div>
+                                        <div className="flex items-center justify-between p-2.5 rounded-xl bg-violet-50/60 border border-violet-200/70">
+                                            <span className="text-violet-900 font-medium">Observasi Hotspot Satelit</span>
+                                            <strong className="font-mono text-violet-900">{dataIntegrity?.total_hotspots ?? mapObservations.length}</strong>
+                                        </div>
+                                        <div className="flex items-center justify-between p-2.5 rounded-xl bg-emerald-50/70 border border-emerald-200/70">
+                                            <span className="text-emerald-900 font-semibold">Rasio Penyelesaian Terverifikasi</span>
+                                            <strong className="font-mono text-[#0c4e33]">
+                                                {statusCounts.total > 0
+                                                    ? `${Math.round((statusCounts.resolved_verified / statusCounts.total) * 100)}%`
+                                                    : '0%'}
+                                            </strong>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="pt-3 border-t border-neutral-100 text-[11px] text-neutral-500 space-y-1">
+                                    <div>
+                                        <strong>Pembaruan Laporan:</strong> {formatDate(dataIntegrity?.last_report_at)}
+                                    </div>
+                                    <div>
+                                        <strong>Sinkronisasi Satelit:</strong> {formatDate(dataIntegrity?.last_hotspot_at)}
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                    )}
 
                     {/* =========================================================================
                         4. BOTTOM SECTION: Recent Activities Table

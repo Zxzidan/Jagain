@@ -79,7 +79,7 @@ create.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     create.form = createForm
 /**
 * @see \App\Http\Controllers\CitizenReportController::store
- * @see app/Http/Controllers/CitizenReportController.php:50
+ * @see app/Http/Controllers/CitizenReportController.php:52
  * @route '/lapor'
  */
 export const store = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -94,7 +94,7 @@ store.definition = {
 
 /**
 * @see \App\Http\Controllers\CitizenReportController::store
- * @see app/Http/Controllers/CitizenReportController.php:50
+ * @see app/Http/Controllers/CitizenReportController.php:52
  * @route '/lapor'
  */
 store.url = (options?: RouteQueryOptions) => {
@@ -103,7 +103,7 @@ store.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\CitizenReportController::store
- * @see app/Http/Controllers/CitizenReportController.php:50
+ * @see app/Http/Controllers/CitizenReportController.php:52
  * @route '/lapor'
  */
 store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -113,7 +113,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
     /**
 * @see \App\Http\Controllers\CitizenReportController::store
- * @see app/Http/Controllers/CitizenReportController.php:50
+ * @see app/Http/Controllers/CitizenReportController.php:52
  * @route '/lapor'
  */
     const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -123,7 +123,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
             /**
 * @see \App\Http\Controllers\CitizenReportController::store
- * @see app/Http/Controllers/CitizenReportController.php:50
+ * @see app/Http/Controllers/CitizenReportController.php:52
  * @route '/lapor'
  */
         storeForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -134,7 +134,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     store.form = storeForm
 /**
 * @see \App\Http\Controllers\CitizenReportController::index
- * @see app/Http/Controllers/CitizenReportController.php:146
+ * @see app/Http/Controllers/CitizenReportController.php:150
  * @route '/laporan-saya'
  */
 export const index = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -149,7 +149,7 @@ index.definition = {
 
 /**
 * @see \App\Http\Controllers\CitizenReportController::index
- * @see app/Http/Controllers/CitizenReportController.php:146
+ * @see app/Http/Controllers/CitizenReportController.php:150
  * @route '/laporan-saya'
  */
 index.url = (options?: RouteQueryOptions) => {
@@ -158,7 +158,7 @@ index.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\CitizenReportController::index
- * @see app/Http/Controllers/CitizenReportController.php:146
+ * @see app/Http/Controllers/CitizenReportController.php:150
  * @route '/laporan-saya'
  */
 index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -167,7 +167,7 @@ index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\CitizenReportController::index
- * @see app/Http/Controllers/CitizenReportController.php:146
+ * @see app/Http/Controllers/CitizenReportController.php:150
  * @route '/laporan-saya'
  */
 index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -177,7 +177,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\CitizenReportController::index
- * @see app/Http/Controllers/CitizenReportController.php:146
+ * @see app/Http/Controllers/CitizenReportController.php:150
  * @route '/laporan-saya'
  */
     const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -187,7 +187,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\CitizenReportController::index
- * @see app/Http/Controllers/CitizenReportController.php:146
+ * @see app/Http/Controllers/CitizenReportController.php:150
  * @route '/laporan-saya'
  */
         indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -196,7 +196,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\CitizenReportController::index
- * @see app/Http/Controllers/CitizenReportController.php:146
+ * @see app/Http/Controllers/CitizenReportController.php:150
  * @route '/laporan-saya'
  */
         indexForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -212,7 +212,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     index.form = indexForm
 /**
 * @see \App\Http\Controllers\CitizenReportController::show
- * @see app/Http/Controllers/CitizenReportController.php:172
+ * @see app/Http/Controllers/CitizenReportController.php:176
  * @route '/laporan-saya/{tracking_code}'
  */
 export const show = (args: { tracking_code: string | number } | [tracking_code: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -227,7 +227,7 @@ show.definition = {
 
 /**
 * @see \App\Http\Controllers\CitizenReportController::show
- * @see app/Http/Controllers/CitizenReportController.php:172
+ * @see app/Http/Controllers/CitizenReportController.php:176
  * @route '/laporan-saya/{tracking_code}'
  */
 show.url = (args: { tracking_code: string | number } | [tracking_code: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -255,7 +255,7 @@ show.url = (args: { tracking_code: string | number } | [tracking_code: string | 
 
 /**
 * @see \App\Http\Controllers\CitizenReportController::show
- * @see app/Http/Controllers/CitizenReportController.php:172
+ * @see app/Http/Controllers/CitizenReportController.php:176
  * @route '/laporan-saya/{tracking_code}'
  */
 show.get = (args: { tracking_code: string | number } | [tracking_code: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -264,7 +264,7 @@ show.get = (args: { tracking_code: string | number } | [tracking_code: string | 
 })
 /**
 * @see \App\Http\Controllers\CitizenReportController::show
- * @see app/Http/Controllers/CitizenReportController.php:172
+ * @see app/Http/Controllers/CitizenReportController.php:176
  * @route '/laporan-saya/{tracking_code}'
  */
 show.head = (args: { tracking_code: string | number } | [tracking_code: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -274,7 +274,7 @@ show.head = (args: { tracking_code: string | number } | [tracking_code: string |
 
     /**
 * @see \App\Http\Controllers\CitizenReportController::show
- * @see app/Http/Controllers/CitizenReportController.php:172
+ * @see app/Http/Controllers/CitizenReportController.php:176
  * @route '/laporan-saya/{tracking_code}'
  */
     const showForm = (args: { tracking_code: string | number } | [tracking_code: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -284,7 +284,7 @@ show.head = (args: { tracking_code: string | number } | [tracking_code: string |
 
             /**
 * @see \App\Http\Controllers\CitizenReportController::show
- * @see app/Http/Controllers/CitizenReportController.php:172
+ * @see app/Http/Controllers/CitizenReportController.php:176
  * @route '/laporan-saya/{tracking_code}'
  */
         showForm.get = (args: { tracking_code: string | number } | [tracking_code: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -293,7 +293,7 @@ show.head = (args: { tracking_code: string | number } | [tracking_code: string |
         })
             /**
 * @see \App\Http\Controllers\CitizenReportController::show
- * @see app/Http/Controllers/CitizenReportController.php:172
+ * @see app/Http/Controllers/CitizenReportController.php:176
  * @route '/laporan-saya/{tracking_code}'
  */
         showForm.head = (args: { tracking_code: string | number } | [tracking_code: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -309,7 +309,7 @@ show.head = (args: { tracking_code: string | number } | [tracking_code: string |
     show.form = showForm
 /**
 * @see \App\Http\Controllers\CitizenReportController::provideInformation
- * @see app/Http/Controllers/CitizenReportController.php:234
+ * @see app/Http/Controllers/CitizenReportController.php:238
  * @route '/laporan-saya/{tracking_code}/tambah-informasi'
  */
 export const provideInformation = (args: { tracking_code: string | number } | [tracking_code: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -324,7 +324,7 @@ provideInformation.definition = {
 
 /**
 * @see \App\Http\Controllers\CitizenReportController::provideInformation
- * @see app/Http/Controllers/CitizenReportController.php:234
+ * @see app/Http/Controllers/CitizenReportController.php:238
  * @route '/laporan-saya/{tracking_code}/tambah-informasi'
  */
 provideInformation.url = (args: { tracking_code: string | number } | [tracking_code: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -352,7 +352,7 @@ provideInformation.url = (args: { tracking_code: string | number } | [tracking_c
 
 /**
 * @see \App\Http\Controllers\CitizenReportController::provideInformation
- * @see app/Http/Controllers/CitizenReportController.php:234
+ * @see app/Http/Controllers/CitizenReportController.php:238
  * @route '/laporan-saya/{tracking_code}/tambah-informasi'
  */
 provideInformation.post = (args: { tracking_code: string | number } | [tracking_code: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -362,7 +362,7 @@ provideInformation.post = (args: { tracking_code: string | number } | [tracking_
 
     /**
 * @see \App\Http\Controllers\CitizenReportController::provideInformation
- * @see app/Http/Controllers/CitizenReportController.php:234
+ * @see app/Http/Controllers/CitizenReportController.php:238
  * @route '/laporan-saya/{tracking_code}/tambah-informasi'
  */
     const provideInformationForm = (args: { tracking_code: string | number } | [tracking_code: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -372,7 +372,7 @@ provideInformation.post = (args: { tracking_code: string | number } | [tracking_
 
             /**
 * @see \App\Http\Controllers\CitizenReportController::provideInformation
- * @see app/Http/Controllers/CitizenReportController.php:234
+ * @see app/Http/Controllers/CitizenReportController.php:238
  * @route '/laporan-saya/{tracking_code}/tambah-informasi'
  */
         provideInformationForm.post = (args: { tracking_code: string | number } | [tracking_code: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({

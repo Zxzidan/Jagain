@@ -3,12 +3,13 @@ export type User = {
     name: string;
     email: string;
     avatar?: string;
-    role?: 'ADMIN' | 'AGENCY' | 'COMMUNITY' | string;
+    role?: 'ADMIN' | 'AGENCY' | 'COMMUNITY' | 'EXECUTIVE' | string;
     role_label?: string;
     phone?: string | null;
     is_admin?: boolean;
     is_agency?: boolean;
     is_community?: boolean;
+    is_executive?: boolean;
     account_status?: string;
     agency?: {
         id: number;
