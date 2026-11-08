@@ -3,7 +3,11 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
-        <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+
+        {{-- Upgrade insecure requests to HTTPS only in production (Vercel) --}}
+        @production
+            <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+        @endproduction
 
         {{-- Mobile Web App & PWA Capabilities for iOS & Android --}}
         <meta name="mobile-web-app-capable" content="yes">
